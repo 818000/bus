@@ -1,4 +1,4 @@
-package org.aoju.bus.boot.druid;
+package org.aoju.bus.boot.swagger;
 
 
 import org.aoju.bus.spring.druid.DruidConfiguration;
@@ -11,5 +11,5 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(value = {DruidConfiguration.class, DruidMonitorConfiguration.class})
-public class DruidAutoConfiguration {
+public class SwaggerAutoConfiguration {
 }
