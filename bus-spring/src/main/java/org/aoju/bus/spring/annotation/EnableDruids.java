@@ -1,12 +1,13 @@
 package org.aoju.bus.spring.annotation;
 
 import org.aoju.bus.spring.druid.DruidConfiguration;
+import org.aoju.bus.spring.druid.DruidMonitorConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
 /**
- * Druid 支持
+ * Dubbo 支持
  *
  * @author aoju.org
  * @version 3.0.1
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@Import(DruidConfiguration.class)
-public @interface EnableDruid {
+@Import(value = {DruidConfiguration.class, DruidMonitorConfiguration.class})
+public @interface EnableDruids {
 
 }
