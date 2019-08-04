@@ -1,7 +1,8 @@
 
-[![Travis](https://travis-ci.org/aoju/bus.svg?branch=master)](https://travis-ci.org/aoju/bus)
+
 [![JDK](https://img.shields.io/badge/JDK-1.7+-green.svg)](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://www.mit-license.org)
+[![Travis](https://travis-ci.org/aoju/bus.svg?branch=master)](https://travis-ci.org/aoju/bus)
 
 
 ## 项目说明
