@@ -33,4 +33,5 @@ script:
   - cd bus-base && mvn install -DskipTests=true
   - cd bus-cache && mvn install -DskipTests=true
   - cd bus-spring && mvn install -DskipTests=true
+  - cd bus-all && mvn install -DskipTests=true
 
