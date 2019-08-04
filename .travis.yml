@@ -12,5 +12,5 @@ cache:
 
 script:
   - export TZ=Asia/Shanghai
-  - mvn install -DskipTests=true
+  - cd bus-all && mvn install -DskipTests=true
 
