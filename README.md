@@ -1,9 +1,21 @@
+<p align="center">
+	<a target="_blank" href="https://www.mit-license.org">
+		<img src="https://img.shields.io/badge/license-MIT-green.svg" ></img>
+	</a>
+	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
+		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg" ></img>
+	</a>
+	<a target="_blank" href="https://travis-ci.org/aoju/bus">
+		<img src="https://travis-ci.org/aoju/bus.svg?branch=master" ></img>
+	</a>
+</p>
 
+<p align="center">
+	-- QQ群①：<a href="https://shang.qq.com/wpa/qunwpa?idkey=17fadd02891457034c6536c984f0d7db29b73ea14c9b86bba39ce18ed7a90e18">839128</a> --
+	-- QQ群②：<a href="https://shang.qq.com/wpa/qunwpa?idkey=c207666cbc107d03d368bde8fc15605bb883ebc482e28d440de149e3e2217460">839120</a> --
+</p>
 
-[![MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://www.mit-license.org)
-[![JDK](https://img.shields.io/badge/JDK-1.8+-green.svg)](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
-[![Travis](https://travis-ci.org/aoju/bus.svg?branch=master)](https://travis-ci.org/aoju/bus)
-
+-------------------------------------------------------------------------------
 
 ## 项目说明
 Bus 是一个微服务套件、基础框架，它基于Java8编写，参考、借鉴了大量已有框架、组件的设计，可以作为后端服务的开发基础中间件。代码简洁，架构清晰，非常适合学习使用。
