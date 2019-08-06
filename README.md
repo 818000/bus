@@ -23,6 +23,9 @@
 	<a target="_blank" href="http://poi.apache.org">
 		<img src="https://img.shields.io/badge/poi-3.1.7-blue.svg">
 	</a>
+	<a target="_blank" href="http://github.com/aoju/bus.git">
+		<img src="https://img.shields.io/badge/version-3.0.0-brightgreen.svg">
+	</a>
 	<a target="_blank" href="https://www.mit-license.org">
 		<img src="https://img.shields.io/badge/license-MIT-green.svg">
 	</a>
@@ -33,7 +36,7 @@
 	-- QQ群②：<a href="https://shang.qq.com/wpa/qunwpa?idkey=c207666cbc107d03d368bde8fc15605bb883ebc482e28d440de149e3e2217460">839120</a> --
 </p>
 
--------------------------------------------------------------------------------
+---
 
 ## 项目说明
 Bus 是一个微服务套件、基础框架，它基于Java8编写，参考、借鉴了大量已有框架、组件的设计，可以作为后端服务的开发基础中间件。代码简洁，架构清晰，非常适合学习使用。
