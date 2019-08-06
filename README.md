@@ -1,12 +1,12 @@
 <p align="center">
 	<a target="_blank" href="https://www.mit-license.org">
-		<img src="https://img.shields.io/badge/license-MIT-green.svg" ></img>
+		<img src="https://img.shields.io/badge/license-MIT-green.svg">
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
-		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg" ></img>
+		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg">
 	</a>
 	<a target="_blank" href="https://travis-ci.org/aoju/bus">
-		<img src="https://travis-ci.org/aoju/bus.svg?branch=master" ></img>
+		<img src="https://travis-ci.org/aoju/bus.svg?branch=master">
 	</a>
 </p>
 
