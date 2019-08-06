@@ -1,12 +1,30 @@
 <p align="center">
-	<a target="_blank" href="https://www.mit-license.org">
-		<img src="https://img.shields.io/badge/license-MIT-green.svg">
+	<a target="_blank" href="https://travis-ci.org/aoju/bus">
+		<img src="https://travis-ci.org/aoju/bus.svg?branch=master">
+	</a>
+    <a target="_blank" href="http://maven.apache.org">
+		<img src="https://img.shields.io/badge/Maven-3.5.0-yellowgreen.svg">
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
 		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg">
 	</a>
-	<a target="_blank" href="https://travis-ci.org/aoju/bus">
-		<img src="https://travis-ci.org/aoju/bus.svg?branch=master">
+	<a target="_blank" href="https://spring.io/projects/spring-boot">
+		<img src="https://img.shields.io/badge/Spring Boot-2.1.6-brightgreen.svg">
+	</a>
+	<a target="_blank" href="https://www.mysql.com">
+		<img src="https://img.shields.io/badge/Mysql-5.7-blue.svg">
+	</a>
+	<a target="_blank" href="https://swagger.io">
+		<img src="https://img.shields.io/badge/swagger-2.9.2-brightgreen.svg">
+	</a>
+	<a target="_blank" href="http://dubbo.apache.org">
+		<img src="https://img.shields.io/badge/dubbo-2.6.6-yellow.svg">
+	</a>
+	<a target="_blank" href="http://poi.apache.org">
+		<img src="https://img.shields.io/badge/poi-3.1.7-blue.svg">
+	</a>
+	<a target="_blank" href="https://www.mit-license.org">
+		<img src="https://img.shields.io/badge/license-MIT-green.svg">
 	</a>
 </p>
 
