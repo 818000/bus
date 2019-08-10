@@ -23,9 +23,6 @@
 	<a target="_blank" href="http://poi.apache.org">
 		<img src="https://img.shields.io/badge/poi-3.1.7-blue.svg">
 	</a>
-	<a target="_blank" href="http://github.com/aoju/bus.git">
-		<img src="https://img.shields.io/badge/version-3.0.0-brightgreen.svg">
-	</a>
 	<a target="_blank" href="https://www.mit-license.org">
 		<img src="https://img.shields.io/badge/license-MIT-green.svg">
 	</a>
