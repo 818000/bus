@@ -21,18 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+package org.aoju.bus.socket.netty;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class MessagePublisher {
+
+    public static void publish(String topic, String message) {
+        ClientService.publish(topic, message);
+    }
 
 }

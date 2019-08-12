@@ -21,18 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class RemoveCommand implements Runnable {
+
+    private ChannelHandlerContext context;
+
+    public RemoveCommand(ChannelHandlerContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void run() {
+        context.channel().close();
+        ClientService.remove(this.context);
+    }
 
 }

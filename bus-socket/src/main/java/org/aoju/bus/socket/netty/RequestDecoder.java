@@ -21,18 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import io.netty.channel.ChannelHandlerContext;
+import org.aoju.bus.logger.Logger;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class RequestDecoder {
+
+    public SocketRequest decode(ChannelHandlerContext ctx, String message) {
+        try {
+
+            SocketRequest request = new SocketRequest();
+            JSONObject input = JSON.parseObject(message);
+
+            request.setContext(ctx);
+
+            if (input.containsKey(NettyConsts.EVENT)) {
+                String event = input.getString(NettyConsts.EVENT);
+                request.setEvent(event);
+            }
+
+            if (input.containsKey(NettyConsts.TOPIC)) {
+                String[] topic = input.getObject(NettyConsts.TOPIC, String[].class);
+                request.setTopic(topic);
+            }
+
+            if (input.containsKey(NettyConsts.DATA)) {
+                String data = input.getString(NettyConsts.DATA);
+                request.setData(data);
+            }
+
+            return request;
+        } catch (Exception e) {
+            Logger.error("SocketRequest decode exception!", e);
+            return null;
+        }
+    }
 
 }

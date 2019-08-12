@@ -21,18 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+package org.aoju.bus.socket.origin;
 
 /**
+ * 协议接口<br>
+ * 通过实现此接口完成消息的编码和解码
+ *
+ * <p>
+ * 所有Socket使用相同协议对象，类成员变量和对象成员变量易造成并发读写问题。
+ * </p>
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public interface Protocol<T> extends MsgEncoder<T>, MsgDecoder<T> {
 
 }

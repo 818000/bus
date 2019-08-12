@@ -21,18 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.origin.aio;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
 
 /**
+ * 接入完成回调，单例使用
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AioServer> {
+
+    @Override
+    public void completed(AsynchronousSocketChannel socketChannel, AioServer aioServer) {
+        // 继续等待接入（异步）
+        aioServer.accept();
+
+        final IoAction<ByteBuffer> ioAction = aioServer.ioAction;
+        // 创建Session会话
+        final AioSession session = new AioSession(socketChannel, ioAction, aioServer.config);
+        // 处理请求接入（同步）
+        ioAction.accept(session);
+
+        // 处理读（异步）
+        session.read();
+    }
+
+    @Override
+    public void failed(Throwable exc, AioServer aioServer) {
+
+    }
 
 }

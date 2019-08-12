@@ -21,18 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+public class NettyConsts {
 
-/**
- * @author Kimi Liu
- * @version 3.0.5
- * @since JDK 1.8
- */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+    public static final String EVENT = "e";
+    public static final String TOPIC = "t";
+    public static final String DATA = "d";
+
+    public static final String SUBSCRIBE = "subscribe";
+    public static final String MESSAGE = "message";
+    public static final String CANCEL = "cancel";
+    public static final String HEARTBEAT = "heartbeat";
+
+    public static final String HEARTBEAT_TEXT = "{\"e\":\"heartbeat\",\"d\":\"ping\"}";
+
+    public static final String TOPIC_ALL = "all";
+
+    public static int BOSS_GROUP_THREADS = 1;
+    public static int WORKER_GROUP_THREADS = 0;
+    public static String END_POINT = "/ws";
 
 }

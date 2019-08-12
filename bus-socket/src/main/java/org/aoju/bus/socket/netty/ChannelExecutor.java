@@ -21,18 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.core.thread.ThreadFactoryBuilder;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class ChannelExecutor {
+
+    private static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, new ThreadFactoryBuilder().setNamePrefix("channel-check-%d").build());
+
+    private static void execute(Runnable command) {
+        executor.scheduleAtFixedRate(command, 0, 60, TimeUnit.SECONDS);
+    }
+
+    public static void start() {
+        execute(new ChannelCommand());
+    }
 
 }

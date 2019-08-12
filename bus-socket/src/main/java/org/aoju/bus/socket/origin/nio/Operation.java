@@ -21,18 +21,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.origin.nio;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import java.nio.channels.SelectionKey;
 
 /**
+ * SelectionKey Operation的枚举封装
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public enum Operation {
+
+    /**
+     * 读操作
+     */
+    READ(SelectionKey.OP_READ),
+    /**
+     * 写操作
+     */
+    WRITE(SelectionKey.OP_WRITE),
+    /**
+     * 连接操作
+     */
+    CONNECT(SelectionKey.OP_CONNECT),
+    /**
+     * 接受连接操作
+     */
+    ACCEPT(SelectionKey.OP_ACCEPT);
+
+    private int value;
+
+    /**
+     * 构造
+     *
+     * @param value 值
+     * @see SelectionKey#OP_READ
+     * @see SelectionKey#OP_WRITE
+     * @see SelectionKey#OP_CONNECT
+     * @see SelectionKey#OP_ACCEPT
+     */
+    Operation(int value) {
+        this.value = value;
+    }
+
+    /**
+     * 获取值
+     *
+     * @return 值
+     * @see SelectionKey#OP_READ
+     * @see SelectionKey#OP_WRITE
+     * @see SelectionKey#OP_CONNECT
+     * @see SelectionKey#OP_ACCEPT
+     */
+    public int getValue() {
+        return this.value;
+    }
 
 }

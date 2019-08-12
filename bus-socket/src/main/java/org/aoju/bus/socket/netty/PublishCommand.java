@@ -21,18 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+package org.aoju.bus.socket.netty;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class PublishCommand implements Runnable {
+
+    private String topic;
+    private String message;
+
+    public PublishCommand(String topic, String message) {
+        this.topic = topic;
+        this.message = message;
+    }
+
+    @Override
+    public void run() {
+        ClientGroup group = ClientService.getClientGroup();
+        if (group.containsKey(topic)) {
+            ClientMap map = group.get(topic);
+            for (SocketClient client : map.values()) {
+                client.send(topic, message);
+            }
+        }
+    }
 
 }

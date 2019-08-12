@@ -21,18 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.spring.socket;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.socket.netty.annotation.WebSocket;
+import org.aoju.bus.socket.netty.CustomizeEventHandler;
+import org.aoju.bus.socket.netty.EventHandler;
+import org.aoju.bus.socket.netty.SocketService;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+@Component
+public class SocketHandlerBeanPostProcessor implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        Class<?> clazz = AopUtils.getTargetClass(bean);
+        WebSocket annotation = clazz.getAnnotation(WebSocket.class);
+        if (annotation != null) {
+            if (EventHandler.class.isAssignableFrom(clazz)) {
+                SocketService.addHandler(annotation.value(), (EventHandler) bean);
+            } else if (CustomizeEventHandler.class.isAssignableFrom(clazz)) {
+                SocketService.addCustomizeHandler((CustomizeEventHandler) bean);
+            }
+        }
+        return bean;
+    }
 
 }
