@@ -21,18 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+package org.aoju.bus.socket.netty;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class RequestHandler {
+
+    public static void execute(SocketRequest request) {
+        if (request.getEvent() != null) {
+            if (NettyConsts.SUBSCRIBE.equals(request.getEvent())) {
+                CommandExecutor.execute(new SubscribeCommand(request));
+            } else if (NettyConsts.HEARTBEAT.equals(request.getEvent())) {
+                CommandExecutor.execute(new HeartbeatCommand(request));
+            } else if (NettyConsts.CANCEL.equals(request.getEvent())) {
+                CommandExecutor.execute(new CancelCommand(request));
+            } else if (NettyConsts.MESSAGE.equals(request.getEvent())) {
+                CommandExecutor.execute(new MessageCommand(request));
+            }
+        }
+    }
 
 }

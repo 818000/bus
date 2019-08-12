@@ -21,18 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.logger.Logger;
+
+import java.util.Iterator;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class ChannelCommand implements Runnable {
+
+    @Override
+    public void run() {
+        try {
+            ClientMap clients = ClientService.getClients();
+            Iterator<SocketClient> iterator = clients.values().iterator();
+            while (iterator.hasNext()) {
+                SocketClient client = iterator.next();
+                if (client.needClose()) {
+                    client.close();
+                } else if (!client.isActive()) {
+                    client.sendHeartbeat();
+                }
+            }
+        } catch (Exception e) {
+            Logger.error("WebSocket channel check error: {}", e.getMessage(), e);
+        }
+    }
 
 }

@@ -21,18 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.origin.aio;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import java.nio.ByteBuffer;
 
 /**
+ * 简易IO信息处理类<br>
+ * 简单实现了accept和failed事件
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public abstract class SimpleIoAction implements IoAction<ByteBuffer> {
+
+    @Override
+    public void accept(AioSession session) {
+    }
+
+    @Override
+    public void failed(Throwable exc, AioSession session) {
+
+    }
 
 }

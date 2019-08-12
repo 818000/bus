@@ -21,18 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.crypto.annotation;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.crypto.Mode;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * 加密
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+@Target(value = {ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface EncryptBody {
+
+    /**
+     * 如果选择的 RSA 加/解密算法，那么 key 为必填项
+     *
+     * @return Mode
+     */
+    Mode type() default Mode.AES;
+
+    /**
+     * 可选，如果未配置则采用全局的key
+     *
+     * @return String
+     */
+    String key() default "";
+
+    /**
+     * 描述信息
+     *
+     * @return String
+     */
+    String description() default "";
 
 }

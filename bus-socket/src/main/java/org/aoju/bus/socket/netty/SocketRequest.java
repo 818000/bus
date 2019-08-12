@@ -21,18 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.netty;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import io.netty.channel.ChannelHandlerContext;
+import lombok.Data;
 
 /**
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+@Data
+public class SocketRequest {
+
+    /**
+     * 通信通道上下文
+     */
+    private ChannelHandlerContext context;
+
+    /**
+     * 事件类型：订阅，消息，取消订阅，心跳
+     */
+    private String event;
+
+    /**
+     * 订阅主题
+     */
+    private String[] topic;
+
+    /**
+     * 消息内容
+     */
+    private String data;
 
 }

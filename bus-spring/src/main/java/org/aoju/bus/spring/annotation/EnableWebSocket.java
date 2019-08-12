@@ -21,18 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.spring.annotation;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.aoju.bus.spring.socket.SocketScannerRegistrar;
 import org.springframework.context.annotation.Import;
 
-/**
- * @author Kimi Liu
- * @version 3.0.5
- * @since JDK 1.8
- */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Documented
+@Import({SocketScannerRegistrar.class})
+public @interface EnableWebSocket {
+
+    /**
+     * 扫描路径
+     */
+    String[] basePackages() default {};
 
 }

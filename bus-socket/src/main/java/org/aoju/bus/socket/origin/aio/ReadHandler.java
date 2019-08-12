@@ -21,18 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.origin.aio;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.core.lang.exception.CommonException;
+
+import java.nio.channels.CompletionHandler;
 
 /**
+ * 数据读取完成回调，调用Session中相应方法处理消息，单例使用
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public class ReadHandler implements CompletionHandler<Integer, AioSession> {
+
+    @Override
+    public void completed(Integer result, AioSession session) {
+        session.callbackRead();
+    }
+
+    @Override
+    public void failed(Throwable exc, AioSession session) {
+        throw new CommonException(exc);
+    }
 
 }

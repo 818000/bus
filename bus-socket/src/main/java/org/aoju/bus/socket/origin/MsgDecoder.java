@@ -21,18 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.socket.origin;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import org.aoju.bus.socket.origin.aio.AioSession;
+
+import java.nio.ByteBuffer;
 
 /**
+ * 消息解码器
+ *
+ * @param <T> 解码后的目标类型
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public interface MsgDecoder<T> {
+
+    /**
+     * 对于从Socket流中获取到的数据采用当前MsgDecoder的实现类协议进行解析。
+     *
+     * @param session    本次需要解码的session
+     * @param readBuffer 待处理的读buffer
+     * @return 本次解码成功后封装的业务消息对象, 返回null则表示解码未完成
+     */
+    T decode(AioSession session, ByteBuffer readBuffer);
 
 }

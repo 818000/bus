@@ -21,18 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.spring.crypto;
+package org.aoju.bus.spring.core.proxy;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
+import java.lang.reflect.Method;
 
 /**
+ * 拦截层
+ *
  * @author Kimi Liu
  * @version 3.0.5
  * @since JDK 1.8
  */
-@EnableConfigurationProperties(value = {CryptoProperties.class})
-@Import({RequestBodyAdvice.class, ResponseBodyAdvice.class})
-public class CryptoConfiguration {
+public interface ProxyChain {
 
+    /**
+     * 获取参数名称
+     *
+     * @return 参数
+     */
+    Object[] getNames();
+
+    /**
+     * 获取参数值
+     *
+     * @return 参数
+     */
+    Object[] getArgs();
+
+    /**
+     * 获取目标实例
+     *
+     * @return 目标实例
+     */
+    Object getTarget();
+
+    /**
+     * 获取方法
+     *
+     * @return Method
+     */
+    Method getMethod();
+
+    /**
+     * 执行方法
+     *
+     * @param arguments 参数
+     * @return 执行结果
+     * @throws Throwable Throwable
+     */
+    Object doProxyChain(Object[] arguments) throws Throwable;
 }
