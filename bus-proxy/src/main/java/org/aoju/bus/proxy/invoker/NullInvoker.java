@@ -21,38 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.invoker;
 
-import org.aoju.bus.proxy.Invocation;
+import org.aoju.bus.proxy.Invoker;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class NullInvoker implements Invoker {
 
-    private Object target;
+    private static Map primitiveValueMap = new HashMap();
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    static {
+        primitiveValueMap.put(Integer.TYPE, new Integer(0));
+        primitiveValueMap.put(Long.TYPE, new Long(0));
+        primitiveValueMap.put(Short.TYPE, new Short((short) 0));
+        primitiveValueMap.put(Byte.TYPE, new Byte((byte) 0));
+        primitiveValueMap.put(Float.TYPE, new Float(0.0f));
+        primitiveValueMap.put(Double.TYPE, new Double(0.0));
+        primitiveValueMap.put(Character.TYPE, new Character((char) 0));
+        primitiveValueMap.put(Boolean.TYPE, Boolean.FALSE);
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final Class returnType = method.getReturnType();
+        if (returnType.isPrimitive()) {
+            return primitiveValueMap.get(returnType);
+        } else {
+            return null;
+        }
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
-    }
-
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
-    }
 }
+

@@ -21,38 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
-
-import org.aoju.bus.proxy.Invocation;
+package org.aoju.bus.proxy.factory;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public interface ProxyClassGenerator {
 
-    private Object target;
+    Class generateProxyClass(ClassLoader classLoader, Class[] proxyClasses);
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
-    }
-
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
-    }
-
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
-    }
-
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
-    }
 }
+

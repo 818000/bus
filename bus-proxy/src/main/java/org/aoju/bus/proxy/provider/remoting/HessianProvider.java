@@ -21,38 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.provider.remoting;
 
-import org.aoju.bus.proxy.Invocation;
+import com.caucho.hessian.client.HessianProxyFactory;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.proxy.Provider;
+
+import java.net.MalformedURLException;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class HessianProvider implements Provider {
 
-    private Object target;
+    private Class serviceInterface;
+    private String url;
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    public HessianProvider() {
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public HessianProvider(Class serviceInterface, String url) {
+        this.serviceInterface = serviceInterface;
+        this.url = url;
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
+    public Object getObject() {
+        try {
+            return new HessianProxyFactory().create(serviceInterface, url);
+        } catch (MalformedURLException e) {
+            throw new InstrumentException("Invalid url given.", e);
+        }
     }
 
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
+    public void setServiceInterface(Class serviceInterface) {
+        this.serviceInterface = serviceInterface;
     }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 }
+

@@ -21,38 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.provider;
 
-import org.aoju.bus.proxy.Invocation;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.proxy.Provider;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class BeanProvider implements Provider {
 
-    private Object target;
+    private Class beanClass;
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    public BeanProvider() {
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public BeanProvider(Class beanClass) {
+        this.beanClass = beanClass;
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
+    public Object getObject() {
+        try {
+            if (beanClass == null) {
+                throw new InstrumentException("No bean class provided.");
+            }
+            return beanClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new InstrumentException("Class " + beanClass.getName() + " is not concrete.", e);
+        } catch (IllegalAccessException e) {
+            throw new InstrumentException("Constructor for class " + beanClass.getName() + " is not accessible.",
+                    e);
+        }
     }
 
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
+    public void setBeanClass(Class beanClass) {
+        this.beanClass = beanClass;
     }
+
 }
+

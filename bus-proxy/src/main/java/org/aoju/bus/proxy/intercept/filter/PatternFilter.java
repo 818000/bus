@@ -21,38 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.intercept.filter;
 
-import org.aoju.bus.proxy.Invocation;
+import org.aoju.bus.proxy.intercept.MethodFilter;
+
+import java.lang.reflect.Method;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class PatternFilter implements MethodFilter {
 
-    private Object target;
+    public static String GETTER_SETTER_PATTERN = "get\\w+|set\\w+";
+    private final String pattern;
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    public PatternFilter(String pattern) {
+        this.pattern = pattern;
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public static MethodFilter getterSetterFilter() {
+        return new PatternFilter(GETTER_SETTER_PATTERN);
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
+    public boolean accepts(Method method) {
+        return method.getName().matches(pattern);
     }
 
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
-    }
 }
+
