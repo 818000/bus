@@ -21,38 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.provider;
 
-import org.aoju.bus.proxy.Invocation;
+import org.aoju.bus.proxy.Provider;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class SingletonProvider extends ProviderDecorator {
 
-    private Object target;
+    private Object instance;
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    public SingletonProvider(Provider inner) {
+        super(inner);
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public Object getObject() {
+        synchronized (this) {
+            if (instance == null) {
+                instance = super.getObject();
+                inner = null;
+            }
+        }
+        return instance;
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
-    }
-
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
-    }
 }

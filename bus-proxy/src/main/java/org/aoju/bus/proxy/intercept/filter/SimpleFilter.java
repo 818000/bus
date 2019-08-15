@@ -21,38 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cache.invoker;
+package org.aoju.bus.proxy.intercept.filter;
 
-import org.aoju.bus.proxy.Invocation;
+import org.aoju.bus.proxy.intercept.MethodFilter;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Kimi Liu
- * @version 3.0.5
+ * @version 3.0.6
  * @since JDK 1.8
  */
-public class InvocationBaseInvoker implements BaseInvoker {
+public class SimpleFilter implements MethodFilter {
 
-    private Object target;
+    private final Set methodNames;
 
-    private Invocation invocation;
-
-    public InvocationBaseInvoker(Object target, Invocation invocation) {
-        this.target = target;
-        this.invocation = invocation;
+    public SimpleFilter() {
+        this.methodNames = new HashSet();
     }
 
-    @Override
-    public Object[] getArgs() {
-        return invocation.getArguments();
+    public SimpleFilter(String[] methodNames) {
+        this.methodNames = new HashSet(Arrays.asList(methodNames));
     }
 
-    @Override
-    public Object proceed() throws Throwable {
-        return invocation.proceed();
+    public boolean accepts(Method method) {
+        return methodNames.contains(method.getName());
     }
 
-    @Override
-    public Object proceed(Object[] args) throws Throwable {
-        return invocation.getMethod().invoke(target, args);
-    }
 }
+
