@@ -21,38 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.boot.consts;
+package org.aoju;
 
+import org.aoju.bus.Version;
 
 /**
- * 全局常量配置
+ * 用于识别当前版本号和版权声明!
+ * Version is Licensed under the MIT License, Version 3.0.0 (the "License")
  *
  * @author Kimi Liu
  * @version 3.0.6
  * @since JDK 1.8
  */
-public class BusConsts {
-
-    /***
-     * 应用名: 备注 @Value("${spring.application.name:@null}")
-     */
-    public static final String BUS_VERSION = "version";
-
-    /***
-     * 应用名: 备注 @Value("${spring.application.name:@null}")
-     */
-    public static final String BUS_APP_NAME = "spring.application.name";
-    /***
-     * 应用版本号
-     */
-    public static final String BUS_BOOT_VERSION = "bus-boot.version";
-    /***
-     * 应用版本信息
-     */
-    public static final String BUS_BOOT_FORMATTED_VERSION = "bus-boot.formatted-version";
-    /***
-     * 应用属性
-     */
-    public static final String BUS_BOOT_PROPERTIES = "BusConfigurationProperties";
+public final class Bus extends Version {
 
 }
