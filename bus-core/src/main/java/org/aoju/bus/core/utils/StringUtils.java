@@ -55,7 +55,7 @@ import java.util.zip.GZIPOutputStream;
  * 用于MD5,加解密和字符串编码转换
  *
  * @author Kimi Liu
- * @version 3.0.6
+ * @version 3.0.9
  * @since JDK 1.8
  */
 public class StringUtils extends TextUtils {
@@ -1296,7 +1296,6 @@ public class StringUtils extends TextUtils {
      *
      * @param str 被切分的字符串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> splitPath(String str) {
         return splitPath(str, 0);
@@ -1308,7 +1307,6 @@ public class StringUtils extends TextUtils {
      * @param str   被切分的字符串
      * @param limit 限制分片数
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> splitPath(String str, int limit) {
         return split(str, Symbol.C_SLASH, limit, true, true);
@@ -1319,7 +1317,6 @@ public class StringUtils extends TextUtils {
      *
      * @param str 被切分的字符串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitPathToArray(String str) {
         return toArray(splitPath(str));
@@ -1331,7 +1328,6 @@ public class StringUtils extends TextUtils {
      * @param str   被切分的字符串
      * @param limit 限制分片数
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitPathToArray(String str, int limit) {
         return toArray(splitPath(str, limit));
@@ -1383,7 +1379,6 @@ public class StringUtils extends TextUtils {
      * @param limit       限制分片数，-1不限制
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> splitTrim(String str, char separator, int limit, boolean ignoreEmpty) {
         return split(str, separator, limit, true, ignoreEmpty, false);
@@ -1468,7 +1463,6 @@ public class StringUtils extends TextUtils {
      * @param str   被切分的字符串
      * @param limit 限制分片数
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitToArray(String str, int limit) {
         return toArray(split(str, limit));
@@ -1483,7 +1477,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitToArray(String str, char separator, int limit, boolean isTrim, boolean ignoreEmpty) {
         return toArray(split(str, separator, limit, isTrim, ignoreEmpty));
@@ -1498,7 +1491,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitToArray(String str, String separator, int limit, boolean isTrim, boolean ignoreEmpty) {
         return toArray(split(str, separator, limit, isTrim, ignoreEmpty));
@@ -1513,7 +1505,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim           是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty      是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static String[] splitToArray(String str, Pattern separatorPattern, int limit, boolean isTrim, boolean ignoreEmpty) {
         return toArray(split(str, separatorPattern, limit, isTrim, ignoreEmpty));
@@ -1528,7 +1519,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim         是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty    是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> splitByRegex(String str, String separatorRegex, int limit, boolean isTrim, boolean ignoreEmpty) {
         final Pattern pattern = PatternUtils.get(separatorRegex);
@@ -1639,7 +1629,6 @@ public class StringUtils extends TextUtils {
      * @param str   被切分的字符串
      * @param limit 限制分片数
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, int limit) {
         if (isEmpty(str)) {
@@ -1686,7 +1675,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, char separator, boolean isTrim, boolean ignoreEmpty) {
         return split(str, separator, 0, isTrim, ignoreEmpty);
@@ -1700,7 +1688,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, String separator, boolean isTrim, boolean ignoreEmpty) {
         return split(str, separator, -1, isTrim, ignoreEmpty, false);
@@ -1715,7 +1702,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, char separator, int limit, boolean isTrim, boolean ignoreEmpty) {
         return split(str, separator, limit, isTrim, ignoreEmpty, false);
@@ -1731,7 +1717,6 @@ public class StringUtils extends TextUtils {
      * @param isTrim      是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty 是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, String separator, int limit, boolean isTrim, boolean ignoreEmpty) {
         return split(str, separator, limit, isTrim, ignoreEmpty, false);
@@ -1746,14 +1731,13 @@ public class StringUtils extends TextUtils {
      * @param isTrim           是否去除切分字符串后每个元素两边的空格
      * @param ignoreEmpty      是否忽略空串
      * @return 切分后的集合
-     * @since 3.0.8
      */
     public static List<String> split(String str, Pattern separatorPattern, int limit, boolean isTrim, boolean ignoreEmpty) {
         if (isEmpty(str)) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
         if (limit == 1) {
-            return addToList(new ArrayList<String>(1), str, isTrim, ignoreEmpty);
+            return addToList(new ArrayList<>(1), str, isTrim, ignoreEmpty);
         }
 
         if (null == separatorPattern) {//分隔符为空时按照空白符切分
@@ -1768,7 +1752,6 @@ public class StringUtils extends TextUtils {
             addToList(list, str.substring(start, matcher.start()), isTrim, ignoreEmpty);
             start = matcher.end();
 
-            //检查是否超出范围（最大允许limit-1个，剩下一个留给末尾字符串）
             if (limit > 0 && list.size() > limit - 2) {
                 break;
             }
@@ -4568,7 +4551,7 @@ public class StringUtils extends TextUtils {
      * @param str        字符串
      * @param partLength 每等份的长度
      * @return 切分后的数组
-     * @since 3.0.6
+     * @since 3.0.9
      */
     public static String[] cut(CharSequence str, int partLength) {
         if (null == str) {
