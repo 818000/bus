@@ -21,49 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.core.io.resource;
-
-import org.aoju.bus.core.utils.FileUtils;
-import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.core.utils.UriUtils;
-
-import java.io.File;
+package org.aoju.bus.core.loader;
 
 /**
- * 文件资源访问对象
+ * 正则表达式资源加载器
  *
  * @author Kimi Liu
  * @version 3.0.9
  * @since JDK 1.8
  */
-public class FileResource extends UriResource {
+public class RegexLoader extends PatternLoader implements Loader {
 
-    /**
-     * 构造
-     *
-     * @param file 文件
-     */
-    public FileResource(File file) {
-        this(file, file.getName());
+    public RegexLoader() {
+        this(new StdLoader());
     }
 
-    /**
-     * 构造
-     *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
-     */
-    public FileResource(File file, String fileName) {
-        super(UriUtils.getURL(file), StringUtils.isBlank(fileName) ? file.getName() : fileName);
+    public RegexLoader(ClassLoader classLoader) {
+        this(new StdLoader(classLoader));
     }
 
-    /**
-     * 构造
-     *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
-     */
-    public FileResource(String path) {
-        this(FileUtils.file(path));
+    public RegexLoader(Loader delegate) {
+        super(delegate);
     }
 
+    protected String path(String pattern) {
+        return "";
+    }
+
+    protected boolean recursively(String pattern) {
+        return true;
+    }
+
+    protected Filter filter(String pattern) {
+        return new RegexFilter(pattern);
+    }
 }

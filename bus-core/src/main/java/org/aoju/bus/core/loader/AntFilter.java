@@ -21,49 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.core.io.resource;
-
-import org.aoju.bus.core.utils.FileUtils;
-import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.core.utils.UriUtils;
-
-import java.io.File;
+package org.aoju.bus.core.loader;
 
 /**
- * 文件资源访问对象
+ * ANT风格路径过滤器
  *
  * @author Kimi Liu
  * @version 3.0.9
  * @since JDK 1.8
  */
-public class FileResource extends UriResource {
+public class AntFilter extends RegexFilter implements Filter {
 
-    /**
-     * 构造
-     *
-     * @param file 文件
-     */
-    public FileResource(File file) {
-        this(file, file.getName());
+    private static final String[] SYMBOLS = {"\\", "$", "(", ")", "+", ".", "[", "]", "^", "{", "}", "|"};
+
+    public AntFilter(String ant) {
+        super(convert(ant));
     }
 
     /**
-     * 构造
+     * 将ANT风格路径表达式转换成正则表达式
      *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
+     * @param ant ANT风格路径表达式
+     * @return 正则表达式
      */
-    public FileResource(File file, String fileName) {
-        super(UriUtils.getURL(file), StringUtils.isBlank(fileName) ? file.getName() : fileName);
-    }
-
-    /**
-     * 构造
-     *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
-     */
-    public FileResource(String path) {
-        this(FileUtils.file(path));
+    private static String convert(String ant) {
+        String regex = ant;
+        for (String symbol : SYMBOLS) regex = regex.replace(symbol, '\\' + symbol);
+        regex = regex.replace("?", ".{1}");
+        regex = regex.replace("**/", "(.{0,}?/){0,}?");
+        regex = regex.replace("**", ".{0,}?");
+        regex = regex.replace("*", "[^/]{0,}?");
+        while (regex.startsWith("/")) regex = regex.substring(1);
+        while (regex.endsWith("/")) regex = regex.substring(0, regex.length() - 1);
+        return regex;
     }
 
 }
