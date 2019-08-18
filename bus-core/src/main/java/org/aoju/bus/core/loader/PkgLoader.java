@@ -21,49 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.core.io.resource;
+package org.aoju.bus.core.loader;
 
-import org.aoju.bus.core.utils.FileUtils;
-import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.core.utils.UriUtils;
+import org.aoju.bus.core.io.resource.Resource;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
 
 /**
- * 文件资源访问对象
+ * 包名表达式资源加载器
  *
  * @author Kimi Liu
  * @version 3.0.9
  * @since JDK 1.8
  */
-public class FileResource extends UriResource {
+public class PkgLoader extends DelegateLoader implements Loader {
 
-    /**
-     * 构造
-     *
-     * @param file 文件
-     */
-    public FileResource(File file) {
-        this(file, file.getName());
+    public PkgLoader() {
+        this(new StdLoader());
     }
 
-    /**
-     * 构造
-     *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
-     */
-    public FileResource(File file, String fileName) {
-        super(UriUtils.getURL(file), StringUtils.isBlank(fileName) ? file.getName() : fileName);
+    public PkgLoader(ClassLoader classLoader) {
+        this(new StdLoader(classLoader));
     }
 
-    /**
-     * 构造
-     *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
-     */
-    public FileResource(String path) {
-        this(FileUtils.file(path));
+    public PkgLoader(Loader delegate) {
+        super(delegate);
+    }
+
+    public Enumeration<Resource> load(String pkg, boolean recursively, Filter filter) throws IOException {
+        String path = pkg.replace('.', '/');
+        return delegate.load(path, recursively, filter);
     }
 
 }

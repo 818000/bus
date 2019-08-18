@@ -21,49 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.core.io.resource;
+package org.aoju.bus.core.loader;
 
-import org.aoju.bus.core.utils.FileUtils;
-import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.core.utils.UriUtils;
-
-import java.io.File;
+import java.net.URL;
 
 /**
- * 文件资源访问对象
+ * 资源过滤器
  *
  * @author Kimi Liu
  * @version 3.0.9
  * @since JDK 1.8
  */
-public class FileResource extends UriResource {
+public interface Filter {
 
     /**
-     * 构造
+     * 过滤资源
      *
-     * @param file 文件
+     * @param name 资源名称，即相对路径
+     * @param url  资源URL地址
+     * @return true: 加载  false: 不加载
      */
-    public FileResource(File file) {
-        this(file, file.getName());
-    }
-
-    /**
-     * 构造
-     *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
-     */
-    public FileResource(File file, String fileName) {
-        super(UriUtils.getURL(file), StringUtils.isBlank(fileName) ? file.getName() : fileName);
-    }
-
-    /**
-     * 构造
-     *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
-     */
-    public FileResource(String path) {
-        this(FileUtils.file(path));
-    }
+    boolean filtrate(String name, URL url);
 
 }

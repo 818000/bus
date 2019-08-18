@@ -21,49 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.core.io.resource;
+package org.aoju.bus.core.loader;
 
-import org.aoju.bus.core.utils.FileUtils;
-import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.core.utils.UriUtils;
-
-import java.io.File;
+import java.net.URL;
+import java.util.Collection;
 
 /**
- * 文件资源访问对象
+ * ANY逻辑复合过滤器，即任意一个过滤器满足时就满足，当没有过滤器的时候则认为没有过滤器满足，也就是不满足。
  *
  * @author Kimi Liu
  * @version 3.0.9
  * @since JDK 1.8
  */
-public class FileResource extends UriResource {
+public class AnyFilter extends MixFilter implements Filter {
 
-    /**
-     * 构造
-     *
-     * @param file 文件
-     */
-    public FileResource(File file) {
-        this(file, file.getName());
+    public AnyFilter(Filter... filters) {
+        super(filters);
     }
 
-    /**
-     * 构造
-     *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
-     */
-    public FileResource(File file, String fileName) {
-        super(UriUtils.getURL(file), StringUtils.isBlank(fileName) ? file.getName() : fileName);
+    public AnyFilter(Collection<? extends Filter> filters) {
+        super(filters);
     }
 
-    /**
-     * 构造
-     *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
-     */
-    public FileResource(String path) {
-        this(FileUtils.file(path));
+    public boolean filtrate(String name, URL url) {
+        Filter[] filters = this.filters.toArray(new Filter[0]);
+        for (Filter filter : filters) {
+            if (filter.filtrate(name, url)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public AnyFilter mix(Filter filter) {
+        add(filter);
+        return this;
     }
 
 }
