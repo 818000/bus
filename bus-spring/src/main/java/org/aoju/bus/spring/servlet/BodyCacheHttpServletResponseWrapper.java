@@ -35,7 +35,7 @@ import java.io.PrintWriter;
 
 /**
  * @author Kimi Liu
- * @version 3.1.2
+ * @version 3.1.5
  * @since JDK 1.8
  */
 public class BodyCacheHttpServletResponseWrapper extends HttpServletResponseWrapper {

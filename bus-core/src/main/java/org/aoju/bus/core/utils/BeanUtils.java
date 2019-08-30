@@ -46,7 +46,7 @@ import java.util.*;
  * </p>
  *
  * @author Kimi Liu
- * @version 3.1.2
+ * @version 3.1.5
  * @since JDK 1.8
  */
 public class BeanUtils {
@@ -121,7 +121,7 @@ public class BeanUtils {
      *
      * @param clazz Bean类
      * @return {@link BeanDesc}
-     * @since 3.1.2
+     * @since 3.1.5
      */
     public static BeanDesc getBeanDesc(Class<?> clazz) {
         BeanDesc beanDesc = BeanDescCache.INSTANCE.getBeanDesc(clazz);

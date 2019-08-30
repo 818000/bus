@@ -27,6 +27,7 @@ import org.aoju.bus.Version;
 import org.aoju.bus.boot.consts.BusConsts;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -39,9 +40,10 @@ import java.util.Properties;
  * 将作为一个名为BusConfigurationProperties的属性源添加
  *
  * @author Kimi Liu
- * @version 3.1.2
+ * @version 3.1.5
  * @since JDK 1.8
  */
+@ComponentScan("org.aoju.**")
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 public class BusEnvironment implements EnvironmentPostProcessor {
 
