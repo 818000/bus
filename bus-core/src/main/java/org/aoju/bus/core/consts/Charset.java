@@ -27,7 +27,7 @@ package org.aoju.bus.core.consts;
  * 编码常量
  *
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 public final class Charset {

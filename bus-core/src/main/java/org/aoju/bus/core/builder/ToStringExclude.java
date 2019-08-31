@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  * the {@link ReflectionToStringBuilder}.
  *
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 @Retention(RetentionPolicy.RUNTIME)

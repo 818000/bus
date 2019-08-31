@@ -33,7 +33,7 @@ import java.io.File;
  * 大数据量Excel写出
  *
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 public class BigExcelWriter extends ExcelWriter {
