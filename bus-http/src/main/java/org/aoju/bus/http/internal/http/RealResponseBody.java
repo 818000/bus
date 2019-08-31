@@ -29,7 +29,7 @@ import org.aoju.bus.http.ResponseBody;
 
 /**
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 public final class RealResponseBody extends ResponseBody {

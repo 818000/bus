@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
  * swagger配置项
  *
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 @Data

@@ -34,7 +34,7 @@ import java.nio.channels.ClosedChannelException;
  * Socket相关工具类
  *
  * @author Kimi Liu
- * @version 3.1.5
+ * @version 3.1.6
  * @since JDK 1.8
  */
 public class SocketUtils {
