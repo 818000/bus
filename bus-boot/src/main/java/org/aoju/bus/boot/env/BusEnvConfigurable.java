@@ -40,12 +40,12 @@ import java.util.Properties;
  * 将作为一个名为BusConfigurationProperties的属性源添加
  *
  * @author Kimi Liu
- * @version 3.1.6
+ * @version 3.1.8
  * @since JDK 1.8
  */
 @ComponentScan("org.aoju.**")
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
-public class BusEnvironment implements EnvironmentPostProcessor {
+public class BusEnvConfigurable implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,

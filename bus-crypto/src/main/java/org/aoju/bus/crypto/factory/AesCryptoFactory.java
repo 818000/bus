@@ -42,7 +42,7 @@ import java.security.SecureRandom;
  * 达到十亿量级
  *
  * @author Kimi Liu
- * @version 3.1.6
+ * @version 3.1.8
  * @since JDK 1.8
  */
 public class AesCryptoFactory implements CryptoFactory {

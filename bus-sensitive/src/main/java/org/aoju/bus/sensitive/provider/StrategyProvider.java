@@ -29,7 +29,7 @@ import org.aoju.bus.sensitive.Context;
  * 脱敏策略
  *
  * @author Kimi Liu
- * @version 3.1.6
+ * @version 3.1.8
  * @since JDK 1.8
  */
 public interface StrategyProvider {
