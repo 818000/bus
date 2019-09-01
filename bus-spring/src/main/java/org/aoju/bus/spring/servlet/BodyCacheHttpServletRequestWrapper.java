@@ -36,7 +36,7 @@ import java.io.*;
 
 /**
  * @author Kimi Liu
- * @version 3.1.6
+ * @version 3.1.8
  * @since JDK 1.8
  */
 public class BodyCacheHttpServletRequestWrapper extends HttpServletRequestWrapper {
