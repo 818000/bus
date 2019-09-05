@@ -28,7 +28,7 @@ package org.aoju.bus.core.lang;
  *
  * @param <T> 建造对象类型
  * @author Kimi Liu
- * @version 3.1.8
+ * @version 3.1.9
  * @since JDK 1.8
  */
 public interface Builder<T> {

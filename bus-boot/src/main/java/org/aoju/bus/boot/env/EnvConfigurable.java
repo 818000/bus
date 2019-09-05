@@ -40,19 +40,19 @@ import java.util.Properties;
  * 将作为一个名为BusConfigurationProperties的属性源添加
  *
  * @author Kimi Liu
- * @version 3.1.8
+ * @version 3.1.9
  * @since JDK 1.8
  */
 @ComponentScan("org.aoju.**")
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
-public class BusEnvConfigurable implements EnvironmentPostProcessor {
+public class EnvConfigurable implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
 
         /**
-         * Get Version version properties
+         * 获取版本信息
          */
         Properties properties = getProperties();
 
@@ -61,13 +61,13 @@ public class BusEnvConfigurable implements EnvironmentPostProcessor {
         environment.getPropertySources().addLast(propertySource);
 
         /**
-         * set required properties
+         * 设置必要参数
          **/
         environment.setRequiredProperties(BusConsts.BUS_APP_NAME);
     }
 
     /**
-     * Get boot Version and print it on banner
+     * 获取版本信息以及banner信息
      *
      * @return properties
      */
@@ -81,7 +81,7 @@ public class BusEnvConfigurable implements EnvironmentPostProcessor {
     }
 
     /**
-     * Get Version Version string.
+     * 获取bus版本信息.
      *
      * @return version
      */
