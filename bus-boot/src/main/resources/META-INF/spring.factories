@@ -1,2 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-org.aoju.bus.boot.env.BusEnvConfigurable
+org.aoju.bus.boot.env.EnvConfigurable
