@@ -1,2 +1,2 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.aoju.bus.boot.env.EnvConfigurable
