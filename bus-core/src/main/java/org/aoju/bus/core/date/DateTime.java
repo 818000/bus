@@ -42,7 +42,7 @@ import java.util.TimeZone;
  * 包装java.utils.Date
  *
  * @author Kimi Liu
- * @version 3.2.0
+ * @version 3.2.1
  * @since JDK 1.8
  */
 public class DateTime extends Date {

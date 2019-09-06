@@ -49,7 +49,7 @@ import java.nio.file.Path;
  * 图像编辑器
  *
  * @author Kimi Liu
- * @version 3.2.0
+ * @version 3.2.1
  * @since JDK 1.8
  */
 public class Image implements Serializable {

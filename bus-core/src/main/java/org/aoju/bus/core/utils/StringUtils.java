@@ -55,7 +55,7 @@ import java.util.zip.GZIPOutputStream;
  * 用于MD5,加解密和字符串编码转换
  *
  * @author Kimi Liu
- * @version 3.2.0
+ * @version 3.2.1
  * @since JDK 1.8
  */
 public class StringUtils extends TextUtils {
@@ -982,7 +982,7 @@ public class StringUtils extends TextUtils {
      * @param str2       要比较的字符串2
      * @param ignoreCase 是否忽略大小写
      * @return 如果两个字符串相同，或者都是null，则返回true
-     * @since 3.2.0
+     * @since 3.2.1
      */
     public static boolean equals(CharSequence str1, CharSequence str2, boolean ignoreCase) {
         if (null == str1) {
@@ -3934,7 +3934,7 @@ public class StringUtils extends TextUtils {
      * @param str      指定字符串
      * @param testStrs 需要检查的字符串数组
      * @return 是否包含任意一个字符串
-     * @since 3.2.0
+     * @since 3.2.1
      */
     public static boolean containsAny(CharSequence str, CharSequence... testStrs) {
         return null != getContainsStr(str, testStrs);
@@ -4011,7 +4011,7 @@ public class StringUtils extends TextUtils {
      * @param str      指定字符串
      * @param testStrs 需要检查的字符串数组
      * @return 被包含的第一个字符串
-     * @since 3.2.0
+     * @since 3.2.1
      */
     public static String getContainsStr(CharSequence str, CharSequence... testStrs) {
         if (isEmpty(str) || ArrayUtils.isEmpty(testStrs)) {
@@ -4047,7 +4047,7 @@ public class StringUtils extends TextUtils {
      * @param str      指定字符串
      * @param testStrs 需要检查的字符串数组
      * @return 是否包含任意一个字符串
-     * @since 3.2.0
+     * @since 3.2.1
      */
     public static boolean containsAnyIgnoreCase(CharSequence str, CharSequence... testStrs) {
         return null != getContainsStrIgnoreCase(str, testStrs);
@@ -4060,7 +4060,7 @@ public class StringUtils extends TextUtils {
      * @param str      指定字符串
      * @param testStrs 需要检查的字符串数组
      * @return 被包含的第一个字符串
-     * @since 3.2.0
+     * @since 3.2.1
      */
     public static String getContainsStrIgnoreCase(CharSequence str, CharSequence... testStrs) {
         if (isEmpty(str) || ArrayUtils.isEmpty(testStrs)) {
