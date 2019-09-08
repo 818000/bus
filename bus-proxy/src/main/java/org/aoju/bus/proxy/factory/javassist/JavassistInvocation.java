@@ -38,7 +38,7 @@ import java.util.WeakHashMap;
 
 /**
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 public abstract class JavassistInvocation implements Invocation {
@@ -113,7 +113,7 @@ public abstract class JavassistInvocation implements Invocation {
         final String body = proceedBody.toString();
         proceedMethod.setBody(body);
         ctClass.addMethod(proceedMethod);
-        invocationClass = ctClass.toClass(classLoader);
+        invocationClass = ctClass.toClass(classLoader,null);
         return invocationClass;
     }
 

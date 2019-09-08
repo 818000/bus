@@ -45,7 +45,7 @@ import java.util.Set;
  * JDK7中<strong>BigDecimal(double val)</strong>构造方法的结果有一定的不可预知性
  *
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 abstract class MemberUtils {
@@ -1619,7 +1619,7 @@ abstract class MemberUtils {
      * @param ignoreCase 是否忽略大小写
      * @return 是否相同
      * @see CharUtils#equals(char, char, boolean)
-     * @since 3.2.1
+     * @since 3.2.2
      */
     public static boolean equals(char c1, char c2, boolean ignoreCase) {
         return CharUtils.equals(c1, c2, ignoreCase);
@@ -1879,7 +1879,7 @@ abstract class MemberUtils {
      *
      * @param str 数字字符串
      * @return {@link BigInteger}
-     * @since 3.2.1
+     * @since 3.2.2
      */
     public static BigInteger newBigInteger(String str) {
         str = StringUtils.trimToNull(str);

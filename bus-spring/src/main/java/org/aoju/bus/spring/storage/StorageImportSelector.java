@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
 
 /**
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 public class StorageImportSelector implements ImportBeanDefinitionRegistrar, EnvironmentAware {

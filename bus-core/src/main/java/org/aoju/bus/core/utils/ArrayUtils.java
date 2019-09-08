@@ -40,7 +40,7 @@ import java.util.*;
  * 数组工具类
  *
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 public class ArrayUtils {
@@ -9363,7 +9363,7 @@ public class ArrayUtils {
      * @param array  数组
      * @param filter 过滤器接口，用于定义过滤规则
      * @return 过滤后的数组
-     * @since 3.2.1
+     * @since 3.2.2
      */
     public static <T> T[] filter(T[] array, Filter<T> filter) {
         ArrayList<T> list = new ArrayList<T>(array.length);
