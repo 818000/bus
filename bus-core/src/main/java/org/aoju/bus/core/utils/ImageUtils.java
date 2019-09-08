@@ -53,7 +53,7 @@ import java.util.Random;
  * 参考：http://blog.csdn.net/zhangzhikaixinya/article/details/8459400
  *
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 public class ImageUtils {

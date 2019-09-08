@@ -27,7 +27,7 @@ package org.aoju.bus.forest.algorithm;
  * 密钥
  *
  * @author Kimi Liu
- * @version 3.2.1
+ * @version 3.2.2
  * @since JDK 1.8
  */
 public interface Key {
