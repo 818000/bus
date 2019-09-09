@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>3.2.2</version>
+    <version>3.2.5</version>
     <packaging>jar</packaging>
 
     <name>bus-all</name>
@@ -23,6 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.compiler.version>1.8</project.compiler.version>
+        <!--bus-boot-->
+        <taobao.text.version>0.0.2</taobao.text.version>
         <!--bus-cache-->
         <aspectj.version>1.9.4</aspectj.version>
         <guice.version>4.2.0</guice.version>
@@ -72,7 +74,7 @@
         <!--bus-socket-->
         <netty.version>4.1.36.Final</netty.version>
         <!--bus-spring-->
-        <mysql.version>5.1.30</mysql.version>
+        <mysql.version>8.0.15</mysql.version>
         <druid.version>1.1.16</druid.version>
         <dubbo.version>2.6.6</dubbo.version>
         <!--bus-storage-->
@@ -88,6 +90,13 @@
     </properties>
 
     <dependencies>
+        <!--bus-boot-->
+        <dependency>
+            <groupId>com.taobao.text</groupId>
+            <artifactId>text-ui</artifactId>
+            <version>${taobao.text.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!--bus-cache-->
         <dependency>
             <groupId>org.aspectj</groupId>
