@@ -40,7 +40,7 @@ import java.util.Properties;
  * 将作为一个名为BusConfigurationProperties的属性源添加
  *
  * @author Kimi Liu
- * @version 3.2.2
+ * @version 3.2.5
  * @since JDK 1.8
  */
 @ComponentScan("org.aoju.**")
@@ -63,7 +63,7 @@ public class BusConfigurable implements EnvironmentPostProcessor {
         /**
          * 设置必要参数
          **/
-        environment.setRequiredProperties(BusConsts.BUS_APP_NAME);
+        environment.setRequiredProperties(BusConsts.BUS_NAME);
     }
 
     /**
@@ -86,7 +86,7 @@ public class BusConfigurable implements EnvironmentPostProcessor {
      * @return version
      */
     protected String getVersion() {
-        return Version.version() == null ? "" : Version.version();
+        return Version.get() == null ? "" : Version.get();
     }
 
 }
