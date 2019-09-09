@@ -93,5 +93,5 @@ public class MySQLTypeConvert implements TypeConvert {
         }
         return MySQLColumnType.STRING;
     }
-    
+
 }

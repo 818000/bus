@@ -39,7 +39,7 @@ public interface ColumnType {
     String getType();
 
     /**
-     *  获取字段类型完整名
+     * 获取字段类型完整名
      *
      * @return 字段类型完整名
      */
