@@ -27,7 +27,7 @@ package org.aoju.bus.shade.convert;
  * 获取实体类字段属性类信息接口
  *
  * @author Kimi Liu
- * @version 3.2.5
+ * @version 3.2.6
  * @since JDK 1.8
  */
 public interface ColumnType {
@@ -39,7 +39,7 @@ public interface ColumnType {
     String getType();
 
     /**
-     *  获取字段类型完整名
+     * 获取字段类型完整名
      *
      * @return 字段类型完整名
      */
