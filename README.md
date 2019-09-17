@@ -72,7 +72,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 |bus-setting|bus-core|设置工具类， 用于支持设置/配置|
 |bus-shade|bus-logger|设置工具类， 用于支持设置/配置|
 |bus-socket|bus-logger|基础NIO/AIO通讯|
-|bus-spring|bus-base/bus-cache/bus-crypto/bus-limiter/bus-mapper/bus-mapper/bus-pager/bus-proxy/bus-sensitive/bus-socket/bus-storage/bus-tracer/bus-validate|spring相关配置|
+|bus-spring|无|spring相关配置|
 |bus-storage|bus-http|存储公用工具类,qiniu,alioss等|
 |bus-swagger|无|API调用及测试|
 |bus-tracer|bus-health/bus-logger|日志及访问流程追踪|
