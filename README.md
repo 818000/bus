@@ -73,10 +73,10 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 |bus-shade|bus-mapper|设置工具类， 用于支持设置/配置|
 |bus-socket|无|基础NIO/AIO通讯|
 |bus-spring|无|spring相关配置|
-|bus-storage|无|存储公用工具类,qiniu,alioss等|
+|bus-storage|无|文件存储组件,,支持阿里云、七牛，提供了工厂模式和注入两种集成方式|
 |bus-swagger|无|API调用及测试|
 |bus-tracer|无|日志及访问流程追踪|
-|bus-validate|无|参数校验|
+|bus-validate|无|参数校验，会默认拦截所有的标记有`@Valid`的方法或类|
 
 
 ## 功能概述
