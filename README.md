@@ -49,34 +49,34 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 系统监测的解决方案。
 
 ## 组件信息
-|服务名 | 依赖 | 模块说明|
+|服务名 | 模块说明|
 |----|----|----        |
-|bus-all|ALL|为微服务提供统一的pom管理，以及通用组件| 
-|bus-boot|无|SpringBoot starter，启动及相关配置文件信息| 
-|bus-base|无|基础功能及base相关功能,实体类(Entity),服务(Service),接口(Controller)|
-|bus-cache|无|缓存服务及工具,支持redis,memcached,ehcache,hession等|
-|bus-core|无|核心功能及工具类,包括常量、Bean操作,类加载、反射、集合、日期、等各种Utils|
-|bus-cron|无|定时器及定时任务等功能|
-|bus-crypto|无|加密解密，支持支持AES/DES/REA/MD5等常用加密算法|
-|bus-extra|无|扩展功能及文件操作|
-|bus-forest|无|jar加解密,杜绝源码泄漏或被反编译|
-|bus-health|无|应用服务器健康信息|
-|bus-http|无|HTTP功能封装|
-|bus-limiter|无|请求限流|
-|bus-logger|无|日志信息及功能|
-|bus-mapper|无|数据操作,mybatis|
-|bus-pager|无|数据分页,mybatis|
-|bus-poi|无|Excel处理|
-|bus-proxy|无|公共代理，使动态代理变得简单|
-|bus-sensitive|无|敏感数据脱敏|
-|bus-setting|无|设置工具类， 用于支持设置/配置|
-|bus-shade|bus-mapper|设置工具类， 用于支持设置/配置|
-|bus-socket|无|基础NIO/AIO通讯|
-|bus-spring|无|spring相关配置|
-|bus-storage|无|文件存储组件,,支持阿里云、七牛，提供了工厂模式和注入两种集成方式|
-|bus-swagger|无|API调用及测试|
-|bus-tracer|无|日志及访问流程追踪|
-|bus-validate|无|参数校验，会默认拦截所有的标记有`@Valid`的方法或类|
+|bus-all|为微服务提供统一的pom管理，以及通用组件| 
+|bus-boot|SpringBoot starter，启动及相关配置文件信息| 
+|bus-base|基础功能及base相关功能,实体类(Entity),服务(Service),接口(Controller)|
+|bus-cache|缓存服务及工具,支持redis,memcached,ehcache,hession等|
+|bus-core|核心功能及工具类,包括常量、Bean操作,类加载、反射、集合、日期、等各种Utils|
+|bus-cron|定时器及定时任务等功能|
+|bus-crypto|加密解密，支持支持AES/DES/REA/MD5等常用加密算法|
+|bus-extra|扩展功能及文件操作|
+|bus-forest|jar加解密,杜绝源码泄漏或被反编译|
+|bus-health|应用服务器健康信息|
+|bus-http|HTTP功能封装|
+|bus-limiter|请求限流|
+|bus-logger|日志信息及功能|
+|bus-mapper|数据操作,mybatis|
+|bus-pager|数据分页,mybatis|
+|bus-poi|Excel处理|
+|bus-proxy|公共代理，使动态代理变得简单|
+|bus-sensitive|敏感数据脱敏|
+|bus-setting|设置工具类， 用于支持设置/配置|
+|bus-shade|设置工具类， 用于支持设置/配置|
+|bus-socket|基础NIO/AIO通讯|
+|bus-spring|spring相关配置|
+|bus-storage|文件存储组件,,支持阿里云、七牛，提供了工厂模式和注入两种集成方式|
+|bus-swagger|API调用及测试|
+|bus-tracer|日志及访问流程追踪|
+|bus-validate|参数校验，会默认拦截所有的标记有`@Valid`的方法或类|
 
 
 ## 功能概述
