@@ -50,7 +50,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 
 ## 组件信息
 | module | depend on | description |
-| --------   | -----:   | :----: |
+| -------- | ----- | ---- |
 |bus-all|ALL|为微服务提供统一的pom管理，以及通用组件| 
 |bus-boot|bus-spring|SpringBoot starter，启动及相关配置文件信息| 
 |bus-base|bus-mapper/bus-pager/bus-logger/bus-swagger|基础功能及base相关功能,实体类(Entity),服务(Service),接口(Controller)|
