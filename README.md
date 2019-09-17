@@ -49,7 +49,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 系统监测的解决方案。
 
 ## 组件信息
-|module | depend on | description|
+| module | depend on | description |
 |----|----|----        |
 |bus-all|ALL|为微服务提供统一的pom管理，以及通用组件| 
 |bus-boot|bus-spring|SpringBoot starter，启动及相关配置文件信息| 
