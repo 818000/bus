@@ -32,7 +32,7 @@ package org.aoju.bus.socket.origin;
  * </p>
  *
  * @author Kimi Liu
- * @version 3.5.5
+ * @version 3.5.6
  * @since JDK 1.8
  */
 public interface Protocol<T> extends MsgEncoder<T>, MsgDecoder<T> {

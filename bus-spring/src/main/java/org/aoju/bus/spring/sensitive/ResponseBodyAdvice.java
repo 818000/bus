@@ -55,7 +55,7 @@ import java.util.*;
  * 对加了@Encrypt的方法的数据进行加密操作
  *
  * @author Kimi Liu
- * @version 3.5.5
+ * @version 3.5.6
  * @since JDK 1.8
  */
 @ControllerAdvice
