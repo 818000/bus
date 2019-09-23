@@ -34,7 +34,7 @@ import java.io.Writer;
  * without the +.
  *
  * @author Kimi Liu
- * @version 3.5.5
+ * @version 3.5.6
  * @since JDK 1.8
  */
 public class UnicodeUnescaper extends CharSequenceTranslator {

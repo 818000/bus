@@ -40,7 +40,7 @@ import java.io.IOException;
  * </ul>
  *
  * @author Kimi Liu
- * @version 3.5.5
+ * @version 3.5.6
  * @since JDK 1.8
  */
 class Huffman {
