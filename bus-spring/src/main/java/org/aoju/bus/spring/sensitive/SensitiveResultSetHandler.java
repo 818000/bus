@@ -51,7 +51,7 @@ import java.util.Properties;
  * 数据解密脱敏
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 @Intercepts({@Signature(type = ResultSetHandler.class, method = "handleResultSets", args = {java.sql.Statement.class})})
@@ -75,9 +75,7 @@ public class SensitiveResultSetHandler implements Interceptor {
             final ResultMap resultMap = mappedStatement.getResultMaps().isEmpty() ? null : mappedStatement.getResultMaps().get(0);
 
             Sensitive sensitive = results.get(0).getClass().getAnnotation(Sensitive.class);
-            if (ObjectUtils.isEmpty(sensitive)
-                    && !Builder.ALL.equals(sensitive.value())
-                    && !Builder.OUT.equals(sensitive.value())) {
+            if (ObjectUtils.isEmpty(sensitive)) {
                 return results;
             }
 

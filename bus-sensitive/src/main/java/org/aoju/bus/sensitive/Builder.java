@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
  * 2.主要供单独的字符串处理使用
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public final class Builder {

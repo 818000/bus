@@ -36,7 +36,7 @@ import com.taobao.text.util.RenderUtil;
  * LOGO旗标生成
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class LogoBanner extends AbstractBanner {

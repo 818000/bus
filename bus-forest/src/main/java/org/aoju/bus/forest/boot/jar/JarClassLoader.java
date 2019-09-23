@@ -40,7 +40,7 @@ import java.util.Enumeration;
  * JAR包类加载器
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class JarClassLoader extends URLClassLoader {

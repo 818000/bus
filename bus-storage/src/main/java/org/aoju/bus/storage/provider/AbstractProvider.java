@@ -37,7 +37,7 @@ import java.net.URL;
 
 /**
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 @Data

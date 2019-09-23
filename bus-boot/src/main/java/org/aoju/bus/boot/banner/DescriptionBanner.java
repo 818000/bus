@@ -33,7 +33,7 @@ import java.util.List;
  * 描述旗标生成
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class DescriptionBanner {

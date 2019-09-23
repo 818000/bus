@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
  * see http://blog.csdn.net/earbao/article/details/44453937
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public final class Base32 {

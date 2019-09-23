@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationContextAware;
  * <p>Description: </p>
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class RegistrarFactoryBean implements ApplicationContextAware, FactoryBean<Object>, InitializingBean, BeanClassLoaderAware {

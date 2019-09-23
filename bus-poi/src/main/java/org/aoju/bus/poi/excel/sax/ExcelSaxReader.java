@@ -33,7 +33,7 @@ import java.io.InputStream;
  *
  * @param <T> 子对象类型，用于标记返回值this
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public interface ExcelSaxReader<T> {

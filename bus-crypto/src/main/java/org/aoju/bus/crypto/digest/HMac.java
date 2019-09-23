@@ -48,7 +48,7 @@ import java.io.InputStream;
  * 注意：此对象实例化后为非线程安全！
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class HMac {
