@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Kimi Liu
- * @version 3.5.3
+ * @version 3.5.5
  * @since JDK 1.8
  */
 public class MethodInterceptorAdapter implements Interceptor {

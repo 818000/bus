@@ -35,7 +35,7 @@ import javax.validation.Validator;
 
 /**
  * @author Kimi Liu
- * @version 3.5.3
+ * @version 3.5.5
  * @since JDK 1.8
  */
 @EnableConfigurationProperties(value = {I18nProperties.class})
