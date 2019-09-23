@@ -55,7 +55,7 @@ import java.util.*;
  * 对加了@Encrypt的方法的数据进行加密操作
  *
  * @author Kimi Liu
- * @version 3.5.3
+ * @version 3.5.5
  * @since JDK 1.8
  */
 @ControllerAdvice
@@ -133,7 +133,7 @@ public class ResponseBodyAdvice extends BaseAdvice
                 }
                 ((Message) body).setData(list);
             } catch (Exception e) {
-                Logger.error("加密数据异常:" + e.getMessage());
+                Logger.error("Internal processing failure:" + e.getMessage());
             }
         }
         return body;

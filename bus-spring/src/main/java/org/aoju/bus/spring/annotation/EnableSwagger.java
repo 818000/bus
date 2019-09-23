@@ -33,7 +33,7 @@ import java.lang.annotation.*;
  * 开启防 Xss 攻击
  *
  * @author Kimi Liu
- * @version 3.5.3
+ * @version 3.5.5
  * @since JDK 1.8
  */
 @Target({ElementType.TYPE})

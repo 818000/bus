@@ -27,7 +27,7 @@ package org.aoju.bus.core.io;
  * 行处理器
  *
  * @author Kimi Liu
- * @version 3.5.3
+ * @version 3.5.5
  * @since JDK 1.8
  */
 public interface LineHandler {
