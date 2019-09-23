@@ -37,7 +37,7 @@ import java.util.List;
  * <p>Implementations of this interface must be safe for concurrent use.
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public interface Dns {

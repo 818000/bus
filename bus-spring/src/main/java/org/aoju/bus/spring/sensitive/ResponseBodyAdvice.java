@@ -24,6 +24,7 @@
 package org.aoju.bus.spring.sensitive;
 
 import org.aoju.bus.base.entity.Message;
+import org.aoju.bus.base.entity.Result;
 import org.aoju.bus.base.spring.BaseAdvice;
 import org.aoju.bus.core.consts.Charset;
 import org.aoju.bus.core.lang.exception.InstrumentException;
@@ -42,8 +43,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -55,11 +54,9 @@ import java.util.*;
  * 对加了@Encrypt的方法的数据进行加密操作
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
-@ControllerAdvice
-@RestControllerAdvice
 public class ResponseBodyAdvice extends BaseAdvice
         implements org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice<Object> {
 
@@ -100,10 +97,17 @@ public class ResponseBodyAdvice extends BaseAdvice
                 if (ObjectUtils.isEmpty(sensitive)) {
                     return body;
                 }
+                List rows;
+                if (((Message) body).getData() instanceof Result) {
+                    rows = ((Result) ((Message) body).getData()).getRows();
+                } else if (((Message) body).getData() instanceof List) {
+                    rows = (List) ((Message) body).getData();
+                } else {
+                    rows = Arrays.asList(((Message) body).getData());
+                }
 
                 List list = new ArrayList<>();
-                for (Object obj : ((Message) body).getData() instanceof List ?
-                        (List) ((Message) body).getData() : Arrays.asList(((Message) body).getData())) {
+                for (Object obj : rows) {
                     // 数据脱敏
                     if (Builder.ALL.equals(sensitive.value()) || Builder.SENS.equals(sensitive.value())
                             && (Builder.ALL.equals(sensitive.stage()) || Builder.OUT.equals(sensitive.stage()))) {
@@ -131,7 +135,12 @@ public class ResponseBodyAdvice extends BaseAdvice
                     }
                     list.add(obj);
                 }
-                ((Message) body).setData(list);
+
+                if (((Message) body).getData() instanceof Result) {
+                    ((Result) ((Message) body).getData()).setRows(list);
+                } else {
+                    ((Message) body).setData(list);
+                }
             } catch (Exception e) {
                 Logger.error("Internal processing failure:" + e.getMessage());
             }

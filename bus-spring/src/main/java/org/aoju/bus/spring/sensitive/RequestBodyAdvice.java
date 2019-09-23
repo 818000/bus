@@ -38,8 +38,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -50,11 +48,9 @@ import java.lang.reflect.Type;
  * 对加了@P的方法的数据进行解密密操作
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
-@ControllerAdvice
-@RestControllerAdvice
 public class RequestBodyAdvice extends BaseAdvice
         implements org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdvice {
 

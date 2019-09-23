@@ -35,7 +35,7 @@ import org.pmw.tinylog.Logger;
  * tinylog log.
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class TinyLog extends AbstractAware {

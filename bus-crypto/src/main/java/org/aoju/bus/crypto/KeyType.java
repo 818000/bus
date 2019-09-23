@@ -27,7 +27,7 @@ package org.aoju.bus.crypto;
  * 密钥类型
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public enum KeyType {

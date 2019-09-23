@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 1. 注解和实现之间映射
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public final class Registry {

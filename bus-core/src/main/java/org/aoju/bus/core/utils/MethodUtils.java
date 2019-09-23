@@ -48,7 +48,7 @@ import java.util.*;
  * If this call fails then the method may fail.</p>
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class MethodUtils {

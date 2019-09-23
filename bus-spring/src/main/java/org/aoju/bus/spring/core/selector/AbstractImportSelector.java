@@ -44,7 +44,7 @@ import java.util.List;
  * 参考@EnableCircuitBreaker的用法
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public abstract class AbstractImportSelector<T> implements DeferredImportSelector, BeanClassLoaderAware, EnvironmentAware {

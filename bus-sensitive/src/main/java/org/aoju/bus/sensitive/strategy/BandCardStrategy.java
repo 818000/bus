@@ -33,7 +33,7 @@ import org.aoju.bus.sensitive.provider.StrategyProvider;
  * 6227 0383 3938 3938 393 脱敏结果: 6227 **** **** ***8 393
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class BandCardStrategy implements StrategyProvider {

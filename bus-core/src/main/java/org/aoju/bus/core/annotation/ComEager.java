@@ -29,7 +29,7 @@ import java.lang.annotation.*;
  * 公共注解
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 @Inherited

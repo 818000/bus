@@ -27,7 +27,7 @@ package org.aoju.bus.pager;
  * 分页插件异常
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class PageException extends RuntimeException {

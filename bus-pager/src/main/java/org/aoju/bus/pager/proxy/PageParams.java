@@ -36,7 +36,7 @@ import java.util.Properties;
  * Page 参数信息
  *
  * @author Kimi Liu
- * @version 3.5.6
+ * @version 3.5.7
  * @since JDK 1.8
  */
 public class PageParams {
