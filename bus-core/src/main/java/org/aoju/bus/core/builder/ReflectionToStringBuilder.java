@@ -98,7 +98,7 @@ import java.util.List;
  * </p>
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class ReflectionToStringBuilder extends ToStringBuilder {
@@ -214,7 +214,6 @@ public class ReflectionToStringBuilder extends ToStringBuilder {
      * @param outputTransients  whether to include transient fields
      * @param outputStatics     whether to include static fields
      * @param excludeNullValues whether to exclude fields who value is null
-     * @since 3.6
      */
     public <T> ReflectionToStringBuilder(
             final T object, final ToStringStyle style, final StringBuffer buffer,
@@ -453,7 +452,6 @@ public class ReflectionToStringBuilder extends ToStringBuilder {
      * @throws IllegalArgumentException if the Object is <code>null</code>
      * @see ToStringExclude
      * @see ToStringSummary
-     * @since 3.6
      */
     public static <T> String toString(
             final T object, final ToStringStyle style, final boolean outputTransients,
@@ -713,7 +711,6 @@ public class ReflectionToStringBuilder extends ToStringBuilder {
      * </p>
      *
      * @return Whether or not to append fields whose values are null.
-     * @since 3.6
      */
     public boolean isExcludeNullValues() {
         return this.excludeNullValues;
@@ -725,7 +722,6 @@ public class ReflectionToStringBuilder extends ToStringBuilder {
      * </p>
      *
      * @param excludeNullValues Whether or not to append fields whose values are null.
-     * @since 3.6
      */
     public void setExcludeNullValues(final boolean excludeNullValues) {
         this.excludeNullValues = excludeNullValues;

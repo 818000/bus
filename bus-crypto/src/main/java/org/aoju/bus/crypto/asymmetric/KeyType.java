@@ -21,30 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.crypto;
-
-import java.security.Provider;
+package org.aoju.bus.crypto.asymmetric;
 
 /**
- * Provider对象生产法工厂类
- *
- * <pre>
- * 调用{@link #createBouncyCastleProvider()} 用于新建一个BouncyCastleProvider对象
- * </pre>
+ * 密钥类型
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
-public abstract class ProviderFactory implements CryptoFactory {
-
-    /**
-     * 创建Bouncy Castle 提供者
-     *
-     * @return {@link Provider}
-     */
-    public static Provider createBouncyCastleProvider() {
-        return new org.bouncycastle.jce.provider.BouncyCastleProvider();
-    }
-
+public enum KeyType {
+    PrivateKey, PublicKey
 }

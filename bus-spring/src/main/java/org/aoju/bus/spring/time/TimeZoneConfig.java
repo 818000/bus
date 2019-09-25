@@ -47,7 +47,7 @@ import java.util.TimeZone;
  * JDK8 日期格式化
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class TimeZoneConfig {

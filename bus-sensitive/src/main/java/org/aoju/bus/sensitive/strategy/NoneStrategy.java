@@ -30,7 +30,7 @@ import org.aoju.bus.sensitive.provider.StrategyProvider;
  * 不脱敏
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class NoneStrategy implements StrategyProvider {

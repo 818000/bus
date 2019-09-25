@@ -23,46 +23,47 @@
  */
 package org.aoju.bus.crypto;
 
-import java.security.Provider;
-
 /**
- * 全局单例对象
+ * 模式
+ * <p>
+ * 加密算法模式，是用来描述加密算法（此处特指分组密码，不包括流密码，）
+ * 在加密时对明文分组的模式，它代表了不同的分组方式
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
-public enum BouncyCastleProvider {
-
-    INSTANCE;
-    private static boolean useBouncyCastle = true;
-    private Provider provider;
-
-    BouncyCastleProvider() {
-        try {
-            this.provider = ProviderFactory.createBouncyCastleProvider();
-        } catch (NoClassDefFoundError e) {
-            // ignore
-        }
-    }
-
+public enum Mode {
     /**
-     * 设置是否使用Bouncy Castle库
-     * 如果设置为false，表示强制关闭Bouncy Castle而使用JDK
-     *
-     * @param isUseBouncyCastle boolean
-     * @since 4.5.2
+     * 无模式
      */
-    public static void setUseBouncyCastle(boolean isUseBouncyCastle) {
-        useBouncyCastle = isUseBouncyCastle;
-    }
-
+    NONE,
     /**
-     * 获取{@link Provider}
-     *
-     * @return {@link Provider}
+     * 密码分组连接模式（Cipher Block Chaining）
      */
-    public Provider getProvider() {
-        return useBouncyCastle ? this.provider : null;
-    }
+    CBC,
+    /**
+     * 密文反馈模式（Cipher Feedback）
+     */
+    CFB,
+    /**
+     * 计数器模式（A simplification of OFB）
+     */
+    CTR,
+    /**
+     * Cipher Text Stealing
+     */
+    CTS,
+    /**
+     * 电子密码本模式（Electronic CodeBook）
+     */
+    ECB,
+    /**
+     * 输出反馈模式（Output Feedback）
+     */
+    OFB,
+    /**
+     * Propagating Cipher Block
+     */
+    PCBC;
 }

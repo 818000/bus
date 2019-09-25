@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
  * Jboss-Logging log.
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class JbossLog extends AbstractAware {
