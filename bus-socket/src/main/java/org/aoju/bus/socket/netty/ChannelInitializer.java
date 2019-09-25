@@ -32,7 +32,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 /**
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class ChannelInitializer extends io.netty.channel.ChannelInitializer<SocketChannel> {

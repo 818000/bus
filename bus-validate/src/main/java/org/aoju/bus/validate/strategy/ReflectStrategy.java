@@ -40,7 +40,7 @@ import java.lang.reflect.Method;
  * 反射信息校验
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class ReflectStrategy implements Complex<Object, Reflect> {
@@ -65,7 +65,7 @@ public class ReflectStrategy implements Complex<Object, Reflect> {
             if (!Registry.getInstance().contains(name)) {
                 throw new NoSuchException("尝试使用一个不存在的校验器：" + name);
             }
-            Complex complex = (Complex) Registry.getInstance().get(name);
+            Complex complex = (Complex) Registry.getInstance().require(name);
             if (!complex.on(result, null, context)) {
                 return false;
             }

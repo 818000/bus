@@ -21,32 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.crypto;
+package org.aoju.bus.crypto.digest.mac;
+
+import java.io.InputStream;
 
 /**
+ * MAC（Message Authentication Code）算法引擎
+ *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
-public interface CryptoFactory {
+public interface MacEngine {
 
     /**
-     * 加密
+     * 生成摘要
      *
-     * @param key     密钥
-     * @param content 需要加密的内容
-     * @return 加密结果
-     * @throws RuntimeException RuntimeException
+     * @param data         {@link InputStream} 数据流
+     * @param bufferLength 缓存长度
+     * @return 摘要bytes
      */
-    byte[] encrypt(String key, byte[] content) throws RuntimeException;
-
-    /**
-     * 解密
-     *
-     * @param key     密钥
-     * @param content 需要解密的内容
-     * @return 解密结果
-     * @throws RuntimeException RuntimeException
-     */
-    byte[] decrypt(String key, byte[] content) throws RuntimeException;
+    byte[] digest(InputStream data, int bufferLength);
 }

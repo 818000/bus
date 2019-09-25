@@ -48,7 +48,7 @@ import java.util.*;
  * </pre>
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class BeanPath {

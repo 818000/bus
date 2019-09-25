@@ -32,7 +32,7 @@ import org.aoju.bus.core.lang.exception.CommonException;
  *
  * @param <T> 继承类的类型
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class Support<T> implements Cloneable<T> {

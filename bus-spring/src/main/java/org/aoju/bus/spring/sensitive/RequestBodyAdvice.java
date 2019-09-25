@@ -29,7 +29,6 @@ import org.aoju.bus.core.utils.ArrayUtils;
 import org.aoju.bus.core.utils.IoUtils;
 import org.aoju.bus.core.utils.ObjectUtils;
 import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.crypto.CryptoUtils;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.sensitive.Builder;
 import org.aoju.bus.sensitive.annotation.Sensitive;
@@ -48,7 +47,7 @@ import java.lang.reflect.Type;
  * 对加了@P的方法的数据进行解密密操作
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class RequestBodyAdvice extends BaseAdvice
@@ -183,7 +182,7 @@ public class RequestBodyAdvice extends BaseAdvice
                 if (!StringUtils.isEmpty(content)) {
                     String[] contents = content.split("\\|");
                     for (int k = 0; k < contents.length; k++) {
-                        json.append(CryptoUtils.decrypt(type, key, contents[k], Charset.UTF_8));
+                        json.append(org.aoju.bus.crypto.Builder.decrypt(type, key, contents[k], Charset.UTF_8));
                     }
                 }
                 decryptBody = json.toString();

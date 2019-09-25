@@ -32,7 +32,6 @@ import org.aoju.bus.core.utils.ArrayUtils;
 import org.aoju.bus.core.utils.ObjectUtils;
 import org.aoju.bus.core.utils.ReflectUtils;
 import org.aoju.bus.core.utils.StringUtils;
-import org.aoju.bus.crypto.CryptoUtils;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.sensitive.Builder;
 import org.aoju.bus.sensitive.annotation.Privacy;
@@ -54,7 +53,7 @@ import java.util.*;
  * 对加了@Encrypt的方法的数据进行加密操作
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class ResponseBodyAdvice extends BaseAdvice
@@ -62,6 +61,38 @@ public class ResponseBodyAdvice extends BaseAdvice
 
     @Autowired
     SensitiveProperties properties;
+
+    /**
+     * 依据对象的属性数组和值数组对进行赋值
+     *
+     * @param <T>    对象
+     * @param entity 反射对象
+     * @param fields 属性数组
+     * @param value  值数组
+     */
+    private static <T> void setValue(T entity, String[] fields, Object[] value) {
+        for (int i = 0; i < fields.length; i++) {
+            String field = fields[i];
+            if (ReflectUtils.hasField(entity, field)) {
+                ReflectUtils.invokeSetter(entity, field, value[i]);
+            }
+        }
+    }
+
+    /**
+     * 依据对象的属性获取对象值
+     *
+     * @param <T>    对象
+     * @param entity 反射对象
+     * @param field  属性数组
+     */
+    private static <T> Object getValue(T entity, String field) {
+        if (ReflectUtils.hasField(entity, field)) {
+            Object object = ReflectUtils.invokeGetter(entity, field);
+            return object != null ? object.toString() : null;
+        }
+        return null;
+    }
 
     @Override
     public boolean supports(MethodParameter returnType,
@@ -126,7 +157,7 @@ public class ResponseBodyAdvice extends BaseAdvice
                                         if (ObjectUtils.isEmpty(properties)) {
                                             throw new InstrumentException("please check the request.crypto.decrypt");
                                         }
-                                        value = CryptoUtils.encrypt(properties.getEncrypt().getType(), properties.getEncrypt().getKey(), value, Charset.UTF_8);
+                                        value = org.aoju.bus.crypto.Builder.encrypt(properties.getEncrypt().getType(), properties.getEncrypt().getKey(), value, Charset.UTF_8);
                                         setValue(obj, new String[]{property}, new String[]{value});
                                     }
                                 }
@@ -146,38 +177,6 @@ public class ResponseBodyAdvice extends BaseAdvice
             }
         }
         return body;
-    }
-
-    /**
-     * 依据对象的属性数组和值数组对进行赋值
-     *
-     * @param <T>    对象
-     * @param entity 反射对象
-     * @param fields 属性数组
-     * @param value  值数组
-     */
-    private static <T> void setValue(T entity, String[] fields, Object[] value) {
-        for (int i = 0; i < fields.length; i++) {
-            String field = fields[i];
-            if (ReflectUtils.hasField(entity, field)) {
-                ReflectUtils.invokeSetter(entity, field, value[i]);
-            }
-        }
-    }
-
-    /**
-     * 依据对象的属性获取对象值
-     *
-     * @param <T>    对象
-     * @param entity 反射对象
-     * @param field  属性数组
-     */
-    private static <T> Object getValue(T entity, String field) {
-        if (ReflectUtils.hasField(entity, field)) {
-            Object object = ReflectUtils.invokeGetter(entity, field);
-            return object != null ? object.toString() : null;
-        }
-        return null;
     }
 
     private Map<String, Privacy> getPrivacyMap(Class<?> clazz) {

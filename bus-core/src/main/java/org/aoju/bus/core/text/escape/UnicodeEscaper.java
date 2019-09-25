@@ -33,7 +33,7 @@ import java.io.Writer;
  * Translates codepoints to their Unicode escaped value.
  *
  * @author Kimi Liu
- * @version 3.5.7
+ * @version 3.5.8
  * @since JDK 1.8
  */
 public class UnicodeEscaper extends CodePointTranslator {
