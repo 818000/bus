@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Import;
  * Druid自动配置
  *
  * @author Kimi Liu
- * @version 3.5.8
+ * @version 3.6.0
  * @since JDK 1.8
  */
 @Configuration
