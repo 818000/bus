@@ -98,7 +98,7 @@ import java.util.List;
  * </p>
  *
  * @author Kimi Liu
- * @version 3.5.8
+ * @version 3.6.0
  * @since JDK 1.8
  */
 public class ReflectionToStringBuilder extends ToStringBuilder {
@@ -106,7 +106,7 @@ public class ReflectionToStringBuilder extends ToStringBuilder {
     /**
      * Which field names to exclude from output. Intended for fields like <code>"password"</code>.
      *
-     * @since 3.0 this is protected instead of private
+     * @since 3.0
      */
     protected String[] excludeFieldNames;
     /**
