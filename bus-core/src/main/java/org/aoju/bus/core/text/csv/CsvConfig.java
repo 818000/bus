@@ -31,7 +31,7 @@ import java.io.Serializable;
  * CSV基础配置项
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class CsvConfig implements Serializable {

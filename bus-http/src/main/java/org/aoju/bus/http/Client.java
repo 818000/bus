@@ -123,7 +123,7 @@ import java.util.concurrent.TimeUnit;
  * remain idle.
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class Client implements Cloneable, Call.Factory, WebSocket.Factory {

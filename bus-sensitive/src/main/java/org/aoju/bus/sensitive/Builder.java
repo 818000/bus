@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
  * 2.主要供单独的字符串处理使用
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class Builder {
@@ -75,7 +75,22 @@ public final class Builder {
      * @return 脱敏后的对象
      */
     public static <T> T on(Object object) {
-        return on(object, null);
+        return on(object, null, false);
+    }
+
+    /**
+     * 脱敏对象
+     * <p>
+     * 每次都创建一个新的对象，避免线程问题
+     * 可以使用 {@link ThreadLocal} 简单优化。
+     *
+     * @param object 原始对象
+     * @param clone  是否克隆
+     * @param <T>    泛型
+     * @return 脱敏后的对象
+     */
+    public static <T> T on(Object object, boolean clone) {
+        return on(object, null, clone);
     }
 
     /**
@@ -90,7 +105,23 @@ public final class Builder {
      * @return 脱敏后的对象
      */
     public static <T> T on(Object object, Annotation annotation) {
-        return (T) Instances.singletion(Provider.class).on(object, annotation);
+        return (T) Instances.singletion(Provider.class).on(object, annotation, false);
+    }
+
+    /**
+     * 脱敏对象
+     * <p>
+     * 每次都创建一个新的对象，避免线程问题
+     * 可以使用 {@link ThreadLocal} 简单优化。
+     *
+     * @param object     原始对象
+     * @param annotation 注解信息
+     * @param clone      是否克隆
+     * @param <T>        泛型
+     * @return 脱敏后的对象
+     */
+    public static <T> T on(Object object, Annotation annotation, boolean clone) {
+        return (T) Instances.singletion(Provider.class).on(object, annotation, clone);
     }
 
     /**

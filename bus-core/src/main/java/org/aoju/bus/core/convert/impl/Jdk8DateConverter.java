@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
  * </pre>
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class Jdk8DateConverter extends AbstractConverter<Object> {

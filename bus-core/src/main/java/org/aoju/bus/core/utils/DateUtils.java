@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * 时间工具类
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class DateUtils extends Fields {

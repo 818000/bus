@@ -53,7 +53,7 @@ import java.util.stream.StreamSupport;
  * 存储服务-MinIO
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class MinioOssProvider extends AbstractProvider {
