@@ -29,7 +29,7 @@ import java.lang.annotation.*;
  * 限流
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 @Target({ElementType.METHOD, ElementType.TYPE})

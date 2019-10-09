@@ -49,7 +49,7 @@ import javax.crypto.spec.IvParameterSpec;
  * <p>
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class AES extends Symmetric {

@@ -39,7 +39,7 @@ import java.util.*;
  * TrustManagerImpl} and {@code TrustedCertificateIndex}.
  *
  * @author Kimi Liu
- * @version 3.6.8
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class BasicCertificateChainCleaner extends CertificateChainCleaner {
