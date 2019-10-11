@@ -30,11 +30,12 @@ import org.aoju.bus.core.utils.StringUtils;
  * 响应结果
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
-public class Readers {
+public class Readers implements java.io.Serializable {
 
+    private static final long serialVersionUID = -498222912510624959L;
     /**
      * 请求返回码,正确为 0
      */
@@ -55,11 +56,11 @@ public class Readers {
     }
 
     public Readers(Object data) {
-        this("0", "", data);
+        this("", "0", data);
     }
 
     public Readers(String errcode, String errmsg) {
-        this(errcode, StringUtils.isEmpty(errcode) ? "-1" : errmsg, null);
+        this(StringUtils.isEmpty(errcode) ? "-1" : errmsg, errcode, null);
     }
 
     public Readers(String errcode, String errmsg, Object data) {

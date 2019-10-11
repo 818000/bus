@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  * Encode requests and responses using HTTP/2 frames.
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class Http2Codec implements HttpCodec {
@@ -188,7 +188,7 @@ public final class Http2Codec implements HttpCodec {
         if (stream != null) stream.closeLater(ErrorCode.CANCEL);
     }
 
-    class StreamFinishingSource extends ForwardSource {
+    class StreamFinishingSource extends ForwardingSource {
         boolean completed = false;
         long bytesRead = 0;
 

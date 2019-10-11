@@ -50,7 +50,7 @@ import java.nio.file.Path;
  * 存储服务-腾讯云
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class TencentCosProvider extends AbstractProvider {
@@ -90,22 +90,22 @@ public class TencentCosProvider extends AbstractProvider {
 
     @Override
     public Readers download(String fileName, File file) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
     public Readers list() {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
     public Readers rename(String oldName, String newName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
     public Readers rename(String bucket, String oldName, String newName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
@@ -125,7 +125,7 @@ public class TencentCosProvider extends AbstractProvider {
             PutObjectRequest request = new PutObjectRequest(this.property.getBucket(), fileName, content, objectMetadata);
             PutObjectResult result = this.client.putObject(request);
             if (StringUtils.isEmpty(result.getETag())) {
-                return new Readers(Builder.FAILURE);
+                return new Readers(null, "file upload failed");
             }
             return new Readers(Attachs.builder()
                     .path(this.property.getPrefix() + fileName)
@@ -134,7 +134,7 @@ public class TencentCosProvider extends AbstractProvider {
         } catch (IOException e) {
             Logger.error("file upload failed", e.getMessage());
         }
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, Builder.FAILURE);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class TencentCosProvider extends AbstractProvider {
                 new ByteArrayInputStream(content), objectMetadata);
         PutObjectResult result = this.client.putObject(request);
         if (StringUtils.isEmpty(result.getETag())) {
-            return new Readers(Builder.FAILURE);
+            return new Readers(null, "file upload failed");
         }
         return new Readers(Attachs.builder()
                 .name(fileName)
@@ -160,18 +160,18 @@ public class TencentCosProvider extends AbstractProvider {
 
     @Override
     public Readers remove(String fileName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
     public Readers remove(String bucket, String fileName) {
         this.client.deleteObject(bucket, fileName);
-        return new Readers(Builder.SUCCESS);
+        return new Readers(null, Builder.SUCCESS);
     }
 
     @Override
     public Readers remove(String bucket, Path path) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
 }

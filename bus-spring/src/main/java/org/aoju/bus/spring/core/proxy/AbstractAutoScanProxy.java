@@ -45,7 +45,7 @@ import java.util.Map;
  * <p>Description: </p>
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public abstract class AbstractAutoScanProxy extends AbstractAutoProxyCreator {

@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
  * newFixedLengthSource(0)} and may skip reading and closing that source.
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class Http1Codec implements HttpCodec {
@@ -81,13 +81,13 @@ public final class Http1Codec implements HttpCodec {
      */
     final StreamAllocation streamAllocation;
 
-    final BufferSource source;
-    final BufferSink sink;
+    final BufferedSource source;
+    final BufferedSink sink;
     int state = STATE_IDLE;
     private long headerLimit = HEADER_LIMIT;
 
-    public Http1Codec(Client client, StreamAllocation streamAllocation, BufferSource source,
-                      BufferSink sink) {
+    public Http1Codec(Client client, StreamAllocation streamAllocation, BufferedSource source,
+                      BufferedSink sink) {
         this.client = client;
         this.streamAllocation = streamAllocation;
         this.source = source;
@@ -252,7 +252,7 @@ public final class Http1Codec implements HttpCodec {
         return new UnknownLengthSource();
     }
 
-    void detachTimeout(Forward timeout) {
+    void detachTimeout(ForwardingTimeout timeout) {
         Timeout oldDelegate = timeout.delegate();
         timeout.setDelegate(Timeout.NONE);
         oldDelegate.clearDeadline();
@@ -260,7 +260,7 @@ public final class Http1Codec implements HttpCodec {
     }
 
     private final class FixedLengthSink implements Sink {
-        private final Forward timeout = new Forward(sink.timeout());
+        private final ForwardingTimeout timeout = new ForwardingTimeout(sink.timeout());
         private boolean closed;
         private long bytesRemaining;
 
@@ -303,7 +303,7 @@ public final class Http1Codec implements HttpCodec {
 
     private final class ChunkedSink implements Sink {
 
-        private final Forward timeout = new Forward(sink.timeout());
+        private final ForwardingTimeout timeout = new ForwardingTimeout(sink.timeout());
         private boolean closed;
 
         ChunkedSink() {
@@ -343,7 +343,7 @@ public final class Http1Codec implements HttpCodec {
 
     private abstract class AbstractSource implements Source {
 
-        protected final Forward timeout = new Forward(source.timeout());
+        protected final ForwardingTimeout timeout = new ForwardingTimeout(source.timeout());
         protected boolean closed;
         protected long bytesRead = 0;
 

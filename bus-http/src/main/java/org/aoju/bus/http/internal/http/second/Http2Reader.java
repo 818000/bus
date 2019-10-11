@@ -37,24 +37,24 @@ import java.util.List;
  * Http2#INITIAL_MAX_FRAME_SIZE}.
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 final class Http2Reader implements Closeable {
 
     final Hpack.Reader hpackReader;
-    private final BufferSource source;
+    private final BufferedSource source;
     private final ContinuationSource continuation;
     private final boolean client;
 
-    Http2Reader(BufferSource source, boolean client) {
+    Http2Reader(BufferedSource source, boolean client) {
         this.source = source;
         this.client = client;
         this.continuation = new ContinuationSource(this.source);
         this.hpackReader = new Hpack.Reader(4096, continuation);
     }
 
-    static int readMedium(BufferSource source) throws IOException {
+    static int readMedium(BufferedSource source) throws IOException {
         return (source.readByte() & 0xff) << 16
                 | (source.readByte() & 0xff) << 8
                 | (source.readByte() & 0xff);
@@ -320,7 +320,7 @@ final class Http2Reader implements Closeable {
     }
 
     interface Handler {
-        void data(boolean inFinished, int streamId, BufferSource source, int length)
+        void data(boolean inFinished, int streamId, BufferedSource source, int length)
                 throws IOException;
 
         void headers(boolean inFinished, int streamId, int associatedStreamId,
@@ -348,7 +348,7 @@ final class Http2Reader implements Closeable {
     }
 
     static final class ContinuationSource implements Source {
-        private final BufferSource source;
+        private final BufferedSource source;
 
         int length;
         byte flags;
@@ -357,7 +357,7 @@ final class Http2Reader implements Closeable {
         int left;
         short padding;
 
-        ContinuationSource(BufferSource source) {
+        ContinuationSource(BufferedSource source) {
             this.source = source;
         }
 

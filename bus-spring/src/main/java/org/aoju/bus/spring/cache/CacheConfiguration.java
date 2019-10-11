@@ -23,8 +23,8 @@
  */
 package org.aoju.bus.spring.cache;
 
-import org.aoju.bus.cache.Aspectj;
-import org.aoju.bus.cache.Context;
+import org.aoju.bus.cache.CacheAspect;
+import org.aoju.bus.cache.CacheConfig;
 import org.aoju.bus.cache.provider.*;
 import org.aoju.bus.core.utils.ClassUtils;
 import org.aoju.bus.core.utils.StringUtils;
@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  * 缓存配置
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 @EnableConfigurationProperties(value = {CacheProperties.class})
@@ -46,15 +46,15 @@ public class CacheConfiguration {
     CacheProperties properties;
 
     @Autowired
-    Aspectj cacheAspect = cacheConfigurer();
+    CacheAspect cacheAspect = cacheConfigurer();
 
     @Bean
-    public Aspectj cacheConfigurer() {
+    public CacheAspect cacheConfigurer() {
         String type = StringUtils.toString(this.properties.getType());
         try {
             if (!StringUtils.isEmpty(type)) {
                 Object provider = ClassUtils.loadClass(type);
-                Context config = Context.newConfig(this.properties.getMap());
+                CacheConfig config = CacheConfig.newConfig(this.properties.getMap());
                 if (provider instanceof H2Provider) {
                     // config.setProvider(new H2Provider());
                 } else if (provider instanceof MySQLProvider) {
@@ -66,7 +66,7 @@ public class CacheConfiguration {
                 } else if (provider instanceof MemoryProvider) {
                     //config.setProvider(new MemoryProvider());
                 }
-                this.cacheAspect = new Aspectj(config);
+                this.cacheAspect = new CacheAspect(config);
                 return this.cacheAspect;
             }
         } catch (Exception e) {

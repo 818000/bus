@@ -33,11 +33,11 @@ import java.io.IOException;
  * 移除协议框架。
  *
  * <h3>Interop with InputStream</h3>
- * {@link BufferSource#inputStream} to adapt a source to an {@code
+ * {@link BufferedSource#inputStream} to adapt a source to an {@code
  * InputStream}.
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public interface Source extends Closeable {

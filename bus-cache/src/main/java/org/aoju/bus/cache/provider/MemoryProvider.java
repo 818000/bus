@@ -23,8 +23,6 @@
  */
 package org.aoju.bus.cache.provider;
 
-import org.aoju.bus.cache.Provider;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,10 +31,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
-public class MemoryProvider implements Provider {
+public class MemoryProvider implements BaseProvider {
 
     private ConcurrentMap<String, AtomicLong> hitMap = new ConcurrentHashMap<>();
 
@@ -59,7 +57,7 @@ public class MemoryProvider implements Provider {
     }
 
     @Override
-    public Map<String, Provider.ShootingDO> getShooting() {
+    public Map<String, BaseProvider.ShootingDO> getShooting() {
         Map<String, ShootingDO> result = new LinkedHashMap<>();
 
         AtomicLong statisticsHit = new AtomicLong(0);

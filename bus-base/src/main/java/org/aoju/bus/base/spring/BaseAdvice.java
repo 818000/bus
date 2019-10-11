@@ -44,7 +44,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * </p>
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 @ControllerAdvice
@@ -110,7 +110,7 @@ public class BaseAdvice extends Controller {
     @ExceptionHandler(value = BusinessException.class)
     public Object businessException(BusinessException e) {
         Logger.error(RuntimeUtils.getStackTrace(e));
-        return write(e.getErrcode());
+        return write(ErrorCode.EM_100513);
     }
 
     /**

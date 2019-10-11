@@ -63,8 +63,6 @@ public class StorageProviderService {
             return new TencentCosProvider(context);
         } else if (Registry.UPYUN.equals(type)) {
             return new UpaiYunOssProvider(context);
-        } else if (Registry.LOCAL.equals(type)) {
-            return new LocalFileProvider(context);
         }
         throw new InstrumentException(Builder.FAILURE);
     }

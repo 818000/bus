@@ -28,10 +28,10 @@ import org.aoju.bus.cache.annotation.CacheKey;
 import org.aoju.bus.cache.annotation.Cached;
 import org.aoju.bus.cache.annotation.CachedGet;
 import org.aoju.bus.cache.annotation.Invalid;
-import org.aoju.bus.cache.entity.CacheExpire;
 import org.aoju.bus.cache.entity.CacheHolder;
 import org.aoju.bus.cache.entity.CacheMethod;
-import org.aoju.bus.cache.entity.CachePair;
+import org.aoju.bus.cache.entity.Expire;
+import org.aoju.bus.cache.entity.Pair;
 import org.aoju.bus.logger.Logger;
 
 import java.lang.annotation.Annotation;
@@ -46,22 +46,22 @@ import java.util.concurrent.ConcurrentMap;
  * 定位: 将@Cached、@Invalid、@CachedGet、(@CachedPut未来)以及将@CacheKey整体融合到一起
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class CacheInfoContainer {
 
-    private static final ConcurrentMap<Method, CachePair<CacheHolder, CacheMethod>> cacheMap = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Method, Pair<CacheHolder, CacheMethod>> cacheMap = new ConcurrentHashMap<>();
 
-    public static CachePair<CacheHolder, CacheMethod> getCacheInfo(Method method) {
+    public static Pair<CacheHolder, CacheMethod> getCacheInfo(Method method) {
         return cacheMap.computeIfAbsent(method, CacheInfoContainer::doGetMethodInfo);
     }
 
-    private static CachePair<CacheHolder, CacheMethod> doGetMethodInfo(Method method) {
+    private static Pair<CacheHolder, CacheMethod> doGetMethodInfo(Method method) {
         CacheHolder cacheHolder = getAnnoHolder(method);
         CacheMethod cacheMethod = getMethodHolder(method, cacheHolder);
 
-        return CachePair.of(cacheHolder, cacheMethod);
+        return Pair.of(cacheHolder, cacheMethod);
     }
 
     /****
@@ -123,14 +123,14 @@ public class CacheInfoContainer {
         return builder
                 .setCache(cachedGet.value())
                 .setPrefix(cachedGet.prefix())
-                .setExpire(CacheExpire.NO);
+                .setExpire(Expire.NO);
     }
 
     private static CacheHolder.Builder scanInvalid(CacheHolder.Builder builder, Invalid invalid) {
         return builder
                 .setCache(invalid.value())
                 .setPrefix(invalid.prefix())
-                .setExpire(CacheExpire.NO);
+                .setExpire(Expire.NO);
     }
 
     /***

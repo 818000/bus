@@ -24,12 +24,12 @@
 package org.aoju.bus.http.internal.http;
 
 import org.aoju.bus.core.consts.MediaType;
-import org.aoju.bus.core.io.segment.BufferSource;
+import org.aoju.bus.core.io.segment.BufferedSource;
 import org.aoju.bus.http.bodys.ResponseBody;
 
 /**
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class RealResponseBody extends ResponseBody {
@@ -39,10 +39,10 @@ public final class RealResponseBody extends ResponseBody {
      */
     private final String contentType;
     private final long contentLength;
-    private final BufferSource source;
+    private final BufferedSource source;
 
     public RealResponseBody(
-            String contentType, long contentLength, BufferSource source) {
+            String contentType, long contentLength, BufferedSource source) {
         this.contentType = contentType;
         this.contentLength = contentLength;
         this.source = source;
@@ -59,7 +59,7 @@ public final class RealResponseBody extends ResponseBody {
     }
 
     @Override
-    public BufferSource source() {
+    public BufferedSource source() {
         return source;
     }
 

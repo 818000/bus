@@ -34,12 +34,12 @@ import java.util.zip.Inflater;
  * 解压从另一个源读取的数据.
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class InflaterSource implements Source {
 
-    private final BufferSource source;
+    private final BufferedSource source;
     private final Inflater inflater;
 
     private int bufferBytesHeldByInflater;
@@ -49,7 +49,7 @@ public final class InflaterSource implements Source {
         this(IoUtils.buffer(source), inflater);
     }
 
-    InflaterSource(BufferSource source, Inflater inflater) {
+    InflaterSource(BufferedSource source, Inflater inflater) {
         if (source == null) throw new IllegalArgumentException("source == null");
         if (inflater == null) throw new IllegalArgumentException("inflater == null");
         this.source = source;
@@ -81,7 +81,7 @@ public final class InflaterSource implements Source {
                     if (tail.pos == tail.limit) {
                         // We allocated a tail segment, but didn't end up needing it. Recycle!
                         sink.head = tail.pop();
-                        LifeCycle.recycle(tail);
+                        Segments.recycle(tail);
                     }
                     return -1;
                 }

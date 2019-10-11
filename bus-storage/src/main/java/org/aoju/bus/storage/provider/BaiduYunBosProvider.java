@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  * 存储服务-百度云
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class BaiduYunBosProvider extends AbstractProvider {
@@ -76,7 +76,7 @@ public class BaiduYunBosProvider extends AbstractProvider {
 
     @Override
     public Readers download(String bucket, String fileName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
@@ -110,12 +110,12 @@ public class BaiduYunBosProvider extends AbstractProvider {
 
     @Override
     public Readers rename(String oldName, String newName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
     public Readers rename(String bucket, String oldName, String newName) {
-        return new Readers(Builder.FAILURE);
+        return new Readers(null, "failure to provide services");
     }
 
     @Override
@@ -126,13 +126,13 @@ public class BaiduYunBosProvider extends AbstractProvider {
     @Override
     public Readers upload(String bucket, String fileName, InputStream content) {
         this.client.putObject(bucket, fileName, content);
-        return new Readers(Builder.SUCCESS);
+        return new Readers(null, Builder.SUCCESS);
     }
 
     @Override
     public Readers upload(String bucket, String fileName, byte[] content) {
         this.client.putObject(bucket, fileName, content);
-        return new Readers(Builder.SUCCESS);
+        return new Readers(null, Builder.SUCCESS);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class BaiduYunBosProvider extends AbstractProvider {
     @Override
     public Readers remove(String bucket, String fileName) {
         client.deleteObject(bucket, fileName);
-        return new Readers(Builder.SUCCESS);
+        return new Readers(null, Builder.SUCCESS);
     }
 
     @Override

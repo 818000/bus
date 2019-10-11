@@ -23,7 +23,7 @@
  */
 package org.aoju.bus.http;
 
-import org.aoju.bus.core.io.segment.Awaits;
+import org.aoju.bus.core.io.segment.AsyncTimeout;
 import org.aoju.bus.core.io.segment.Timeout;
 import org.aoju.bus.http.accord.ConnectInterceptor;
 import org.aoju.bus.http.accord.StreamAllocation;
@@ -49,14 +49,14 @@ import static org.aoju.bus.http.accord.platform.Platform.INFO;
 
 /**
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class RealCall implements Call {
 
     public final Client client;
     public final RetryAndFollowUpInterceptor retryAndFollowUpInterceptor;
-    public final Awaits timeout;
+    public final AsyncTimeout timeout;
     /**
      * The application's original request unadulterated by redirects or auth headers.
      */
@@ -75,7 +75,7 @@ public final class RealCall implements Call {
         this.originalRequest = originalRequest;
         this.forWebSocket = forWebSocket;
         this.retryAndFollowUpInterceptor = new RetryAndFollowUpInterceptor(client, forWebSocket);
-        this.timeout = new Awaits() {
+        this.timeout = new AsyncTimeout() {
             @Override
             protected void timedOut() {
                 cancel();

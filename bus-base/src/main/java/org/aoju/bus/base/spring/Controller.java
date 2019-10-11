@@ -27,6 +27,7 @@ package org.aoju.bus.base.spring;
 import org.aoju.bus.base.consts.ErrorCode;
 import org.aoju.bus.base.entity.Message;
 import org.aoju.bus.core.utils.ObjectUtils;
+import org.aoju.bus.core.utils.StringUtils;
 
 /**
  * <p>
@@ -34,29 +35,42 @@ import org.aoju.bus.core.utils.ObjectUtils;
  * </p>
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class Controller {
+
+    public static Object write(ErrorCode respCode) {
+        return write(respCode, null);
+    }
+
+    public static Object write(ErrorCode respCode, Object data) {
+        return write(respCode.getErrcode(), respCode.getErrmsg(), data);
+    }
+
+    public static Object write(ErrorCode respCode, String message) {
+        return write(respCode.getErrcode(), StringUtils.isEmpty(message) ? respCode.getErrmsg() : message);
+    }
 
     public static Object write(Object data) {
         return write(ErrorCode.EM_SUCCESS, data);
     }
 
     public static Object write(String errcode) {
-        return write(errcode, ErrorCode.require(errcode));
+        return write(ErrorCode.of(errcode), null);
     }
 
     public static Object write(String errcode, String errmsg) {
-        return new Message(errcode, errmsg);
+        return write(errcode, errmsg, null);
     }
 
-    private static Object write(String errcode, Object data) {
-        String errmsg = ErrorCode.require(errcode);
-        if (ObjectUtils.isNotEmpty(errmsg)) {
-            return new Message(errcode, errmsg, data);
+    public static Object write(String errcode, String errmsg, Object data) {
+        ErrorCode resultCode = ErrorCode.of(errcode);
+        if (ObjectUtils.isNotEmpty(resultCode)) {
+            errmsg = StringUtils.isEmpty(errmsg) ? resultCode.getErrmsg() : errmsg;
+            return new Message(resultCode.getErrcode(), errmsg, data);
         }
-        return new Message(ErrorCode.EM_FAILURE, ErrorCode.require(ErrorCode.EM_FAILURE));
+        return new Message(ErrorCode.EM_FAILURE.getErrcode(), ErrorCode.EM_FAILURE.errmsg);
     }
 
 }

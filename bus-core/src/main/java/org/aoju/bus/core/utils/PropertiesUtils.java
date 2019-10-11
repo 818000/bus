@@ -40,7 +40,7 @@ import java.util.Properties;
  * Parsing The Configuration File
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class PropertiesUtils {

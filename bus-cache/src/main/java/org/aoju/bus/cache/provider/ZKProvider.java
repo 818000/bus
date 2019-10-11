@@ -23,8 +23,7 @@
  */
 package org.aoju.bus.cache.provider;
 
-import org.aoju.bus.cache.Provider;
-import org.aoju.bus.cache.entity.CachePair;
+import org.aoju.bus.cache.entity.Pair;
 import org.aoju.bus.logger.Logger;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -42,10 +41,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
-public class ZKProvider implements Provider {
+public class ZKProvider implements BaseProvider {
 
     private static final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
         Thread thread = new Thread(r);
@@ -58,9 +57,9 @@ public class ZKProvider implements Provider {
 
     private volatile boolean isShutdown = false;
 
-    private BlockingQueue<CachePair<String, Integer>> hitQueue = new LinkedTransferQueue<>();
+    private BlockingQueue<Pair<String, Integer>> hitQueue = new LinkedTransferQueue<>();
 
-    private BlockingQueue<CachePair<String, Integer>> requireQueue = new LinkedTransferQueue<>();
+    private BlockingQueue<Pair<String, Integer>> requireQueue = new LinkedTransferQueue<>();
 
     private Map<String, DistributedAtomicLong> hitCounterMap = new HashMap<>();
 
@@ -119,13 +118,13 @@ public class ZKProvider implements Provider {
     @Override
     public void hitIncr(String pattern, int count) {
         if (count != 0)
-            hitQueue.add(CachePair.of(pattern, count));
+            hitQueue.add(Pair.of(pattern, count));
     }
 
     @Override
     public void reqIncr(String pattern, int count) {
         if (count != 0)
-            requireQueue.add(CachePair.of(pattern, count));
+            requireQueue.add(Pair.of(pattern, count));
     }
 
     @Override
@@ -202,9 +201,9 @@ public class ZKProvider implements Provider {
         isShutdown = true;
     }
 
-    private void dumpToZK(BlockingQueue<CachePair<String, Integer>> queue, Map<String, DistributedAtomicLong> counterMap, String zkPrefix) {
+    private void dumpToZK(BlockingQueue<Pair<String, Integer>> queue, Map<String, DistributedAtomicLong> counterMap, String zkPrefix) {
         long count = 0;
-        CachePair<String, Integer> head;
+        Pair<String, Integer> head;
 
         // 将queue中所有的 || 前100条数据聚合到一个暂存Map中
         Map<String, AtomicLong> holdMap = new HashMap<>();

@@ -35,7 +35,7 @@ package org.aoju.bus.core.io.segment;
  * 限制、prev和next引用不共享。
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public final class Segment {
@@ -134,7 +134,7 @@ public final class Segment {
         if (byteCount >= SHARE_MINIMUM) {
             prefix = sharedCopy();
         } else {
-            prefix = LifeCycle.take();
+            prefix = Segments.take();
             System.arraycopy(data, pos, prefix.data, 0, byteCount);
         }
 
@@ -152,7 +152,7 @@ public final class Segment {
         if (byteCount > availableByteCount) return; // Cannot compact: not enough writable space.
         writeTo(prev, byteCount);
         pop();
-        LifeCycle.recycle(this);
+        Segments.recycle(this);
     }
 
     public final void writeTo(Segment sink, int byteCount) {

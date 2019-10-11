@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 校验器注册中心
  *
  * @author Kimi Liu
- * @version 5.0.1
+ * @version 3.6.9
  * @since JDK 1.8+
  */
 public class Registry {
@@ -88,7 +88,7 @@ public class Registry {
      */
     public static Registry getInstance() {
         synchronized (Registry.class) {
-            if (ObjectUtils.isEmpty(instance)) {
+            if (instance == null) {
                 instance = new Registry();
             }
         }
