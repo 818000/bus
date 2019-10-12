@@ -21,47 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.storage.metric;
+package org.aoju.bus.cache.proxy;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
- * 缓存调度器
- *
  * @author Kimi Liu
- * @version 3.6.9
+ * @version 5.0.0
  * @since JDK 1.8+
  */
-public enum CacheScheduler {
+public class AspectJoinPoint implements ProxyChain {
 
-    /**
-     * 当前实例
-     */
-    INSTANCE;
+    private ProceedingJoinPoint proceedingJoinPoint;
 
-    private AtomicInteger cacheTaskNumber = new AtomicInteger(1);
-    private ScheduledExecutorService scheduler;
-
-    CacheScheduler() {
-        create();
+    public AspectJoinPoint(ProceedingJoinPoint proceedingJoinPoint) {
+        this.proceedingJoinPoint = proceedingJoinPoint;
     }
 
-    private void create() {
-        this.shutdown();
-        this.scheduler = new ScheduledThreadPoolExecutor(10, r -> new Thread(r, String.format("JustAuth-Task-%s", cacheTaskNumber.getAndIncrement())));
+    @Override
+    public Object[] getArgs() {
+        return proceedingJoinPoint.getArgs();
     }
 
-    private void shutdown() {
-        if (null != scheduler) {
-            this.scheduler.shutdown();
-        }
+    @Override
+    public Object proceed() throws Throwable {
+        return proceedingJoinPoint.proceed();
     }
 
-    public void schedule(Runnable task, long delay) {
-        this.scheduler.scheduleAtFixedRate(task, delay, delay, TimeUnit.MILLISECONDS);
+    @Override
+    public Object proceed(Object[] args) throws Throwable {
+        return proceedingJoinPoint.proceed(args);
     }
 
 }

@@ -25,17 +25,17 @@ package org.aoju.bus.cache.reader;
 
 import org.aoju.bus.cache.entity.CacheHolder;
 import org.aoju.bus.cache.entity.CacheMethod;
-import org.aoju.bus.cache.invoker.BaseInvoker;
+import org.aoju.bus.cache.proxy.ProxyChain;
 import org.aoju.bus.logger.Logger;
 
 /**
  * @author Kimi Liu
- * @version 3.6.9
+ * @version 5.0.0
  * @since JDK 1.8+
  */
-public abstract class AbstractCacheReader {
+public abstract class AbstractReader {
 
-    public abstract Object read(CacheHolder cacheHolder, CacheMethod cacheMethod, BaseInvoker baseInvoker, boolean needWrite) throws Throwable;
+    public abstract Object read(CacheHolder cacheHolder, CacheMethod cacheMethod, ProxyChain baseInvoker, boolean needWrite) throws Throwable;
 
     Object doLogInvoke(ThrowableSupplier<Object> throwableSupplier) throws Throwable {
         long start = System.currentTimeMillis();

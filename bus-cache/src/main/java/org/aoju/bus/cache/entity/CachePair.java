@@ -21,27 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.storage.metric;
+package org.aoju.bus.cache.entity;
 
 /**
- * Cache配置类
- *
  * @author Kimi Liu
- * @version 3.6.9
+ * @version 5.0.0
  * @since JDK 1.8+
  */
-public class CacheConfig {
+public class CachePair<L, R> {
 
-    /**
-     * 默认缓存过期时间：3分钟
-     * 根据个人的操作习惯，或者平台的不同，每个流程的耗时也有差异，不过单个授权流程一般不会太长
-     * 本缓存工具默认的过期时间设置为3分钟，即程序默认认为3分钟内的授权有效，超过3分钟则默认失效，失效后删除
-     */
-    public static long timeout = 3 * 60 * 1000;
+    private L left;
 
-    /**
-     * 是否开启定时{@link DefaultCache#pruneCache()}的任务
-     */
-    public static boolean schedulePrune = true;
+    private R right;
+
+    private CachePair(L left, R right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    public static <L, R> CachePair<L, R> of(L left, R right) {
+        return new CachePair<>(left, right);
+    }
+
+    public L getLeft() {
+        return left;
+    }
+
+    public R getRight() {
+        return right;
+    }
 
 }

@@ -33,7 +33,7 @@ import org.apache.cxf.phase.Phase;
 
 /**
  * @author Kimi Liu
- * @version 3.6.9
+ * @version 5.0.0
  * @since JDK 1.8+
  */
 public class TraceResponseOutInterceptor extends AbstractTraceOutInterceptor {
