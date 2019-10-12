@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
  * 2.主要供单独的字符串处理使用
  *
  * @author Kimi Liu
- * @version 3.6.9
+ * @version 5.0.0
  * @since JDK 1.8+
  */
 public final class Builder {
@@ -63,6 +63,11 @@ public final class Builder {
      * 不做任何处理
      */
     public static final String NOTHING = "NOTHING";
+
+    /**
+     * 不做任何处理
+     */
+    public static final String OVERALL = "OVERALL";
 
     /**
      * 脱敏对象
