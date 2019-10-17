@@ -1,6 +1,6 @@
 <p align="center">
     <a target="_blank" href="https://search.maven.org/search?q=org.aoju">
-		<img src="https://img.shields.io/badge/maven--central-v5.0.3-blue.svg?label=Maven%20Central" ></img>
+		<img src="https://img.shields.io/badge/maven--central-v5.0.5-blue.svg?label=Maven%20Central" ></img>
 	</a>
 	<a target="_blank" href="https://travis-ci.org/aoju/bus">
 		<img src="https://travis-ci.org/aoju/bus.svg?branch=master">
@@ -96,13 +96,13 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>5.0.3</version>
+    <version>5.0.5</version>
 </dependency>
 ```
 
 ### Gradle
 ```
-implementation 'org.aoju:bus-all:5.0.3'
+implementation 'org.aoju:bus-all:5.0.5'
 ```
 
 ### Other
@@ -121,11 +121,11 @@ All kinds of contributions (enhancements, new features, documentation & code imp
 
 欢迎各种形式的贡献，包括但不限于优化，添加功能，文档 & 代码的改进，问题和 bugs 的报告。
 
-## License 许可证
+## 许可证
 
 Open sourced under the MIT license.
 
 根据 MIT 许可证开源。
 
 ##
-源码永远是最好的教程，善于读源码和debug朋友掌握smart-socket完全是轻而易举的事。源码是作者设计理念最直观的展现，这也是开源的魅力所在。"talk is cheap show me the code"，开源让技术难题的探讨变得更加务实，正如smart-socket，在您看完源码后心中对它都会有一个定论。在作者看来，smart-socket切切实实降低了通信开发学习门槛，也保障了服务的高性能、高可用。如果读者朋友对源码中某些部分的设计存在疑虑，也欢迎与作者保持沟通。
+源码永远是最好的教程，善于读源码和debug朋友掌握完全是轻而易举的事。源码是作者设计理念最直观的展现，这也是开源的魅力所在。"talk is cheap show me the code"，开源让技术难题的探讨变得更加务实，在您看完源码后心中对它都会有一个定论。在作者看来，Bus切切实实降低了开发学习门槛，也保障了服务的高性能、高可用。如果读者朋友对源码中某些部分的设计存在疑虑，也欢迎与作者保持沟通。

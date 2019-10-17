@@ -42,7 +42,7 @@ import java.util.*;
 
 /**
  * @author Kimi Liu
- * @version 5.0.3
+ * @version 5.0.5
  * @since JDK 1.8+
  */
 public class LimitedResourceScanner implements LimitedResourceSource {
