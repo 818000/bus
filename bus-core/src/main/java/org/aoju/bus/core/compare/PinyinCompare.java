@@ -9,10 +9,10 @@ import java.util.Locale;
  * 按照GBK拼音顺序对给定的汉字字符串排序
  *
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
-public class PinyinComparator implements Comparator<String>, Serializable {
+public class PinyinCompare implements Comparator<String>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ public class PinyinComparator implements Comparator<String>, Serializable {
     /**
      * 构造
      */
-    public PinyinComparator() {
+    public PinyinCompare() {
         collator = Collator.getInstance(Locale.CHINESE);
     }
 

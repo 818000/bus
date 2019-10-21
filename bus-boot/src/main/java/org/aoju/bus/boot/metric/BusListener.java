@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
  * 应用程序事件侦听器
  *
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public class BusListener implements

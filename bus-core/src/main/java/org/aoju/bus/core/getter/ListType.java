@@ -31,10 +31,10 @@ import java.util.List;
  * 列表类型的Get接口
  *
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
-public interface ListTypeGetter {
+public interface ListType {
 
     /**
      * 获取Object型属性值列表

@@ -30,10 +30,10 @@ import java.math.BigInteger;
  * 基于分组的Get接口
  *
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
-public interface GroupedTypeGetter {
+public interface GroupedType {
 
     /**
      * 获取字符串型属性值

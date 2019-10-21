@@ -27,7 +27,7 @@ import javax.jms.*;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public final class TraceQueueSender implements QueueSender {

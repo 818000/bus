@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public class PatternFilter implements MethodFilter {

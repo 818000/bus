@@ -27,8 +27,10 @@ import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.proxy.Provider;
 
 /**
+ * Bean 模型
+ *
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public class BeanProvider implements Provider {

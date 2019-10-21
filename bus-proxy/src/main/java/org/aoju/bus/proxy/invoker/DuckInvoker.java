@@ -24,25 +24,37 @@
 package org.aoju.bus.proxy.invoker;
 
 import org.aoju.bus.proxy.Invoker;
+import org.aoju.bus.proxy.Provider;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
-public class InvocationHandlerAdapter implements Invoker {
+public class DuckInvoker implements Invoker {
 
-    private final InvocationHandler invocationHandler;
+    private final Provider targetProvider;
 
-    public InvocationHandlerAdapter(InvocationHandler invocationHandler) {
-        this.invocationHandler = invocationHandler;
+    public DuckInvoker(final Provider targetProvider) {
+        this.targetProvider = targetProvider;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] arguments) throws Throwable {
-        return invocationHandler.invoke(proxy, method, arguments);
+    public Object invoke(final Object proxy, final Method method, final Object[] arguments) throws Throwable {
+        final Object target = targetProvider.getObject();
+        final Class targetClass = target.getClass();
+        try {
+            final Method targetMethod = targetClass.getMethod(method.getName(), method.getParameterTypes());
+            if (method.getReturnType().isAssignableFrom(targetMethod.getReturnType())) {
+                return targetMethod.invoke(target, arguments);
+            }
+            throw new UnsupportedOperationException(
+                    "Target type " + targetClass.getName() + " method has incompatible return type.");
+        } catch (NoSuchMethodException e) {
+            throw new UnsupportedOperationException(
+                    "Target type " + targetClass.getName() + " does not have a method matching " + method + ".");
+        }
     }
 
 }
