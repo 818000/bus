@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 @ControllerAdvice

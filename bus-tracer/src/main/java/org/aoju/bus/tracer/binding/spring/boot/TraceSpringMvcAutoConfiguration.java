@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Import;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 @ConditionalOnWebApplication

@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public class ZKProvider implements Provider {

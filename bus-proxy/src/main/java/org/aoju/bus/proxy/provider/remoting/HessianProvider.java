@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
 public class HessianProvider implements Provider {
@@ -40,6 +40,7 @@ public class HessianProvider implements Provider {
     private String url;
 
     public HessianProvider() {
+
     }
 
     public HessianProvider(Class serviceInterface, String url) {

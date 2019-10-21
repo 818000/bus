@@ -25,12 +25,12 @@ package org.aoju.bus.proxy.factory;
 
 /**
  * @author Kimi Liu
- * @version 5.0.5
+ * @version 5.0.6
  * @since JDK 1.8+
  */
-public interface ProxyClassGenerator {
+public interface ProxyClass {
 
-    Class generateProxyClass(ClassLoader classLoader, Class[] proxyClasses);
+    Class createProxy(ClassLoader classLoader, Class[] proxyClasses);
 
 }
 
