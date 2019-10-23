@@ -37,7 +37,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * @author Kimi Liu
- * @version 5.0.6
+ * @version 5.0.8
  * @since JDK 1.8+
  */
 public class CglibFactory extends AbstractFactory {
@@ -51,7 +51,7 @@ public class CglibFactory extends AbstractFactory {
         enhancer.setCallback(new CglibInterceptor(target, aspect));
         return (T) enhancer.create();
     }
-    
+
     public Object createDelegatorProxy(ClassLoader classLoader, Provider targetProvider,
                                        Class[] proxyClasses) {
         final Enhancer enhancer = new Enhancer();

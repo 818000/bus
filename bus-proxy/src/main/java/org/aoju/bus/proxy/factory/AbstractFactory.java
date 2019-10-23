@@ -41,7 +41,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 5.0.6
+ * @version 5.0.8
  * @since JDK 1.8+
  */
 public abstract class AbstractFactory extends Factory {
@@ -109,25 +109,6 @@ public abstract class AbstractFactory extends Factory {
                 throw new InstrumentException(errorMessage.toString());
         }
     }
-
-    public boolean canProxy(Class[] proxyClasses) {
-        try {
-            getSuperclass(proxyClasses);
-            return true;
-        } catch (InstrumentException e) {
-            return false;
-        }
-    }
-
-    /**
-     * 创建代理
-     *
-     * @param <T>    代理对象类型
-     * @param target 被代理对象
-     * @param aspect 切面实现
-     * @return 代理对象
-     */
-    public abstract <T> T proxy(T target, Aspect aspect);
 
     /**
      * 根据用户引入Cglib与否自动创建代理对象
@@ -210,6 +191,25 @@ public abstract class AbstractFactory extends Factory {
     public static <T> T newProxyInstance(InvocationHandler invocationHandler, Class<?>... interfaces) {
         return newProxyInstance(ClassUtils.getClassLoader(), invocationHandler, interfaces);
     }
+
+    public boolean canProxy(Class[] proxyClasses) {
+        try {
+            getSuperclass(proxyClasses);
+            return true;
+        } catch (InstrumentException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 创建代理
+     *
+     * @param <T>    代理对象类型
+     * @param target 被代理对象
+     * @param aspect 切面实现
+     * @return 代理对象
+     */
+    public abstract <T> T proxy(T target, Aspect aspect);
 
 }
 
