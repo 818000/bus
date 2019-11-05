@@ -36,7 +36,7 @@ import java.util.Properties;
 
 /**
  * @author Kimi Liu
- * @version 5.0.8
+ * @version 5.0.9
  * @since JDK 1.8+
  */
 public class SessionBeanProvider implements Provider {
