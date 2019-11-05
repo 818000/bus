@@ -96,13 +96,13 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>5.0.8</version>
+    <version>5.0.9</version>
 </dependency>
 ```
 
 ### Gradle
 ```
-implementation 'org.aoju:bus-all:5.0.8'
+implementation 'org.aoju:bus-all:5.0.9'
 ```
 
 ### Other
