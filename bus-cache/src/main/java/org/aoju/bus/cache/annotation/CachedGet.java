@@ -28,7 +28,7 @@ import java.lang.annotation.*;
 
 /**
  * @author Kimi Liu
- * @version 5.0.9
+ * @version 5.1.0
  * @since JDK 1.8+
  */
 @Documented

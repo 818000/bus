@@ -45,7 +45,7 @@ import java.util.*;
  *
  * @param <T> 参数类型
  * @author Kimi Liu
- * @version 5.0.9
+ * @version 5.1.0
  * @since JDK 1.8+
  */
 public class Provider<T> {
