@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * @author Kimi Liu
- * @version 5.2.3
+ * @version 5.2.5
  * @since JDK 1.8+
  */
 class JavassistUtils {

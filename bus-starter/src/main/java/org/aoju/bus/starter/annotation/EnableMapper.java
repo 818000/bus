@@ -36,7 +36,7 @@ import java.lang.annotation.*;
  * 开启 Mybatis/Mapper
  *
  * @author Kimi Liu
- * @version 5.2.3
+ * @version 5.2.5
  * @since JDK 1.8+
  */
 @Retention(RetentionPolicy.RUNTIME)
