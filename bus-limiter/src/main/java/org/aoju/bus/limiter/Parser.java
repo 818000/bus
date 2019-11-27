@@ -30,7 +30,7 @@ import java.lang.annotation.Annotation;
 
 /**
  * @author Kimi Liu
- * @version 5.2.3
+ * @version 5.2.5
  * @since JDK 1.8+
  */
 public interface Parser<T extends Limiter> {

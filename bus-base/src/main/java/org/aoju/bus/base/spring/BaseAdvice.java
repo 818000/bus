@@ -44,7 +44,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * </p>
  *
  * @author Kimi Liu
- * @version 5.2.3
+ * @version 5.2.5
  * @since JDK 1.8+
  */
 @ControllerAdvice

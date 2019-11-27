@@ -29,33 +29,33 @@ import org.aoju.bus.validate.Context;
  * 校验器接口
  *
  * @author Kimi Liu
- * @version 5.2.3
+ * @version 5.2.5
  * @since JDK 1.8+
  */
 @FunctionalInterface
-public interface Complex<T, K> {
+public interface Matcher<T, K> {
 
     /**
-     * 将Validator转为Complex
+     * 将Validator转为Matcher
      *
      * @param validator Validator对象
      * @param <T>       Validator泛型
      * @return ComplexValidator对象
      */
-    static <T> Complex<T, ?> of(Validator<T> validator) {
+    static <T> Matcher<T, ?> of(Validator<T> validator) {
         return (object, annotation, context) -> validator.on(object, context);
     }
 
     /**
      * 根据校验器,创建相对立的一个校验器
      *
-     * @param complex 校验器
+     * @param matcher 校验器
      * @param <T>     校验对象泛型
      * @param <K>     校验器注解泛型
      * @return 新的校验器, 永远与传入参数的校验器的校验结果相反
      */
-    static <T, K> Complex<T, K> not(Complex<T, K> complex) {
-        return (object, anno, context) -> !complex.on(object, anno, context);
+    static <T, K> Matcher<T, K> not(Matcher<T, K> matcher) {
+        return (object, anno, context) -> !matcher.on(object, anno, context);
     }
 
     /**
