@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * HTTP 媒体类型
  *
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 @Data

@@ -34,12 +34,12 @@ import org.springframework.core.annotation.Order;
  * AOP切面切点
  *
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 @Aspect
 @Order(99)
-public class AspectjProxyPoint {
+public class AspectjValidateProxy {
 
     /**
      * requestMapping
@@ -67,13 +67,13 @@ public class AspectjProxyPoint {
     /**
      * 执行结果
      *
-     * @param joinPoint 切点
+     * @param point 切点
      * @return 返回结果
      * @throws Throwable 异常
      */
     @Around("match()")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        return new AutoValidateAdvice().access(new AspectjProxyChain(joinPoint));
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        return new AutoValidateAdvice().access(new AspectjProxyChain(point));
     }
 
 }
