@@ -32,7 +32,7 @@ import java.util.Enumeration;
  * 代表当前主机的信息
  *
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 public class HostInfo {

@@ -66,7 +66,7 @@
         }
 
         , laydate = {
-            v: '5.2.5'
+            v: '5.2.6'
             , config: {} //全局配置项
             , index: (window.laydate && window.laydate.v) ? 100000 : 0
             , path: ready.getPath

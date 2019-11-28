@@ -40,6 +40,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
@@ -52,25 +53,26 @@ import java.util.Map;
  * 数据源配置
  *
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 @ConditionalOnClass(DruidDataSource.class)
 @EnableConfigurationProperties(DruidProperties.class)
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
+@Import(AspectjDruidProxy.class)
 public class DruidConfiguration {
 
+    @Autowired
+    DruidProperties druidProperties;
+
     private static final ConfigurationPropertyNameAliases aliases;
+    private Map<Object, Object> sourceMap = new HashMap<>();
 
     static {
         aliases = new ConfigurationPropertyNameAliases();
         aliases.addAliases("url", new String[]{"jdbc-url"});
         aliases.addAliases("username", new String[]{"user"});
     }
-
-    @Autowired
-    DruidProperties druidProperties;
-    private Map<Object, Object> sourceMap = new HashMap<>();
 
     /**
      * 初始化数据源/多数据源
@@ -79,7 +81,7 @@ public class DruidConfiguration {
      */
     @Bean
     @Primary
-    public MultiDataSource dataSource() {
+    public DynamicDataSource dataSource() {
         Map defaultConfig = beanToMap(this.druidProperties);
         DataSource defaultDatasource = bind(defaultConfig);
         sourceMap.put("dataSource", defaultDatasource);
@@ -95,7 +97,7 @@ public class DruidConfiguration {
                 sourceMap.put(config.get("key").toString(), bind(config));
             }
         }
-        MultiDataSource dataSource = new MultiDataSource();
+        DynamicDataSource dataSource = new DynamicDataSource();
         dataSource.setDefaultTargetDataSource(defaultDatasource);
         dataSource.setTargetDataSources(sourceMap);
         return dataSource;

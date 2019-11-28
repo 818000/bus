@@ -37,7 +37,7 @@ import java.io.*;
 
 /**
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 public class CacheRequestWrapper extends HttpServletRequestWrapper {

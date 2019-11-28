@@ -28,7 +28,7 @@ import java.util.Properties;
 
 /**
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 public class PropertyChain {

@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 
 /**
  * @author Kimi Liu
- * @version 5.2.5
+ * @version 5.2.6
  * @since JDK 1.8+
  */
 public abstract class AbstractProvider implements Provider {
