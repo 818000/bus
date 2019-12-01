@@ -21,7 +21,7 @@ import java.util.Map;
  * 数据源信息
  *
  * @author Kimi Liu
- * @version 5.2.6
+ * @version 5.2.8
  * @since JDK 1.8+
  */
 public class DataSourceHolder {
@@ -34,21 +34,21 @@ public class DataSourceHolder {
     };
 
     /**
-     * To switch DataSource
-     *
-     * @param key the key
-     */
-    public static void setKey(String key) {
-        DATA_SOURCE_KEY.set(key);
-    }
-
-    /**
      * Get current DataSource
      *
      * @return data source key
      */
     public static String getKey() {
         return DATA_SOURCE_KEY.get();
+    }
+
+    /**
+     * To switch DataSource
+     *
+     * @param key the key
+     */
+    public static void setKey(String key) {
+        DATA_SOURCE_KEY.set(key);
     }
 
     /**

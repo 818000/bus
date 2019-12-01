@@ -36,7 +36,7 @@ import java.util.Set;
  * 多数据源支持
  *
  * @author Kimi Liu
- * @version 5.2.6
+ * @version 5.2.8
  * @since JDK 1.8+
  */
 public class DynamicDataSource extends AbstractRoutingDataSource {
@@ -50,6 +50,43 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      */
     private static DynamicDataSource instance;
     private static byte[] lock = new byte[0];
+
+    /**
+     * 单例方法
+     *
+     * @return the DynamicDataSource
+     */
+    public static synchronized DynamicDataSource getInstance() {
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    instance = new DynamicDataSource();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 动态增加数据源
+     *
+     * @param key        数据源key
+     * @param dataSource 数据源信息
+     */
+    public synchronized static void addDataSource(String key, javax.sql.DataSource dataSource) {
+        if (dataSource != null && dataSource instanceof AbstractRoutingDataSource) {
+            try {
+                Field sourceMapField = AbstractRoutingDataSource.class.getDeclaredField("resolvedDataSources");
+                sourceMapField.setAccessible(true);
+                Map<Object, javax.sql.DataSource> sourceMap = (Map<Object, javax.sql.DataSource>) sourceMapField.get(getInstance().getDefaultDataSource());
+                sourceMap.put(key, dataSource);
+                keySet.add(key);
+                sourceMapField.setAccessible(false);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public void setTargetDataSources(Map<Object, Object> map) {
@@ -113,43 +150,6 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
      */
     public javax.sql.DataSource getDefaultDataSource() {
         return super.determineTargetDataSource();
-    }
-
-    /**
-     * 单例方法
-     *
-     * @return the DynamicDataSource
-     */
-    public static synchronized DynamicDataSource getInstance() {
-        if (instance == null) {
-            synchronized (lock) {
-                if (instance == null) {
-                    instance = new DynamicDataSource();
-                }
-            }
-        }
-        return instance;
-    }
-
-    /**
-     * 动态增加数据源
-     *
-     * @param key        数据源key
-     * @param dataSource 数据源信息
-     */
-    public synchronized static void addDataSource(String key, javax.sql.DataSource dataSource) {
-        if (dataSource != null && dataSource instanceof AbstractRoutingDataSource) {
-            try {
-                Field sourceMapField = AbstractRoutingDataSource.class.getDeclaredField("resolvedDataSources");
-                sourceMapField.setAccessible(true);
-                Map<Object, javax.sql.DataSource> sourceMap = (Map<Object, javax.sql.DataSource>) sourceMapField.get(getInstance().getDefaultDataSource());
-                sourceMap.put(key, dataSource);
-                keySet.add(key);
-                sourceMapField.setAccessible(false);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }

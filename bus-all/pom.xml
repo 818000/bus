@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>5.2.6</version>
+    <version>5.2.8</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -81,7 +81,7 @@
         <!--bus-spring-->
         <mysql.version>8.0.18</mysql.version>
         <druid.version>1.1.20</druid.version>
-        <dubbo.version>2.6.7</dubbo.version>
+        <dubbo.version>2.7.3</dubbo.version>
         <!--bus-storage-->
         <aliyun.oss.version>3.4.2</aliyun.oss.version>
         <baidu.bos.version>0.10.48</baidu.bos.version>
@@ -503,7 +503,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
+            <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
             <version>${dubbo.version}</version>
             <scope>provided</scope>
