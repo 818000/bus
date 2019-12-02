@@ -21,33 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.cron;
+package org.aoju.bus.cron.factory;
 
 /**
- * 作业启动器
- * 负责检查<strong>TaskTable</strong>是否有匹配到此时运行的Task
- * 检查完毕后启动器结束
+ * {@link Runnable} 的 {@link Task}包装
  *
  * @author Kimi Liu
  * @version 5.2.9
  * @since JDK 1.8+
  */
-public class TaskLauncher implements Runnable {
+public class RunnableTask implements Task {
 
-    private Scheduler scheduler;
-    private long millis;
+    private Runnable runnable;
 
-    public TaskLauncher(Scheduler scheduler, long millis) {
-        this.scheduler = scheduler;
-        this.millis = millis;
+    public RunnableTask(Runnable runnable) {
+        this.runnable = runnable;
     }
 
     @Override
-    public void run() {
-        //匹配秒部分由用户定义决定,始终不匹配年
-        scheduler.taskTable.executeTaskIfMatchInternal(millis);
-
-        //结束通知
-        scheduler.launcherManager.notifyLauncherCompleted(this);
+    public void execute() {
+        runnable.run();
     }
 }
