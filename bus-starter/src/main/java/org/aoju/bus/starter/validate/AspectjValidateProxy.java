@@ -37,8 +37,8 @@ import org.springframework.core.annotation.Order;
  * @version 5.3.2
  * @since JDK 1.8+
  */
-@Aspect
 @Order(99)
+@Aspect
 public class AspectjValidateProxy {
 
     /**

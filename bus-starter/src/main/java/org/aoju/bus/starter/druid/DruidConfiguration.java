@@ -150,6 +150,7 @@ public class DruidConfiguration {
             for (Object key : beanMap.keySet()) {
                 Object value = beanMap.get(key);
                 if (StringUtils.isNotEmpty(this.druidProperties.getPrivateKey())) {
+                    Logger.info("The database connection is securely enabled");
                     if ("url".equals(key)) {
                         value = Builder.decrypt(Algorithm.AES, this.druidProperties.getPrivateKey(), value.toString(), Charset.UTF_8);
                         beanMap.put("url", value);
