@@ -21,40 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.metric;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
+import org.aoju.bus.office.Builder;
+import org.aoju.bus.office.process.ProcessManager;
 
-import java.io.PrintStream;
+import java.io.File;
 
 /**
- * 旗标生成器
+ * 当需要某个office实例执行转换时，该类提供{@link AbstractOfficePoolManager}的配置
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public class OfficeProcessManagerPoolBuilder extends OfficeProcessManagerEntryBuilder
+        implements OfficeManagerPoolBuilder {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    private long taskQueueTimeout = Builder.DEFAULT_TASK_QUEUE_TIMEOUT;
+
+    /**
+     * 使用指定的值创建配置.
+     *
+     * @param officeHome     office安装的主目录.
+     * @param workingDir     要设置为office的工作目录.
+     * @param processManager 用于处理创建的流程的流程管理器.
+     */
+    public OfficeProcessManagerPoolBuilder(
+            final File officeHome, final File workingDir, final ProcessManager processManager) {
+        super(officeHome, workingDir, processManager);
+    }
 
     @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
+    public long getTaskQueueTimeout() {
+        return taskQueueTimeout;
+    }
 
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
+    @Override
+    public void setTaskQueueTimeout(final long taskQueueTimeout) {
+        this.taskQueueTimeout = taskQueueTimeout;
     }
 
 }

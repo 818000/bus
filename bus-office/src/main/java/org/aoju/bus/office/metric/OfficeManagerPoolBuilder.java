@@ -21,40 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
-
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+package org.aoju.bus.office.metric;
 
 /**
- * 旗标生成器
+ * 这个类提供了{@link AbstractOfficePoolManager}的配置
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public interface OfficeManagerPoolBuilder extends OfficeManagerBuilder {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    /**
+     * 获取转换队列中任务的最大生存时间。如果等待时间长于此超时，则任务将从队列中删除.
+     * 默认:30秒
+     *
+     * @return 任务队列超时，以毫秒为单位.
+     */
+    long getTaskQueueTimeout();
 
-    @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
-
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
-    }
+    /**
+     * 设置转换队列中任务的最大生存时间。如果等待时间长于此超时，则任务将从队列中删除.
+     *
+     * @param taskQueueTimeout 任务队列超时，以毫秒为单位.
+     */
+    void setTaskQueueTimeout(final long taskQueueTimeout);
 
 }
