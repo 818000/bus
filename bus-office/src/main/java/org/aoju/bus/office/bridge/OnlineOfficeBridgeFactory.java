@@ -21,40 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.bridge;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import org.aoju.bus.http.HttpClient;
+import org.aoju.bus.office.metric.RequestBuilder;
 
 /**
- * 旗标生成器
+ * 保存与LibreOffice在线服务器通信的请求配置.
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public class OnlineOfficeBridgeFactory implements OnlineOfficeContextAware {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    private final HttpClient httpClient;
+    private final RequestBuilder requestBuilder;
+
+    /**
+     * 使用指定的客户端和URL构造新连接.
+     *
+     * @param httpClient     用于与LibreOffice在线服务器通信的HTTP客户机(已初始化).
+     * @param requestBuilder 转换的请求配置.
+     */
+    public OnlineOfficeBridgeFactory(final HttpClient httpClient,
+                                     final RequestBuilder requestBuilder) {
+        this.httpClient = httpClient;
+        this.requestBuilder = requestBuilder;
+    }
 
     @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
 
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
+    @Override
+    public RequestBuilder getRequestBuilder() {
+        return requestBuilder;
     }
 
 }

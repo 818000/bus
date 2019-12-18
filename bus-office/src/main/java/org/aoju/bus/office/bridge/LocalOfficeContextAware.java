@@ -21,40 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.bridge;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XDesktop;
+import com.sun.star.uno.XComponentContext;
+import org.aoju.bus.office.Context;
 
 /**
- * 旗标生成器
+ * 表示用于本地转换的office上下文
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public interface LocalOfficeContextAware extends Context {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    /**
+     * 获取此上下文的office组件加载程序.
+     *
+     * @return 组件加载程序.
+     */
+    XComponentLoader getComponentLoader();
 
-    @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
+    /**
+     * 获取此上下文的office组件上下文.
+     *
+     * @return 组件的上下文.
+     */
+    XComponentContext getComponentContext();
 
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
-    }
+    /**
+     * 获取此上下文的office桌面.
+     *
+     * @return 桌面.
+     */
+    XDesktop getDesktop();
 
 }

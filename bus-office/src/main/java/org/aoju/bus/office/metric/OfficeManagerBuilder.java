@@ -21,40 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.metric;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import java.io.File;
 
 /**
- * 旗标生成器
+ * 这个类提供了{@link AbstractOfficeManager}的配置.
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public interface OfficeManagerBuilder {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    /**
+     * 获取将在处理流时创建临时文件的目录.
+     * 默认: 系统临时目录<code>java.io.tmpdir</code>确定.
+     *
+     * @return 工作目录.
+     */
+    File getWorkingDir();
 
-    @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
-
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
-    }
+    /**
+     * 设置将在处理流时创建临时文件的目录.
+     *
+     * @param workingDir 新的工作目录.
+     */
+    void setWorkingDir(final File workingDir);
 
 }

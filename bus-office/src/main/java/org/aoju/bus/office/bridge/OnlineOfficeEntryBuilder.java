@@ -21,40 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.bridge;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import org.aoju.bus.office.Builder;
+import org.aoju.bus.office.metric.OfficeManagerEntryBuilder;
 
 /**
- * 旗标生成器
+ * 当不需要office实例来执行转换时，该类保存{@link OnlineOfficeEntryManager}的配置.
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public class OnlineOfficeEntryBuilder implements OfficeManagerEntryBuilder {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    private long taskExecutionTimeout = Builder.DEFAULT_TASK_EXECUTION_TIMEOUT;
 
     @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
+    public long getTaskExecutionTimeout() {
+        return taskExecutionTimeout;
+    }
 
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
+    @Override
+    public void setTaskExecutionTimeout(final long taskExecutionTimeout) {
+        this.taskExecutionTimeout = taskExecutionTimeout;
     }
 
 }

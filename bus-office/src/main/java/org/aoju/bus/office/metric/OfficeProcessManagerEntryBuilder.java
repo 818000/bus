@@ -23,26 +23,50 @@
  */
 package org.aoju.bus.office.metric;
 
-import org.aoju.bus.office.bridge.LocalOfficeBridgeFactory;
+import org.aoju.bus.office.Builder;
+import org.aoju.bus.office.process.ProcessManager;
 
-import java.util.EventObject;
+import java.io.File;
 
 /**
- * office连接打开或关闭时引发的事件.
+ * 当需要office实例来执行转换时，该类保存{@link OfficeProcessEntryManager}的配置
  *
  * @author Kimi Liu
  * @version 3.6.6
  * @since JDK 1.8+
  */
-public class OfficeConnectEvent extends EventObject {
+public class OfficeProcessManagerEntryBuilder extends OfficeProcessManagerBuilder
+        implements OfficeManagerEntryBuilder {
+
+    private long taskExecutionTimeout = Builder.DEFAULT_TASK_EXECUTION_TIMEOUT;
 
     /**
-     * 为指定的连接构造新事件.
-     *
-     * @param source 事件最初发生时所在的连接.
+     * 使用默认值创建配置.
      */
-    public OfficeConnectEvent(final LocalOfficeBridgeFactory source) {
-        super(source);
+    public OfficeProcessManagerEntryBuilder() {
+        super();
+    }
+
+    /**
+     * 使用指定的值创建配置.
+     *
+     * @param officeHome     office安装的主目录.
+     * @param workingDir     要设置为office的工作目录.
+     * @param processManager 用于处理创建的流程的流程管理器.
+     */
+    public OfficeProcessManagerEntryBuilder(
+            final File officeHome, final File workingDir, final ProcessManager processManager) {
+        super(officeHome, workingDir, processManager);
+    }
+
+    @Override
+    public long getTaskExecutionTimeout() {
+        return taskExecutionTimeout;
+    }
+
+    @Override
+    public void setTaskExecutionTimeout(final long taskExecutionTimeout) {
+        this.taskExecutionTimeout = taskExecutionTimeout;
     }
 
 }

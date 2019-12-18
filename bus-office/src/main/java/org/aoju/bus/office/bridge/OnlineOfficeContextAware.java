@@ -21,40 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.starter.banner;
+package org.aoju.bus.office.bridge;
 
-import org.aoju.bus.Version;
-import org.aoju.bus.starter.BusXBuilder;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringBootVersion;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.core.env.Environment;
-
-import java.io.PrintStream;
+import org.aoju.bus.http.HttpClient;
+import org.aoju.bus.office.Context;
+import org.aoju.bus.office.metric.RequestBuilder;
 
 /**
- * 旗标生成器
+ * 表示用于在线转换的office环境.
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 3.6.6
  * @since JDK 1.8+
  */
-public class BusBanner implements Banner {
+public interface OnlineOfficeContextAware extends Context {
 
-    private static final String SPRING_BOOT = "::Spring Boot::";
+    /**
+     * 获取负责向office服务器执行请求的HTTP客户端.
+     *
+     * @return 将发送转换请求的客户端.
+     */
+    HttpClient getHttpClient();
 
-    @Override
-    public void printBanner(Environment environment, Class<?> sourceClass, PrintStream printStream) {
-        for (Object line : BusXBuilder.BUS_BANNER) {
-            printStream.println(AnsiOutput.toString(AnsiColor.BRIGHT_YELLOW, line));
-        }
-
-        printStream.println();
-        printStream.println(AnsiOutput.toString(
-                AnsiColor.BRIGHT_MAGENTA, SPRING_BOOT + String.format(" (v%s)", SpringBootVersion.getVersion()),
-                AnsiColor.BRIGHT_MAGENTA, "      " + BusXBuilder.BUS_BOOT + String.format(" (v%s)", Version.get())));
-        printStream.println();
-    }
+    /**
+     * 获取请求配置.
+     *
+     * @return 请求配置.
+     */
+    RequestBuilder getRequestBuilder();
 
 }
