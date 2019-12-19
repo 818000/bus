@@ -26,8 +26,8 @@ package org.aoju.bus.extra;
 import com.google.zxing.*;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
-import org.aoju.bus.core.consts.Charset;
-import org.aoju.bus.core.consts.FileType;
+import org.aoju.bus.core.lang.Charset;
+import org.aoju.bus.core.lang.FileType;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.utils.ImageUtils;
 import org.aoju.bus.extra.qrcode.BufferedImageLuminanceSource;
@@ -45,7 +45,7 @@ import java.util.HashMap;
  * 基于Zxing的二维码工具类
  *
  * @author Kimi Liu
- * @version 5.3.2
+ * @version 5.3.3
  * @since JDK 1.8+
  */
 public class QrCodeUtils {
