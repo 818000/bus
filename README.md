@@ -49,7 +49,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 
 ## 组件信息
 | 完成 |模块信息 | 描述信息 |
-|-----| ------ | ------- |
+|------| ------ | ------- |
 |[√]|bus-all|为微服务提供统一的pom管理，以及通用组件| 
 |[√]|bus-base|基础功能及base相关功能,实体类(Entity),服务(Service),接口(Controller)|
 |[×]|bus-cache|缓存服务及工具,支持redis,memcached,ehcache,hession等|
