@@ -50,9 +50,9 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 ## 组件信息
 | 完成 |模块信息 | 描述信息 |
 |-----| ------ | ------- |
-|bus-all|为微服务提供统一的pom管理，以及通用组件| 
+|[√]|bus-all|为微服务提供统一的pom管理，以及通用组件| 
 |[√]|bus-base|基础功能及base相关功能,实体类(Entity),服务(Service),接口(Controller)|
-|[ ]|bus-cache|缓存服务及工具,支持redis,memcached,ehcache,hession等|
+|[x]|bus-cache|缓存服务及工具,支持redis,memcached,ehcache,hession等|
 |[√]|bus-core|核心功能及工具类,包括常量、线程、类加载器、字符集编码、反射、集合、日期、等各种常用工具|
 |[√]|bus-cron|定时器及定时任务等功能|
 |[√]|bus-crypto|加密解密，支持支持AES/DES/REA/MD5等常用加密算法|
@@ -60,7 +60,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 |[√]|bus-forest|jar加解密,杜绝源码泄漏或被反编译|
 |[√]|bus-health|应用服务器健康信息|
 |[√]|bus-http|HTTP功能封装|
-|[ ]|bus-limiter|请求限流|
+|[x]|bus-limiter|请求限流|
 |[√]|bus-logger|日志信息及功能，动态检测日志实现的方式，使日志使用个更加便利灵活简单|
 |[√]|bus-mapper|数据操作,在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生|
 |[√]|bus-oauth|第三方登录,已集成十多家第三方平台（国内外常用的基本都已包含）|
@@ -75,7 +75,7 @@ Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Jav
 |[√]|bus-starter|SpringBoot starter，启动及相关配置文件信息|
 |[√]|bus-storage|文件存储组件,,支持阿里云、七牛，提供了工厂模式和注入两种集成方式|
 |[√]|bus-swagger|API调用及测试|
-|[ ]|bus-tracer|轻量级分布式链路跟踪监控，日志及访问流程追踪以及内部调用链追踪|
+|[x]|bus-tracer|轻量级分布式链路跟踪监控，日志及访问流程追踪以及内部调用链追踪|
 |[√]|bus-validate|参数校验，会默认拦截所有的标记有`@Valid`的方法或类|
  
 
