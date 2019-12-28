@@ -29,8 +29,10 @@ import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.utils.ArrayUtils;
 import org.aoju.bus.core.utils.IterUtils;
+import org.aoju.bus.core.utils.ObjectUtils;
 import org.aoju.bus.core.utils.StringUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
@@ -150,8 +152,10 @@ public class ArrayConverter extends AbstractConverter<Object> {
             for (int i = 0; i < list.size(); i++) {
                 Array.set(result, i, converter.convert(targetComponentType, list.get(i)));
             }
+        } else if (value instanceof Serializable && byte.class == targetComponentType) {
+            // 用户可能想序列化指定对象
+            result = ObjectUtils.serialize(value);
         } else {
-            // everything else:
             result = convertToSingleElementArray(value);
         }
 

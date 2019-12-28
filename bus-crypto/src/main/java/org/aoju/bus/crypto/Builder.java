@@ -736,7 +736,7 @@ public class Builder {
      * @param password 明文密码
      * @return 加密后的密文
      */
-    public static String bcrypt(String password) {
+    public static String hashpw(String password) {
         return BCrypt.hashpw(password);
     }
 
@@ -747,7 +747,7 @@ public class Builder {
      * @param hashed   密文
      * @return 是否匹配
      */
-    public static boolean bcryptCheck(String password, String hashed) {
+    public static boolean checkpw(String password, String hashed) {
         return BCrypt.checkpw(password, hashed);
     }
 

@@ -41,6 +41,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.net.URI;
 import java.net.URL;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 /**
@@ -487,14 +488,34 @@ public class ClassUtils {
 
     /**
      * 是否为简单值类型
-     * 包括：原始类型,、String、other CharSequence, a Number, a Date, a URI, a URL, a Locale or a Class.
+     * 包括：
+     * <pre>
+     *     原始类型
+     *     String
+     *     CharSequence
+     *     Number
+     *     Date
+     *     URI
+     *     URL
+     *     Locale
+     *     Class
+     * </pre>
      *
+     * @param clazz 类
      * @param clazz 类
      * @return 是否为简单值类型
      */
     public static boolean isSimpleValueType(Class<?> clazz) {
-        return isBasicType(clazz) || clazz.isEnum() || CharSequence.class.isAssignableFrom(clazz) || Number.class.isAssignableFrom(clazz) || Date.class.isAssignableFrom(clazz) || clazz
-                .equals(URI.class) || clazz.equals(URL.class) || clazz.equals(Locale.class) || clazz.equals(Class.class);
+        return isBasicType(clazz)
+                || clazz.isEnum()
+                || CharSequence.class.isAssignableFrom(clazz)
+                || Number.class.isAssignableFrom(clazz)
+                || Date.class.isAssignableFrom(clazz)
+                || clazz.equals(URI.class)
+                || clazz.equals(URL.class)
+                || clazz.equals(Locale.class)
+                || clazz.equals(Class.class)
+                || TemporalAccessor.class.isAssignableFrom(clazz);
     }
 
     /**

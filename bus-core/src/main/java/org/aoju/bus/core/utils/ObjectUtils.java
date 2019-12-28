@@ -1285,4 +1285,49 @@ public class ObjectUtils {
         return newArray;
     }
 
+    /**
+     * 对象序列化
+     * 对象必须实现Serializable接口
+     *
+     * @param <T> 对象类型
+     * @param obj 要被序列化的对象
+     * @return 序列化后的字节码
+     */
+    public static <T> byte[] serialize(T obj) {
+        if (false == (obj instanceof Serializable)) {
+            return null;
+        }
+
+        FastByteArray out = new FastByteArray();
+        ObjectOutputStream os = null;
+        try {
+            os = new ObjectOutputStream(out);
+            os.writeObject(obj);
+            os.flush();
+        } catch (Exception e) {
+            throw new InstrumentException(e);
+        } finally {
+            IoUtils.close(os);
+        }
+        return out.toByteArray();
+    }
+
+    /**
+     * byte反序列化
+     * 对象必须实现Serializable接口
+     *
+     * @param <T>   对象类型
+     * @param bytes 反序列化的字节码
+     * @return 反序列化后的对象
+     */
+    public static <T> T deserialize(byte[] bytes) {
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            ObjectInputStream out = new ObjectInputStream(in);
+            return (T) out.readObject();
+        } catch (Exception e) {
+            throw new InstrumentException(e);
+        }
+    }
+
 }
