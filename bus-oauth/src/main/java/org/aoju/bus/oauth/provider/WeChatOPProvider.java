@@ -25,7 +25,6 @@ package org.aoju.bus.oauth.provider;
 
 import com.alibaba.fastjson.JSONObject;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.utils.StringUtils;
 import org.aoju.bus.http.Httpx;
@@ -34,24 +33,25 @@ import org.aoju.bus.oauth.Context;
 import org.aoju.bus.oauth.Registry;
 import org.aoju.bus.oauth.magic.AccToken;
 import org.aoju.bus.oauth.magic.Callback;
+import org.aoju.bus.oauth.magic.Message;
 import org.aoju.bus.oauth.magic.Property;
 import org.aoju.bus.oauth.metric.StateCache;
 
 /**
- * 企业微信登录
+ * 微信登录
  *
  * @author Kimi Liu
  * @version 5.5.0
  * @since JDK 1.8+
  */
-public class WeChatEEProvider extends DefaultProvider {
+public class WeChatOPProvider extends DefaultProvider {
 
-    public WeChatEEProvider(Context context) {
-        super(context, Registry.WECHAT_EE);
+    public WeChatOPProvider(Context context) {
+        super(context, Registry.WECHAT_OPEN);
     }
 
-    public WeChatEEProvider(Context context, StateCache stateCache) {
-        super(context, Registry.WECHAT_EE, stateCache);
+    public WeChatOPProvider(Context context, StateCache stateCache) {
+        super(context, Registry.WECHAT_OPEN, stateCache);
     }
 
     /**
@@ -62,56 +62,70 @@ public class WeChatEEProvider extends DefaultProvider {
      */
     @Override
     protected AccToken getAccessToken(Callback Callback) {
-        String response = doGetAuthorizationCode(accessTokenUrl(Callback.getCode()));
-
-        JSONObject object = this.checkResponse(response);
-
-        return AccToken.builder()
-                .accessToken(object.getString("access_token"))
-                .expireIn(object.getIntValue("expires_in"))
-                .code(Callback.getCode())
-                .build();
+        return this.getToken(accessTokenUrl(Callback.getCode()));
     }
 
     @Override
     protected Property getUserInfo(AccToken token) {
-        String response = doGetUserInfo(token);
-        JSONObject object = this.checkResponse(response);
+        String openId = token.getOpenId();
+        JSONObject object = JSONObject.parseObject(doGetUserInfo(token));
 
-        // 返回 OpenId 或其他,均代表非当前企业用户,不支持
-        if (!object.containsKey("UserId")) {
-            throw new InstrumentException(Builder.Status.UNIDENTIFIED_PLATFORM.getCode());
+        this.checkResponse(object);
+
+        String location = String.format("%s-%s-%s", object.getString("country"), object.getString("province"), object.getString("city"));
+
+        if (object.containsKey("unionid")) {
+            token.setUnionId(object.getString("unionid"));
         }
-        String userId = object.getString("UserId");
-        String userDetailResponse = getUserDetail(token.getAccessToken(), userId);
-        JSONObject userDetail = this.checkResponse(userDetailResponse);
 
         return Property.builder()
-                .username(userDetail.getString("name"))
-                .nickname(userDetail.getString("alias"))
-                .avatar(userDetail.getString("avatar"))
-                .location(userDetail.getString("address"))
-                .email(userDetail.getString("email"))
-                .uuid(userId)
-                .gender(Normal.Gender.getGender(object.getString("gender")))
+                .username(object.getString("nickname"))
+                .nickname(object.getString("nickname"))
+                .avatar(object.getString("headimgurl"))
+                .location(location)
+                .uuid(openId)
+                .gender(Normal.Gender.getGender(object.getString("sex")))
                 .token(token)
                 .source(source.toString())
                 .build();
     }
 
-    /**
-     * 校验请求结果
-     *
-     * @param response 请求结果
-     * @return 如果请求结果正常, 则返回JSONObject
-     */
-    private JSONObject checkResponse(String response) {
-        JSONObject object = JSONObject.parseObject(response);
+    @Override
+    public Message refresh(AccToken oldToken) {
+        return Message.builder()
+                .errcode(Builder.Status.SUCCESS.getCode())
+                .data(this.getToken(refreshTokenUrl(oldToken.getRefreshToken())))
+                .build();
+    }
 
-        if (object.containsKey("errcode") && object.getIntValue("errcode") != 0) {
+    /**
+     * 检查响应内容是否正确
+     *
+     * @param object 请求响应内容
+     */
+    private void checkResponse(JSONObject object) {
+        if (object.containsKey("errcode")) {
             throw new InstrumentException(StringUtils.toString(object.getIntValue("errcode")), object.getString("errmsg"));
         }
-        return object;
+    }
+
+    /**
+     * 获取token,适用于获取access_token和刷新token
+     *
+     * @param accessTokenUrl 实际请求token的地址
+     * @return token对象
+     */
+    private AccToken getToken(String accessTokenUrl) {
+        JSONObject object = JSONObject.parseObject(Httpx.get(accessTokenUrl));
+
+        this.checkResponse(object);
+
+        return AccToken.builder()
+                .accessToken(object.getString("access_token"))
+                .refreshToken(object.getString("refresh_token"))
+                .expireIn(object.getIntValue("expires_in"))
+                .openId(object.getString("openid"))
+                .build();
     }
 
     /**
@@ -124,9 +138,10 @@ public class WeChatEEProvider extends DefaultProvider {
     @Override
     public String authorize(String state) {
         return Builder.fromBaseUrl(source.authorize())
+                .queryParam("response_type", "code")
                 .queryParam("appid", context.getClientId())
-                .queryParam("agentid", context.getAgentId())
                 .queryParam("redirect_uri", context.getRedirectUri())
+                .queryParam("scope", "snsapi_login")
                 .queryParam("state", getRealState(state))
                 .build();
     }
@@ -140,8 +155,10 @@ public class WeChatEEProvider extends DefaultProvider {
     @Override
     protected String accessTokenUrl(String code) {
         return Builder.fromBaseUrl(source.accessToken())
-                .queryParam("corpid", context.getClientId())
-                .queryParam("corpsecret", context.getClientSecret())
+                .queryParam("code", code)
+                .queryParam("appid", context.getClientId())
+                .queryParam("secret", context.getClientSecret())
+                .queryParam("grant_type", "authorization_code")
                 .build();
     }
 
@@ -155,23 +172,24 @@ public class WeChatEEProvider extends DefaultProvider {
     protected String userInfoUrl(AccToken token) {
         return Builder.fromBaseUrl(source.userInfo())
                 .queryParam("access_token", token.getAccessToken())
-                .queryParam("code", token.getCode())
+                .queryParam("openid", token.getOpenId())
+                .queryParam("lang", "zh_CN")
                 .build();
     }
 
     /**
-     * 用户详情
+     * 返回获取userInfo的url
      *
-     * @param accessToken accessToken
-     * @param userId      企业内用户id
-     * @return 用户详情
+     * @param refreshToken getAccessToken方法返回的refreshToken
+     * @return 返回获取userInfo的url
      */
-    private String getUserDetail(String accessToken, String userId) {
-        String userDetailUrl = Builder.fromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
-                .queryParam("access_token", accessToken)
-                .queryParam("userid", userId)
+    @Override
+    protected String refreshTokenUrl(String refreshToken) {
+        return Builder.fromBaseUrl(source.refresh())
+                .queryParam("appid", context.getClientId())
+                .queryParam("refresh_token", refreshToken)
+                .queryParam("grant_type", "refresh_token")
                 .build();
-        return Httpx.get(userDetailUrl);
     }
 
 }
