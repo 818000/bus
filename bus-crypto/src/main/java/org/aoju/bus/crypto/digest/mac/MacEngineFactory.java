@@ -21,48 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aoju.bus.crypto;
+package org.aoju.bus.crypto.digest.mac;
 
-import java.security.Provider;
+import org.aoju.bus.core.lang.Algorithm;
+import org.aoju.bus.crypto.Builder;
+
+import javax.crypto.SecretKey;
 
 /**
- * 全局单例的 org.bouncycastle.jce.provider.BouncyCastleProvider 对象
+ * {@link MacEngine} 实现工厂类
  *
  * @author Kimi Liu
  * @version 5.5.6
  * @since JDK 1.8+
  */
-public class Holder {
-
-    private static boolean useBouncyCastle = true;
+public class MacEngineFactory {
 
     /**
-     * 创建Bouncy Castle 提供者
-     * 如果用户未引入bouncycastle库,则此方法抛出{@link NoClassDefFoundError} 异常
+     * 根据给定算法和密钥生成对应的{@link MacEngine}
      *
-     * @return {@link  Provider}
+     * @param algorithm 算法，见{@link Algorithm}
+     * @param key       密钥
+     * @return {@link MacEngine}
      */
-    public Provider createBouncyCastleProvider() {
-        return new org.bouncycastle.jce.provider.BouncyCastleProvider();
-    }
-
-    /**
-     * 获取{@link Provider}
-     *
-     * @return {@link Provider}
-     */
-    public Provider getProvider() {
-        return useBouncyCastle ? createBouncyCastleProvider() : null;
-    }
-
-    /**
-     * 设置是否使用Bouncy Castle库
-     * 如果设置为false，表示强制关闭Bouncy Castle而使用JDK
-     *
-     * @param isUseBouncyCastle 是否使用BouncyCastle库
-     */
-    public static void setUseBouncyCastle(boolean isUseBouncyCastle) {
-        useBouncyCastle = isUseBouncyCastle;
+    public static MacEngine createEngine(String algorithm, SecretKey key) {
+        if (Algorithm.HmacSM3.equalsIgnoreCase(algorithm)) {
+            // HmacSM3算法是BC库实现的
+            return Builder.createHmacSm3Engine(key.getEncoded());
+        }
+        return new DefaultHMacEngine(algorithm, key);
     }
 
 }
