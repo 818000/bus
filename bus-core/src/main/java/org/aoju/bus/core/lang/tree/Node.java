@@ -22,40 +22,84 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.oauth;
-
-import lombok.Data;
-import org.aoju.bus.oauth.Context;
-import org.aoju.bus.oauth.Registry;
-import org.aoju.bus.starter.BusXExtend;
-import org.aoju.bus.starter.cache.CacheProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.util.Map;
+package org.aoju.bus.core.lang.tree;
 
 /**
- * 授权配置信息
- * 1. 默认读取配置文件信息
- * 2. 通过set形式设置(动态/DB等)
+ * 提供节点相关的的方法
  *
+ * @param <T> 类型
  * @author Kimi Liu
  * @version 5.6.9
  * @since JDK 1.8+
  */
-@Data
-@ConfigurationProperties(prefix = BusXExtend.OAUTH)
-public class AuthProperties {
+public interface Node<T> extends Comparable<Node<T>> {
 
     /**
-     * 基础配置
+     * 获取ID
+     *
+     * @return ID
      */
-    private Map<Registry, Context> type;
+    T getId();
 
     /**
-     * 缓存配置
+     * 设置ID
+     *
+     * @param id ID
      */
-    @NestedConfigurationProperty
-    private CacheProperties cache;
+    Node<T> setId(T id);
+
+    /**
+     * 获取父节点ID
+     *
+     * @return 父节点ID
+     */
+    T getParentId();
+
+    /**
+     * 设置父节点ID
+     *
+     * @param parentId 父节点ID
+     * @return 父节点ID
+     */
+    Node<T> setParentId(T parentId);
+
+    /**
+     * 获取节点标签名称
+     *
+     * @return 节点标签名称
+     */
+    CharSequence getName();
+
+    /**
+     * 设置节点标签名称
+     *
+     * @param name 节点标签名称
+     * @return this
+     */
+    Node<T> setName(CharSequence name);
+
+    /**
+     * 获取权重
+     *
+     * @return 权重
+     */
+    Comparable<?> getWeight();
+
+    /**
+     * 设置权重
+     *
+     * @param weight 权重
+     * @return this
+     */
+    Node<T> setWeight(Comparable<?> weight);
+
+    default int compareTo(Node node) {
+        final Comparable weight = this.getWeight();
+        if (null != weight) {
+            final Comparable weightOther = node.getWeight();
+            return weight.compareTo(weightOther);
+        }
+        return 0;
+    }
 
 }
