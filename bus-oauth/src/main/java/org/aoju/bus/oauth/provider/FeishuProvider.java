@@ -24,8 +24,9 @@
  ********************************************************************************/
 package org.aoju.bus.oauth.provider;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.http.Httpx;
 import org.aoju.bus.oauth.Builder;
@@ -41,103 +42,101 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 美团登录
+ * 支付宝登录
  *
  * @author Kimi Liu
  * @version 5.6.9
  * @since JDK 1.8+
  */
-public class MeituanProvider extends DefaultProvider {
+public class FeishuProvider extends DefaultProvider {
 
-    public MeituanProvider(Context context) {
-        super(context, Registry.MEITUAN);
+    public FeishuProvider(Context context) {
+        super(context, Registry.FEISHU);
     }
 
-    public MeituanProvider(Context context, StateCache stateCache) {
-        super(context, Registry.MEITUAN, stateCache);
+    public FeishuProvider(Context context, StateCache stateCache) {
+        super(context, Registry.FEISHU, stateCache);
     }
 
     @Override
-    protected AccToken getAccessToken(Callback Callback) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("app_id", context.getAppKey());
-        params.put("secret", context.getAppSecret());
-        params.put("code", Callback.getCode());
-        params.put("grant_type", "authorization_code");
-
-        String response = Httpx.post(source.accessToken(), params);
-        JSONObject object = JSONObject.parseObject(response);
-
-        this.checkResponse(object);
-
+    protected AccToken getAccessToken(Callback callback) {
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("app_id", context.getAppKey());
+        requestObject.put("app_secret", context.getAppSecret());
+        requestObject.put("grant_type", "authorization_code");
+        requestObject.put("code", callback.getCode());
+        String response = Httpx.post(source.accessToken(), requestObject.toJSONString(), MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = JSON.parseObject(response);
+        this.checkResponse(jsonObject);
         return AccToken.builder()
-                .accessToken(object.getString("access_token"))
-                .refreshToken(object.getString("refresh_token"))
-                .expireIn(object.getIntValue("expires_in"))
+                .accessToken(jsonObject.getString("access_token"))
+                .refreshToken(jsonObject.getString("refresh_token"))
+                .expireIn(jsonObject.getIntValue("expires_in"))
+                .tokenType(jsonObject.getString("token_type"))
+                .openId(jsonObject.getString("open_id"))
                 .build();
+
     }
 
     @Override
-    protected Property getUserInfo(AccToken token) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("app_id", context.getAppKey());
-        params.put("secret", context.getAppSecret());
-        params.put("access_token", token.getAccessToken());
+    protected Property getUserInfo(AccToken authToken) {
+        String accessToken = authToken.getAccessToken();
 
-        String response = Httpx.post(source.refresh(), params);
-        JSONObject object = JSONObject.parseObject(response);
-
-        this.checkResponse(object);
-
+        Map<String, String> map = new HashMap<>();
+        map.put("Content-Type", MediaType.APPLICATION_JSON);
+        map.put("Authorization", "Bearer " + accessToken);
+        String response = Httpx.get(source.userInfo(), null, map);
+        JSONObject jsonObject = JSON.parseObject(response);
         return Property.builder()
-                .uuid(object.getString("openid"))
-                .username(object.getString("nickname"))
-                .nickname(object.getString("nickname"))
-                .avatar(object.getString("avatar"))
-                .gender(Normal.Gender.UNKNOWN)
-                .token(token)
-                .source(source.toString())
+                .avatar(jsonObject.getString("AvatarUrl"))
+                .username(jsonObject.getString("Mobile"))
+                .email(jsonObject.getString("Email"))
+                .nickname("Name")
                 .build();
     }
 
     @Override
-    public Message refresh(AccToken oldToken) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("app_id", context.getAppKey());
-        params.put("secret", context.getAppSecret());
-        params.put("refresh_token", oldToken.getRefreshToken());
-        params.put("grant_type", "refresh_token");
+    public Message refresh(AccToken authToken) {
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("app_id", context.getAppKey());
+        requestObject.put("app_secret", context.getAppSecret());
+        requestObject.put("grant_type", "refresh_token");
+        requestObject.put("refresh_token", authToken.getRefreshToken());
 
-        String response = Httpx.post(source.refresh(), params);
-        JSONObject object = JSONObject.parseObject(response);
-
-        this.checkResponse(object);
-
+        String response = Httpx.post(source.refresh(), requestObject.toJSONString(), MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = JSON.parseObject(response);
+        this.checkResponse(jsonObject);
         return Message.builder()
                 .errcode(Builder.Status.SUCCESS.getCode())
                 .data(AccToken.builder()
-                        .accessToken(object.getString("access_token"))
-                        .refreshToken(object.getString("refresh_token"))
-                        .expireIn(object.getIntValue("expires_in"))
+                        .accessToken(jsonObject.getString("access_token"))
+                        .refreshToken(jsonObject.getString("refresh_token"))
+                        .expireIn(jsonObject.getIntValue("expires_in"))
+                        .tokenType(jsonObject.getString("token_type"))
+                        .openId(jsonObject.getString("open_id"))
                         .build())
                 .build();
-    }
 
-    private void checkResponse(JSONObject object) {
-        if (object.containsKey("error_code")) {
-            throw new InstrumentException(object.getString("erroe_msg"));
-        }
     }
 
     @Override
     public String authorize(String state) {
         return Builder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
                 .queryParam("app_id", context.getAppKey())
-                .queryParam("redirect_uri", context.getRedirectUri())
+                .queryParam("redirect_uri", urlEncode(context.getRedirectUri()))
                 .queryParam("state", getRealState(state))
-                .queryParam("scope", Normal.EMPTY)
                 .build();
+    }
+
+    /**
+     * 校验响应内容是否正确
+     *
+     * @param jsonObject 响应内容
+     */
+    private void checkResponse(JSONObject jsonObject) {
+        if (jsonObject.getIntValue("code") != 0) {
+            throw new InstrumentException(jsonObject.getString("message"));
+        }
     }
 
 }
