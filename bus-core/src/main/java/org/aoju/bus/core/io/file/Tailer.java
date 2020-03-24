@@ -43,7 +43,7 @@ import java.util.concurrent.*;
  * 文件内容跟随器，实现类似Linux下"tail -f"命令功能
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class Tailer implements Serializable {
@@ -53,22 +53,22 @@ public class Tailer implements Serializable {
     /**
      * 编码
      */
-    private final Charset charset;
+    private Charset charset;
     /**
      * 行处理器
      */
-    private final LineHandler lineHandler;
+    private LineHandler lineHandler;
     /**
      * 初始读取的行数
      */
-    private final int initReadLine;
+    private int initReadLine;
     /**
      * 定时任务检查间隔时长
      */
-    private final long period;
+    private long period;
 
-    private final RandomAccessFile randomAccessFile;
-    private final ScheduledExecutorService executorService;
+    private RandomAccessFile randomAccessFile;
+    private ScheduledExecutorService executorService;
 
     /**
      * 构造，默认UTF-8编码

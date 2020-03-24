@@ -36,7 +36,7 @@ import org.aoju.bus.core.lang.Symbol;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @see #MAC
  * @see #LINUX
  * @see #WINDOWS
@@ -57,7 +57,7 @@ public enum LineSeparator {
      */
     WINDOWS(Symbol.CRLF);
 
-    private final String value;
+    private String value;
 
     LineSeparator(String lineSeparator) {
         this.value = lineSeparator;

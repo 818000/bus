@@ -28,12 +28,12 @@ package org.aoju.bus.core.convert;
  * 泛型枚举转换器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class GenericEnumConverter<E extends Enum<E>> extends AbstractConverter<E> {
 
-    private final Class<E> enumClass;
+    private Class<E> enumClass;
 
     /**
      * 构造

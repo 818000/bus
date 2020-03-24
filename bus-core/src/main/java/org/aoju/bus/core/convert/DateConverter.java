@@ -36,12 +36,12 @@ import java.util.Date;
  * 日期转换器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class DateConverter extends AbstractConverter<Date> {
 
-    private final Class<? extends Date> targetType;
+    private Class<? extends Date> targetType;
     /**
      * 日期格式化
      */

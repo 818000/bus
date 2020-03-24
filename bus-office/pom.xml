@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-office</artifactId>
-    <version>5.8.5</version>
+    <version>5.8.0</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -42,25 +42,21 @@
             <groupId>org.openoffice</groupId>
             <artifactId>juh</artifactId>
             <version>${office.version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.openoffice</groupId>
             <artifactId>ridl</artifactId>
             <version>${office.version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.openoffice</groupId>
             <artifactId>unoil</artifactId>
             <version>${office.version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>${poi.version}</version>
-            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-codec</artifactId>
@@ -72,19 +68,16 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>${poi.version}</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
             <version>${xerces.version}</version>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 

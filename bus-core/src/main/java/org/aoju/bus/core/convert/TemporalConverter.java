@@ -50,12 +50,12 @@ import java.util.Objects;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class TemporalConverter extends AbstractConverter<TemporalAccessor> {
 
-    private final Class<?> targetType;
+    private Class<?> targetType;
     /**
      * 日期格式化
      */

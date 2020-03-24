@@ -30,14 +30,18 @@ import org.aoju.bus.core.utils.BooleanUtils;
  * 波尔转换器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class BooleanConverter extends AbstractConverter<Boolean> {
 
     @Override
     protected Boolean convertInternal(Object value) {
-        return BooleanUtils.toBoolean(convertToStr(value));
+        if (boolean.class == value.getClass()) {
+            return Boolean.valueOf((boolean) value);
+        }
+        String valueStr = convertToStr(value);
+        return Boolean.valueOf(BooleanUtils.toBoolean(valueStr));
     }
 
 }

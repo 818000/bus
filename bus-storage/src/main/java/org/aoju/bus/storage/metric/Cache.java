@@ -22,47 +22,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.core.io.streams;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+package org.aoju.bus.storage.metric;
 
 /**
+ * 缓存,用来缓存State
+ *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
-public class RandomFileOutputStream extends OutputStream {
+public interface Cache {
 
-    private RandomAccessFile raf;
+    /**
+     * 设置缓存
+     *
+     * @param key   缓存KEY
+     * @param value 缓存内容
+     */
+    void set(String key, Object value);
 
-    public RandomFileOutputStream(RandomAccessFile raf) {
-        this.raf = raf;
-    }
+    /**
+     * 设置缓存,指定过期时间
+     *
+     * @param key     缓存KEY
+     * @param value   缓存内容
+     * @param timeout 指定缓存过期时间（毫秒）
+     */
+    void set(String key, Object value, long timeout);
 
-    @Override
-    public void write(int b) throws IOException {
-        raf.write(b);
-    }
+    /**
+     * 获取缓存
+     *
+     * @param key 缓存KEY
+     * @return 缓存内容
+     */
+    Object get(String key);
 
-    @Override
-    public void write(byte[] b) throws IOException {
-        raf.write(b);
-    }
+    /**
+     * 是否存在key,如果对应key的value值已过期,也返回false
+     *
+     * @param key 缓存KEY
+     * @return true：存在key,并且value没过期；false：key不存在或者已过期
+     */
+    boolean containsKey(String key);
 
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        raf.write(b, off, len);
-    }
+    /**
+     * 清理过期的缓存
+     */
+    default void pruneCache() {
 
-    @Override
-    public void flush() {
-    }
-
-    @Override
-    public void close() throws IOException {
-        raf.close();
     }
 
 }

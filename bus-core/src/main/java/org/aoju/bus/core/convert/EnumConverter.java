@@ -36,14 +36,14 @@ import java.util.stream.Collectors;
  * 无泛型检查的枚举转换器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class EnumConverter extends AbstractConverter<Object> {
 
     private static final Map<Class<?>, Map<Class<?>, Method>> VALUE_OF_METHOD_CACHE = new ConcurrentHashMap<>();
 
-    private final Class enumClass;
+    private Class enumClass;
 
     /**
      * 构造

@@ -22,40 +22,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.cache.metric;
+package org.aoju.bus.core.io;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * State缓存接口,方便用户扩展
+ * 此OutputStream写出数据到<b>/dev/null</b>,既忽略所有数据
+ * 来自 Apache Commons io
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
-public interface ExtendCache {
+public class NullOutputStream extends OutputStream {
+
+    private boolean closed = false;
 
     /**
-     * 存入缓存
+     * 什么也不做,写出到 <code>/dev/null</code>.
      *
-     * @param key   缓存key
-     * @param value 缓存内容
+     * @param b 写出的数据
      */
-    void cache(String key, String value);
+    @Override
+    public void write(int b) throws IOException {
+        if (this.closed) _throwClosed();
+    }
 
     /**
-     * 存入缓存
+     * 什么也不做,写出到 <code>/dev/null</code>.
      *
-     * @param key     缓存key
-     * @param value   缓存内容
-     * @param timeout 指定缓存过期时间（毫秒）
+     * @param b 写出的数据
+     * @throws IOException 不抛出
      */
-    void cache(String key, String value, long timeout);
+    @Override
+    public void write(byte[] b) throws IOException {
+        if (this.closed) _throwClosed();
+    }
 
     /**
-     * 获取缓存内容
+     * 什么也不做,写出到<code>/dev/null</code>.
      *
-     * @param key 缓存key
-     * @return 缓存内容
+     * @param b   写出的数据
+     * @param off 开始位置
+     * @param len 长度
      */
-    Object get(String key);
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        if (this.closed) _throwClosed();
+    }
+
+    private void _throwClosed() throws IOException {
+        throw new IOException("This OutputStream has been closed");
+    }
+
+    public void close() {
+        this.closed = true;
+    }
 
 }

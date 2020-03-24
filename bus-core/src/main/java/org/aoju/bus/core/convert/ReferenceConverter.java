@@ -36,12 +36,12 @@ import java.lang.reflect.Type;
  * {@link Reference}转换器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class ReferenceConverter extends AbstractConverter<Reference> {
 
-    private final Class<? extends Reference> targetType;
+    private Class<? extends Reference> targetType;
 
     /**
      * 构造

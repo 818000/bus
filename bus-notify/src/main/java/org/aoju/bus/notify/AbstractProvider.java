@@ -22,45 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.tracer;
+package org.aoju.bus.notify;
 
-import java.lang.annotation.*;
+import lombok.AllArgsConstructor;
+import org.aoju.bus.notify.magic.Response;
+import org.aoju.bus.notify.metric.Properties;
+import org.aoju.bus.notify.metric.Template;
+
+import java.util.Map;
 
 /**
- * 操作日志记录注解
+ * 抽象类
  *
- * @author Kimi Liu
- * @version 5.8.5
- * @since JDK 1.8+
+ * @author Justubborn
+ * @version 5.8.0
+ * @since JDK1.8+
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Tracer {
+@AllArgsConstructor
+public abstract class AbstractProvider<T extends Template, K extends Properties> implements Provider<T> {
 
-    /**
-     * @return 标题
-     */
-    String value() default "";
+    protected K properties;
 
-    /**
-     * @return 模块
-     */
-    String module() default "";
+    @Override
+    public Response send(String templateId, Map<String, String> context) {
+        return null;
+    }
 
-    /**
-     * @return 功能
-     */
-    String business() default "";
-
-    /**
-     * @return 操作人类别
-     */
-    String operator() default "";
-
-    /**
-     * @return 是否保存请求的参数
-     */
-    boolean isSaveRequestData() default true;
+    @Override
+    public Response send(T template) {
+        return null;
+    }
 
 }

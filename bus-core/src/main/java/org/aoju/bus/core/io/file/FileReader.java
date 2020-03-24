@@ -41,7 +41,7 @@ import java.util.List;
  * 文件读取器
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class FileReader extends FileWrapper {
@@ -277,12 +277,17 @@ public class FileReader extends FileWrapper {
      * @return File
      * @throws InstrumentException 异常
      */
-    public long writeToStream(OutputStream out) throws InstrumentException {
-        try (FileInputStream in = new FileInputStream(this.file)) {
-            return IoUtils.copy(in, out);
+    public File writeToStream(OutputStream out) throws InstrumentException {
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            IoUtils.copy(in, out);
         } catch (IOException e) {
             throw new InstrumentException(e);
+        } finally {
+            IoUtils.close(in);
         }
+        return this.file;
     }
 
     /**

@@ -40,15 +40,15 @@ import java.util.Map;
  * 支持Map和普通Bean
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public class DynaBean extends Support<DynaBean> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final Class<?> beanClass;
-    private final Object bean;
+    private Class<?> beanClass;
+    private Object bean;
 
     /**
      * 构造

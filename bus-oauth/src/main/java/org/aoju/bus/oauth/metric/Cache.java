@@ -22,70 +22,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.core.io.streams;
-
-import org.aoju.bus.core.lang.Charset;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+package org.aoju.bus.oauth.metric;
 
 /**
+ * 缓存,用来缓存State
+ *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
-public class StringOutputStream extends OutputStream {
-
-    private StringBuilder sb;
-    private ByteArrayOutputStream baos;
-    private String charset;
-
-    public StringOutputStream(StringBuilder sb) {
-        this(sb, Charset.DEFAULT_UTF_8);
-    }
-
-    public StringOutputStream(StringBuilder sb, String charset) {
-        this.sb = sb;
-        baos = new ByteArrayOutputStream();
-        this.charset = charset;
-    }
+public interface Cache {
 
     /**
-     * 完成本方法后,确认字符串已经完成写入后,务必调用flash方法!
+     * 设置缓存
+     *
+     * @param key   缓存KEY
+     * @param value 缓存内容
      */
-    @Override
-    public void write(int b) throws IOException {
-        if (null == baos)
-            throw new IOException("Stream is closed");
-        baos.write(b);
-    }
+    void set(String key, String value);
 
     /**
-     * 使用StringBuilder前,务必调用
+     * 设置缓存,指定过期时间
+     *
+     * @param key     缓存KEY
+     * @param value   缓存内容
+     * @param timeout 指定缓存过期时间（毫秒）
      */
-    @Override
-    public void flush() throws IOException {
-        if (null != baos) {
-            baos.flush();
-            if (baos.size() > 0) {
-                if (charset == null)
-                    sb.append(new String(baos.toByteArray()));
-                else
-                    sb.append(new String(baos.toByteArray(), charset));
-                baos.reset();
-            }
-        }
-    }
+    void set(String key, String value, long timeout);
 
-    @Override
-    public void close() throws IOException {
-        flush();
-        baos = null;
-    }
+    /**
+     * 获取缓存
+     *
+     * @param key 缓存KEY
+     * @return 缓存内容
+     */
+    String get(String key);
 
-    public StringBuilder getStringBuilder() {
-        return sb;
+    /**
+     * 是否存在key,如果对应key的value值已过期,也返回false
+     *
+     * @param key 缓存KEY
+     * @return true：存在key,并且value没过期；false：key不存在或者已过期
+     */
+    boolean containsKey(String key);
+
+    /**
+     * 清理过期的缓存
+     */
+    default void pruneCache() {
+
     }
 
 }

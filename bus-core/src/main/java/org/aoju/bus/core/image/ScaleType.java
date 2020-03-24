@@ -30,7 +30,7 @@ import java.awt.Image;
  * 图片缩略算法类型
  *
  * @author Kimi Liu
- * @version 5.8.5
+ * @version 5.8.0
  * @since JDK 1.8+
  */
 public enum ScaleType {
@@ -56,7 +56,7 @@ public enum ScaleType {
      */
     AREA_AVERAGING(Image.SCALE_AREA_AVERAGING);
 
-    private final int value;
+    private int value;
 
     /**
      * 构造
