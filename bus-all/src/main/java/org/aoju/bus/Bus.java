@@ -22,56 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter;
+package org.aoju.bus;
 
 import org.aoju.bus.core.Version;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.env.EnvironmentPostProcessor;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.PropertiesPropertySource;
-
-import java.util.Properties;
 
 /**
- * 用于配置一些特殊的关键属性,比如bus-boot.version等,
- * 将作为一个名为PropertiesPropertySource的属性源添加
+ * <p>
+ * Bus (应用/服务总线) 是一个微服务套件、基础框架，它基于Java8编写，参考、借鉴了大量已有
+ * 框架、组件的设计，可以作为后端服务的开发基础中间件。代码简洁，架构清晰，非常适合学习使用
+ * </p>
+ *
+ * <p>
+ * 目标期望能努力打造一套从 基础框架 - 分布式微服务架构 - 持续集成 - 自动化部署 -系统监测
+ * 等，快速实现业务需求的全栈式技术解决方案
+ * </p>
+ *
+ * <p>
+ * 欢迎各种形式的贡献，包括但不限于优化，添加功能，文档 & 代码的改进，问题和 bugs 的报告
+ * </p>
  *
  * @author Kimi Liu
  * @version 5.8.3
  * @since JDK 1.8+
  */
-@Order(Ordered.LOWEST_PRECEDENCE - 100)
-public class Configurable implements EnvironmentPostProcessor {
-
-    @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment,
-                                       SpringApplication application) {
-        /**
-         * 环境信息
-         */
-        PropertiesPropertySource propertySource = new PropertiesPropertySource(
-                BusXBuilder.BUS_BOOT_PROPERTIES, getProperties());
-        environment.getPropertySources().addLast(propertySource);
-        /**
-         * 必要参数
-         */
-        environment.setRequiredProperties(BusXBuilder.BUS_NAME);
-    }
-
-    /**
-     * 获取版本信息
-     *
-     * @return properties
-     */
-    protected Properties getProperties() {
-        Properties properties = new Properties();
-        String version = Version.get() == null ? "" : Version.get();
-        properties.setProperty(BusXBuilder.BUS_BOOT_VERSION, version);
-        properties.setProperty(BusXBuilder.BUS_BOOT_FORMATTED_VERSION,
-                version.isEmpty() ? "" : String.format(" (v%s)", version));
-        return properties;
-    }
+public class Bus extends Version {
 
 }
