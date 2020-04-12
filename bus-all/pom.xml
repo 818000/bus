@@ -220,9 +220,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -231,6 +228,7 @@
                         </goals>
                         <configuration>
                             <createSourcesJar>true</createSourcesJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <artifactSet>
                                 <includes>
                                     <include>${project.groupId}:*:*</include>
