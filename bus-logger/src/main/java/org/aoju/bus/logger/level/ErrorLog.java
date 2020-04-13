@@ -28,7 +28,7 @@ package org.aoju.bus.logger.level;
  * ERROR级别日志接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface ErrorLog {
@@ -36,7 +36,7 @@ public interface ErrorLog {
     /**
      * @return ERROR 等级是否开启
      */
-    boolean isErrorEnabled();
+    boolean isError();
 
     /**
      * 打印 ERROR 等级的日志

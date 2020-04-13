@@ -31,7 +31,7 @@ import lombok.Setter;
  * 授权回调时的参数类
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 @Getter
@@ -55,8 +55,17 @@ public class Callback {
 
     /**
      * 华为授权登录接受code的参数名
-     *
-     * @since 2.0.0
      */
     private String authorization_code;
+
+    /**
+     * Twitter回调后返回的oauth_token
+     */
+    private String oauthToken;
+
+    /**
+     * Twitter回调后返回的oauth_verifier
+     */
+    private String oauthVerifier;
+
 }

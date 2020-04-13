@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
  * ByteBuffer的相关介绍见：https://www.cnblogs.com/ruber/p/6857159.html
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class BufferUtils {
@@ -206,7 +206,7 @@ public class BufferUtils {
 
         if (endPosition > startPosition) {
             byte[] bs = readBytes(buffer, startPosition, endPosition);
-            return StringUtils.str(bs, charset);
+            return StringUtils.toString(bs, charset);
         } else if (endPosition == startPosition) {
             return Normal.EMPTY;
         }

@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * 持有一个计算延迟的值
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Lazy<T> implements Supplier<T>, Serializable {
@@ -39,6 +39,10 @@ public class Lazy<T> implements Supplier<T>, Serializable {
     private transient volatile Supplier<? extends T> supplier;
 
     private T value;
+
+    private Lazy(final Supplier<T> supplier) {
+        this.supplier = supplier;
+    }
 
     /**
      * 创建惰性的新实例
@@ -49,10 +53,6 @@ public class Lazy<T> implements Supplier<T>, Serializable {
      */
     public static <T> Lazy<T> of(final Supplier<T> supplier) {
         return new Lazy<>(supplier);
-    }
-
-    private Lazy(final Supplier<T> supplier) {
-        this.supplier = supplier;
     }
 
     /**

@@ -26,7 +26,7 @@ package org.aoju.bus.oauth.provider;
 
 import com.alibaba.fastjson.JSONObject;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.exception.AuthorizedException;
 import org.aoju.bus.oauth.Builder;
 import org.aoju.bus.oauth.Context;
 import org.aoju.bus.oauth.Registry;
@@ -39,7 +39,7 @@ import org.aoju.bus.oauth.metric.StateCache;
  * 淘宝登录
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class TaobaoProvider extends DefaultProvider {
@@ -62,7 +62,7 @@ public class TaobaoProvider extends DefaultProvider {
         String response = doPostAuthorizationCode(token.getAccessCode());
         JSONObject object = JSONObject.parseObject(response);
         if (object.containsKey("error")) {
-            throw new InstrumentException(object.getString("error_description"));
+            throw new AuthorizedException(object.getString("error_description"));
         }
         token.setAccessToken(object.getString("access_token"));
         token.setRefreshToken(object.getString("refresh_token"));
@@ -90,9 +90,9 @@ public class TaobaoProvider extends DefaultProvider {
      */
     @Override
     public String authorize(String state) {
-        return Builder.fromBaseUrl(source.authorize())
+        return Builder.fromUrl(source.authorize())
                 .queryParam("response_type", "code")
-                .queryParam("client_id", context.getClientId())
+                .queryParam("client_id", context.getAppKey())
                 .queryParam("redirect_uri", context.getRedirectUri())
                 .queryParam("view", "web")
                 .queryParam("state", getRealState(state))

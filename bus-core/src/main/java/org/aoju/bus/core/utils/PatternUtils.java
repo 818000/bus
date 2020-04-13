@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * 常用正则表达式集合
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class PatternUtils {
@@ -648,7 +648,7 @@ public class PatternUtils {
      */
     public static String replaceAll(CharSequence content, Pattern pattern, String replacementTemplate) {
         if (StringUtils.isEmpty(content)) {
-            return StringUtils.str(content);
+            return StringUtils.toString(content);
         }
 
         final Matcher matcher = pattern.matcher(content);
@@ -668,7 +668,7 @@ public class PatternUtils {
             matcher.appendTail(sb);
             return sb.toString();
         }
-        return StringUtils.str(content);
+        return StringUtils.toString(content);
     }
 
     /**

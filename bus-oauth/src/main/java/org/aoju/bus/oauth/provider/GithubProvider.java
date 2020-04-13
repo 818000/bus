@@ -26,7 +26,7 @@ package org.aoju.bus.oauth.provider;
 
 import com.alibaba.fastjson.JSONObject;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.exception.AuthorizedException;
 import org.aoju.bus.oauth.Context;
 import org.aoju.bus.oauth.Registry;
 import org.aoju.bus.oauth.magic.AccToken;
@@ -40,7 +40,7 @@ import java.util.Map;
  * Github登录
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class GithubProvider extends DefaultProvider {
@@ -90,7 +90,7 @@ public class GithubProvider extends DefaultProvider {
 
     private void checkResponse(boolean error, String error_description) {
         if (error) {
-            throw new InstrumentException(error_description);
+            throw new AuthorizedException(error_description);
         }
     }
 

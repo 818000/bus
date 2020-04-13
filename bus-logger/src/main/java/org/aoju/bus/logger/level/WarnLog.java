@@ -28,7 +28,7 @@ package org.aoju.bus.logger.level;
  * WARN级别日志接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface WarnLog {
@@ -36,7 +36,7 @@ public interface WarnLog {
     /**
      * @return WARN 等级是否开启
      */
-    boolean isWarnEnabled();
+    boolean isWarn();
 
     /**
      * 打印 WARN 等级的日志

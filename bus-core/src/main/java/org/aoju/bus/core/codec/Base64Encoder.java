@@ -35,7 +35,7 @@ import java.nio.charset.Charset;
  * Base64编码
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Base64Encoder {
@@ -111,7 +111,7 @@ public class Base64Encoder {
      * @return 被加密后的字符串
      */
     public static String encode(byte[] source) {
-        return StringUtils.str(encode(source, false), org.aoju.bus.core.lang.Charset.UTF_8);
+        return StringUtils.toString(encode(source, false), org.aoju.bus.core.lang.Charset.UTF_8);
     }
 
     /**
@@ -121,7 +121,7 @@ public class Base64Encoder {
      * @return 被加密后的字符串
      */
     public static String encodeUrlSafe(byte[] source) {
-        return StringUtils.str(encodeUrlSafe(source, false), org.aoju.bus.core.lang.Charset.UTF_8);
+        return StringUtils.toString(encodeUrlSafe(source, false), org.aoju.bus.core.lang.Charset.UTF_8);
     }
 
     /**

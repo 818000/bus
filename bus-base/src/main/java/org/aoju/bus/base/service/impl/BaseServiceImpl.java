@@ -40,12 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
  * BaseService 接口实现
- * </p>
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class BaseServiceImpl<Mapper extends BaseMapper<T>, T extends BaseEntity>

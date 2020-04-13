@@ -24,7 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.oauth;
 
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.exception.AuthorizedException;
 import org.aoju.bus.oauth.magic.Callback;
 
 /**
@@ -41,7 +41,7 @@ import org.aoju.bus.oauth.magic.Callback;
  * ③、如果扩展了对应枚举类时,在{@link Provider#login(Callback)}中可以通过{@code xx.toString()}获取对应的source
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface Complex {
@@ -73,7 +73,7 @@ public interface Complex {
      * @return url
      */
     default String revoke() {
-        throw new InstrumentException(Builder.Status.UNSUPPORTED.getCode());
+        throw new AuthorizedException(Builder.Status.UNSUPPORTED.getCode());
     }
 
     /**
@@ -82,7 +82,7 @@ public interface Complex {
      * @return url
      */
     default String refresh() {
-        throw new InstrumentException(Builder.Status.UNSUPPORTED.getCode());
+        throw new AuthorizedException(Builder.Status.UNSUPPORTED.getCode());
     }
 
 }

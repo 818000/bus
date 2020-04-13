@@ -44,7 +44,7 @@ import java.util.*;
  * 把一个拥有对属性进行set和get方法的类,我们就可以称之为JavaBean
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class BeanUtils {
@@ -67,6 +67,23 @@ public class BeanUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 判断是否为可读的Bean对象，判定方法是：
+     *
+     * <pre>
+     *     1、是否存在只有无参数的getXXX方法或者isXXX方法
+     *     2、是否存在public类型的字段
+     * </pre>
+     *
+     * @param clazz 待测试类
+     * @return 是否为可读的Bean对象
+     * @see #hasGetter(Class)
+     * @see #hasPublicField(Class)
+     */
+    public static boolean isReadable(Class<?> clazz) {
+        return hasGetter(clazz) || hasPublicField(clazz);
     }
 
     /**
@@ -423,7 +440,7 @@ public class BeanUtils {
      * @param bean       Bean对象,支持Map、List、Collection、Array
      * @param expression 表达式,例如：person.friend[5].name
      * @return Bean属性值
-     * @see BeanPath#get(Object) 
+     * @see BeanPath#get(Object)
      */
     public static Object getProperty(Object bean, String expression) {
         return BeanPath.create(expression).get(bean);
@@ -450,8 +467,21 @@ public class BeanUtils {
      * @return Bean对象
      */
     public static <T> T toBean(Object source, Class<T> clazz) {
+        return toBean(source, clazz, null);
+    }
+
+    /**
+     * 对象或Map转Bean
+     *
+     * @param <T>     转换的Bean类型
+     * @param source  Bean对象或Map
+     * @param clazz   目标的Bean类型
+     * @param options 属性拷贝选项
+     * @return Bean对象
+     */
+    public static <T> T toBean(Object source, Class<T> clazz, CopyOptions options) {
         final T target = ReflectUtils.newInstance(clazz);
-        copyProperties(source, target);
+        copyProperties(source, target, options);
         return target;
     }
 
@@ -689,6 +719,20 @@ public class BeanUtils {
     }
 
     /**
+     * 创建对应的Class对象并复制Bean对象属性
+     *
+     * @param <T>    对象
+     * @param source 源Bean对象
+     * @param tClass 目标Class
+     * @return 新对象信息
+     */
+    public static <T> T copyProperties(Object source, Class<T> tClass) {
+        T target = ReflectUtils.newInstance(tClass);
+        copyProperties(source, target, CopyOptions.create());
+        return target;
+    }
+
+    /**
      * 复制Bean对象属性
      *
      * @param source 源Bean对象
@@ -748,6 +792,42 @@ public class BeanUtils {
      */
     public static boolean isMatchName(Object bean, String beanClassName, boolean isSimple) {
         return ClassUtils.getClassName(bean, isSimple).equals(isSimple ? StringUtils.upperFirst(beanClassName) : beanClassName);
+    }
+
+    /**
+     * 把Bean里面的String属性做trim操作。此方法直接对传入的Bean做修改。
+     * 通常bean直接用来绑定页面的input，用户的输入可能首尾存在空格，通常保存数据库前需要把首尾空格去掉
+     *
+     * @param <T>          Bean类型
+     * @param bean         Bean对象
+     * @param ignoreFields 不需要trim的Field名称列表（不区分大小写）
+     * @return 处理后的Bean对象
+     */
+    public static <T> T trimStrFields(T bean, String... ignoreFields) {
+        if (bean == null) {
+            return null;
+        }
+
+        final Field[] fields = ReflectUtils.getFields(bean.getClass());
+        for (Field field : fields) {
+            if (ignoreFields != null && ArrayUtils.containsIgnoreCase(ignoreFields, field.getName())) {
+                // 不处理忽略的Fields
+                continue;
+            }
+            if (String.class.equals(field.getType())) {
+                // 只有String的Field才处理
+                final String val = (String) ReflectUtils.getFieldValue(bean, field);
+                if (null != val) {
+                    final String trimVal = StringUtils.trim(val);
+                    if (false == val.equals(trimVal)) {
+                        // Field Value不为null，且首尾有空格才处理
+                        ReflectUtils.setFieldValue(bean, field, trimVal);
+                    }
+                }
+            }
+        }
+
+        return bean;
     }
 
 }

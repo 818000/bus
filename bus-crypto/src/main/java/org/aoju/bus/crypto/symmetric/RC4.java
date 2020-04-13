@@ -39,7 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
  * RC4加密解密算法实现
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class RC4 implements Serializable {
@@ -138,7 +138,7 @@ public class RC4 implements Serializable {
      * @throws InstrumentException key长度小于5或者大于255抛出此异常
      */
     public String decrypt(byte[] message, Charset charset) throws InstrumentException {
-        return StringUtils.str(crypt(message), charset);
+        return StringUtils.toString(crypt(message), charset);
     }
 
     /**

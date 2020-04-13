@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * java.util.logging log.
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class JdkLog extends AbstractAware {
@@ -87,7 +87,7 @@ public class JdkLog extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return logger.isLoggable(Level.FINEST);
     }
 
@@ -97,7 +97,7 @@ public class JdkLog extends AbstractAware {
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return logger.isLoggable(Level.FINE);
     }
 
@@ -107,7 +107,7 @@ public class JdkLog extends AbstractAware {
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return logger.isLoggable(Level.INFO);
     }
 
@@ -117,7 +117,7 @@ public class JdkLog extends AbstractAware {
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return logger.isLoggable(Level.WARNING);
     }
 
@@ -127,7 +127,7 @@ public class JdkLog extends AbstractAware {
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return logger.isLoggable(Level.SEVERE);
     }
 

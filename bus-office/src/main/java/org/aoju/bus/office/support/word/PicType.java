@@ -30,7 +30,7 @@ import org.apache.poi.xwpf.usermodel.Document;
  * Word中的图片类型
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public enum PicType {
@@ -45,15 +45,16 @@ public enum PicType {
     EPS(Document.PICTURE_TYPE_EPS),
     WPG(Document.PICTURE_TYPE_WPG);
 
+    private int value;
+
     /**
      * 构造
+     *
      * @param value 图片类型值
      */
     PicType(int value) {
         this.value = value;
     }
-
-    private int value;
 
     /**
      * 获取图片类型对应值
@@ -63,4 +64,5 @@ public enum PicType {
     public int getValue() {
         return this.value;
     }
+
 }

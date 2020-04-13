@@ -36,14 +36,14 @@ import java.util.stream.Collectors;
  * 无泛型检查的枚举转换器
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class EnumConverter extends AbstractConverter<Object> {
 
     private static final Map<Class<?>, Map<Class<?>, Method>> VALUE_OF_METHOD_CACHE = new ConcurrentHashMap<>();
 
-    private Class enumClass;
+    private final Class enumClass;
 
     /**
      * 构造
@@ -52,21 +52,6 @@ public class EnumConverter extends AbstractConverter<Object> {
      */
     public EnumConverter(Class enumClass) {
         this.enumClass = enumClass;
-    }
-
-    @Override
-    protected Object convertInternal(Object value) {
-        Enum enumValue = tryConvertEnum(value, this.enumClass);
-        if (null == enumValue && false == value instanceof String) {
-            // 最后尝试valueOf转换
-            enumValue = Enum.valueOf(this.enumClass, convertToStr(value));
-        }
-        return enumValue;
-    }
-
-    @Override
-    public Class getTargetType() {
-        return this.enumClass;
     }
 
     /**
@@ -122,6 +107,21 @@ public class EnumConverter extends AbstractConverter<Object> {
             VALUE_OF_METHOD_CACHE.put(enumClass, valueOfMethods);
         }
         return valueOfMethods;
+    }
+
+    @Override
+    protected Object convertInternal(Object value) {
+        Enum enumValue = tryConvertEnum(value, this.enumClass);
+        if (null == enumValue && false == value instanceof String) {
+            // 最后尝试valueOf转换
+            enumValue = Enum.valueOf(this.enumClass, convertToStr(value));
+        }
+        return enumValue;
+    }
+
+    @Override
+    public Class getTargetType() {
+        return this.enumClass;
     }
 
 }

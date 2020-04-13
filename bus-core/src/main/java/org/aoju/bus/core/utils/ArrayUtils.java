@@ -41,7 +41,7 @@ import java.util.*;
  * 数组工具类
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class ArrayUtils {
@@ -50,7 +50,7 @@ public class ArrayUtils {
      * 列表或数组中没有找到元素时的索引值 : {@code -1}.
      * 此值由该类中的方法返回,也可用于与所返回的值进行比较{@link java.util.List}.
      */
-    public static final int INDEX_NOT_FOUND = -1;
+    private static final int INDEX_NOT_FOUND = -1;
 
     /**
      * 对象是否为数组对象
@@ -7139,7 +7139,7 @@ public class ArrayUtils {
      *
      * @param array 数组对象
      * @return 元素类型
-     * @since 5.6.9
+     * @since 5.8.3
      */
     public static Class<?> getComponentType(Object array) {
         return null == array ? null : array.getClass().getComponentType();
@@ -7150,7 +7150,7 @@ public class ArrayUtils {
      *
      * @param arrayClass 数组类
      * @return 元素类型
-     * @since 5.6.9
+     * @since 5.8.3
      */
     public static Class<?> getComponentType(Class<?> arrayClass) {
         return null == arrayClass ? null : arrayClass.getComponentType();
@@ -7162,7 +7162,7 @@ public class ArrayUtils {
      *
      * @param componentType 数组元素类型
      * @return 数组类型
-     * @since 5.6.9
+     * @since 5.8.3
      */
     public static Class<?> getArrayType(Class<?> componentType) {
         return Array.newInstance(componentType, 0).getClass();
@@ -7789,10 +7789,10 @@ public class ArrayUtils {
     /**
      * 获取子数组
      *
-     * @param <T> 数组元素类型
+     * @param <T>   数组元素类型
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7826,7 +7826,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7860,7 +7860,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7894,7 +7894,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7928,7 +7928,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7962,7 +7962,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -7996,7 +7996,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -8030,7 +8030,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -8064,7 +8064,7 @@ public class ArrayUtils {
      *
      * @param array 数组
      * @param start 开始位置（包括）
-     * @param end 结束位置（不包括）
+     * @param end   结束位置（不包括）
      * @return 新的数组
      * @see Arrays#copyOfRange(Object[], int, int)
      */
@@ -8187,7 +8187,7 @@ public class ArrayUtils {
             if (ArrayUtils.isArray(item)) {
                 sb.append(join(ArrayUtils.wrap(item), conjunction, prefix, suffix));
             } else if (item instanceof Iterable<?>) {
-                sb.append(IterUtils.join((Iterable<?>) item, conjunction, prefix, suffix));
+                sb.append(CollUtils.join((Iterable<?>) item, conjunction, prefix, suffix));
             } else if (item instanceof Iterator<?>) {
                 sb.append(IterUtils.join((Iterator<?>) item, conjunction, prefix, suffix));
             } else {
@@ -8792,7 +8792,7 @@ public class ArrayUtils {
      * @param array  数组
      * @param filter 过滤器接口,用于定义过滤规则
      * @return 过滤后的数组
-     * @since 5.6.9
+     * @since 5.8.3
      */
     public static <T> T[] filter(T[] array, Filter<T> filter) {
         ArrayList<T> list = new ArrayList<>(array.length);

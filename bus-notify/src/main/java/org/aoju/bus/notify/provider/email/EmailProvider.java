@@ -22,62 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.core.io;
-
-import java.io.IOException;
-import java.io.OutputStream;
+package org.aoju.bus.notify.provider.email;
 
 /**
- * 此OutputStream写出数据到<b>/dev/null</b>,既忽略所有数据
- * 来自 Apache Commons io
+ * 邮箱
  *
- * @author Kimi Liu
- * @version 5.6.9
- * @since JDK 1.8+
+ * @author Justubborn
+ * @version 5.8.3
+ * @since JDK1.8+
  */
-public class NullOutputStream extends OutputStream {
-
-    private boolean closed = false;
-
-    /**
-     * 什么也不做,写出到 <code>/dev/null</code>.
-     *
-     * @param b 写出的数据
-     */
-    @Override
-    public void write(int b) throws IOException {
-        if (this.closed) _throwClosed();
-    }
-
-    /**
-     * 什么也不做,写出到 <code>/dev/null</code>.
-     *
-     * @param b 写出的数据
-     * @throws IOException 不抛出
-     */
-    @Override
-    public void write(byte[] b) throws IOException {
-        if (this.closed) _throwClosed();
-    }
-
-    /**
-     * 什么也不做,写出到<code>/dev/null</code>.
-     *
-     * @param b   写出的数据
-     * @param off 开始位置
-     * @param len 长度
-     */
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        if (this.closed) _throwClosed();
-    }
-
-    private void _throwClosed() throws IOException {
-        throw new IOException("This OutputStream has been closed");
-    }
-
-    public void close() {
-        this.closed = true;
-    }
+public class EmailProvider {
 
 }

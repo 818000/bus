@@ -25,7 +25,10 @@
 package org.aoju.bus.core.compare;
 
 import org.aoju.bus.core.lang.exception.InstrumentException;
-import org.aoju.bus.core.utils.*;
+import org.aoju.bus.core.utils.ClassUtils;
+import org.aoju.bus.core.utils.ObjectUtils;
+import org.aoju.bus.core.utils.ReflectUtils;
+import org.aoju.bus.core.utils.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -37,7 +40,7 @@ import java.util.Comparator;
  *
  * @param <T> 被比较的Bean
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class FieldCompare<T> implements Comparator<T>, Serializable {

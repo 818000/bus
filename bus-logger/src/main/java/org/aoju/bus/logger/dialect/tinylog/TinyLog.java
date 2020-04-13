@@ -36,7 +36,7 @@ import org.pmw.tinylog.Logger;
  * tinylog log.
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class TinyLog extends AbstractAware {
@@ -78,7 +78,7 @@ public class TinyLog extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return this.level <= Level.TRACE.ordinal();
     }
 
@@ -88,7 +88,7 @@ public class TinyLog extends AbstractAware {
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return this.level <= Level.DEBUG.ordinal();
     }
 
@@ -98,7 +98,7 @@ public class TinyLog extends AbstractAware {
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return this.level <= Level.INFO.ordinal();
     }
 
@@ -108,7 +108,7 @@ public class TinyLog extends AbstractAware {
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return this.level <= Level.WARNING.ordinal();
     }
 
@@ -118,7 +118,7 @@ public class TinyLog extends AbstractAware {
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return this.level <= Level.ERROR.ordinal();
     }
 

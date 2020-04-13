@@ -28,7 +28,7 @@ package org.aoju.bus.logger.level;
  * DEBUG级别日志接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface DebugLog {
@@ -36,7 +36,7 @@ public interface DebugLog {
     /**
      * @return DEBUG 等级是否开启
      */
-    boolean isDebugEnabled();
+    boolean isDebug();
 
     /**
      * 打印 DEBUG 等级的日志

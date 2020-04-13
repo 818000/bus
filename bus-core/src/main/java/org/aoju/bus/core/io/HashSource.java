@@ -39,7 +39,7 @@ import java.security.NoSuchAlgorithmException;
  * 然后调用{@link #hash()}来计算最终的哈希值
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public final class HashSource extends DelegateSource {
@@ -79,7 +79,7 @@ public final class HashSource extends DelegateSource {
     }
 
     public static HashSource sha256(Source source) {
-        return new HashSource(source,  Algorithm.SHA256);
+        return new HashSource(source, Algorithm.SHA256);
     }
 
     public static HashSource hmacSha1(Source source, ByteString key) {

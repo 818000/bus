@@ -25,12 +25,10 @@
 package org.aoju.bus.base.mapper;
 
 /**
- * <p>
- * CoreMapper 接口.
- * </p>
+ * BaseMapper 接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface BaseMapper<T> extends Mapper<T> {

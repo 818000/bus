@@ -28,7 +28,7 @@ package org.aoju.bus.logger.level;
  * INFO级别日志接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface InfoLog {
@@ -36,7 +36,7 @@ public interface InfoLog {
     /**
      * @return INFO 等级是否开启
      */
-    boolean isInfoEnabled();
+    boolean isInfo();
 
     /**
      * 打印 INFO 等级的日志

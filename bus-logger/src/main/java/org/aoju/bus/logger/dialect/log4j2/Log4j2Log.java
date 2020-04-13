@@ -35,7 +35,7 @@ import org.apache.logging.log4j.spi.AbstractLogger;
  * Apache Log4J 2 log.
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Log4j2Log extends AbstractAware {
@@ -60,7 +60,7 @@ public class Log4j2Log extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return logger.isTraceEnabled();
     }
 
@@ -70,7 +70,7 @@ public class Log4j2Log extends AbstractAware {
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return logger.isDebugEnabled();
     }
 
@@ -85,7 +85,7 @@ public class Log4j2Log extends AbstractAware {
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return logger.isInfoEnabled();
     }
 
@@ -95,7 +95,7 @@ public class Log4j2Log extends AbstractAware {
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return logger.isWarnEnabled();
     }
 
@@ -105,7 +105,7 @@ public class Log4j2Log extends AbstractAware {
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return logger.isErrorEnabled();
     }
 

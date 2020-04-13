@@ -32,12 +32,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>
  * 返回结果公用
- * </p>
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 @Data

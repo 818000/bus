@@ -49,10 +49,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * 在对称加密算法中，使用的密钥只有一个，发收信双方都使用这个密钥对数据进行加密和解密，这就要求解密方事先必须知道加密密钥。
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Symmetric implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -381,7 +382,7 @@ public class Symmetric implements Serializable {
      * @return 解密后的String
      */
     public String decryptStr(byte[] bytes, Charset charset) {
-        return StringUtils.str(decrypt(bytes), charset);
+        return StringUtils.toString(decrypt(bytes), charset);
     }
 
     /**
@@ -412,7 +413,7 @@ public class Symmetric implements Serializable {
      * @return 解密后的String
      */
     public String decryptStr(String data, Charset charset) {
-        return StringUtils.str(decrypt(data), charset);
+        return StringUtils.toString(decrypt(data), charset);
     }
 
     /**
@@ -444,7 +445,7 @@ public class Symmetric implements Serializable {
      * @return 解密后的String
      */
     public String decryptStr(InputStream data, Charset charset) {
-        return StringUtils.str(decrypt(data), charset);
+        return StringUtils.toString(decrypt(data), charset);
     }
 
     /**

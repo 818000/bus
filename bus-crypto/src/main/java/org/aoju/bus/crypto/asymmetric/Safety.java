@@ -42,7 +42,7 @@ import java.security.PublicKey;
  *
  * @param <T> 返回自身类型
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public abstract class Safety<T extends Safety<T>> extends Keys<T> {
@@ -272,7 +272,7 @@ public abstract class Safety<T extends Safety<T>> extends Keys<T> {
      * @return 解密后的密文
      */
     public String decryptStr(String data, KeyType keyType, Charset charset) {
-        return StringUtils.str(decrypt(data, keyType), charset);
+        return StringUtils.toString(decrypt(data, keyType), charset);
     }
 
     /**
@@ -319,7 +319,7 @@ public abstract class Safety<T extends Safety<T>> extends Keys<T> {
      * @return 解密后的密文
      */
     public String decryptStrFromBcd(String data, KeyType keyType, Charset charset) {
-        return StringUtils.str(decryptFromBcd(data, keyType, charset), charset);
+        return StringUtils.toString(decryptFromBcd(data, keyType, charset), charset);
     }
 
     /**

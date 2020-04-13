@@ -30,7 +30,6 @@ import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.Validator;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 
-import javax.net.ServerSocketFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
@@ -42,7 +41,7 @@ import java.util.*;
  * 网络相关工具
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class NetUtils {

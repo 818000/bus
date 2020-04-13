@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * Apache Log4J log.
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Log4jLog extends AbstractAware {
@@ -59,7 +59,7 @@ public class Log4jLog extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return logger.isTraceEnabled();
     }
 
@@ -69,7 +69,7 @@ public class Log4jLog extends AbstractAware {
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return logger.isDebugEnabled();
     }
 
@@ -79,7 +79,7 @@ public class Log4jLog extends AbstractAware {
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return logger.isInfoEnabled();
     }
 
@@ -89,7 +89,7 @@ public class Log4jLog extends AbstractAware {
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return logger.isEnabledFor(Level.WARN);
     }
 
@@ -99,7 +99,7 @@ public class Log4jLog extends AbstractAware {
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return logger.isEnabledFor(Level.ERROR);
     }
 

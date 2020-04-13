@@ -25,7 +25,7 @@
 package org.aoju.bus.core.utils;
 
 import org.aoju.bus.core.convert.Convert;
-import org.aoju.bus.core.io.FastByteArray;
+import org.aoju.bus.core.io.streams.ByteArrayOutputStream;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
@@ -40,7 +40,7 @@ import java.util.*;
  * 一些通用的函数
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class ObjectUtils {
@@ -72,10 +72,49 @@ public class ObjectUtils {
      * @param object       被检查对象,可能为{@code null}
      * @param defaultValue 被检查对象为{@code null}返回的默认值,可以为{@code null}
      * @return 被检查对象为{ null}返回默认值,否则返回原值
-     * @since 3.0.7
      */
     public static <T> T defaultIfNull(final T object, final T defaultValue) {
         return (null != object) ? object : defaultValue;
+    }
+
+    /**
+     * 如果给定对象为{@code null}或者 "" 返回默认值
+     *
+     * <pre>
+     * ObjectUtils.defaultIfEmpty(null, null)      = null
+     * ObjectUtils.defaultIfEmpty(null, "")        = ""
+     * ObjectUtils.defaultIfEmpty("", "zz")        = "zz"
+     * ObjectUtils.defaultIfEmpty(" ", "zz")       = " "
+     * ObjectUtils.defaultIfEmpty("abc", *)        = "abc"
+     * </pre>
+     *
+     * @param <T>          对象类型（必须实现CharSequence接口）
+     * @param str          被检查对象，可能为{@code null}
+     * @param defaultValue 被检查对象为{@code null}或者 ""返回的默认值，可以为{@code null}或者 ""
+     * @return 被检查对象为{@code null}或者 ""返回默认值，否则返回原值
+     */
+    public static <T extends CharSequence> T defaultIfEmpty(final T str, final T defaultValue) {
+        return StringUtils.isEmpty(str) ? defaultValue : str;
+    }
+
+    /**
+     * 如果给定对象为{@code null}或者""或者空白符返回默认值
+     *
+     * <pre>
+     * ObjectUtils.defaultIfEmpty(null, null)      = null
+     * ObjectUtils.defaultIfEmpty(null, "")        = ""
+     * ObjectUtils.defaultIfEmpty("", "zz")        = "zz"
+     * ObjectUtils.defaultIfEmpty(" ", "zz")       = "zz"
+     * ObjectUtils.defaultIfEmpty("abc", *)        = "abc"
+     * </pre>
+     *
+     * @param <T>          对象类型（必须实现CharSequence接口）
+     * @param str          被检查对象，可能为{@code null}
+     * @param defaultValue 被检查对象为{@code null}或者 ""或者空白符返回的默认值，可以为{@code null}或者 ""或者空白符
+     * @return 被检查对象为{@code null}或者 ""或者空白符返回默认值，否则返回原值
+     */
+    public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultValue) {
+        return StringUtils.isBlank(str) ? defaultValue : str;
     }
 
     /**
@@ -416,7 +455,7 @@ public class ObjectUtils {
         if (null == obj || false == (obj instanceof Serializable)) {
             return null;
         }
-        final FastByteArray byteOut = new FastByteArray();
+        final ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(byteOut);
@@ -595,7 +634,7 @@ public class ObjectUtils {
      */
     public static byte[] toByte(Object obj) {
         try {
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            java.io.ByteArrayOutputStream byteOut = new java.io.ByteArrayOutputStream();
             ObjectOutputStream objOut = new ObjectOutputStream(byteOut);
             objOut.writeObject(obj);
             return byteOut.toByteArray();
@@ -973,7 +1012,7 @@ public class ObjectUtils {
      * @return byte数据
      */
     public static byte[] parseObjForByte(Object obj) {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        java.io.ByteArrayOutputStream byteOut = new java.io.ByteArrayOutputStream();
         ObjectOutputStream objOut = null;
         try {
             objOut = new ObjectOutputStream(byteOut);
@@ -1393,7 +1432,7 @@ public class ObjectUtils {
             return null;
         }
 
-        FastByteArray out = new FastByteArray();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = null;
         try {
             os = new ObjectOutputStream(out);

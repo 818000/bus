@@ -32,7 +32,7 @@ import org.aoju.bus.logger.level.Level;
  * 静态日志类,用于在不引入日志对象的情况下打印日志
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public final class Logger {
@@ -258,6 +258,51 @@ public final class Logger {
      */
     public static Log get() {
         return LogFactory.get(CallerUtils.getCallers());
+    }
+
+    /**
+     * Trace 等级日志否开启
+     *
+     * @return the true/false
+     */
+    public boolean isTrace() {
+        return LogFactory.get(CallerUtils.getCallers()).isTrace();
+    }
+
+    /**
+     * Debug 等级日志否开启
+     *
+     * @return the true/false
+     */
+    public boolean isDebug() {
+        return LogFactory.get(CallerUtils.getCallers()).isDebug();
+    }
+
+    /**
+     * Info 等级日志否开启
+     *
+     * @return the true/false
+     */
+    public boolean isInfo() {
+        return LogFactory.get(CallerUtils.getCallers()).isInfo();
+    }
+
+    /**
+     * Warn 等级日志否开启
+     *
+     * @return the true/false
+     */
+    public boolean isWarn() {
+        return LogFactory.get(CallerUtils.getCallers()).isWarn();
+    }
+
+    /**
+     * Error 等级日志否开启
+     *
+     * @return the true/false
+     */
+    public boolean isError() {
+        return LogFactory.get(CallerUtils.getCallers()).isError();
     }
 
 }

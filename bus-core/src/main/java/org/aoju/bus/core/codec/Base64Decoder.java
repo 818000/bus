@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
  * Base64解码实现
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class Base64Decoder {
@@ -61,7 +61,7 @@ public class Base64Decoder {
      * @return 被加密后的字符串
      */
     public static String decodeStr(CharSequence source, Charset charset) {
-        return StringUtils.str(decode(source), charset);
+        return StringUtils.toString(decode(source), charset);
     }
 
     /**

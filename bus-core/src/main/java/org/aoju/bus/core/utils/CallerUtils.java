@@ -32,7 +32,7 @@ import org.aoju.bus.core.lang.caller.StackTraceCaller;
  * 调用者 可以通过此类的方法获取调用者、多级调用者以及判断是否被调用
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class CallerUtils {
@@ -87,6 +87,22 @@ public class CallerUtils {
      */
     public static boolean isCalledBy(Class<?> clazz) {
         return INSTANCE.isCalledBy(clazz);
+    }
+
+    /**
+     * 获取调用此方法的方法名
+     *
+     * @param isFullName 是否返回全名，全名包括方法所在类的全路径名
+     * @return 调用此方法的方法名
+     */
+    public static String getCallerMethodName(boolean isFullName) {
+        final StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+        final String methodName = stackTraceElement.getMethodName();
+        if (false == isFullName) {
+            return methodName;
+        }
+
+        return stackTraceElement.getClassName() + "." + methodName;
     }
 
     /**

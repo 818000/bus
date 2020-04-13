@@ -43,12 +43,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
- * <p>
  * 异常信息拦截处理
- * </p>
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 @ControllerAdvice

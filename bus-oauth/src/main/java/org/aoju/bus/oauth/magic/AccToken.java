@@ -32,7 +32,7 @@ import lombok.Setter;
  * 授权所需的token
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8++
  */
 @Getter
@@ -65,5 +65,14 @@ public class AccToken {
      * 企业微信附带属性
      */
     private String code;
+
+    /**
+     * Twitter附带属性
+     */
+    private String oauthToken;
+    private String oauthTokenSecret;
+    private String userId;
+    private String screenName;
+    private Boolean oauthCallbackConfirmed;
 
 }

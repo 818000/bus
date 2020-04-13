@@ -40,7 +40,7 @@ import org.aoju.bus.core.utils.StringUtils;
  * 通过该注入该类实现发送短信
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 @AllArgsConstructor
@@ -92,7 +92,7 @@ public class AliSmsService {
      */
     public AliSmsResult send(AliSmsEntity entity) throws InstrumentException {
         try {
-            IClientProfile profile = DefaultProfile.getProfile(StringUtils.defaultString(this.profile, "default"), this.accessKey, this.accessSecret);
+            IClientProfile profile = DefaultProfile.getProfile(StringUtils.toString(this.profile, "default"), this.accessKey, this.accessSecret);
             DefaultProfile.addEndpoint(this.profile, ALIYUN_PRODUCT, ALIYUN_PRODUCT_DOMAIN);
             IAcsClient acsClient = new DefaultAcsClient(profile);
 

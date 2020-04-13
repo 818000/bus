@@ -29,12 +29,10 @@ import org.aoju.bus.base.entity.Result;
 import java.util.List;
 
 /**
- * <p>
- * BaseService 接口.
- * </p>
+ * BaseService 接口
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public interface BaseService<T> extends Service {

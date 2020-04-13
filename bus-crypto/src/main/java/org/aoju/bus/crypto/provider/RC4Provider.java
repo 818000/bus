@@ -62,7 +62,7 @@ import org.aoju.bus.crypto.symmetric.RC4;
  * 达到十亿量级
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class RC4Provider implements Provider {
@@ -79,7 +79,7 @@ public class RC4Provider implements Provider {
             throw new InstrumentException("key is null!");
         }
         RC4 rc4 = new RC4(key);
-        return rc4.encrypt(StringUtils.str(content, Charset.UTF_8));
+        return rc4.encrypt(StringUtils.toString(content, Charset.UTF_8));
     }
 
     /**

@@ -37,7 +37,7 @@ import org.aoju.bus.logger.level.Level;
  * 利用System.out.println()打印日志
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class ConsoleLog extends AbstractAware {
@@ -80,7 +80,7 @@ public class ConsoleLog extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return isEnabled(Level.TRACE);
     }
 
@@ -90,7 +90,7 @@ public class ConsoleLog extends AbstractAware {
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return isEnabled(Level.DEBUG);
     }
 
@@ -100,7 +100,7 @@ public class ConsoleLog extends AbstractAware {
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return isEnabled(Level.INFO);
     }
 
@@ -110,7 +110,7 @@ public class ConsoleLog extends AbstractAware {
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return isEnabled(Level.WARN);
     }
 
@@ -120,7 +120,7 @@ public class ConsoleLog extends AbstractAware {
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return isEnabled(Level.ERROR);
     }
 

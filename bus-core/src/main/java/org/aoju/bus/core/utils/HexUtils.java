@@ -38,7 +38,7 @@ import java.nio.charset.Charset;
  * <p>
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class HexUtils {
@@ -162,7 +162,7 @@ public class HexUtils {
      * @return 字符串
      */
     public static String decodeHexStr(char[] hexData, Charset charset) {
-        return StringUtils.str(decodeHex(hexData), charset);
+        return StringUtils.toString(decodeHex(hexData), charset);
     }
 
     /**

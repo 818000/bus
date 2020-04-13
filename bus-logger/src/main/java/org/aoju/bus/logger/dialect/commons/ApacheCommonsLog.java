@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * Apache Commons Logging
  *
  * @author Kimi Liu
- * @version 5.6.9
+ * @version 5.8.3
  * @since JDK 1.8+
  */
 public class ApacheCommonsLog extends AbstractAware {
@@ -62,49 +62,49 @@ public class ApacheCommonsLog extends AbstractAware {
     }
 
     @Override
-    public boolean isTraceEnabled() {
+    public boolean isTrace() {
         return logger.isTraceEnabled();
     }
 
     @Override
     public void trace(String fqcn, Throwable t, String format, Object... arguments) {
-        if (isTraceEnabled()) {
+        if (isTrace()) {
             logger.trace(StringUtils.format(format, arguments), t);
         }
     }
 
     @Override
-    public boolean isDebugEnabled() {
+    public boolean isDebug() {
         return logger.isDebugEnabled();
     }
 
     @Override
     public void debug(String fqcn, Throwable t, String format, Object... arguments) {
-        if (isDebugEnabled()) {
+        if (isDebug()) {
             logger.debug(StringUtils.format(format, arguments), t);
         }
     }
 
     @Override
-    public boolean isInfoEnabled() {
+    public boolean isInfo() {
         return logger.isInfoEnabled();
     }
 
     @Override
     public void info(String fqcn, Throwable t, String format, Object... arguments) {
-        if (isInfoEnabled()) {
+        if (isInfo()) {
             logger.info(StringUtils.format(format, arguments), t);
         }
     }
 
     @Override
-    public boolean isWarnEnabled() {
+    public boolean isWarn() {
         return logger.isWarnEnabled();
     }
 
     @Override
     public void warn(String format, Object... arguments) {
-        if (isWarnEnabled()) {
+        if (isWarn()) {
             logger.warn(StringUtils.format(format, arguments));
         }
     }
@@ -115,19 +115,19 @@ public class ApacheCommonsLog extends AbstractAware {
 
     @Override
     public void warn(String fqcn, Throwable t, String format, Object... arguments) {
-        if (isWarnEnabled()) {
+        if (isWarn()) {
             logger.warn(StringUtils.format(format, arguments), t);
         }
     }
 
     @Override
-    public boolean isErrorEnabled() {
+    public boolean isError() {
         return logger.isErrorEnabled();
     }
 
     @Override
     public void error(String fqcn, Throwable t, String format, Object... arguments) {
-        if (isErrorEnabled()) {
+        if (isError()) {
             logger.warn(StringUtils.format(format, arguments), t);
         }
     }
