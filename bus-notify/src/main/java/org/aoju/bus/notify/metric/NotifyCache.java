@@ -22,50 +22,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.notify.provider.dingtalk;
+package org.aoju.bus.notify.metric;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
-import org.aoju.bus.notify.magic.Template;
+import org.aoju.bus.cache.CacheX;
+import org.aoju.bus.cache.metric.ExtendCache;
+import org.aoju.bus.cache.metric.MemoryCache;
 
 /**
- * 钉钉通知模版
+ * 默认缓存实现
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @version 5.8.8
- * @since JDK1.8+
+ * @since JDK 1.8+
  */
-@Getter
-@Setter
-@SuperBuilder
-public class DingTalkTemplate extends Template {
+public enum NotifyCache implements ExtendCache {
 
     /**
-     * 应用agentId
+     * 当前实例
      */
-    private String agentId;
-    /**
-     * 接收者的用户userId列表，最大列表长度：100
-     */
-    private String userIdList;
-    /**
-     * 接收者的部门id列表，最大列表长度：20,  接收者是部门id下(包括子部门下)的所有用户
-     */
-    private String deptIdList;
-    /**
-     * 是否发送给企业全部用户 true,false
-     */
-    private boolean toAllUser = false;
+    INSTANCE;
+
+    private CacheX cache;
+
+    NotifyCache() {
+        cache = new MemoryCache();
+    }
 
     /**
-     * json字符串
+     * 存入缓存
+     *
+     * @param key   缓存key
+     * @param value 缓存内容
      */
-    private String msg;
+    @Override
+    public void cache(String key, String value) {
+        cache.write(key, value, 3 * 60 * 1000);
+    }
 
     /**
-     * 钉钉token
+     * 存入缓存
+     *
+     * @param key     缓存key
+     * @param value   缓存内容
+     * @param timeout 指定缓存过期时间（毫秒）
      */
-    private String token;
+    @Override
+    public void cache(String key, String value, long timeout) {
+        cache.write(key, value, timeout);
+    }
+
+    /**
+     * 获取缓存内容
+     *
+     * @param key 缓存key
+     * @return 缓存内容
+     */
+    @Override
+    public Object get(String key) {
+        return cache.read(key);
+    }
 
 }
