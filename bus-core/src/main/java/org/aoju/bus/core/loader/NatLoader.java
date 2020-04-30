@@ -22,66 +22,82 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.shade;
+package org.aoju.bus.core.loader;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.io.resource.Resource;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.shade.entity.TableEntity;
+import org.aoju.bus.core.utils.StringUtils;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
 
 /**
- * 创建文件
+ * Jar包资源加载器
  *
  * @author Kimi Liu
  * @version 5.8.8
  * @since JDK 1.8+
  */
-public class Freemarker {
+public class NatLoader extends StdLoader implements Loader {
 
-    public static Object createFile(TableEntity dataModel, String templateName, String filePath) {
+    public NatLoader() {
 
-        FileWriter out = null;
+    }
+
+    public Enumeration<Resource> load(String path, Class<?> clazz) throws IOException {
+        if (null == path || !path.startsWith(Symbol.SLASH)) {
+            throw new IllegalArgumentException("The path has to be absolute (start with '/').");
+        }
+
+        // 从路径获取文件名
+        String[] parts = path.split(Symbol.SLASH);
+        String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+
+        // 检查文件名是否正确
+        if (filename == null || filename.length() < 3) {
+            throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
+        }
+
+        File dir = new File(
+                System.getProperty("java.io.tmpdir"),
+                StringUtils.toString(System.nanoTime())
+        );
+
+        if (!dir.mkdir())
+            throw new IOException("Failed to create temp directory " + dir.getName());
+
+        dir.deleteOnExit();
+
+        File file = new File(dir, filename);
+        Class<?> aClass = clazz == null ? Loaders.class : clazz;
+        try (InputStream is = aClass.getResourceAsStream(path)) {
+            Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            file.delete();
+            throw e;
+        } catch (NullPointerException e) {
+            file.delete();
+            throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+        }
+
         try {
-            // 通过FreeMarker的Confuguration读取相应的模板文件
-            Configuration configuration = new Configuration(Configuration.VERSION_2_3_28);
-            // 设置模板路径
-            configuration.setClassForTemplateLoading(Freemarker.class, Symbol.C_SLASH + Normal.META_DATA_INF + "/template");
-            // 设置默认字体
-            configuration.setDefaultEncoding("utf-8");
-            // 获取模板
-            Template template = configuration.getTemplate(templateName);
-            File file = new File(filePath);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            if (!file.exists()) {
-                file.createNewFile();
-            } else {
-                return "The file already exists:" + filePath;
-            }
-
-            //设置输出流
-            out = new FileWriter(file);
-            //模板输出静态文件
-            template.process(dataModel, out);
-            return "create a file :" + filePath;
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.load(file.getAbsolutePath());
         } finally {
-            if (null != out) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (FileSystems.getDefault()
+                    .supportedFileAttributeViews()
+                    .contains("posix")) {
+                file.delete();
+            } else {
+                file.deleteOnExit();
             }
         }
-        return "failed to create file :" + filePath;
+        return null;
     }
 
 }
