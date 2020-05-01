@@ -22,58 +22,75 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.tracer.backend;
+package org.aoju.bus.core.lang.tuple;
 
-import org.aoju.bus.tracer.Backend;
-import org.aoju.bus.tracer.config.PropertiesBasedTraceFilterConfiguration;
-import org.aoju.bus.tracer.config.PropertyChain;
-import org.aoju.bus.tracer.config.TraceFilterConfiguration;
-import org.aoju.bus.tracer.consts.TraceConsts;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.aoju.bus.core.annotation.ThreadSafe;
 
 /**
- * @author Kimi Liu
- * @version 5.8.8
- * @since JDK 1.8+
+ * 从方法返回多个对象的便利类
+ *
+ * @param <A> 第一个元素的类型
+ * @param <B> 第二个元素的类型
+ * @param <C> 第三个元素的类型
+ * @param <D> 第四个元素的类型
  */
-public abstract class AbstractBackend implements Backend {
+@ThreadSafe
+public class Quartet<A, B, C, D> {
 
-    private PropertyChain _lazyPropertyChain;
-    private Map<String, TraceFilterConfiguration> configurationCache = new ConcurrentHashMap<>();
+    private final A a;
+    private final B b;
+    private final C c;
+    private final D d;
 
-    @Override
-    public final TraceFilterConfiguration getConfiguration() {
-        return getConfiguration(null);
+    /**
+     * Create a quartet and store four objects.
+     *
+     * @param a the first object to store
+     * @param b the second object to store
+     * @param c the third object to store
+     * @param d the fourth object to store
+     */
+    public Quartet(A a, B b, C c, D d) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
     }
 
-    @Override
-    public final TraceFilterConfiguration getConfiguration(String profileName) {
-        final String lookupProfile = profileName == null ? TraceConsts.DEFAULT : profileName;
-        TraceFilterConfiguration filterConfiguration = configurationCache.get(lookupProfile);
-        if (filterConfiguration == null) {
-            filterConfiguration = new PropertiesBasedTraceFilterConfiguration(getPropertyChain(), lookupProfile);
-            configurationCache.put(lookupProfile, filterConfiguration);
-        }
-        return filterConfiguration;
+    /**
+     * Returns the first stored object.
+     *
+     * @return first object stored
+     */
+    public final A getA() {
+        return a;
     }
 
-    @Override
-    public String getInvocationId() {
-        return get(TraceConsts.INVOCATION_ID_KEY);
+    /**
+     * Returns the second stored object.
+     *
+     * @return second object stored
+     */
+    public final B getB() {
+        return b;
     }
 
-    @Override
-    public String getSessionId() {
-        return get(TraceConsts.SESSION_ID_KEY);
+    /**
+     * Returns the third stored object.
+     *
+     * @return third object stored
+     */
+    public final C getC() {
+        return c;
     }
 
-    private PropertyChain getPropertyChain() {
-        if (_lazyPropertyChain == null) {
-            _lazyPropertyChain = PropertiesBasedTraceFilterConfiguration.loadPropertyChain();
-        }
-        return _lazyPropertyChain;
+    /**
+     * Returns the fourth stored object.
+     *
+     * @return fourth object stored
+     */
+    public final D getD() {
+        return d;
     }
 
 }
