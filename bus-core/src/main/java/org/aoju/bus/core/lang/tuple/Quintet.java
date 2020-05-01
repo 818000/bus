@@ -22,58 +22,88 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.tracer.backend;
+package org.aoju.bus.core.lang.tuple;
 
-import org.aoju.bus.tracer.Backend;
-import org.aoju.bus.tracer.config.PropertiesBasedTraceFilterConfiguration;
-import org.aoju.bus.tracer.config.PropertyChain;
-import org.aoju.bus.tracer.config.TraceFilterConfiguration;
-import org.aoju.bus.tracer.consts.TraceConsts;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.aoju.bus.core.annotation.ThreadSafe;
 
 /**
- * @author Kimi Liu
- * @version 5.8.8
- * @since JDK 1.8+
+ * 从方法返回多个对象的便利类
+ *
+ * @param <A> 第一个元素的类型
+ * @param <B> 第二个元素的类型
+ * @param <C> 第三个元素的类型
+ * @param <D> 第四个元素的类型
+ * @param <E> 第五个元素的类型
  */
-public abstract class AbstractBackend implements Backend {
+@ThreadSafe
+public class Quintet<A, B, C, D, E> {
 
-    private PropertyChain _lazyPropertyChain;
-    private Map<String, TraceFilterConfiguration> configurationCache = new ConcurrentHashMap<>();
+    private final A a;
+    private final B b;
+    private final C c;
+    private final D d;
+    private final E e;
 
-    @Override
-    public final TraceFilterConfiguration getConfiguration() {
-        return getConfiguration(null);
+    /**
+     * 创建一个五重奏并存储五个对象
+     *
+     * @param a 要存储的第一个对象
+     * @param b 要存储的第二个对象
+     * @param c 要存储的第三个对象
+     * @param d 要存储的第四个对象
+     * @param e 要存储的第五个对象
+     */
+    public Quintet(A a, B b, C c, D d, E e) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
     }
 
-    @Override
-    public final TraceFilterConfiguration getConfiguration(String profileName) {
-        final String lookupProfile = profileName == null ? TraceConsts.DEFAULT : profileName;
-        TraceFilterConfiguration filterConfiguration = configurationCache.get(lookupProfile);
-        if (filterConfiguration == null) {
-            filterConfiguration = new PropertiesBasedTraceFilterConfiguration(getPropertyChain(), lookupProfile);
-            configurationCache.put(lookupProfile, filterConfiguration);
-        }
-        return filterConfiguration;
+    /**
+     * 返回第一个存储的对象
+     *
+     * @return 第一个对象存储
+     */
+    public final A getA() {
+        return a;
     }
 
-    @Override
-    public String getInvocationId() {
-        return get(TraceConsts.INVOCATION_ID_KEY);
+    /**
+     * 返回第二个存储对象
+     *
+     * @return 第二个对象存储
+     */
+    public final B getB() {
+        return b;
     }
 
-    @Override
-    public String getSessionId() {
-        return get(TraceConsts.SESSION_ID_KEY);
+    /**
+     * 返回第三个存储对象
+     *
+     * @return 第三个对象存储
+     */
+    public final C getC() {
+        return c;
     }
 
-    private PropertyChain getPropertyChain() {
-        if (_lazyPropertyChain == null) {
-            _lazyPropertyChain = PropertiesBasedTraceFilterConfiguration.loadPropertyChain();
-        }
-        return _lazyPropertyChain;
+    /**
+     * 返回第四个存储对象
+     *
+     * @return 第四个对象存储
+     */
+    public final D getD() {
+        return d;
+    }
+
+    /**
+     * 返回第五个存储对象
+     *
+     * @return 第五个对象存储
+     */
+    public final E getE() {
+        return e;
     }
 
 }
