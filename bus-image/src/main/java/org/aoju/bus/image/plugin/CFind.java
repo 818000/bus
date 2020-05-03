@@ -24,19 +24,15 @@
  ********************************************************************************/
 package org.aoju.bus.image.plugin;
 
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.image.*;
 import org.aoju.bus.image.centre.DeviceService;
 import org.aoju.bus.image.galaxy.data.Attributes;
-import org.aoju.bus.image.galaxy.data.Sequence;
+import org.aoju.bus.image.galaxy.data.ElementDictionary;
 import org.aoju.bus.image.galaxy.data.VR;
 import org.aoju.bus.image.metric.Connection;
+import org.aoju.bus.image.metric.service.Level;
 import org.aoju.bus.logger.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 
 /**
@@ -44,34 +40,55 @@ import java.text.MessageFormat;
  * @version 5.8.8
  * @since JDK 1.8+
  */
-public class Modality {
+public class CFind {
 
-    public static String calledAET;
+    public static final Args PatientID = new Args(Tag.PatientID);
+    public static final Args IssuerOfPatientID = new Args(Tag.IssuerOfPatientID);
+    public static final Args PatientName = new Args(Tag.PatientName);
+    public static final Args PatientBirthDate = new Args(Tag.PatientBirthDate);
+    public static final Args PatientSex = new Args(Tag.PatientSex);
+
+    public static final Args StudyInstanceUID = new Args(Tag.StudyInstanceUID);
+    public static final Args AccessionNumber = new Args(Tag.AccessionNumber);
+    public static final Args IssuerOfAccessionNumberSequence = new Args(Tag.IssuerOfAccessionNumberSequence);
+    public static final Args StudyID = new Args(Tag.StudyID);
+    public static final Args ReferringPhysicianName = new Args(Tag.ReferringPhysicianName);
+    public static final Args StudyDescription = new Args(Tag.StudyDescription);
+    public static final Args StudyDate = new Args(Tag.StudyDate);
+    public static final Args StudyTime = new Args(Tag.StudyTime);
+
+    public static final Args SeriesInstanceUID = new Args(Tag.SeriesInstanceUID);
+    public static final Args Modality = new Args(Tag.Modality);
+    public static final Args SeriesNumber = new Args(Tag.SeriesNumber);
+    public static final Args SeriesDescription = new Args(Tag.SeriesDescription);
+
+    public static final Args SOPInstanceUID = new Args(Tag.SOPInstanceUID);
+    public static final Args InstanceNumber = new Args(Tag.InstanceNumber);
 
     /**
      * @param callingNode 调用DICOM节点的配置
      * @param calledNode  被调用的DICOM节点配置
-     * @param keys        匹配和返回键。没有值的Args是返回键
+     * @param keys        用于匹配和返回键。 没有值的Args是返回键
      * @return Status实例，其中包含DICOM响应，DICOM状态，错误消息和进度信息
      */
     public static Status process(Node callingNode,
                                  Node calledNode,
                                  Args... keys) {
-        return process(null, callingNode, calledNode, 0, keys);
+        return process(null, callingNode, calledNode, 0, Level.STUDY, keys);
     }
 
     /**
      * @param params      可选的高级参数(代理、身份验证、连接和TLS)
      * @param callingNode 调用DICOM节点的配置
      * @param calledNode  被调用的DICOM节点配置
-     * @param keys        匹配和返回键。没有值的Args是返回键
-     * @return Status实例，其中包含DICOM响应，DICOM状态，错误消息和进度信息
+     * @param keys        用于匹配和返回键。 没有值的Args是返回键
+     * @return Status实例，其中包含DICOM响应，DICOM状态，错误消息和进度
      */
     public static Status process(Args params,
                                  Node callingNode,
                                  Node calledNode,
                                  Args... keys) {
-        return process(params, callingNode, calledNode, 0, keys);
+        return process(params, callingNode, calledNode, 0, Level.STUDY, keys);
     }
 
     /**
@@ -79,13 +96,15 @@ public class Modality {
      * @param callingNode 调用DICOM节点的配置
      * @param calledNode  被调用的DICOM节点配置
      * @param cancelAfter 接收到指定数目的匹配项后，取消查询请求
-     * @param keys        匹配和返回键。没有值的Args是返回键
-     * @return Status实例，其中包含DICOM响应，DICOM状态，错误消息和进度信息
+     * @param level       指定检索级别。默认使用PatientRoot、StudyRoot、PatientStudyOnly模型进行研究
+     * @param keys        用于匹配和返回键。 没有值的Args是返回键
+     * @return Status实例，其中包含DICOM响应，DICOM状态，错误消息和进度
      */
     public static Status process(Args params,
                                  Node callingNode,
                                  Node calledNode,
                                  int cancelAfter,
+                                 Level level,
                                  Args... keys) {
         if (callingNode == null || calledNode == null) {
             throw new IllegalArgumentException("callingNode or calledNode cannot be null!");
@@ -105,9 +124,13 @@ public class Modality {
 
             findSCU.setInformationModel(getInformationModel(options), options.getTsuidOrder(),
                     options.getTypes());
+            if (level != null) {
+                findSCU.addLevel(level.name());
+            }
 
-            addKeys(findSCU, keys);
-
+            for (Args p : keys) {
+                addAttributes(findSCU.getKeys(), p);
+            }
             findSCU.setCancelAfter(cancelAfter);
             findSCU.setPriority(options.getPriority());
 
@@ -135,29 +158,8 @@ public class Modality {
             }
         } catch (Exception e) {
             Logger.error("findscu", e);
-            return new Status(org.aoju.bus.image.Status.UnableToProcess,
+            return new Status(Status.UnableToProcess,
                     "DICOM Find failed :" + e.getMessage(), null);
-        }
-    }
-
-    private static void addKeys(FindSCU findSCU, Args[] keys) {
-        for (Args p : keys) {
-            int[] pSeq = p.getParentSeqTags();
-            if (pSeq == null || pSeq.length == 0) {
-                CFind.addAttributes(findSCU.getKeys(), p);
-            } else {
-                Attributes parent = findSCU.getKeys();
-                for (int value : pSeq) {
-                    Sequence lastSeq = parent.getSequence(value);
-                    if (lastSeq == null || lastSeq.isEmpty()) {
-                        lastSeq = parent.newSequence(value, 1);
-                        lastSeq.add(new Attributes());
-                    }
-                    parent = lastSeq.get(0);
-                }
-
-                CFind.addAttributes(parent, p);
-            }
         }
     }
 
@@ -166,86 +168,22 @@ public class Modality {
         if (model instanceof FindSCU.InformationModel) {
             return (FindSCU.InformationModel) model;
         }
-        return FindSCU.InformationModel.MWL;
+        return FindSCU.InformationModel.StudyRoot;
     }
 
-    public static void setTlsParams(Connection remote, Connection conn) {
-        remote.setTlsProtocols(conn.getTlsProtocols());
-        remote.setTlsCipherSuites(conn.getTlsCipherSuites());
-    }
-
-    private static void addReferencedPerformedProcedureStepSequence(String mppsiuid,
-                                                                    StoreSCU storescu) {
-        Attributes attrs = storescu.getAttributes();
-        Sequence seq = attrs.newSequence(Tag.ReferencedPerformedProcedureStepSequence, 1);
-        Attributes item = new Attributes(2);
-        item.setString(Tag.ReferencedSOPClassUID, VR.UI, UID.ModalityPerformedProcedureStepSOPClass);
-        item.setString(Tag.ReferencedSOPInstanceUID, VR.UI, mppsiuid);
-        seq.add(item);
-    }
-
-    private static void nullifyReferencedPerformedProcedureStepSequence(StoreSCU storescu) {
-        Attributes attrs = storescu.getAttributes();
-        attrs.setNull(Tag.ReferencedPerformedProcedureStepSequence, VR.SQ);
-    }
-
-    private static void sendStgCmt(StgCmtSCU stgcmtscu) throws IOException,
-            InterruptedException, InstrumentException, GeneralSecurityException {
-        printNextStepMessage("Will now send Storage Commitment to " + calledAET);
-        try {
-            stgcmtscu.open();
-            stgcmtscu.sendRequests();
-        } finally {
-            stgcmtscu.close();
-        }
-    }
-
-    private static void sendMpps(MppsSCU mppsscu, boolean sendNSet) throws IOException,
-            InterruptedException, InstrumentException, GeneralSecurityException {
-        try {
-            printNextStepMessage("Will now send MPPS N-CREATE to " + calledAET);
-            mppsscu.open();
-            mppsscu.createMpps();
-            if (sendNSet) {
-                printNextStepMessage("Will now send MPPS N-SET to " + calledAET);
-                mppsscu.updateMpps();
+    public static void addAttributes(Attributes attrs, Args param) {
+        int tag = param.getTag();
+        String[] ss = param.getValues();
+        VR vr = ElementDictionary.vrOf(tag, attrs.getPrivateCreator(tag));
+        if (ss == null || ss.length == 0) {
+            if (vr == VR.SQ) {
+                attrs.newSequence(tag, 1).add(new Attributes(0));
+            } else {
+                attrs.setNull(tag, vr);
             }
-        } finally {
-            mppsscu.close();
+        } else {
+            attrs.setString(tag, vr, ss);
         }
-    }
-
-    private static void sendMppsNSet(MppsSCU mppsscu) throws IOException, InterruptedException,
-            InstrumentException, GeneralSecurityException {
-        try {
-            printNextStepMessage("Will now send MPPS N-SET to " + calledAET);
-            mppsscu.open();
-            mppsscu.updateMpps();
-        } finally {
-            mppsscu.close();
-        }
-    }
-
-    private static void printNextStepMessage(String message) throws IOException {
-        Logger.info("===========================================================");
-        Logger.info(message + ". Press <enter> to continue.");
-        Logger.info("===========================================================");
-        new BufferedReader(new InputStreamReader(System.in)).read();
-    }
-
-    private static void sendObjects(StoreSCU storescu) throws IOException,
-            InterruptedException, InstrumentException, GeneralSecurityException {
-        printNextStepMessage("Will now send DICOM object(s) to " + calledAET);
-        try {
-            storescu.open();
-            storescu.sendFiles();
-        } finally {
-            storescu.close();
-        }
-    }
-
-    public static void setCalledAET(String calledAET) {
-        Modality.calledAET = calledAET;
     }
 
 }
