@@ -24,6 +24,8 @@
  ********************************************************************************/
 package org.aoju.bus.core.io.streams;
 
+import org.aoju.bus.core.lang.Symbol;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.LinkedList;
@@ -32,7 +34,7 @@ import java.util.LinkedList;
  * 队列InputStream
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class QueueReader extends Reader {
@@ -65,7 +67,7 @@ public class QueueReader extends Reader {
         StringBuilder sb = new StringBuilder();
         while (true) {
             switch (peek()) {
-                case ' ':
+                case Symbol.C_SPACE:
                 case '\r':
                 case '\n':
                 case -1:

@@ -24,6 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.utils;
 
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.caller.Caller;
 import org.aoju.bus.core.lang.caller.SecurityCaller;
 import org.aoju.bus.core.lang.caller.StackTraceCaller;
@@ -32,7 +33,7 @@ import org.aoju.bus.core.lang.caller.StackTraceCaller;
  * 调用者 可以通过此类的方法获取调用者、多级调用者以及判断是否被调用
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class CallerUtils {
@@ -102,7 +103,7 @@ public class CallerUtils {
             return methodName;
         }
 
-        return stackTraceElement.getClassName() + "." + methodName;
+        return stackTraceElement.getClassName() + Symbol.DOT + methodName;
     }
 
     /**

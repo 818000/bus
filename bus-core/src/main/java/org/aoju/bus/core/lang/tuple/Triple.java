@@ -24,6 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.lang.tuple;
 
+import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.builder.CompareBuilder;
 import org.aoju.bus.core.lang.Symbol;
 
@@ -42,9 +43,10 @@ import java.util.Objects;
  * @param <M> the middle element type
  * @param <R> the right element type
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
+@ThreadSafe
 public abstract class Triple<L, M, R> implements Comparable<Triple<L, M, R>>, Serializable {
 
     /**

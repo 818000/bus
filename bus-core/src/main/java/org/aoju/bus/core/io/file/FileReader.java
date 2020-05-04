@@ -41,7 +41,7 @@ import java.util.List;
  * 文件读取器
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class FileReader extends FileWrapper {
@@ -292,10 +292,10 @@ public class FileReader extends FileWrapper {
      */
     private void checkFile() throws InstrumentException {
         if (false == file.exists()) {
-            throw new InstrumentException("File not exist: " + file);
+            throw new InstrumentException("File not exist : " + file);
         }
         if (false == file.isFile()) {
-            throw new InstrumentException("Not a file:" + file);
+            throw new InstrumentException("Not a file :" + file);
         }
     }
 

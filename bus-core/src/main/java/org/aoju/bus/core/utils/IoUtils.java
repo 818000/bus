@@ -58,7 +58,7 @@ import java.util.zip.Checksum;
  * 原因是流可能被多次读写,读写关闭后容易造成问题
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class IoUtils {
@@ -925,6 +925,17 @@ public class IoUtils {
                 close(osw);
             }
         }
+    }
+
+    /**
+     * 将多部分内容写到流中
+     *
+     * @param out        输出流
+     * @param isCloseOut 写入完毕是否关闭输出流
+     * @param obj        写入的对象内容
+     */
+    public static void write(OutputStream out, boolean isCloseOut, Serializable obj) throws InstrumentException {
+        writeObjects(out, isCloseOut, obj);
     }
 
     /**

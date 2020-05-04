@@ -24,6 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.http.secure;
 
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 
 import javax.security.auth.x500.X500Principal;
@@ -33,7 +34,7 @@ import javax.security.auth.x500.X500Principal;
  * 它不支持十六进制字符串样式的值.
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public final class DistinguishedNameParser {
@@ -320,7 +321,7 @@ public final class DistinguishedNameParser {
             return null;
         }
         while (true) {
-            String attValue = "";
+            String attValue = Normal.EMPTY;
 
             if (pos == length) {
                 return null;

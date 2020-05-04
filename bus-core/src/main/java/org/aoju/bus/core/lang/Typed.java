@@ -35,7 +35,7 @@ import java.lang.reflect.Type;
  * {@link ParameterizedType} 接口实现，用于重新定义泛型类型
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class Typed implements ParameterizedType, Serializable {
@@ -119,10 +119,10 @@ public class Typed implements ParameterizedType, Serializable {
             } else {
                 buf.append(useOwner.toString());
             }
-            buf.append('.').append(raw.getSimpleName());
+            buf.append(Symbol.C_DOT).append(raw.getSimpleName());
         }
 
-        appendAllTo(buf.append('<'), ", ", this.actualTypeArguments).append('>');
+        appendAllTo(buf.append(Symbol.C_LT), ", ", this.actualTypeArguments).append(Symbol.C_GT);
         return buf.toString();
     }
 

@@ -33,6 +33,7 @@ import org.aoju.bus.cache.magic.AnnoHolder;
 import org.aoju.bus.cache.magic.CacheExpire;
 import org.aoju.bus.cache.magic.CachePair;
 import org.aoju.bus.cache.magic.MethodHolder;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.logger.Logger;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +48,7 @@ import java.util.concurrent.ConcurrentMap;
  * 定位: 将@Cached、@Invalid、@CachedGet、(@CachedPut未来)以及将@CacheKey整体融合到一起
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class CacheInfoContainer {
@@ -85,7 +86,7 @@ public class CacheInfoContainer {
 
     private static AnnoHolder.Builder scanKeys(AnnoHolder.Builder builder, Annotation[][] pAnnotations) {
         int multiIndex = -1;
-        String id = "";
+        String id = Normal.EMPTY;
         Map<Integer, CacheKey> cacheKeyMap = new LinkedHashMap<>(pAnnotations.length);
 
         for (int pIndex = 0; pIndex < pAnnotations.length; ++pIndex) {

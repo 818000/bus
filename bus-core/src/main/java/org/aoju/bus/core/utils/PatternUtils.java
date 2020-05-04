@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * 常用正则表达式集合
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class PatternUtils {
@@ -240,7 +240,7 @@ public class PatternUtils {
         final Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             for (Integer group : varNums) {
-                template = template.replace("$" + group, matcher.group(group));
+                template = template.replace(Symbol.DOLLAR + group, matcher.group(group));
             }
             return template;
         }
@@ -290,7 +290,7 @@ public class PatternUtils {
         if (matcher.find()) {
             for (String var : varNums) {
                 int group = Integer.parseInt(var);
-                template = template.replace("$" + var, matcher.group(group));
+                template = template.replace(Symbol.DOLLAR + var, matcher.group(group));
             }
             contentHolder.set(StringUtils.sub(content, matcher.end(), content.length()));
             return template;
@@ -660,7 +660,7 @@ public class PatternUtils {
                 String replacement = replacementTemplate;
                 for (String var : varNums) {
                     int group = Integer.parseInt(var);
-                    replacement = replacement.replace("$" + var, matcher.group(group));
+                    replacement = replacement.replace(Symbol.DOLLAR + var, matcher.group(group));
                 }
                 matcher.appendReplacement(sb, escape(replacement));
                 result = matcher.find();

@@ -33,7 +33,7 @@ import java.util.Arrays;
  * 默认常量
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class Normal {
@@ -46,6 +46,10 @@ public class Normal {
      * 字符串:null
      */
     public static final String NULL = "null";
+    /**
+     * 字符串:unknown
+     */
+    public static final String UNKNOWN = "unknown";
     /**
      * 字符串:undefined
      */
@@ -78,6 +82,10 @@ public class Normal {
      * URL 协议表示Jar文件: "jar"
      */
     public static final String URL_PROTOCOL_JAR = "jar";
+    /**
+     * LIB 协议表示lib文件: "lib"
+     */
+    public static final String LIB_PROTOCOL_JAR = "lib";
     /**
      * URL 协议表示zip文件: "zip"
      */

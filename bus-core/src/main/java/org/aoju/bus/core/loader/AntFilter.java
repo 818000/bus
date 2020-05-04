@@ -30,12 +30,17 @@ import org.aoju.bus.core.lang.Symbol;
  * ANT风格路径过滤器
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class AntFilter extends RegexFilter implements Filter {
 
-    public static final String[] SYMBOLS = {"\\", "$", "(", ")", "+", ".", "[", "]", "^", "{", "}", "|"};
+    public static final String[] SYMBOLS = {
+            Symbol.BACKSLASH, Symbol.DOLLAR, Symbol.PARENTHESE_LEFT,
+            Symbol.PARENTHESE_RIGHT, Symbol.PLUS, Symbol.DOT,
+            Symbol.BRACKET_LEFT, Symbol.BRACKET_RIGHT, Symbol.CARET,
+            Symbol.BRACE_LEFT, Symbol.BRACE_RIGHT, Symbol.OR
+    };
 
     public AntFilter(String ant) {
         super(convert(ant));

@@ -39,7 +39,7 @@ import java.nio.file.WatchEvent;
  * 主要负责文件监听器的快捷创建
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class WatchUtils {
@@ -305,7 +305,6 @@ public class WatchUtils {
      * @param uri     URI
      * @param watcher {@link Watcher}
      * @return {@link WatchMonitor}
-     * @since 4.5.2
      */
     public static WatchMonitor createModify(URI uri, Watcher watcher) {
         return createModify(uri, 0, watcher);

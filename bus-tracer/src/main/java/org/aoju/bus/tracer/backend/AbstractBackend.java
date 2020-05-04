@@ -24,7 +24,6 @@
  ********************************************************************************/
 package org.aoju.bus.tracer.backend;
 
-
 import org.aoju.bus.tracer.Backend;
 import org.aoju.bus.tracer.config.PropertiesBasedTraceFilterConfiguration;
 import org.aoju.bus.tracer.config.PropertyChain;
@@ -36,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public abstract class AbstractBackend implements Backend {

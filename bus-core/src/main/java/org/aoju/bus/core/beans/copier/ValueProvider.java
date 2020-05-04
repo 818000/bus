@@ -34,7 +34,7 @@ import java.lang.reflect.Type;
  *
  * @param <T> KEY类型,一般情况下为 {@link String}
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public interface ValueProvider<T> {
@@ -43,7 +43,7 @@ public interface ValueProvider<T> {
      * 获取值
      *
      * @param key       Bean对象中参数名
-     * @param valueType 被注入的值得类型
+     * @param valueType 被注入的值的类型
      * @return 对应参数名的值
      */
     Object value(T key, Type valueType);

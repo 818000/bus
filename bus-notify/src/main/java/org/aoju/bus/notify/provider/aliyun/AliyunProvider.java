@@ -33,7 +33,7 @@ import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.notify.Builder;
 import org.aoju.bus.notify.Context;
 import org.aoju.bus.notify.magic.Message;
-import org.aoju.bus.notify.metric.Template;
+import org.aoju.bus.notify.magic.Template;
 import org.aoju.bus.notify.provider.AbstractProvider;
 
 import javax.crypto.Mac;
@@ -52,7 +52,7 @@ import java.util.TreeMap;
  * 阿里云抽象类提供者
  *
  * @author Justubborn
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK1.8+
  */
 public class AliyunProvider<T extends Template, K extends Context> extends AbstractProvider<T, K> {
@@ -75,9 +75,9 @@ public class AliyunProvider<T extends Template, K extends Context> extends Abstr
     protected String specialUrlEncode(String value) {
         try {
             return URLEncoder.encode(value, Charset.DEFAULT_UTF_8)
-                    .replace("+", "%20")
-                    .replace("*", "%2A")
-                    .replace("%7E", "~");
+                    .replace(Symbol.PLUS, "%20")
+                    .replace(Symbol.STAR, "%2A")
+                    .replace("%7E", Symbol.TILDE);
         } catch (UnsupportedEncodingException e) {
             throw new InstrumentException("aliyun specialUrlEncode error");
         }

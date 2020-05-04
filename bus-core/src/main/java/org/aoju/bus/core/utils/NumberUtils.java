@@ -56,7 +56,7 @@ import java.util.Set;
  * </p>
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class NumberUtils {
@@ -1016,7 +1016,7 @@ public class NumberUtils {
                 foundDigit = true;
                 allowSigns = false;
 
-            } else if (chars[i] == '.') {
+            } else if (chars[i] == Symbol.C_DOT) {
                 if (hasDecPoint || hasExp) {
                     // two decimal points or dec in exponent
                     return false;
@@ -1053,7 +1053,7 @@ public class NumberUtils {
                 // can't have an E at the last byte
                 return false;
             }
-            if (chars[i] == '.') {
+            if (chars[i] == Symbol.C_DOT) {
                 if (hasDecPoint || hasExp) {
                     // two decimal points or dec in exponent
                     return false;
@@ -1810,7 +1810,7 @@ public class NumberUtils {
      *
      * @param str 数字字符串
      * @return {@link BigInteger}
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static BigInteger newBigInteger(String str) {
         if (null == str) {

@@ -36,6 +36,7 @@ import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
 import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.logger.Logger;
 import org.apache.ibatis.reflection.MetaObject;
@@ -44,7 +45,7 @@ import org.apache.ibatis.reflection.MetaObject;
  * 抽象 SQL 解析类
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class AbstractSqlSQLParser {
@@ -66,7 +67,7 @@ public class AbstractSqlSQLParser {
                 for (Statement statement : statements.getStatements()) {
                     if (null != statement) {
                         if (i++ > 0) {
-                            sqlStringBuilder.append(';');
+                            sqlStringBuilder.append(Symbol.C_SEMICOLON);
                         }
                         sqlStringBuilder.append(this.processParser(statement));
                     }

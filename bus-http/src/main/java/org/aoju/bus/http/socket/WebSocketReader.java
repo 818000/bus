@@ -27,6 +27,7 @@ package org.aoju.bus.http.socket;
 import org.aoju.bus.core.io.Buffer;
 import org.aoju.bus.core.io.BufferSource;
 import org.aoju.bus.core.io.ByteString;
+import org.aoju.bus.core.lang.Normal;
 
 import java.io.IOException;
 import java.net.ProtocolException;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * 这个类不是线程安全的
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 final class WebSocketReader {
@@ -152,7 +153,7 @@ final class WebSocketReader {
                 break;
             case WebSocketProtocol.OPCODE_CONTROL_CLOSE:
                 int code = WebSocketProtocol.CLOSE_NO_STATUS_CODE;
-                String reason = "";
+                String reason = Normal.EMPTY;
                 long bufferSize = controlFrameBuffer.size();
                 if (bufferSize == 1) {
                     throw new ProtocolException("Malformed close payload length of 1.");

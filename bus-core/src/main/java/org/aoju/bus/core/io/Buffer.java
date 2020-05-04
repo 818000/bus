@@ -46,7 +46,7 @@ import java.util.List;
  * 内存中字节的集合.
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class Buffer implements BufferSource, BufferSink, Cloneable, ByteChannel {
@@ -770,7 +770,7 @@ public class Buffer implements BufferSource, BufferSink, Cloneable, ByteChannel 
         if (byteCount > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("byteCount > Integer.MAX_VALUE: " + byteCount);
         }
-        if (byteCount == 0) return "";
+        if (byteCount == 0) return Normal.EMPTY;
 
         Segment s = head;
         if (s.pos + byteCount > s.limit) {

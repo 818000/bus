@@ -53,7 +53,7 @@ import java.util.Vector;
  * </p>
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class Sftp extends AbstractFtp {
@@ -255,7 +255,9 @@ public class Sftp extends AbstractFtp {
                 return LsEntrySelector.CONTINUE;
             });
         } catch (SftpException e) {
-            throw new InstrumentException(e);
+            if (false == StringUtils.startWithIgnoreCase(e.getMessage(), "No such file")) {
+                throw new InstrumentException(e);
+            }
         }
         return fileNames;
     }

@@ -32,7 +32,7 @@ import java.io.InputStream;
  * MAC（Message Authentication Code）算法引擎
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public interface MacEngine {
@@ -45,5 +45,20 @@ public interface MacEngine {
      * @return 摘要bytes
      */
     byte[] digest(InputStream data, int bufferLength);
+
+
+    /**
+     * 获取MAC算法块大小
+     *
+     * @return MAC算法块大小
+     */
+    int getMacLength();
+
+    /**
+     * 获取当前算法
+     *
+     * @return 算法
+     */
+    String getAlgorithm();
 
 }

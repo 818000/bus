@@ -24,6 +24,8 @@
  ********************************************************************************/
 package org.aoju.bus.core.annotation;
 
+import org.aoju.bus.core.lang.Normal;
+
 import java.lang.annotation.*;
 
 /**
@@ -45,7 +47,7 @@ import java.lang.annotation.*;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 @Documented
@@ -58,7 +60,7 @@ public @interface SPI {
      *
      * @return 标识
      */
-    String value() default "";
+    String value() default Normal.EMPTY;
 
     /**
      * 声明每次获取实现类时是否需要创建

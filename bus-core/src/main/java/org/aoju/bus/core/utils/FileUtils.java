@@ -53,7 +53,7 @@ import java.util.zip.Checksum;
  * 文件工具类
  *
  * @author Kimi Liu
- * @version 5.8.6
+ * @version 5.8.8
  * @since JDK 1.8+
  */
 public class FileUtils {
@@ -339,7 +339,7 @@ public class FileUtils {
      * @param path       当前遍历文件或目录的路径
      * @param fileFilter 文件过滤规则对象,选择要保留的文件,只对文件有效,不过滤目录
      * @return 文件列表
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static List<File> loopFiles(String path, FileFilter fileFilter) {
         return loopFiles(file(path), fileFilter);
@@ -424,7 +424,7 @@ public class FileUtils {
      *
      * @param path 当前遍历文件或目录的路径
      * @return 文件列表
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static List<File> loopFiles(String path) {
         return loopFiles(file(path));
@@ -1025,7 +1025,10 @@ public class FileUtils {
      */
     public static File rename(File file, String newName, boolean isRetainExt, boolean isOverride) {
         if (isRetainExt) {
-            newName = newName.concat(Symbol.DOT).concat(FileUtils.extName(file));
+            final String extName = FileUtils.extName(file);
+            if (StringUtils.isNotBlank(extName)) {
+                newName = newName.concat(Symbol.DOT).concat(extName);
+            }
         }
         final Path path = file.toPath();
         final CopyOption[] options = isOverride ? new CopyOption[]{StandardCopyOption.REPLACE_EXISTING} : new CopyOption[]{};
@@ -1220,7 +1223,7 @@ public class FileUtils {
         try {
             jarFile = new JarFile(path.substring(0, index));
             // 防止出现jar!/org/aoju/这类路径导致文件找不到
-            return ZipUtils.listFileNames(jarFile, StringUtils.removePrefix(path.substring(index + 1), "/"));
+            return ZipUtils.listFileNames(jarFile, StringUtils.removePrefix(path.substring(index + 1), Symbol.SLASH));
         } catch (IOException e) {
             throw new InstrumentException(StringUtils.format("Can not read file path of [{}]", path), e);
         } finally {
@@ -1369,9 +1372,8 @@ public class FileUtils {
      * @return 总大小, bytes长度
      */
     public static long size(File file) {
-        Assert.notNull(file, "file argument is null !");
-        if (false == file.exists()) {
-            throw new IllegalArgumentException(StringUtils.format("File [{}] not exist !", file.getAbsolutePath()));
+        if (null == file || false == file.exists()) {
+            return 0;
         }
 
         if (file.isDirectory()) {
@@ -1591,7 +1593,7 @@ public class FileUtils {
         // 兼容Spring风格的ClassPath路径,去除前缀,不区分大小写
         String pathToUse = StringUtils.removePrefixIgnoreCase(path, "classpath:");
         // 去除file:前缀
-        pathToUse = StringUtils.removePrefixIgnoreCase(pathToUse, "file:");
+        pathToUse = StringUtils.removePrefixIgnoreCase(pathToUse, Normal.FILE_URL_PREFIX);
         // 统一使用斜杠
         pathToUse = pathToUse.replaceAll("[/\\\\]{1,}", Symbol.SLASH).trim();
 
@@ -2099,7 +2101,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @return 字节码
      * @throws InstrumentException 异常
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static byte[] readBytes(String filePath) throws InstrumentException {
         return readBytes(file(filePath));
@@ -2885,7 +2887,7 @@ public class FileUtils {
      * @param path 绝对路径
      * @return 目标文件
      * @throws InstrumentException 异常
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static <T> File writeUtf8Lines(Collection<T> list, String path) throws InstrumentException {
         return writeLines(list, path, org.aoju.bus.core.lang.Charset.UTF_8);
@@ -2899,7 +2901,7 @@ public class FileUtils {
      * @param file 绝对路径
      * @return 目标文件
      * @throws InstrumentException 异常
-     * @since 5.8.6
+     * @since 5.8.8
      */
     public static <T> File writeUtf8Lines(Collection<T> list, File file) throws InstrumentException {
         return writeLines(list, file, org.aoju.bus.core.lang.Charset.UTF_8);
