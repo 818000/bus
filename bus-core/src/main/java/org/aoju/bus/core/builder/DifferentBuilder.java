@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -58,7 +58,7 @@ import java.util.List;
  * {@link DifferentResult#toString(ToStringStyle)}覆盖此样式选择。.
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @see Differentable
  * @see Different
  * @see DifferentResult

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -35,7 +35,7 @@ import java.util.Date;
  * 用户只需实现getStr方法即可,其他类型将会从String结果中转换 在不提供默认值的情况下, 如果值不存在或获取错误,返回null
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @since JDK 1.8+
  */
 public interface OptNullString<K> extends OptNullType<K> {

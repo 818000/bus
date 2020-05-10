@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -34,7 +34,7 @@ import org.aoju.bus.office.Context;
  * 或者如果调用过滤器是链中的最后一个过滤器，则结束调用链。
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @since JDK 1.8+
  */
 public interface FilterChain {

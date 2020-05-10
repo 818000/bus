@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -45,7 +45,7 @@ import java.util.*;
  * 把一个拥有对属性进行set和get方法的类,我们就可以称之为JavaBean
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @since JDK 1.8+
  */
 public class BeanUtils {

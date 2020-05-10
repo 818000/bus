@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -31,7 +31,7 @@ import org.aoju.bus.cron.TaskExecutor;
  * 继承此监听后实现需要的方法即可
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @since JDK 1.8+
  */
 public class SimpleTaskListener implements TaskListener {

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License                                                               *
  *                                                                               *
- * Copyright (c) 2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 处理主要逻辑,最关键的一个类
  *
  * @author Kimi Liu
- * @version 5.9.0
+ * @version 5.8.9
  * @since JDK 1.8+
  */
 public class MapperBuilder {
