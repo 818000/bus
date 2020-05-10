@@ -108,8 +108,7 @@ implementation 'org.aoju:bus-all:5.9.0'
 
 点击以下任一链接，下载`bus-*-x.x.x.jar`即可：
 
-- [Maven中央库①](https://repo1.maven.org/maven2/org/aoju)
-- [Maven中央库②](http://repo2.maven.org/maven2/org/aoju)
+- [Maven中央库](https://repo1.maven.org/maven2/org/aoju)
 
 ### 测试&使用
 
