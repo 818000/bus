@@ -24,58 +24,59 @@
  ********************************************************************************/
 package org.aoju.bus.image.nimble.opencv;
 
-import org.aoju.bus.image.galaxy.data.Implementation;
+import org.aoju.bus.image.nimble.codec.ImageDescriptor;
 
-import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
-import java.util.Locale;
+import java.io.File;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
-public class RLEImageReaderSpi extends ImageReaderSpi {
+public class ExtendInputImageStream {
 
-    private static final String vendorName = "org.aoju.bus.image";
-    private static final String version = Implementation.getVersionName();
-    private static final String[] formatNames = {"rle", "RLE"};
-    private static final Class<?>[] inputTypes = {ImageInputStream.class};
-    private static final String[] entensions = {""};
-    private static final String[] mimeType = {""};
+    private final File file;
+    private final long[] segmentPositions;
+    private final long[] segmentLengths;
+    private final ImageDescriptor imageDescriptor;
 
-    public RLEImageReaderSpi() {
-        super(vendorName, version, formatNames,
-                entensions,
-                mimeType,
-                RLEImageReader.class.getName(), inputTypes,
-                null,
-                false,
-                null,
-                null,
-                null,
-                null,
-                false,
-                null,
-                null,
-                null,
-                null);
+    public ExtendInputImageStream(File file, long[] segmentPositions, int[] segmentLengths, ImageDescriptor imageDescriptor) {
+        this.file = file;
+        this.segmentPositions = segmentPositions;
+        this.segmentLengths = segmentLengths == null ? null : getDoubleArray(segmentLengths);
+        this.imageDescriptor = imageDescriptor;
     }
 
-    @Override
-    public String getDescription(Locale locale) {
-        return "RLE Image Reader";
+    public static double[] getDoubleArray(long[] array) {
+        double[] a = new double[array.length];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = array[i];
+        }
+        return a;
     }
 
-    @Override
-    public boolean canDecodeInput(Object source) {
-        return false;
+    public static long[] getDoubleArray(int[] array) {
+        long[] a = new long[array.length];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = array[i];
+        }
+        return a;
     }
 
-    @Override
-    public ImageReader createReaderInstance(Object extension) {
-        return new RLEImageReader(this);
+    public long[] getSegmentPositions() {
+        return segmentPositions;
+    }
+
+    public long[] getSegmentLengths() {
+        return segmentLengths;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public ImageDescriptor getImageDescriptor() {
+        return imageDescriptor;
     }
 
 }

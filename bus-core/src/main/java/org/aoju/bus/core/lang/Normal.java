@@ -33,7 +33,7 @@ import java.util.Arrays;
  * 默认常量
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class Normal {
@@ -46,6 +46,30 @@ public class Normal {
      * 字符串:null
      */
     public static final String NULL = "null";
+    /**
+     * is
+     */
+    public static final String IS = "is";
+    /**
+     * set
+     */
+    public static final String SET = "set";
+    /**
+     * get
+     */
+    public static final String GET = "get";
+    /**
+     * equals
+     */
+    public static final String EQUALS = "equals";
+    /**
+     * hashCode
+     */
+    public static final String HASHCODE = "hashCode";
+    /**
+     * toString
+     */
+    public static final String TOSTRING = "toString";
     /**
      * 字符串:unknown
      */

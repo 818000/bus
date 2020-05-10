@@ -40,7 +40,7 @@ import java.util.List;
  * OpenJDK 7 or OpenJDK 8 with {@code org.mortbay.jetty.alpn/alpn-boot} 在引导类路径中.
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class JdkWithJettyBootPlatform extends Platform {
@@ -69,7 +69,7 @@ public class JdkWithJettyBootPlatform extends Platform {
             Class<?> clientProviderClass = Class.forName(negoClassName + "$ClientProvider");
             Class<?> serverProviderClass = Class.forName(negoClassName + "$ServerProvider");
             Method putMethod = negoClass.getMethod("put", SSLSocket.class, providerClass);
-            Method getMethod = negoClass.getMethod("get", SSLSocket.class);
+            Method getMethod = negoClass.getMethod(Normal.GET, SSLSocket.class);
             Method removeMethod = negoClass.getMethod("remove", SSLSocket.class);
             return new JdkWithJettyBootPlatform(
                     putMethod, getMethod, removeMethod, clientProviderClass, serverProviderClass);

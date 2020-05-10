@@ -31,6 +31,7 @@ import org.aoju.bus.core.beans.copier.ValueProvider;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.Editor;
 import org.aoju.bus.core.lang.Filter;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.map.CaseInsensitiveMap;
 
@@ -44,7 +45,7 @@ import java.util.*;
  * 把一个拥有对属性进行set和get方法的类,我们就可以称之为JavaBean
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class BeanUtils {
@@ -60,7 +61,7 @@ public class BeanUtils {
         if (ClassUtils.isNormalClass(clazz)) {
             final Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if (method.getParameterTypes().length == 1 && method.getName().startsWith("set")) {
+                if (method.getParameterTypes().length == 1 && method.getName().startsWith(Normal.SET)) {
                     // 检测包含标准的setXXX方法即视为标准的JavaBean
                     return true;
                 }
@@ -111,7 +112,6 @@ public class BeanUtils {
      * @param bean             Bean对象
      * @param ignoreFiledNames 忽略检查的字段名
      * @return 是否为空，<code>true</code> - 空 / <code>false</code> - 非空
-     * @since 5.0.7
      */
     public static boolean isNotEmpty(Object bean, String... ignoreFiledNames) {
         return false == isEmpty(bean, ignoreFiledNames);
@@ -152,7 +152,7 @@ public class BeanUtils {
         if (ClassUtils.isNormalClass(clazz)) {
             final Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if (method.getParameterTypes().length == 1 && method.getName().startsWith("set")) {
+                if (method.getParameterTypes().length == 1 && method.getName().startsWith(Normal.SET)) {
                     // 检测包含标准的setXXX方法即视为标准的JavaBean
                     return true;
                 }
@@ -172,7 +172,7 @@ public class BeanUtils {
         if (ClassUtils.isNormalClass(clazz)) {
             for (Method method : clazz.getMethods()) {
                 if (method.getParameterTypes().length == 0) {
-                    if (method.getName().startsWith("get") || method.getName().startsWith("is")) {
+                    if (method.getName().startsWith(Normal.GET) || method.getName().startsWith(Normal.IS)) {
                         return true;
                     }
                 }
@@ -300,7 +300,6 @@ public class BeanUtils {
      *
      * @param clazz Bean类
      * @return {@link BeanDesc}
-     * @since 3.1.9
      */
     public static BeanDesc getBeanDesc(Class<?> clazz) {
         BeanDesc beanDesc = BeanDescCache.INSTANCE.getBeanDesc(clazz);
@@ -617,7 +616,6 @@ public class BeanUtils {
      * @param isToCamelCase 是否将Map中的下划线风格key转换为驼峰风格
      * @param copyOptions   属性复制选项 {@link CopyOptions}
      * @return Bean
-     * @since 3.3.1
      */
     public static <T> T fillBeanWithMap(Map<?, ?> map, T bean, boolean isToCamelCase, CopyOptions copyOptions) {
         if (MapUtils.isEmpty(map)) {
@@ -659,7 +657,6 @@ public class BeanUtils {
      * @param isToUnderlineCase 是否转换为下划线模式
      * @param ignoreNullValue   是否忽略值为空的字段
      * @return Map
-     * @since 3.2.3
      */
     public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, final boolean isToUnderlineCase, boolean ignoreNullValue) {
         if (bean == null) {

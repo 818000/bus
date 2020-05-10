@@ -48,7 +48,7 @@ import java.util.Properties;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class StoreSCP extends BasicCStoreSCP {
@@ -133,7 +133,7 @@ public class StoreSCP extends BasicCStoreSCP {
             Attributes fmi = as.createFileMetaInformation(iuid, cuid, tsuid);
             storeTo(as, fmi, data, file);
             if (ObjectUtils.isNotEmpty(rollers)) {
-                rollers.supports(fmi, file);
+                rollers.supports(fmi, file, this.getClass());
             }
         } catch (Exception e) {
             throw new ImageException(Status.ProcessingFailure, e);
@@ -163,12 +163,12 @@ public class StoreSCP extends BasicCStoreSCP {
         this.status = status;
     }
 
-    public void loadDefaultTransferCapability(URL transferCapabilityFile) {
+    public void loadDefaultTransferCapability(URL url) {
         Properties p = new Properties();
 
         try {
-            if (transferCapabilityFile != null) {
-                p.load(transferCapabilityFile.openStream());
+            if (url != null) {
+                p.load(url.openStream());
             }
         } catch (IOException e) {
             Logger.error("Cannot read sop-classes", e);

@@ -32,7 +32,7 @@ import java.util.Locale;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class NativeJLSImageWriterSpi extends ImageWriterSpi {
@@ -62,4 +62,5 @@ public class NativeJLSImageWriterSpi extends ImageWriterSpi {
     public ImageWriter createWriterInstance(Object extension) {
         return new NativeJLSImageWriter(this);
     }
+
 }

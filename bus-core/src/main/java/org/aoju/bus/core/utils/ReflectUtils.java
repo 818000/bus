@@ -40,20 +40,10 @@ import java.util.Set;
  * 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class ReflectUtils {
-
-    /**
-     * set方法前缀
-     */
-    public static final String SETTER_PREFIX = "set";
-
-    /**
-     * get方法前缀
-     */
-    public static final String GETTER_PREFIX = "get";
 
     private static final String CGLIB_CLASS_SEPARATOR = Symbol.DOLLAR + Symbol.DOLLAR;
 
@@ -81,7 +71,7 @@ public class ReflectUtils {
     public static Object invokeGetter(Object obj, String name) {
         Object object = obj;
         for (String method : StringUtils.split(name, Symbol.DOT)) {
-            String getterMethodName = GETTER_PREFIX + StringUtils.capitalize(method);
+            String getterMethodName = Normal.GET + StringUtils.capitalize(method);
             object = invokeMethod(object, getterMethodName, new Class[]{}, new Object[]{});
         }
         return object;
@@ -100,10 +90,10 @@ public class ReflectUtils {
         String[] names = StringUtils.split(name, Symbol.DOT);
         for (int i = 0; i < names.length; i++) {
             if (i < names.length - 1) {
-                String getterMethodName = GETTER_PREFIX + StringUtils.capitalize(names[i]);
+                String getterMethodName = Normal.GET + StringUtils.capitalize(names[i]);
                 object = invokeMethod(object, getterMethodName, new Class[]{}, new Object[]{});
             } else {
-                String setterMethodName = SETTER_PREFIX + StringUtils.capitalize(names[i]);
+                String setterMethodName = Normal.SET + StringUtils.capitalize(names[i]);
                 invokeMethodByName(object, setterMethodName, new Object[]{value});
             }
         }
@@ -446,7 +436,7 @@ public class ReflectUtils {
         final Field[] fields = getFields(beanClass);
         if (ArrayUtils.isNotEmpty(fields)) {
             for (Field field : fields) {
-                if ((name.equals(field.getName()))) {
+                if ((name.equals(getFieldName(field)))) {
                     return field;
                 }
             }
@@ -504,7 +494,7 @@ public class ReflectUtils {
      * @param field 字段信息
      * @return 字段名
      */
-    public static String getFieldsName(Field field) {
+    public static String getFieldName(Field field) {
         if (null == field) {
             return null;
         }
@@ -650,7 +640,6 @@ public class ReflectUtils {
      * @param paramTypes 参数类型,指定参数类型如果是方法的子类也算
      * @return 方法
      * @throws SecurityException 无权访问抛出异常
-     * @since 5.8.9
      */
     public static Method getMethodIgnoreCase(Class<?> clazz, String methodName, Class<?>... paramTypes) throws SecurityException {
         return getMethod(clazz, true, methodName, paramTypes);
@@ -678,7 +667,6 @@ public class ReflectUtils {
      * @param paramTypes 参数类型,指定参数类型如果是方法的子类也算
      * @return 方法
      * @throws SecurityException 无权访问抛出异常
-     * @since 5.8.9
      */
     public static Method getMethod(Class<?> clazz, boolean ignoreCase, String methodName, Class<?>... paramTypes) throws SecurityException {
         if (null == clazz || StringUtils.isBlank(methodName)) {
@@ -793,7 +781,7 @@ public class ReflectUtils {
      * @return 是否为equals方法
      */
     public static boolean isEqualsMethod(Method method) {
-        if (method == null || false == ObjectUtils.equal(method.getName(), "equals")) {
+        if (method == null || false == ObjectUtils.equal(method.getName(), Normal.EQUALS)) {
             return false;
         }
         final Class<?>[] paramTypes = method.getParameterTypes();
@@ -1013,7 +1001,7 @@ public class ReflectUtils {
      * @return 返回结果
      */
     public static String getGetMethodName(String fieldName) {
-        return GETTER_PREFIX + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+        return Normal.GET + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
     /**
@@ -1023,7 +1011,7 @@ public class ReflectUtils {
      * @return 返回结果
      */
     public static String getSetMethodName(String fieldName) {
-        return SETTER_PREFIX + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+        return Normal.SET + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
 

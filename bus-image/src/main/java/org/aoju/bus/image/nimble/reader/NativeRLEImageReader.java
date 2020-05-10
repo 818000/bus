@@ -22,13 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.image.nimble.opencv;
+package org.aoju.bus.image.nimble.reader;
 
 import org.aoju.bus.core.utils.ByteUtils;
 import org.aoju.bus.logger.Logger;
 
 import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
@@ -41,10 +40,10 @@ import java.util.Iterator;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
-public class RLEImageReader extends ImageReader {
+public class NativeRLEImageReader extends javax.imageio.ImageReader {
 
     private static final String UNKNOWN_IMAGE_TYPE =
             "RLE Image Reader needs ImageReadParam.destination or "
@@ -73,7 +72,7 @@ public class RLEImageReader extends ImageReader {
 
     private int height;
 
-    protected RLEImageReader(ImageReaderSpi originatingProvider) {
+    protected NativeRLEImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 

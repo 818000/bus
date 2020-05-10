@@ -35,7 +35,7 @@ import java.util.LinkedList;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class ContentHandlerAdapter extends DefaultHandler {
@@ -308,6 +308,7 @@ public class ContentHandlerAdapter extends DefaultHandler {
             bulkData = null;
         } else if (inlineBinary) {
             attrs.setBytes(privateCreator, tag, vr, getBytes());
+            inlineBinary = false;
         } else {
             attrs.setString(privateCreator, tag, vr, getStrings());
         }

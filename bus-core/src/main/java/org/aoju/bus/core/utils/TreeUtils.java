@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * 6、代码简洁轻量无额外依赖
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class TreeUtils {
@@ -166,9 +166,14 @@ public class TreeUtils {
             return node;
         }
 
+        final List<TreeMap<T>> children = node.getChildren();
+        if (null == children) {
+            return null;
+        }
+
         // 查找子节点
         TreeMap<T> childNode;
-        for (TreeMap<T> child : node.getChildren()) {
+        for (TreeMap<T> child : children) {
             childNode = child.getNode(id);
             if (null != childNode) {
                 return childNode;

@@ -26,6 +26,7 @@ package org.aoju.bus.core.utils;
 
 import org.aoju.bus.core.builder.Builder;
 import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.map.TableMap;
 
@@ -42,7 +43,7 @@ import java.util.*;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class TypeUtils {
@@ -191,7 +192,7 @@ public class TypeUtils {
         if (isJavaBean(clazz)) {
             final Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if (method.getParameterTypes().length == 1 && method.getName().startsWith("set")) {
+                if (method.getParameterTypes().length == 1 && method.getName().startsWith(Normal.SET)) {
                     // 检测包含标准的setXXX方法即视为标准的JavaBean
                     return true;
                 }
@@ -230,7 +231,6 @@ public class TypeUtils {
      *
      * @param method 方法
      * @return {@link Type},可能为{@code null}
-     * @since 3.1.2
      */
     public static Type getFirstParamType(Method method) {
         return getParamType(method, 0);
@@ -241,7 +241,6 @@ public class TypeUtils {
      *
      * @param method 方法
      * @return 第一个参数类型, 可能为{@code null}
-     * @since 3.1.2
      */
     public static Class<?> getFirstParamClass(Method method) {
         return getParamClass(method, 0);
@@ -269,7 +268,6 @@ public class TypeUtils {
      * @param method 方法
      * @param index  第几个参数的索引,从0开始计数
      * @return 参数类, 可能为{@code null}
-     * @since 3.1.2
      */
     public static Class<?> getParamClass(Method method, int index) {
         Class<?>[] classes = getParamClasses(method);
@@ -497,7 +495,6 @@ public class TypeUtils {
      *
      * @param field {@link Field}
      * @return 原始类, 如果无法获取原始类, 返回{@code null}
-     * @since 3.1.9
      */
     public static Class<?> getClass(Field field) {
         return null == field ? null : field.getType();
@@ -524,7 +521,6 @@ public class TypeUtils {
      * @return 参数类型类列表
      * @see Method#getGenericParameterTypes
      * @see Method#getParameterTypes
-     * @since 3.1.9
      */
     public static Class<?>[] getParamClasses(Method method) {
         return null == method ? null : method.getParameterTypes();
@@ -550,7 +546,6 @@ public class TypeUtils {
      * @return 返回值类型的类
      * @see Method#getGenericReturnType
      * @see Method#getReturnType
-     * @since 3.1.9
      */
     public static Class<?> getReturnClass(Method method) {
         return null == method ? null : method.getReturnType();
@@ -758,7 +753,6 @@ public class TypeUtils {
      * @param var            要查找的类型变量
      * @param typeVarAssigns 用于查找的map
      * @return 如果某个变量不在映射中，则返回{@code null}
-     * @since 3.2.0
      */
     private static Type unrollVariableAssignments(TypeVariable<?> var, final Map<TypeVariable<?>, Type> typeVarAssigns) {
         Type result;
@@ -1424,7 +1418,6 @@ public class TypeUtils {
      * @param typeArguments 参数 {@link TypeUtils#getTypeArguments(Type, Class)}
      * @param type          变量赋值的类型
      * @return Type
-     * @since 3.2.0
      */
     public static Type unrollVariables(Map<TypeVariable<?>, Type> typeArguments, final Type type) {
         if (typeArguments == null) {
@@ -1467,7 +1460,6 @@ public class TypeUtils {
      * @param typeArguments 参数 {@link Map}
      * @param bounds        绑定
      * @return {@code bounds}，任何变量都可以重新赋值
-     * @since 3.2.0
      */
     private static Type[] unrollBounds(final Map<TypeVariable<?>, Type> typeArguments, final Type[] bounds) {
         Type[] result = bounds;
@@ -1488,7 +1480,6 @@ public class TypeUtils {
      *
      * @param type 检查类型变量的类型
      * @return boolean
-     * @since 3.2.0
      */
     public static boolean containsTypeVariables(final Type type) {
         if (type instanceof TypeVariable<?>) {
@@ -1519,7 +1510,6 @@ public class TypeUtils {
      * @param raw           用于创建参数化类型实例的原始类
      * @param typeArguments 用于参数化的类型
      * @return {@link ParameterizedType}
-     * @since 3.2.0
      */
     public static final ParameterizedType parameterize(final Class<?> raw, final Type... typeArguments) {
         return parameterizeWithOwner(null, raw, typeArguments);
@@ -1531,7 +1521,6 @@ public class TypeUtils {
      * @param raw             用于创建参数化类型实例的原始类
      * @param typeArgMappings 用于参数化的类型
      * @return {@link ParameterizedType}
-     * @since 3.2.0
      */
     public static final ParameterizedType parameterize(final Class<?> raw,
                                                        final Map<TypeVariable<?>, Type> typeArgMappings) {
@@ -1547,7 +1536,6 @@ public class TypeUtils {
      * @param raw           用于创建参数化类型实例的原始类
      * @param typeArguments 用于参数化的类型
      * @return {@link ParameterizedType}
-     * @since 3.2.0
      */
     public static final ParameterizedType parameterizeWithOwner(final Type owner, final Class<?> raw,
                                                                 final Type... typeArguments) {
@@ -1578,7 +1566,6 @@ public class TypeUtils {
      * @param raw             用于创建参数化类型实例的原始类
      * @param typeArgMappings 用于参数化的映射
      * @return {@link ParameterizedType}
-     * @since 3.2.0
      */
     public static final ParameterizedType parameterizeWithOwner(final Type owner, final Class<?> raw,
                                                                 final Map<TypeVariable<?>, Type> typeArgMappings) {
@@ -1608,7 +1595,6 @@ public class TypeUtils {
      * 获取{@link WildcardTypeBuilder}.
      *
      * @return {@link WildcardTypeBuilder}
-     * @since 3.2.0
      */
     public static WildcardTypeBuilder wildcardType() {
         return new WildcardTypeBuilder();
@@ -1619,7 +1605,6 @@ public class TypeUtils {
      *
      * @param componentType 数组元素的类型
      * @return {@link GenericArrayType}
-     * @since 3.2.0
      */
     public static GenericArrayType genericArrayType(final Type componentType) {
         return new GenericArrayTypeImpl(Assert.notNull(componentType, "componentType is null"));
@@ -1631,7 +1616,6 @@ public class TypeUtils {
      * @param t1 第一个比较对象
      * @param t2 第二个比较对象
      * @return 是否相等 true/false
-     * @since 3.2.0
      */
     public static boolean equals(final Type t1, final Type t2) {
         if (Objects.equals(t1, t2)) {
@@ -1655,7 +1639,6 @@ public class TypeUtils {
      * @param p 第一个比较对象
      * @param t 第二个比较对象
      * @return 是否相等 true/false
-     * @since 3.2.0
      */
     private static boolean equals(final ParameterizedType p, final Type t) {
         if (t instanceof ParameterizedType) {
@@ -1673,7 +1656,6 @@ public class TypeUtils {
      * @param a 第一个比较对象
      * @param t 第二个比较对象
      * @return 是否相等 true/false
-     * @since 3.2.0
      */
     private static boolean equals(final GenericArrayType a, final Type t) {
         return t instanceof GenericArrayType
@@ -1686,7 +1668,6 @@ public class TypeUtils {
      * @param w 第一个比较对象
      * @param t 第二个比较对象
      * @return 是否相等 true/false
-     * @since 3.2.0
      */
     private static boolean equals(final WildcardType w, final Type t) {
         if (t instanceof WildcardType) {
@@ -1703,7 +1684,6 @@ public class TypeUtils {
      * @param t1 第一个比较对象
      * @param t2 第二个比较对象
      * @return 是否相等 true/false
-     * @since 3.2.0
      */
     private static boolean equals(final Type[] t1, final Type[] t2) {
         if (t1.length == t2.length) {
@@ -1722,7 +1702,6 @@ public class TypeUtils {
      *
      * @param type 创建字符串表示的类型
      * @return 字符串
-     * @since 3.2.0
      */
     public static String toString(final Type type) {
         Assert.notNull(type);
@@ -1749,7 +1728,6 @@ public class TypeUtils {
      *
      * @param var 创建字符串表示的类型变量，而不是{@code null}
      * @return 字符串
-     * @since 3.2.0
      */
     public static String toLongString(final TypeVariable<?> var) {
         Assert.notNull(var, "var is null");
@@ -1778,7 +1756,6 @@ public class TypeUtils {
      *
      * @param c {@code Class} 格式化内容
      * @return 字符串
-     * @since 3.2.0
      */
     private static String classToString(final Class<?> c) {
         if (c.isArray()) {
@@ -1805,7 +1782,6 @@ public class TypeUtils {
      *
      * @param v {@code TypeVariable} 格式化内容
      * @return 字符串
-     * @since 3.2.0
      */
     private static String typeVariableToString(final TypeVariable<?> v) {
         final StringBuilder buf = new StringBuilder(v.getName());
@@ -1822,7 +1798,6 @@ public class TypeUtils {
      *
      * @param p {@code ParameterizedType}格式化内容
      * @return 字符串
-     * @since 3.2.0
      */
     private static String parameterizedTypeToString(final ParameterizedType p) {
         final StringBuilder buf = new StringBuilder();
@@ -1900,7 +1875,6 @@ public class TypeUtils {
      * @param sep   分隔符
      * @param types 要添加的内容
      * @return 操作后的buf
-     * @since 3.2.0
      */
     private static <T> StringBuilder appendAllTo(final StringBuilder buf, final String sep, final T... types) {
         Assert.notEmpty(Assert.noNullElements(types));

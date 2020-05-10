@@ -26,6 +26,7 @@ package org.aoju.bus.core.beans;
 
 import org.aoju.bus.core.annotation.Alias;
 import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.map.CaseInsensitiveMap;
 import org.aoju.bus.core.utils.*;
 
@@ -49,7 +50,7 @@ import java.util.Map;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class BeanDesc implements Serializable {
@@ -166,7 +167,7 @@ public class BeanDesc implements Serializable {
         for (Field field : ReflectUtils.getFields(this.beanClass)) {
             if (false == ModifierUtils.isStatic(field)) {
                 //只针对非static属性
-                this.propMap.put(field.getName(), createProp(field));
+                this.propMap.put(ReflectUtils.getFieldName(field), createProp(field));
             }
         }
         return this;
@@ -245,7 +246,7 @@ public class BeanDesc implements Serializable {
         methodName = methodName.toLowerCase();
         fieldName = fieldName.toLowerCase();
 
-        if (false == methodName.startsWith("get") && false == methodName.startsWith("is")) {
+        if (false == methodName.startsWith(Normal.GET) && false == methodName.startsWith(Normal.IS)) {
             // 非标准Getter方法
             return false;
         }
@@ -256,22 +257,22 @@ public class BeanDesc implements Serializable {
 
         // 针对Boolean类型特殊检查
         if (isBooeanField) {
-            if (fieldName.startsWith("is")) {
+            if (fieldName.startsWith(Normal.IS)) {
                 // 字段已经是is开头
                 if (methodName.equals(fieldName) // isName -》 isName
-                        || methodName.equals("get" + fieldName)// isName -》 getIsName
-                        || methodName.equals("is" + fieldName)// isName -》 isIsName
+                        || methodName.equals(Normal.GET + fieldName)// isName -》 getIsName
+                        || methodName.equals(Normal.IS + fieldName)// isName -》 isIsName
                 ) {
                     return true;
                 }
-            } else if (methodName.equals("is" + fieldName)) {
+            } else if (methodName.equals(Normal.IS + fieldName)) {
                 // 字段非is开头, name -》 isName
                 return true;
             }
         }
 
         // 包括boolean的任何类型只有一种匹配情况：name -》 getName
-        return methodName.equals("get" + fieldName);
+        return methodName.equals(Normal.GET + fieldName);
     }
 
     /**
@@ -296,22 +297,22 @@ public class BeanDesc implements Serializable {
         fieldName = fieldName.toLowerCase();
 
         // 非标准Setter方法跳过
-        if (false == methodName.startsWith("set")) {
+        if (false == methodName.startsWith(Normal.SET)) {
             return false;
         }
 
         // 针对Boolean类型特殊检查
-        if (isBooeanField && fieldName.startsWith("is")) {
+        if (isBooeanField && fieldName.startsWith(Normal.IS)) {
             // 字段是is开头
-            if (methodName.equals("set" + StringUtils.removePrefix(fieldName, "is"))// isName -》 setName
-                    || methodName.equals("set" + fieldName)// isName -》 setIsName
+            if (methodName.equals(Normal.SET + StringUtils.removePrefix(fieldName, Normal.IS))// isName -》 setName
+                    || methodName.equals(Normal.SET + fieldName)// isName -》 setIsName
             ) {
                 return true;
             }
         }
 
         // 包括boolean的任何类型只有一种匹配情况：name -》 setName
-        return methodName.equals("set" + fieldName);
+        return methodName.equals(Normal.SET + fieldName);
     }
 
     /**
@@ -352,7 +353,7 @@ public class BeanDesc implements Serializable {
          * @return 字段名
          */
         public String getFieldName() {
-            return ReflectUtils.getFieldsName(this.field);
+            return ReflectUtils.getFieldName(this.field);
         }
 
         /**

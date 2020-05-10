@@ -30,12 +30,10 @@ import java.util.Objects;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class FileRawImage {
-
-    public static final int HEADER_LENGTH = 46;
 
     private final File file;
 

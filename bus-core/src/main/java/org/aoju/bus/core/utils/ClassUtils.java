@@ -29,6 +29,7 @@ import org.aoju.bus.core.beans.copier.BeanCopier;
 import org.aoju.bus.core.beans.copier.CopyOptions;
 import org.aoju.bus.core.beans.copier.ValueProvider;
 import org.aoju.bus.core.convert.BasicType;
+import org.aoju.bus.core.instance.Instances;
 import org.aoju.bus.core.lang.*;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.lang.mutable.MutableObject;
@@ -50,7 +51,7 @@ import java.util.*;
  * Class工具类
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class ClassUtils {
@@ -58,14 +59,14 @@ public class ClassUtils {
     /**
      * 原始类型名和其class对应表,例如：int =》 int.class
      */
-    private static final Map<String, Class<?>> primitiveWrapperMap = new HashMap<>();
-    private static final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>();
-    private static SimpleCache<String, Class<?>> classCache = new SimpleCache<>();
+    private static final Map<String, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
+    private static SimpleCache<String, Class<?>> CLASS_CACHE = new SimpleCache<>();
 
     static {
         List<Class<?>> primitiveTypes = new ArrayList<>(32);
         // 加入原始类型
-        primitiveTypes.addAll(BasicType.primitiveWrapperMap.keySet());
+        primitiveTypes.addAll(BasicType.PRIMITIVE_WRAPPER_MAP.keySet());
         // 加入原始类型数组类型
         primitiveTypes.add(boolean[].class);
         primitiveTypes.add(byte[].class);
@@ -77,7 +78,7 @@ public class ClassUtils {
         primitiveTypes.add(short[].class);
         primitiveTypes.add(void.class);
         for (Class<?> primitiveType : primitiveTypes) {
-            primitiveWrapperMap.put(primitiveType.getName(), primitiveType);
+            PRIMITIVE_WRAPPER_MAP.put(primitiveType.getName(), primitiveType);
         }
     }
 
@@ -441,7 +442,7 @@ public class ClassUtils {
             if (isStatic(method)) {
                 return ReflectUtils.invoke(null, method, args);
             } else {
-                return ReflectUtils.invoke(isSingleton ? Singleton.get(clazz) : clazz.newInstance(), method, args);
+                return ReflectUtils.invoke(isSingleton ? Instances.singletion(clazz) : clazz.newInstance(), method, args);
             }
         } catch (Exception e) {
             throw new InstrumentException(e);
@@ -458,7 +459,7 @@ public class ClassUtils {
         if (null == clazz) {
             return false;
         }
-        return BasicType.wrapperPrimitiveMap.containsKey(clazz);
+        return BasicType.WRAPPER_PRIMITIVE_MAP.containsKey(clazz);
     }
 
     /**
@@ -761,7 +762,6 @@ public class ClassUtils {
      *
      * @param clazz 类
      * @return 是否为枚举类型
-     * @since 5.8.9
      */
     public static boolean isEnum(Class<?> clazz) {
         return null != clazz && clazz.isEnum();
@@ -862,7 +862,6 @@ public class ClassUtils {
      *
      * @param classes 值类型
      * @return 默认值列表
-     * @since 3.1.9
      */
     public static Object[] getDefaultValues(Class<?>... classes) {
         final Object[] values = new Object[classes.length];
@@ -883,7 +882,7 @@ public class ClassUtils {
         if (isNormalClass(clazz)) {
             final Method[] methods = clazz.getMethods();
             for (Method method : methods) {
-                if (method.getParameterTypes().length == 1 && method.getName().startsWith("set")) {
+                if (method.getParameterTypes().length == 1 && method.getName().startsWith(Normal.SET)) {
                     return true;
                 }
             }
@@ -921,7 +920,6 @@ public class ClassUtils {
      * @param isToUnderlineCase 是否转换为下划线模式
      * @param ignoreNullValue   是否忽略值为空的字段
      * @return Map
-     * @since 3.2.3
      */
     public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, final boolean isToUnderlineCase, boolean ignoreNullValue) {
         if (bean == null) {
@@ -1151,7 +1149,7 @@ public class ClassUtils {
         // 加载原始类型和缓存中的类
         Class<?> clazz = loadPrimitiveClass(name);
         if (clazz == null) {
-            clazz = classCache.get(name);
+            clazz = CLASS_CACHE.get(name);
         }
         if (clazz != null) {
             return clazz;
@@ -1189,7 +1187,7 @@ public class ClassUtils {
         }
 
         // 加入缓存并返回
-        return classCache.put(name, clazz);
+        return CLASS_CACHE.put(name, clazz);
     }
 
     /**
@@ -1203,7 +1201,7 @@ public class ClassUtils {
         if (StringUtils.isNotBlank(name)) {
             name = name.trim();
             if (name.length() <= 8) {
-                result = primitiveWrapperMap.get(name);
+                result = PRIMITIVE_WRAPPER_MAP.get(name);
             }
         }
         return result;
@@ -1373,7 +1371,7 @@ public class ClassUtils {
         // 大多数类名都很长，因为它们应该放在包中，所以长度检查是值得的.
         if (name != null && name.length() <= 8) {
             // Could be a primitive - likely.
-            result = primitiveWrapperMap.get(name);
+            result = PRIMITIVE_WRAPPER_MAP.get(name);
         }
         return result;
     }
@@ -1451,7 +1449,6 @@ public class ClassUtils {
      * @param cls 要为其获取简单名称的类;可能是零
      * @return 简单的类名
      * @see Class#getSimpleName()
-     * @since 3.0
      */
     public static String getSimpleName(final Class<?> cls) {
         return getSimpleName(cls, Normal.EMPTY);
@@ -1464,7 +1461,6 @@ public class ClassUtils {
      * @param valueIfNull 如果为空，返回的值
      * @return 简单的类名
      * @see Class#getSimpleName()
-     * @since 3.0
      */
     public static String getSimpleName(final Class<?> cls, String valueIfNull) {
         return cls == null ? valueIfNull : cls.getSimpleName();
@@ -1488,7 +1484,6 @@ public class ClassUtils {
      * @param valueIfNull 对象或者null
      * @return 简单的类名
      * @see Class#getSimpleName()
-     * @since 3.0
      */
     public static String getSimpleName(final Object object, final String valueIfNull) {
         return object == null ? valueIfNull : object.getClass().getSimpleName();
@@ -1504,7 +1499,7 @@ public class ClassUtils {
     public static Class<?> primitiveToWrapper(final Class<?> cls) {
         Class<?> convertedClass = cls;
         if (cls != null && cls.isPrimitive()) {
-            convertedClass = primitiveWrapperMap.get(cls);
+            convertedClass = PRIMITIVE_WRAPPER_MAP.get(cls);
         }
         return convertedClass;
     }
@@ -1540,7 +1535,7 @@ public class ClassUtils {
      * @see #primitiveToWrapper(Class)
      */
     public static Class<?> wrapperToPrimitive(final Class<?> cls) {
-        return wrapperPrimitiveMap.get(cls);
+        return WRAPPER_PRIMITIVE_MAP.get(cls);
     }
 
     /**
@@ -1844,7 +1839,6 @@ public class ClassUtils {
      * @throws NoSuchMethodException     如果没有这样的可访问方法
      * @throws InvocationTargetException 包装由调用的方法引发的异常
      * @throws IllegalAccessException    如果请求的方法不能通过反射访问
-     * @since 3.5.0
      */
     public static Object invokeMethod(final Object object,
                                       final String methodName) throws NoSuchMethodException,
@@ -1865,7 +1859,6 @@ public class ClassUtils {
      * @throws NoSuchMethodException     如果没有这样的可访问方法
      * @throws InvocationTargetException 包装由调用的方法引发的异常
      * @throws IllegalAccessException    如果请求的方法不能通过反射访问
-     * @since 3.5.0
      */
     public static Object invokeMethod(final Object object,
                                       final boolean forceAccess,
@@ -1908,7 +1901,6 @@ public class ClassUtils {
      * @throws NoSuchMethodException     如果没有这样的可访问方法
      * @throws InvocationTargetException 包装由调用的方法引发的异常
      * @throws IllegalAccessException    如果请求的方法不能通过反射访问
-     * @since 3.5.0
      */
     public static Object invokeMethod(final Object object,
                                       final boolean forceAccess,
@@ -1932,7 +1924,6 @@ public class ClassUtils {
      * @throws NoSuchMethodException     如果没有这样的可访问方法
      * @throws InvocationTargetException 包装由调用的方法引发的异常
      * @throws IllegalAccessException    如果请求的方法不能通过反射访问
-     * @since 3.5.0
      */
     public static Object invokeMethod(final Object object,
                                       final boolean forceAccess,
@@ -1998,7 +1989,6 @@ public class ClassUtils {
      * @throws NoSuchMethodException     如果没有这样的可访问方法
      * @throws InvocationTargetException 包装由调用的方法引发的异常
      * @throws IllegalAccessException    如果请求的方法不能通过反射访问
-     * @since 3.5.0
      */
     public static Object invokeExactMethod(final Object object, final String methodName) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
@@ -2150,7 +2140,6 @@ public class ClassUtils {
      * @param args                 传递给varags方法的参数数组
      * @param methodParameterTypes 方法参数类型的声明数组
      * @return 传递给方法的可变参数数组
-     * @since 3.5.0
      */
     static Object[] getVarArgs(final Object[] args, final Class<?>[] methodParameterTypes) {
         if (args.length == methodParameterTypes.length
@@ -2427,7 +2416,6 @@ public class ClassUtils {
      * @param method             方法信息
      * @param interfacesBehavior 接口，{@code null}
      * @return 按从子类到超类的升序设置方法
-     * @since 3.2.0
      */
     public static Set<Method> getOverrideHierarchy(final Method method,
                                                    final Interfaces interfacesBehavior) {
@@ -2473,7 +2461,6 @@ public class ClassUtils {
      * @param cls           要查询的 {@link Class}
      * @param annotationCls 必须在要匹配的方法上出现的 {@link Annotation}
      * @return 方法数组.
-     * @since 3.5.0
      */
     public static Method[] getMethodsWithAnnotation(final Class<?> cls,
                                                     final Class<? extends Annotation> annotationCls) {
@@ -2486,7 +2473,6 @@ public class ClassUtils {
      * @param cls           要查询的 {@link Class}
      * @param annotationCls 必须在要匹配的方法上出现的 {@link Annotation}
      * @return 方法列表
-     * @since 3.5.0
      */
     public static List<Method> getMethodsListWithAnnotation(final Class<?> cls, final Class<? extends Annotation> annotationCls) {
         return getMethodsListWithAnnotation(cls, annotationCls, false, false);
@@ -2731,7 +2717,6 @@ public class ClassUtils {
      *
      * @param cls 要查询的 {@link Class}
      * @return 字段数组(可能为空)
-     * @since 3.2.0
      */
     public static Field[] getAllFields(final Class<?> cls) {
         final List<Field> allFieldsList = getAllFieldsList(cls);
@@ -2743,7 +2728,6 @@ public class ClassUtils {
      *
      * @param cls 要查询的 {@link Class}
      * @return 字段数组(可能为空)
-     * @since 3.2.0
      */
     public static List<Field> getAllFieldsList(final Class<?> cls) {
         Assert.isTrue(cls != null, "The class must not be null");
@@ -2763,7 +2747,6 @@ public class ClassUtils {
      * @param cls           要查询的 {@link Class}
      * @param annotationCls 必须在要匹配的方法上出现的 {@link Annotation}
      * @return 字段数组(可能为空)
-     * @since 3.5.0
      */
     public static Field[] getFieldsWithAnnotation(final Class<?> cls,
                                                   final Class<? extends Annotation> annotationCls) {
@@ -2777,7 +2760,6 @@ public class ClassUtils {
      * @param cls           要查询的 {@link Class}
      * @param annotationCls 必须在要匹配的方法上出现的 {@link Annotation}
      * @return 字段列表(可能为空).
-     * @since 3.5.0
      */
     public static List<Field> getFieldsListWithAnnotation(final Class<?> cls, final Class<? extends Annotation> annotationCls) {
         Assert.isTrue(annotationCls != null, "The annotation class must not be null");
@@ -3110,7 +3092,6 @@ public class ClassUtils {
      *
      * @param field 删除最后的修改器
      * @throws IllegalArgumentException 如果字段是{@code null}
-     * @since 3.2.0
      */
     public static void removeFinalModifier(final Field field) {
         removeFinalModifier(field, true);

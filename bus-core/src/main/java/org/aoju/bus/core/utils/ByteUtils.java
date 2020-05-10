@@ -30,11 +30,10 @@ import java.nio.charset.Charset;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class ByteUtils {
-
 
     public static int bytesToVR(byte[] bytes, int off) {
         return bytesToUShortBE(bytes, off);

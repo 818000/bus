@@ -24,32 +24,33 @@
  ********************************************************************************/
 package org.aoju.bus.image.nimble.reader;
 
-import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.image.galaxy.data.Implementation;
+import org.aoju.bus.image.nimble.DicomMetaData;
 
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 /**
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
-public class ImageReaderSpi extends javax.imageio.spi.ImageReaderSpi {
+public class NativeDCMImageReaderSpi extends ImageReaderSpi {
 
     private static final String vendorName = "org.aoju.bus.image";
     private static final String version = Implementation.getVersionName();
-    private static final String[] formatNames = {"rle", "RLE"};
-    private static final Class<?>[] inputTypes = {ImageInputStream.class};
-    private static final String[] entensions = {Normal.EMPTY};
-    private static final String[] mimeType = {Normal.EMPTY};
+    private static final String[] formatNames = {"dicom", "DICOM"};
+    private static final String[] suffixes = {"dcm", "dic", "dicm", "dicom"};
+    private static final String[] MIMETypes = {"application/dicom"};
+    private static final Class<?>[] inputTypes = {ImageInputStream.class, InputStream.class, DicomMetaData.class};
 
-    public ImageReaderSpi() {
-        super(vendorName, version, formatNames,
-                entensions,  // suffixes
-                mimeType,  // MIMETypes
-                ImageReader.class.getName(), inputTypes,
+    public NativeDCMImageReaderSpi() {
+        super(vendorName, version, formatNames, suffixes, MIMETypes,
+                NativeDCMImageReader.class.getName(), inputTypes,
                 null,  // writerSpiNames
                 false, // supportsStandardStreamMetadataFormat
                 null,  // nativeStreamMetadataFormatName
@@ -65,17 +66,32 @@ public class ImageReaderSpi extends javax.imageio.spi.ImageReaderSpi {
 
     @Override
     public String getDescription(Locale locale) {
-        return "RLE Image Reader";
+        return "DICOM Image Reader";
     }
 
     @Override
     public boolean canDecodeInput(Object source) throws IOException {
-        return false;
+        ImageInputStream iis = (ImageInputStream) source;
+        iis.mark();
+        try {
+            int tag = iis.read()
+                    | (iis.read() << 8)
+                    | (iis.read() << 16)
+                    | (iis.read() << 24);
+            return ((tag >= 0x00080000 && tag <= 0x00080016)
+                    || (iis.skipBytes(124) == 124
+                    && iis.read() == 'D'
+                    && iis.read() == 'I'
+                    && iis.read() == 'C'
+                    && iis.read() == 'M'));
+        } finally {
+            iis.reset();
+        }
     }
 
     @Override
-    public javax.imageio.ImageReader createReaderInstance(Object extension)
-            throws IOException {
-        return new ImageReader(this);
+    public ImageReader createReaderInstance(Object extension) {
+        return new NativeDCMImageReader(this);
     }
+
 }

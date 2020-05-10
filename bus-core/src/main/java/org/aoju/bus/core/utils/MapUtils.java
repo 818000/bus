@@ -28,10 +28,7 @@ import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.Editor;
 import org.aoju.bus.core.lang.Filter;
 import org.aoju.bus.core.lang.exception.InstrumentException;
-import org.aoju.bus.core.map.CamelCaseLinkedMap;
-import org.aoju.bus.core.map.CamelCaseMap;
-import org.aoju.bus.core.map.MapBuilder;
-import org.aoju.bus.core.map.MapProxy;
+import org.aoju.bus.core.map.*;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -40,7 +37,7 @@ import java.util.Map.Entry;
  * Map相关工具类
  *
  * @author Kimi Liu
- * @version 5.8.9
+ * @version 5.9.0
  * @since JDK 1.8+
  */
 public class MapUtils {
@@ -93,7 +90,6 @@ public class MapUtils {
      * @param size    初始大小,由于默认负载因子0.75,传入的size会实际初始大小为size / 0.75
      * @param isOrder Map的Key是否有序,有序返回 {@link LinkedHashMap},否则返回 {@link HashMap}
      * @return HashMap对象
-     * @since 3.0.4
      */
     public static <K, V> HashMap<K, V> newHashMap(int size, boolean isOrder) {
         int initialCapacity = (int) (size / DEFAULT_LOAD_FACTOR);
@@ -131,7 +127,6 @@ public class MapUtils {
      * @param <V>        Value类型
      * @param comparator Key比较器
      * @return TreeMap
-     * @since 3.2.3
      */
     public static <K, V> TreeMap<K, V> newTreeMap(Comparator<? super K> comparator) {
         return new TreeMap<>(comparator);
@@ -145,7 +140,6 @@ public class MapUtils {
      * @param map        Map
      * @param comparator Key比较器
      * @return TreeMap
-     * @since 3.2.3
      */
     public static <K, V> TreeMap<K, V> newTreeMap(Map<K, V> map, Comparator<? super K> comparator) {
         final TreeMap<K, V> treeMap = new TreeMap<>(comparator);
@@ -394,7 +388,6 @@ public class MapUtils {
      * @param <V> Value类型
      * @param map 原Map
      * @return 驼峰风格Map
-     * @since 3.3.1
      */
     public static <K, V> Map<K, V> toCamelCaseMap(Map<K, V> map) {
         return (map instanceof LinkedHashMap) ? new CamelCaseLinkedMap<>(map) : new CamelCaseMap<>(map);
@@ -432,7 +425,6 @@ public class MapUtils {
      * @param separator         entry之间的连接符
      * @param keyValueSeparator kv之间的连接符
      * @return 连接字符串
-     * @since 3.1.1
      */
     public static <K, V> String join(Map<K, V> map, String separator, String keyValueSeparator) {
         return join(map, separator, keyValueSeparator, false);
@@ -447,7 +439,6 @@ public class MapUtils {
      * @param separator         entry之间的连接符
      * @param keyValueSeparator kv之间的连接符
      * @return 连接后的字符串
-     * @since 3.1.1
      */
     public static <K, V> String joinIgnoreNull(Map<K, V> map, String separator, String keyValueSeparator) {
         return join(map, separator, keyValueSeparator, true);
@@ -606,7 +597,6 @@ public class MapUtils {
      * @param map    Map
      * @param filter 编辑器接口
      * @return 过滤后的Map
-     * @since 3.1.9
      */
     public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<Entry<K, V>> filter) {
         final Map<K, V> map2 = ObjectUtils.clone(map);
@@ -713,12 +703,36 @@ public class MapUtils {
     }
 
     /**
+     * 创建Map包装类MapWrapper
+     * {@link MapWrapper}对Map做一次包装
+     *
+     * @param <K> key的类型
+     * @param <V> value的类型
+     * @param map 被代理的Map
+     * @return {@link MapWrapper}
+     */
+    public static <K, V> MapWrapper<K, V> wrap(Map<K, V> map) {
+        return new MapWrapper<>(map);
+    }
+
+    /**
+     * 将对应Map转换为不可修改的Map
+     *
+     * @param map Map
+     * @param <K> 键类型
+     * @param <V> 值类型
+     * @return 不修改Map
+     */
+    public static <K, V> Map<K, V> unmodifiable(Map<K, V> map) {
+        return Collections.unmodifiableMap(map);
+    }
+
+    /**
      * 创建代理Map
      * {@link MapProxy}对Map做一次包装,提供各种getXXX方法
      *
      * @param map 被代理的Map
      * @return {@link MapProxy}
-     * @since 5.8.9
      */
     public static MapProxy createProxy(Map<?, ?> map) {
         return MapProxy.create(map);
