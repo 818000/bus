@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -39,7 +39,7 @@ import java.io.Writer;
  * 1 to 377. This is because parsing Java is the main use case.
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class OctalUnescaper extends CharSequenceTranslator {

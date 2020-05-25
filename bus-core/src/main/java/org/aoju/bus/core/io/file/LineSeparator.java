@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -36,7 +36,7 @@ import org.aoju.bus.core.lang.Symbol;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @see #MAC
  * @see #LINUX
  * @see #WINDOWS

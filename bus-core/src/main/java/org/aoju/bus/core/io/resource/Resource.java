@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -39,7 +39,7 @@ import java.nio.charset.Charset;
  * 资源可以是文件、URL、ClassPath中的文件亦或者jar包中的文件
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public interface Resource {
@@ -81,7 +81,7 @@ public interface Resource {
      * @return 读取资源内容
      * @throws InstrumentException 包装{@link IOException}
      */
-    String readStr(Charset charset) throws InstrumentException;
+    String readString(Charset charset) throws InstrumentException;
 
     /**
      * 读取资源内容,读取完毕后会关闭流

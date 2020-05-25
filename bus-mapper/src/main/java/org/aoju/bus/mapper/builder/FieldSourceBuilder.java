@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  * 类字段工具类
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class FieldSourceBuilder {

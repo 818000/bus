@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -41,7 +41,7 @@ import java.nio.charset.Charset;
  * URL资源访问类
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class UriResource implements Resource {
@@ -99,7 +99,7 @@ public class UriResource implements Resource {
     }
 
     @Override
-    public String readStr(Charset charset) throws InstrumentException {
+    public String readString(Charset charset) throws InstrumentException {
         BufferedReader reader = null;
         try {
             reader = getReader(charset);

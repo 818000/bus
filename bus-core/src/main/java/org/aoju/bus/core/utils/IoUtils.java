@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -58,7 +58,7 @@ import java.util.zip.Checksum;
  * 原因是流可能被多次读写,读写关闭后容易造成问题
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class IoUtils {

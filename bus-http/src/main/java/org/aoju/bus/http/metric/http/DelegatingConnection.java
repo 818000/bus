@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -45,7 +45,7 @@ import java.util.Map;
  * 实现HTTPS连接的方法是，除了特定于HTTP的内容外，所有内容都委托给HTTP连接
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public abstract class DelegatingConnection extends HttpsURLConnection {

@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -33,7 +33,7 @@ import java.util.Map;
  * 通知器,用于发送通知,如: 短信,邮件,语音,微信等s
  *
  * @author Justubborn
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK1.8+
  */
 public interface Provider<T extends Template> {

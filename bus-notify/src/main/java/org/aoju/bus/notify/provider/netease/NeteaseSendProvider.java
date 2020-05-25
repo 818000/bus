@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -36,7 +36,7 @@ import java.util.Map;
  * 云信消息
  *
  * @author wubenhui
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class NeteaseSendProvider extends NeteaseProvider {

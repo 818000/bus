@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 它允许你连接到一个SSH服务器,并且可以使用端口转发,X11转发,文件传输等
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class SSHUtils {

@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -41,7 +41,7 @@ import java.util.List;
  * 此资源为一个利用游标自循环资源,只有调用{@link #next()} 方法才会获取下一个资源,使用完毕后调用{@link #reset()}方法重置游标
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class MultiResource implements Resource, Iterable<Resource>, Iterator<Resource> {
@@ -92,8 +92,8 @@ public class MultiResource implements Resource, Iterable<Resource>, Iterator<Res
     }
 
     @Override
-    public String readStr(Charset charset) throws InstrumentException {
-        return resources.get(cursor).readStr(charset);
+    public String readString(Charset charset) throws InstrumentException {
+        return resources.get(cursor).readString(charset);
     }
 
     @Override

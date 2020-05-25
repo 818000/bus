@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -33,7 +33,7 @@ import java.io.File;
  * 当需要office实例来执行转换时，该类保存{@link OfficeProcessEntryManager}的配置
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class OfficeProcessManagerEntryBuilder extends OfficeProcessManagerBuilder

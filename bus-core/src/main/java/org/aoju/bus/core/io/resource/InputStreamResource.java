@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
  * 注意：此对象中getUrl方法始终返回null
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class InputStreamResource implements Resource {
@@ -86,7 +86,7 @@ public class InputStreamResource implements Resource {
     }
 
     @Override
-    public String readStr(Charset charset) throws InstrumentException {
+    public String readString(Charset charset) throws InstrumentException {
         BufferedReader reader = null;
         try {
             reader = getReader(charset);

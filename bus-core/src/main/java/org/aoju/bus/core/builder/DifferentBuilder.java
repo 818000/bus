@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -58,7 +58,7 @@ import java.util.List;
  * {@link DifferentResult#toString(ToStringStyle)}覆盖此样式选择。.
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @see Differentable
  * @see Different
  * @see DifferentResult

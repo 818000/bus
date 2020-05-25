@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -58,7 +58,7 @@ import java.util.function.Consumer;
  * </pre>
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class Setting extends AbsSetting implements Map<String, String> {
@@ -118,7 +118,7 @@ public class Setting extends AbsSetting implements Map<String, String> {
      */
     public Setting(String path, Charset charset, boolean isUseVariable) {
         Assert.notBlank(path, "Blank setting path !");
-        this.init(ResourceUtils.getResourceObj(path), charset, isUseVariable);
+        this.init(FileUtils.getResourceObj(path), charset, isUseVariable);
     }
 
     /**

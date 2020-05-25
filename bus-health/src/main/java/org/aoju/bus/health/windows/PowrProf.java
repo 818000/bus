@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
  *                                                                               *
@@ -34,7 +34,7 @@ import com.sun.jna.Structure.FieldOrder;
  * 果/当它的代码被合并到JNA项目中时，它可能会被删除
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public interface PowrProf extends com.sun.jna.platform.win32.PowrProf {

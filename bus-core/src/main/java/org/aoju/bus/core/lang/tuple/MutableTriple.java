@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -31,7 +31,7 @@ package org.aoju.bus.core.lang.tuple;
  * @param <M> 中间元素类型
  * @param <R> 左元素类型
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class MutableTriple<L, M, R> extends Triple<L, M, R> {

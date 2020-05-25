@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  * 此实现使用{@linkplain NewCall}发送请求和接收响应
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public final class HttpURLConnection extends java.net.HttpURLConnection implements Callback {

@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * 这些指令设置了哪些响应可以存储，以及哪些请求可以由存储的响应来满足的策略
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public final class CacheControl {

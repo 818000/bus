@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -31,7 +31,7 @@ import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
  * Spring-Boot 所有资源加密规则
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class JarAllComplex implements Complex<JarArchiveEntry> {

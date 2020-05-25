@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -31,7 +31,7 @@ import java.util.List;
  * 考虑每月的天数不同,切存在闰年情况,日匹配单独使用
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class DayOfMonthValueMatcher extends BoolArrayValueMatcher {

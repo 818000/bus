@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
  * 文档在线预览服务提供
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 @Component
@@ -50,7 +50,7 @@ public class OfficeProviderService {
         Registry.getInstance().register(Registry.ONLINE, onlineProvider);
     }
 
-    public Provider get(String type) {
+    public Provider require(String type) {
         if (Registry.getInstance().contains(type)) {
             if (Registry.LOCAL.equals(type)) {
                 return (LocalOfficeProvider) Registry.getInstance().require(Registry.LOCAL);

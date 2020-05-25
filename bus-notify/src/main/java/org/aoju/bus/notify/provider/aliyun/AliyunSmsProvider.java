@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -36,7 +36,7 @@ import java.util.*;
  * 阿里云短信
  *
  * @author Justubborn
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK1.8+
  */
 public class AliyunSmsProvider extends AliyunProvider<AliyunSmsTemplate, Context> {

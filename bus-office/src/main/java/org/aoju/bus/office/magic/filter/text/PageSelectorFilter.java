@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -40,7 +40,7 @@ import org.aoju.bus.office.magic.filter.FilterChain;
  * 此筛选器用于从文档中选择特定页面，以便仅转换所选页面.
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class PageSelectorFilter implements Filter {

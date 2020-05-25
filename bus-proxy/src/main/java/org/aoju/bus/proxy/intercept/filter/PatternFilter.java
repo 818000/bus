@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
  * 如果方法的名称与提供的正则表达式(JDK regex)模式字符串匹配，则方法筛选器实现返回true
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 public class PatternFilter implements MethodFilter {

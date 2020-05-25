@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
  *                                                                               *
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * SolarisNetworks class.
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 @ThreadSafe

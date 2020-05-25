@@ -1,6 +1,6 @@
 /*********************************************************************************
  *                                                                               *
- * The MIT License                                                               *
+ * The MIT License (MIT)                                                         *
  *                                                                               *
  * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
  *                                                                               *
@@ -50,7 +50,7 @@ import static org.aoju.bus.health.builtin.software.OSService.State.STOPPED;
  * after the Sun acquisition by Oracle, it was renamed Oracle Solaris.
  *
  * @author Kimi Liu
- * @version 5.9.2
+ * @version 5.9.3
  * @since JDK 1.8+
  */
 @ThreadSafe
