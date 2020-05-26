@@ -22,58 +22,69 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.http.metric;
+package org.aoju.bus.http;
 
-import org.aoju.bus.http.Cookie;
-import org.aoju.bus.http.UnoUrl;
+import org.aoju.bus.core.io.ByteString;
+import org.aoju.bus.http.metric.Array;
 
-import java.util.Collections;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 
 /**
- * 为HTTP cookie提供策略和持久性
- * 作为策略，此接口的实现负责选择接受和拒绝哪些cookie。一个合理的策略是拒绝所有cookie，
- * 尽管这可能会干扰需要cookie的基于会话的身份验证方案
- *
  * @author Kimi Liu
  * @version 5.9.3
  * @since JDK 1.8+
  */
-public interface CookieJar {
+public interface Toable {
 
     /**
-     * 从不接受任何cookie的设置。
+     * @return 消息体转字节流
      */
-    CookieJar NO_COOKIES = new CookieJar() {
-        @Override
-        public void saveFromResponse(UnoUrl url, List<Cookie> cookies) {
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(UnoUrl url) {
-            return Collections.emptyList();
-        }
-    };
+    InputStream toByteStream();
 
     /**
-     * 据这个jar's的策略将HTTP响应中的{@code cookies}保存到这个存储中
-     * 请注意，对于单个HTTP响应，如果响应包含一个拖车，则可以第二次调用此方法。
-     * 对于这个模糊的HTTP特性，{@code cookie}只包含预告片的cookie
-     *
-     * @param url     url信息
-     * @param cookies cookie
+     * @return 消息体转字节数组
      */
-    void saveFromResponse(UnoUrl url, List<Cookie> cookies);
+    byte[] toBytes();
 
     /**
-     * 将HTTP请求的cookie从jar加载到{@code url}。
-     * 此方法为网络请求返回一个可能为空的cookie列表
-     * 简单的实现将返回尚未过期的已接受的Cookie，
-     * 并返回{@linkplain Cookie#matches} {@code url}
-     *
-     * @param url url信息
-     * @return the cookies
+     * @return ByteString
      */
-    List<Cookie> loadForRequest(UnoUrl url);
+    ByteString toByteString();
+
+    /**
+     * @return 消息体转字符流
+     */
+    Reader toCharStream();
+
+    /**
+     * @return 消息体转字符串
+     */
+    String toString();
+
+    /**
+     * @return 消息体转 Mapper 对象（不想定义 Java Bean 时使用）
+     */
+    Wapper toWapper();
+
+    /**
+     * @return 消息体转 Array 数组（不想定义 Java Bean 时使用）
+     */
+    Array toArray();
+
+    /**
+     * @param <T>  目标泛型
+     * @param type 目标类型
+     * @return 报文体Json文本转JavaBean
+     */
+    <T> T toBean(Class<T> type);
+
+    /**
+     * @param <T>  目标泛型
+     * @param type 目标类型
+     * @return 报文体Json文本转JavaBean列表
+     */
+    <T> List<T> toList(Class<T> type);
 
 }

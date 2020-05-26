@@ -22,57 +22,96 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.image.metric.internal.xdsi;
+package org.aoju.bus.http.socket;
 
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.io.ByteString;
+import org.aoju.bus.http.bodys.AbstractBody;
+import org.aoju.bus.http.metric.TaskExecutor;
 
-import javax.xml.bind.annotation.*;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Kimi Liu
  * @version 5.9.3
  * @since JDK 1.8+
  */
+public class WebSocketMessage extends AbstractBody implements WebSocketCover.Sockets.Message {
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExtrinsicObjectType", propOrder = {"contentVersionInfo"})
-public class ExtrinsicObjectType extends RegistryObjectType {
+    private String text;
+    private ByteString bytes;
 
-    @XmlElement(name = "ContentVersionInfo")
-    protected VersionInfoType contentVersionInfo;
-    @XmlAttribute(name = "mimeType")
-    protected String mimeType;
-    @XmlAttribute(name = "isOpaque")
-    protected Boolean isOpaque;
-
-    public VersionInfoType getContentVersionInfo() {
-        return this.contentVersionInfo;
+    public WebSocketMessage(String text, TaskExecutor taskExecutor, Charset charset) {
+        super(taskExecutor, charset);
+        this.text = text;
     }
 
-    public void setContentVersionInfo(VersionInfoType value) {
-        this.contentVersionInfo = value;
+    public WebSocketMessage(ByteString bytes, TaskExecutor taskExecutor, Charset charset) {
+        super(taskExecutor, charset);
+        this.bytes = bytes;
     }
 
-    public String getMimeType() {
-        if (this.mimeType == null) {
-            return MediaType.APPLICATION_OCTET_STREAM;
+    @Override
+    public boolean isText() {
+        return text != null;
+    }
+
+    @Override
+    public byte[] toBytes() {
+        if (text != null) {
+            return text.getBytes(StandardCharsets.UTF_8);
         }
-        return this.mimeType;
-    }
-
-    public void setMimeType(String value) {
-        this.mimeType = value;
-    }
-
-    public boolean isIsOpaque() {
-        if (this.isOpaque == null) {
-            return false;
+        if (bytes != null) {
+            return bytes.toByteArray();
         }
-        return this.isOpaque.booleanValue();
+        return null;
     }
 
-    public void setIsOpaque(Boolean value) {
-        this.isOpaque = value;
+    @Override
+    public String toString() {
+        if (text != null) {
+            return text;
+        }
+        if (bytes != null) {
+            return bytes.utf8();
+        }
+        return null;
+    }
+
+    @Override
+    public ByteString toByteString() {
+        if (text != null) {
+            return ByteString.encodeUtf8(text);
+        }
+        return bytes;
+    }
+
+    @Override
+    public Reader toCharStream() {
+        return new InputStreamReader(toByteStream());
+    }
+
+    @Override
+    public InputStream toByteStream() {
+        if (text != null) {
+            return new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+        }
+        if (bytes != null) {
+            ByteBuffer buffer = bytes.asByteBuffer();
+            return new InputStream() {
+
+                @Override
+                public int read() throws IOException {
+                    if (buffer.hasRemaining()) {
+                        return buffer.get();
+                    }
+                    return -1;
+                }
+            };
+        }
+        return null;
     }
 
 }

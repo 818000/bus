@@ -24,56 +24,44 @@
  ********************************************************************************/
 package org.aoju.bus.http.metric;
 
-import org.aoju.bus.http.Cookie;
-import org.aoju.bus.http.UnoUrl;
-
-import java.util.Collections;
-import java.util.List;
+import org.aoju.bus.http.Httpv;
+import org.aoju.bus.http.metric.http.CoverHttp;
 
 /**
- * 为HTTP cookie提供策略和持久性
- * 作为策略，此接口的实现负责选择接受和拒绝哪些cookie。一个合理的策略是拒绝所有cookie，
- * 尽管这可能会干扰需要cookie的基于会话的身份验证方案
+ * 预处理器，支持异步
+ * 在HTTP请求任务正式开始之前执行
  *
  * @author Kimi Liu
  * @version 5.9.3
  * @since JDK 1.8+
  */
-public interface CookieJar {
+public interface Preprocessor {
 
     /**
-     * 从不接受任何cookie的设置。
-     */
-    CookieJar NO_COOKIES = new CookieJar() {
-        @Override
-        public void saveFromResponse(UnoUrl url, List<Cookie> cookies) {
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(UnoUrl url) {
-            return Collections.emptyList();
-        }
-    };
-
-    /**
-     * 据这个jar's的策略将HTTP响应中的{@code cookies}保存到这个存储中
-     * 请注意，对于单个HTTP响应，如果响应包含一个拖车，则可以第二次调用此方法。
-     * 对于这个模糊的HTTP特性，{@code cookie}只包含预告片的cookie
+     * 在HTTP请求开始之前执行
      *
-     * @param url     url信息
-     * @param cookies cookie
+     * @param chain 预处理器链
      */
-    void saveFromResponse(UnoUrl url, List<Cookie> cookies);
+    void doProcess(PreChain chain);
 
-    /**
-     * 将HTTP请求的cookie从jar加载到{@code url}。
-     * 此方法为网络请求返回一个可能为空的cookie列表
-     * 简单的实现将返回尚未过期的已接受的Cookie，
-     * 并返回{@linkplain Cookie#matches} {@code url}
-     *
-     * @param url url信息
-     * @return the cookies
-     */
-    List<Cookie> loadForRequest(UnoUrl url);
+
+    interface PreChain {
+
+        /**
+         * @return 当前的请求任务
+         */
+        CoverHttp<?> getTask();
+
+        /**
+         * @return HTTP
+         */
+        Httpv getHttp();
+
+        /**
+         * 继续HTTP请求任务
+         */
+        void proceed();
+
+    }
 
 }
