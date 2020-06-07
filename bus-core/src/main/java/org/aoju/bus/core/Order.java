@@ -22,90 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.annotation;
-
-import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.lang.annotation.*;
+package org.aoju.bus.core;
 
 /**
+ * 排序
+ *
  * @author Kimi Liu
  * @version 5.9.8
  * @since JDK 1.8+
  */
-@Documented
-@Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface MethodMapping {
+public interface Order extends Comparable<Order> {
 
     /**
-     * Alias for {@link RequestMapping#name}
+     * 优先级
+     * 越小优先级越高
      *
-     * @return String
+     * @return order
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default "";
+    default int order() {
+        return 0;
+    }
 
     /**
-     * Alias for {@link RequestMapping#value}
+     * 使用order进行比较
      *
-     * @return String[]
+     * @param o compareTo
+     * @return result
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
-
-    /**
-     * Alias for {@link RequestMapping#path}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
-
-    /**
-     * Alias for {@link RequestMapping#params}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
-
-    /**
-     * Alias for {@link RequestMapping#headers}
-     *
-     * @return the String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
-
-    /**
-     * Alias for {@link RequestMapping#consumes}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    /**
-     * Alias for {@link RequestMapping#produces}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    @Override
+    default int compareTo(Order o) {
+        return Integer.compare(order(), o.order());
+    }
 
 }

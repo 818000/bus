@@ -22,90 +22,71 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.annotation;
+package org.aoju.bus.core.annotation;
 
 import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
 /**
+ * 定时任务注解
+ *
  * @author Kimi Liu
  * @version 5.9.8
  * @since JDK 1.8+
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface MethodMapping {
+public @interface Scheduled {
 
     /**
-     * Alias for {@link RequestMapping#name}
+     * cron
      *
-     * @return String
+     * @return cron
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default "";
+    String cron() default Normal.EMPTY;
 
     /**
-     * Alias for {@link RequestMapping#value}
+     * 固定延迟 结束时间-开始时间
+     * 单位毫秒
      *
-     * @return String[]
+     * @return 延迟
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
+    String fixedDelay() default Normal.EMPTY;
 
     /**
-     * Alias for {@link RequestMapping#path}
+     * 固定周期 开始时间-开始时间
+     * <p>
+     * 单位毫秒
      *
-     * @return String[]
+     * @return 周期
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
+    String fixedRate() default Normal.EMPTY;
 
     /**
-     * Alias for {@link RequestMapping#params}
+     * 第一次启动延迟
+     * <p>
+     * 单位毫秒
      *
-     * @return String[]
+     * @return 延迟
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
+    String initialDelay() default Normal.EMPTY;
 
     /**
-     * Alias for {@link RequestMapping#headers}
+     * 项目启动执行
      *
-     * @return the String[]
+     * @return true为执行
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
+    boolean onApplicationStart() default false;
 
     /**
-     * Alias for {@link RequestMapping#consumes}
+     * 是否异步
+     * <p>
+     * 只对 onApplicationStart 方式有效
      *
-     * @return String[]
+     * @return true为异步
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    /**
-     * Alias for {@link RequestMapping#produces}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    boolean async() default false;
 
 }

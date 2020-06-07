@@ -22,90 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.annotation;
+package org.aoju.bus.core.annotation;
 
 import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.annotation.*;
 
 /**
- * @author Kimi Liu
- * @version 5.9.8
- * @since JDK 1.8+
+ * 配置注解，用于添加前缀
  */
-@Documented
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface MethodMapping {
+@Documented
+public @interface Values {
 
     /**
-     * Alias for {@link RequestMapping#name}
+     * 配置属性的前缀
      *
-     * @return String
+     * @return prefix
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default "";
-
-    /**
-     * Alias for {@link RequestMapping#value}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
-
-    /**
-     * Alias for {@link RequestMapping#path}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
-
-    /**
-     * Alias for {@link RequestMapping#params}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
-
-    /**
-     * Alias for {@link RequestMapping#headers}
-     *
-     * @return the String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
-
-    /**
-     * Alias for {@link RequestMapping#consumes}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    /**
-     * Alias for {@link RequestMapping#produces}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    String value() default Normal.EMPTY;
 
 }
