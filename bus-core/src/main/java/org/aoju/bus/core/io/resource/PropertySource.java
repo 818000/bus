@@ -22,90 +22,82 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.annotation;
+package org.aoju.bus.core.io.resource;
 
-import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.aoju.bus.core.Binder;
 
-import java.lang.annotation.*;
+import java.util.Properties;
 
 /**
+ * 配置文件源
+ *
  * @author Kimi Liu
  * @version 5.9.8
  * @since JDK 1.8+
  */
-@Documented
-@Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface MethodMapping {
+@FunctionalInterface
+public interface PropertySource {
 
     /**
-     * Alias for {@link RequestMapping#name}
+     * 获取属性集合
      *
-     * @return String
+     * @return 属性集合
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default "";
+    Properties props();
 
     /**
-     * Alias for {@link RequestMapping#value}
+     * 获取属性
      *
-     * @return String[]
+     * @param key 属性键值
+     * @return 属性值
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
+    default String getProperty(String key) {
+        String value = props().getProperty(key);
+        if (value == null) {
+            return null;
+        }
+        return getPlaceholderProperty(value);
+    }
 
     /**
-     * Alias for {@link RequestMapping#path}
+     * 获取属性，可设置默认值
      *
-     * @return String[]
+     * @param key          属性键值
+     * @param defaultValue 默认值
+     * @return 属性值
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
+    default String getProperty(String key, String defaultValue) {
+        String value = getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value;
+    }
 
     /**
-     * Alias for {@link RequestMapping#params}
+     * 获取占位符属性
      *
-     * @return String[]
+     * @param placeholder 占位 eg. ${a}
+     * @return 属性值
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
+    default String getPlaceholderProperty(String placeholder) {
+        return Binder.DEFAULT_HELPER.replacePlaceholders(placeholder, props());
+    }
 
     /**
-     * Alias for {@link RequestMapping#headers}
+     * 是否包含该前缀属性
      *
-     * @return the String[]
+     * @param prefix 前缀
+     * @return true包含
      */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
-
-    /**
-     * Alias for {@link RequestMapping#consumes}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    /**
-     * Alias for {@link RequestMapping#produces}
-     *
-     * @return String[]
-     */
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    default boolean containPrefix(String prefix) {
+        Properties properties = props();
+        for (Object key : properties.keySet()) {
+            if (key.toString().startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
