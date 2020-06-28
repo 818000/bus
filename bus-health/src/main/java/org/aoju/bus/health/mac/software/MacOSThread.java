@@ -22,77 +22,68 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.health.builtin.software;
+package org.aoju.bus.health.mac.software;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.annotation.Immutable;
+import org.aoju.bus.health.builtin.software.AbstractOSThread;
+import org.aoju.bus.health.builtin.software.OSProcess;
 
-import java.util.function.Supplier;
+@Immutable
+public class MacOSThread extends AbstractOSThread {
 
-import static org.aoju.bus.health.Memoize.defaultExpiration;
-import static org.aoju.bus.health.Memoize.memoize;
+    private final int threadId;
+    private final OSProcess.State state;
+    private final long kernelTime;
+    private final long userTime;
+    private final long startTime;
+    private final long upTime;
+    private final int priority;
 
-/**
- * A process is an instance of a computer program that is being executed. It
- * contains the program code and its current activity. Depending on the
- * operating system (OS), a process may be made up of multiple threads of
- * execution that execute instructions concurrently.
- *
- * @author Kimi Liu
- * @version 6.0.0
- * @since JDK 1.8+
- */
-@ThreadSafe
-public abstract class AbstractOSProcess implements OSProcess {
-
-    private final Supplier<Double> cumulativeCpuLoad = memoize(this::queryCumulativeCpuLoad, defaultExpiration());
-
-    private int processID;
-
-    public AbstractOSProcess(int pid) {
-        this.processID = pid;
+    public MacOSThread(int pid, int threadId, OSProcess.State state, long kernelTime, long userTime, long startTime, long upTime,
+                       int priority) {
+        super(pid);
+        this.threadId = threadId;
+        this.state = state;
+        this.kernelTime = kernelTime;
+        this.userTime = userTime;
+        this.startTime = startTime;
+        this.upTime = upTime;
+        this.priority = priority;
     }
 
     @Override
-    public int getProcessID() {
-        return this.processID;
+    public int getThreadId() {
+        return threadId;
     }
 
     @Override
-    public double getProcessCpuLoadCumulative() {
-        return cumulativeCpuLoad.get();
-    }
-
-    private double queryCumulativeCpuLoad() {
-        return (getKernelTime() + getUserTime()) / (double) getUpTime();
+    public OSProcess.State getState() {
+        return state;
     }
 
     @Override
-    public double getProcessCpuLoadBetweenTicks(OSProcess priorSnapshot) {
-        if (priorSnapshot != null && this.processID == priorSnapshot.getProcessID()
-                && getUpTime() > priorSnapshot.getUpTime()) {
-            return (getUserTime() - priorSnapshot.getUserTime() + getKernelTime() - priorSnapshot.getKernelTime())
-                    / (double) (getUpTime() - priorSnapshot.getUpTime());
-        }
-        return getProcessCpuLoadCumulative();
+    public long getKernelTime() {
+        return kernelTime;
     }
 
     @Override
-    public long getMinorFaults() {
-        return 0L;
+    public long getUserTime() {
+        return userTime;
     }
 
     @Override
-    public long getMajorFaults() {
-        return 0L;
+    public long getStartTime() {
+        return startTime;
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("OSProcess@");
-        builder.append(Integer.toHexString(hashCode()));
-        builder.append("[processID=").append(this.processID);
-        builder.append(", name=").append(getName()).append(']');
-        return builder.toString();
+    public long getUpTime() {
+        return upTime;
+    }
+
+    @Override
+    public int getPriority() {
+        return priority;
     }
 
 }

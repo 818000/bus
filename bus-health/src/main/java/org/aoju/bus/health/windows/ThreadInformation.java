@@ -22,77 +22,67 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.health.builtin.software;
+package org.aoju.bus.health.windows;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.tuple.Pair;
 
-import java.util.function.Supplier;
-
-import static org.aoju.bus.health.Memoize.defaultExpiration;
-import static org.aoju.bus.health.Memoize.memoize;
+import java.util.List;
+import java.util.Map;
 
 /**
- * A process is an instance of a computer program that is being executed. It
- * contains the program code and its current activity. Depending on the
- * operating system (OS), a process may be made up of multiple threads of
- * execution that execute instructions concurrently.
+ * Utility to query Thread Information performance counter
  *
  * @author Kimi Liu
  * @version 6.0.0
  * @since JDK 1.8+
  */
 @ThreadSafe
-public abstract class AbstractOSProcess implements OSProcess {
+public final class ThreadInformation {
 
-    private final Supplier<Double> cumulativeCpuLoad = memoize(this::queryCumulativeCpuLoad, defaultExpiration());
+    private static final String THREAD = "Thread";
+    private static final String WIN32_PERF_RAW_DATA_PERF_PROC_THREAD = "Win32_PerfRawData_PerfProc_Thread WHERE NOT Name LIKE \"%_Total\"";
 
-    private int processID;
-
-    public AbstractOSProcess(int pid) {
-        this.processID = pid;
+    private ThreadInformation() {
     }
 
-    @Override
-    public int getProcessID() {
-        return this.processID;
+    /**
+     * Returns thread counters.
+     *
+     * @return Thread counters for each thread.
+     */
+    public static Pair<List<String>, Map<ThreadPerformanceProperty, List<Long>>> queryThreadCounters() {
+        return PerfCounterWildcardQuery.queryInstancesAndValues(ThreadPerformanceProperty.class, THREAD,
+                WIN32_PERF_RAW_DATA_PERF_PROC_THREAD);
     }
 
-    @Override
-    public double getProcessCpuLoadCumulative() {
-        return cumulativeCpuLoad.get();
-    }
+    /**
+     * Thread performance counters
+     */
+    public enum ThreadPerformanceProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
+        // First element defines WMI instance name field and PDH instance filter
+        NAME(PerfCounterQuery.NOT_TOTAL_INSTANCES),
+        // Remaining elements define counters
+        PERCENTUSERTIME("% User Time"),
+        PERCENTPRIVILEGEDTIME("% Privileged Time"),
+        ELAPSEDTIME("Elapsed Time"),
+        PRIORITYCURRENT("Priority Current"),
+        STARTADDRESS("Start Address"),
+        THREADSTATE("Thread State"),
+        IDPROCESS("ID Process"),
+        IDTHREAD("ID Thread"),
+        CONTEXTSWITCHESPERSEC("Context Switches/sec");
 
-    private double queryCumulativeCpuLoad() {
-        return (getKernelTime() + getUserTime()) / (double) getUpTime();
-    }
+        private final String counter;
 
-    @Override
-    public double getProcessCpuLoadBetweenTicks(OSProcess priorSnapshot) {
-        if (priorSnapshot != null && this.processID == priorSnapshot.getProcessID()
-                && getUpTime() > priorSnapshot.getUpTime()) {
-            return (getUserTime() - priorSnapshot.getUserTime() + getKernelTime() - priorSnapshot.getKernelTime())
-                    / (double) (getUpTime() - priorSnapshot.getUpTime());
+        ThreadPerformanceProperty(String counter) {
+            this.counter = counter;
         }
-        return getProcessCpuLoadCumulative();
-    }
 
-    @Override
-    public long getMinorFaults() {
-        return 0L;
-    }
-
-    @Override
-    public long getMajorFaults() {
-        return 0L;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("OSProcess@");
-        builder.append(Integer.toHexString(hashCode()));
-        builder.append("[processID=").append(this.processID);
-        builder.append(", name=").append(getName()).append(']');
-        return builder.toString();
+        @Override
+        public String getCounter() {
+            return counter;
+        }
     }
 
 }

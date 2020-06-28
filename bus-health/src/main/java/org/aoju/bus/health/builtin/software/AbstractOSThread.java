@@ -24,41 +24,33 @@
  ********************************************************************************/
 package org.aoju.bus.health.builtin.software;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.health.Memoize;
 
 import java.util.function.Supplier;
 
-import static org.aoju.bus.health.Memoize.defaultExpiration;
-import static org.aoju.bus.health.Memoize.memoize;
-
 /**
- * A process is an instance of a computer program that is being executed. It
- * contains the program code and its current activity. Depending on the
- * operating system (OS), a process may be made up of multiple threads of
- * execution that execute instructions concurrently.
- *
  * @author Kimi Liu
  * @version 6.0.0
  * @since JDK 1.8+
  */
-@ThreadSafe
-public abstract class AbstractOSProcess implements OSProcess {
+public abstract class AbstractOSThread implements OSThread {
 
-    private final Supplier<Double> cumulativeCpuLoad = memoize(this::queryCumulativeCpuLoad, defaultExpiration());
+    private final Supplier<Double> cumulativeCpuLoad = Memoize.memoize(this::queryCumulativeCpuLoad, Memoize.defaultExpiration());
 
-    private int processID;
+    private final int owningProcessId;
 
-    public AbstractOSProcess(int pid) {
-        this.processID = pid;
+    public AbstractOSThread(int processId) {
+        this.owningProcessId = processId;
     }
 
     @Override
-    public int getProcessID() {
-        return this.processID;
+    public int getOwningProcessId() {
+        return this.owningProcessId;
     }
 
     @Override
-    public double getProcessCpuLoadCumulative() {
+    public double getThreadCpuLoadCumulative() {
         return cumulativeCpuLoad.get();
     }
 
@@ -67,13 +59,28 @@ public abstract class AbstractOSProcess implements OSProcess {
     }
 
     @Override
-    public double getProcessCpuLoadBetweenTicks(OSProcess priorSnapshot) {
-        if (priorSnapshot != null && this.processID == priorSnapshot.getProcessID()
-                && getUpTime() > priorSnapshot.getUpTime()) {
+    public double getThreadCpuLoadBetweenTicks(OSThread priorSnapshot) {
+        if (priorSnapshot != null && owningProcessId == priorSnapshot.getOwningProcessId()
+                && getThreadId() == priorSnapshot.getThreadId() && getUpTime() > priorSnapshot.getUpTime()) {
             return (getUserTime() - priorSnapshot.getUserTime() + getKernelTime() - priorSnapshot.getKernelTime())
                     / (double) (getUpTime() - priorSnapshot.getUpTime());
         }
-        return getProcessCpuLoadCumulative();
+        return getThreadCpuLoadCumulative();
+    }
+
+    @Override
+    public String getName() {
+        return Normal.EMPTY;
+    }
+
+    @Override
+    public long getStartMemoryAddress() {
+        return 0L;
+    }
+
+    @Override
+    public long getContextSwitches() {
+        return 0L;
     }
 
     @Override
@@ -87,12 +94,18 @@ public abstract class AbstractOSProcess implements OSProcess {
     }
 
     @Override
+    public boolean updateAttributes() {
+        return false;
+    }
+
+    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("OSProcess@");
-        builder.append(Integer.toHexString(hashCode()));
-        builder.append("[processID=").append(this.processID);
-        builder.append(", name=").append(getName()).append(']');
-        return builder.toString();
+        return "OSThread [threadId=" + getThreadId() + ", owningProcessId=" + getOwningProcessId() + ", name="
+                + getName() + ", state=" + getState() + ", kernelTime=" + getKernelTime() + ", userTime="
+                + getUserTime() + ", upTime=" + getUpTime() + ", startTime=" + getStartTime()
+                + ", startMemoryAddress=0x" + String.format("%x", getStartMemoryAddress()) + ", contextSwitches="
+                + getContextSwitches() + ", minorFaults=" + getMinorFaults() + ", majorFaults=" + getMajorFaults()
+                + "]";
     }
 
 }
