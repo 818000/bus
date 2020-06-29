@@ -27,7 +27,6 @@ package org.aoju.bus.oauth.provider;
 import com.alibaba.fastjson.JSONObject;
 import org.aoju.bus.cache.metric.ExtendCache;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.exception.AuthorizedException;
 import org.aoju.bus.oauth.Context;
 import org.aoju.bus.oauth.Registry;
 import org.aoju.bus.oauth.magic.AccToken;
@@ -35,65 +34,49 @@ import org.aoju.bus.oauth.magic.Callback;
 import org.aoju.bus.oauth.magic.Property;
 
 /**
- * Gitee登录
+ * 阿里云登录
  *
  * @author Kimi Liu
  * @version 6.0.0
  * @since JDK 1.8+
  */
-public class GiteeProvider extends AbstractProvider {
+public class AliyunProvider extends AbstractProvider {
 
-    public GiteeProvider(Context context) {
-        super(context, Registry.GITEE);
+    public AliyunProvider(Context context) {
+        super(context, Registry.ALIYUN);
+
     }
 
-    public GiteeProvider(Context context, ExtendCache extendCache) {
-        super(context, Registry.GITEE, extendCache);
+    public AliyunProvider(Context context, ExtendCache extendCache) {
+        super(context, Registry.ALIYUN, extendCache);
     }
 
     @Override
     public AccToken getAccessToken(Callback callback) {
-        JSONObject object = JSONObject.parseObject(doPostAuthorizationCode(callback.getCode()));
-        this.checkResponse(object);
+        String response = doPostAuthorizationCode(callback.getCode());
+        JSONObject accessTokenObject = JSONObject.parseObject(response);
         return AccToken.builder()
-                .accessToken(object.getString("access_token"))
-                .refreshToken(object.getString("refresh_token"))
-                .scope(object.getString("scope"))
-                .tokenType(object.getString("token_type"))
-                .expireIn(object.getIntValue("expires_in"))
+                .accessToken(accessTokenObject.getString("access_token"))
+                .expireIn(accessTokenObject.getIntValue("expires_in"))
+                .tokenType(accessTokenObject.getString("token_type"))
+                .idToken(accessTokenObject.getString("id_token"))
+                .refreshToken(accessTokenObject.getString("refresh_token"))
                 .build();
     }
 
     @Override
     public Property getUserInfo(AccToken accToken) {
-        JSONObject object = JSONObject.parseObject(doGetUserInfo(accToken));
-        this.checkResponse(object);
+        String userInfo = doGetUserInfo(accToken);
+        JSONObject object = JSONObject.parseObject(userInfo);
         return Property.builder()
                 .rawJson(object)
-                .uuid(object.getString("id"))
-                .username(object.getString("login"))
-                .avatar(object.getString("avatar_url"))
-                .blog(object.getString("blog"))
+                .uuid(object.getString("sub"))
+                .username(object.getString("login_name"))
                 .nickname(object.getString("name"))
-                .company(object.getString("company"))
-                .location(object.getString("address"))
-                .email(object.getString("email"))
-                .remark(object.getString("bio"))
                 .gender(Normal.Gender.UNKNOWN)
                 .token(accToken)
                 .source(source.toString())
                 .build();
-    }
-
-    /**
-     * 检查响应内容是否正确
-     *
-     * @param object 请求响应内容
-     */
-    private void checkResponse(JSONObject object) {
-        if (object.containsKey("error")) {
-            throw new AuthorizedException(object.getString("error_description"));
-        }
     }
 
 }
