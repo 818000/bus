@@ -40,7 +40,7 @@ import java.util.*;
  * Utility to read HKEY_PERFORMANCE_DATA information.
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -194,6 +194,8 @@ public final class HkeyPerformance {
      * Looks up the counter index values for the given counter object and the enum
      * of counter names.
      *
+     * @param <T>         An enum containing the counters, whose class is passed as
+     *                    {@code counterEnum}
      * @param objectName  The counter object to look up the index for
      * @param counterEnum The {@link Enum} containing counters to look up the indices for.
      *                    The first Enum value will be ignored.
@@ -278,7 +280,7 @@ public final class HkeyPerformance {
             String[] counterText = Advapi32Util.registryGetStringArray(WinReg.HKEY_LOCAL_MACHINE, HKEY_PERFORMANCE_TEXT,
                     COUNTER);
             for (int i = 1; i < counterText.length; i += 2) {
-                indexMap.put(counterText[i], Integer.parseInt(counterText[i - 1]));
+                indexMap.putIfAbsent(counterText[i], Integer.parseInt(counterText[i - 1]));
             }
         } catch (Win32Exception we) {
             Logger.error(

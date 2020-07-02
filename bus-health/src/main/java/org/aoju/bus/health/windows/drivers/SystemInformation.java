@@ -34,7 +34,7 @@ import java.util.Map;
  * Utility to query System performance counter
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -52,9 +52,7 @@ public final class SystemInformation {
      * @return Context switches counter for the total of all processors.
      */
     public static Map<ContextSwitchProperty, Long> queryContextSwitchCounters() {
-        PerfCounterQuery<ContextSwitchProperty> contextSwitchPerfCounters = new PerfCounterQuery<>(
-                ContextSwitchProperty.class, SYSTEM, WIN32_PERF_RAW_DATA_PERF_OS_SYSTEM);
-        return contextSwitchPerfCounters.queryValues();
+        return PerfCounterQuery.queryValues(ContextSwitchProperty.class, SYSTEM, WIN32_PERF_RAW_DATA_PERF_OS_SYSTEM);
     }
 
     /*

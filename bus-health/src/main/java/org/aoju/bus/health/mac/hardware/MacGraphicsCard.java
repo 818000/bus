@@ -31,15 +31,17 @@ import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.builtin.hardware.AbstractGraphicsCard;
 import org.aoju.bus.health.builtin.hardware.AbstractHardwareAbstractionLayer;
+import org.aoju.bus.health.builtin.hardware.GraphicsCard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Graphics card info obtained by system_profiler SPDisplaysDataType.
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -65,7 +67,7 @@ final class MacGraphicsCard extends AbstractGraphicsCard {
      *
      * @return List of {@link MacGraphicsCard} objects.
      */
-    public static List<MacGraphicsCard> getGraphicsCards() {
+    public static List<GraphicsCard> getGraphicsCards() {
         List<MacGraphicsCard> cardList = new ArrayList<>();
         List<String> sp = Executor.runNative("system_profiler SPDisplaysDataType");
         String name = Normal.UNKNOWN;
@@ -100,7 +102,7 @@ final class MacGraphicsCard extends AbstractGraphicsCard {
         }
         cardList.add(new MacGraphicsCard(name, deviceId, vendor,
                 versionInfoList.isEmpty() ? Normal.UNKNOWN : String.join(", ", versionInfoList), vram));
-        return cardList;
+        return Collections.unmodifiableList(cardList);
     }
 
 }

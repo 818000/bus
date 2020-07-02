@@ -35,13 +35,14 @@ import org.aoju.bus.health.builtin.hardware.Display;
 import org.aoju.bus.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * A Display
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -67,7 +68,7 @@ final class WindowsDisplay extends AbstractDisplay {
      *
      * @return An array of Display objects representing monitors, etc.
      */
-    public static Display[] getDisplays() {
+    public static List<Display> getDisplays() {
         List<Display> displays = new ArrayList<>();
 
         WinNT.HANDLE hDevInfo = SU.SetupDiGetClassDevs(GUID_DEVINTERFACE_MONITOR, null, null,
@@ -99,7 +100,7 @@ final class WindowsDisplay extends AbstractDisplay {
             }
             SU.SetupDiDestroyDeviceInfoList(hDevInfo);
         }
-        return displays.toArray(new Display[0]);
+        return Collections.unmodifiableList(displays);
     }
 
 }

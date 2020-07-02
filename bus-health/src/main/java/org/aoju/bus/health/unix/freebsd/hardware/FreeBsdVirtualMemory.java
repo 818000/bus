@@ -29,7 +29,7 @@ import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.builtin.hardware.AbstractVirtualMemory;
-import org.aoju.bus.health.unix.freebsd.BsdSysctl;
+import org.aoju.bus.health.unix.freebsd.BsdSysctlKit;
 
 import java.util.function.Supplier;
 
@@ -40,7 +40,7 @@ import static org.aoju.bus.health.Memoize.memoize;
  * Memory obtained by swapinfo
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -66,15 +66,15 @@ final class FreeBsdVirtualMemory extends AbstractVirtualMemory {
     }
 
     private static long querySwapTotal() {
-        return BsdSysctl.sysctl("vm.swap_total", 0L);
+        return BsdSysctlKit.sysctl("vm.swap_total", 0L);
     }
 
     private static long queryPagesIn() {
-        return BsdSysctl.sysctl("vm.stats.vm.v_swappgsin", 0L);
+        return BsdSysctlKit.sysctl("vm.stats.vm.v_swappgsin", 0L);
     }
 
     private static long queryPagesOut() {
-        return BsdSysctl.sysctl("vm.stats.vm.v_swappgsout", 0L);
+        return BsdSysctlKit.sysctl("vm.stats.vm.v_swappgsout", 0L);
     }
 
     @Override

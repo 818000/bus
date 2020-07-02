@@ -42,7 +42,7 @@ import static org.aoju.bus.health.Memoize.memoize;
  * Memory obtained by kstat and swap
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -75,7 +75,7 @@ final class SolarisVirtualMemory extends AbstractVirtualMemory {
 
     private static long queryPagesIn() {
         long swapPagesIn = 0L;
-        for (String s : Executor.runNative("kstat -p cpu_stat:::pgpgin")) {
+        for (String s : Executor.runNative("kstat -p cpu_stat:::pgswapin")) {
             swapPagesIn += Builder.parseLastLong(s, 0L);
         }
         return swapPagesIn;
@@ -83,7 +83,7 @@ final class SolarisVirtualMemory extends AbstractVirtualMemory {
 
     private static long queryPagesOut() {
         long swapPagesOut = 0L;
-        for (String s : Executor.runNative("kstat -p cpu_stat:::pgpgout")) {
+        for (String s : Executor.runNative("kstat -p cpu_stat:::pgswapout")) {
             swapPagesOut += Builder.parseLastLong(s, 0L);
         }
         return swapPagesOut;

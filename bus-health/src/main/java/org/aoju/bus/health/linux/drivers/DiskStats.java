@@ -39,7 +39,7 @@ import java.util.Map;
  * Utility to read disk statistics from {@code /proc/diskstats}
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -163,6 +163,7 @@ public final class DiskStats {
         /**
          * The total number of milliseconds spent by all flush requests.
          */
-        FLUSHES_MS;
+        FLUSHES_MS
     }
+
 }

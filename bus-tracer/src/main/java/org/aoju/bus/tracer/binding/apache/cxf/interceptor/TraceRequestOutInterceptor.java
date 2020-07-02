@@ -25,25 +25,25 @@
 package org.aoju.bus.tracer.binding.apache.cxf.interceptor;
 
 import org.aoju.bus.tracer.Backend;
-import org.aoju.bus.tracer.config.TraceFilterConfiguration;
-import org.aoju.bus.tracer.consts.TraceConsts;
+import org.aoju.bus.tracer.Builder;
+import org.aoju.bus.tracer.config.TraceFilterConfig;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.phase.Phase;
 
 /**
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 public class TraceRequestOutInterceptor extends AbstractTraceOutInterceptor {
 
     public TraceRequestOutInterceptor(Backend backend) {
-        this(backend, TraceConsts.DEFAULT);
+        this(backend, Builder.DEFAULT);
     }
 
     public TraceRequestOutInterceptor(Backend backend, String profile) {
-        super(Phase.USER_LOGICAL, TraceFilterConfiguration.Channel.OutgoingRequest, backend, profile);
+        super(Phase.USER_LOGICAL, TraceFilterConfig.Channel.OutgoingRequest, backend, profile);
     }
 
     @Override

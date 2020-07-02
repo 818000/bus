@@ -24,17 +24,17 @@
  ********************************************************************************/
 package org.aoju.bus.tracer.transport.jaxb;
 
-import org.aoju.bus.tracer.consts.TraceConsts;
+import org.aoju.bus.tracer.Builder;
 
 import javax.xml.bind.annotation.*;
 import java.util.*;
 
 /**
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
-@XmlRootElement(name = TraceConsts.TPIC_HEADER)
+@XmlRootElement(name = Builder.TPIC_HEADER)
 @XmlAccessorType(XmlAccessType.NONE)
 public final class TpicMap {
 

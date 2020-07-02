@@ -34,7 +34,7 @@ import java.util.Map;
  * Utility to query Memory performance counter
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -52,9 +52,7 @@ public final class MemoryInformation {
      * @return Page swap counters for memory.
      */
     public static Map<PageSwapProperty, Long> queryPageSwaps() {
-        PerfCounterQuery<PageSwapProperty> memoryPerfCounters = new PerfCounterQuery<>(PageSwapProperty.class, MEMORY,
-                WIN32_PERF_RAW_DATA_PERF_OS_MEMORY);
-        return memoryPerfCounters.queryValues();
+        return PerfCounterQuery.queryValues(PageSwapProperty.class, MEMORY, WIN32_PERF_RAW_DATA_PERF_OS_MEMORY);
     }
 
     /*

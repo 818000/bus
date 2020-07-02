@@ -37,13 +37,14 @@ import org.aoju.bus.health.builtin.hardware.PowerSource;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -69,7 +70,7 @@ public final class MacPowerSource extends AbstractPowerSource {
      *
      * @return An array of PowerSource objects representing batteries, etc.
      */
-    public static PowerSource[] getPowerSources() {
+    public static List<PowerSource> getPowerSources() {
         String psDeviceName = Normal.UNKNOWN;
         double psTimeRemainingInstant = 0d;
         double psPowerUsageRate = 0d;
@@ -238,7 +239,7 @@ public final class MacPowerSource extends AbstractPowerSource {
         powerSourcesList.release();
         powerSourcesInfo.release();
 
-        return psList.toArray(new MacPowerSource[0]);
+        return Collections.unmodifiableList(psList);
     }
 
 }

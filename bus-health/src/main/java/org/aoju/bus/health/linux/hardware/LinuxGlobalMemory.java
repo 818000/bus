@@ -44,24 +44,18 @@ import static org.aoju.bus.health.Memoize.memoize;
  * Memory obtained by /proc/meminfo and sysinfo.totalram
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
 final class LinuxGlobalMemory extends AbstractGlobalMemory {
 
+    public static final long PAGE_SIZE = Builder
+            .parseLongOrDefault(Executor.getFirstAnswer("getconf PAGE_SIZE"), 4096L);
+
     private final Supplier<Pair<Long, Long>> availTotal = memoize(LinuxGlobalMemory::readMemInfo, defaultExpiration());
 
-    private final Supplier<Long> pageSize = memoize(LinuxGlobalMemory::queryPageSize);
-
     private final Supplier<VirtualMemory> vm = memoize(this::createVirtualMemory);
-
-    private static long queryPageSize() {
-        // Ideally we would us sysconf(_SC_PAGESIZE) but the constant is platform
-        // dependent and would require parsing header files, etc. Since this is only
-        // read once at startup, command line is a reliable fallback.
-        return Builder.parseLongOrDefault(Executor.getFirstAnswer("getconf PAGE_SIZE"), 4096L);
-    }
 
     /**
      * Updates instance variables from reading /proc/meminfo. While most of the
@@ -86,27 +80,27 @@ final class LinuxGlobalMemory extends AbstractGlobalMemory {
 
         List<String> procMemInfo = FileKit.readLines(ProcPath.MEMINFO);
         for (String checkLine : procMemInfo) {
-            String[] memorySplit = RegEx.SPACES.split(checkLine);
+            String[] memorySplit = RegEx.SPACES.split(checkLine, 2);
             if (memorySplit.length > 1) {
                 switch (memorySplit[0]) {
                     case "MemTotal:":
-                        memTotal = parseMeminfo(memorySplit);
+                        memTotal = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         break;
                     case "MemAvailable:":
-                        memAvailable = parseMeminfo(memorySplit);
+                        memAvailable = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         // We're done!
                         return Pair.of(memAvailable, memTotal);
                     case "MemFree:":
-                        memFree = parseMeminfo(memorySplit);
+                        memFree = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         break;
                     case "Active(file):":
-                        activeFile = parseMeminfo(memorySplit);
+                        activeFile = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         break;
                     case "Inactive(file):":
-                        inactiveFile = parseMeminfo(memorySplit);
+                        inactiveFile = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         break;
                     case "SReclaimable:":
-                        sReclaimable = parseMeminfo(memorySplit);
+                        sReclaimable = Builder.parseDecimalMemorySizeToBinary(memorySplit[1]);
                         break;
                     default:
                         // do nothing with other lines
@@ -116,23 +110,6 @@ final class LinuxGlobalMemory extends AbstractGlobalMemory {
         }
         // We didn't find MemAvailable so we estimate from other fields
         return Pair.of(memFree + activeFile + inactiveFile + sReclaimable, memTotal);
-    }
-
-    /**
-     * Parses lines from the display of /proc/meminfo
-     *
-     * @param memorySplit Array of Strings representing the 3 columns of /proc/meminfo
-     * @return value, multiplied by 1024 if kB is specified
-     */
-    private static long parseMeminfo(String[] memorySplit) {
-        if (memorySplit.length < 2) {
-            return 0L;
-        }
-        long memory = Builder.parseLongOrDefault(memorySplit[1], 0L);
-        if (memorySplit.length > 2 && "kB".equals(memorySplit[2])) {
-            memory *= 1024;
-        }
-        return memory;
     }
 
     @Override
@@ -147,7 +124,7 @@ final class LinuxGlobalMemory extends AbstractGlobalMemory {
 
     @Override
     public long getPageSize() {
-        return pageSize.get();
+        return PAGE_SIZE;
     }
 
     @Override

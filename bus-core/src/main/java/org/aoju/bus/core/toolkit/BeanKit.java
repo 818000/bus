@@ -47,7 +47,7 @@ import java.util.*;
  * 把一个拥有对属性进行set和get方法的类
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 public class BeanKit {
@@ -99,6 +99,9 @@ public class BeanKit {
     public static boolean isEmpty(Object bean, String... ignoreFiledNames) {
         if (null != bean) {
             for (Field field : ReflectKit.getFields(bean.getClass())) {
+                if (isStatic(field)) {
+                    continue;
+                }
                 if ((false == ArrayKit.contains(ignoreFiledNames, field.getName()))
                         && null != ReflectKit.getFieldValue(bean, field)) {
                     return false;
@@ -214,7 +217,10 @@ public class BeanKit {
             return true;
         }
         for (Field field : ReflectKit.getFields(bean.getClass())) {
-            if ((false == ArrayKit.contains(ignoreFiledNames, field.getName()))//
+            if (isStatic(field)) {
+                continue;
+            }
+            if ((false == ArrayKit.contains(ignoreFiledNames, field.getName()))
                     && null == ReflectKit.getFieldValue(bean, field)) {
                 return true;
             }
@@ -800,6 +806,9 @@ public class BeanKit {
 
         final Field[] fields = ReflectKit.getFields(bean.getClass());
         for (Field field : fields) {
+            if (isStatic(field)) {
+                continue;
+            }
             if (ignoreFields != null && ArrayKit.containsIgnoreCase(ignoreFields, field.getName())) {
                 // 不处理忽略的Fields
                 continue;

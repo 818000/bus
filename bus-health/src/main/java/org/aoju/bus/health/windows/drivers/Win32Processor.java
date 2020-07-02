@@ -33,7 +33,7 @@ import org.aoju.bus.health.windows.WmiQueryHandler;
  * Utility to query WMI class {@code Win32_Processor}
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -90,14 +90,14 @@ public final class Win32Processor {
      * Processor voltage properties.
      */
     public enum VoltProperty {
-        CURRENTVOLTAGE, VOLTAGECAPS;
+        CURRENTVOLTAGE, VOLTAGECAPS
     }
 
     /**
      * Processor ID property
      */
     public enum ProcessorIdProperty {
-        PROCESSORID;
+        PROCESSORID
     }
 
     /**

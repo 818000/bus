@@ -34,7 +34,7 @@ import java.util.Map;
  * Utility to query Paging File performance counter
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -52,9 +52,8 @@ public final class PagingFile {
      * @return Paging file counters for memory.
      */
     public static Map<PagingPercentProperty, Long> querySwapUsed() {
-        PerfCounterQuery<PagingPercentProperty> pagingPerfCounters = new PerfCounterQuery<>(PagingPercentProperty.class,
-                PAGING_FILE, WIN32_PERF_RAW_DATA_PERF_OS_PAGING_FILE);
-        return pagingPerfCounters.queryValues();
+        return PerfCounterQuery.queryValues(PagingPercentProperty.class, PAGING_FILE,
+                WIN32_PERF_RAW_DATA_PERF_OS_PAGING_FILE);
     }
 
     /*

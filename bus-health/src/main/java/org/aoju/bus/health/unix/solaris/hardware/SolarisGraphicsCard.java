@@ -31,15 +31,17 @@ import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.builtin.hardware.AbstractGraphicsCard;
 import org.aoju.bus.health.builtin.hardware.AbstractHardwareAbstractionLayer;
+import org.aoju.bus.health.builtin.hardware.GraphicsCard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Graphics Card info obtained from prtconf
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -65,12 +67,10 @@ final class SolarisGraphicsCard extends AbstractGraphicsCard {
      * {@link AbstractHardwareAbstractionLayer} to access the
      * graphics cards.
      *
-     * @return List of
-     * {@link SolarisGraphicsCard}
-     * objects.
+     * @return List of {@link SolarisGraphicsCard} objects.
      */
-    public static List<SolarisGraphicsCard> getGraphicsCards() {
-        List<SolarisGraphicsCard> cardList = new ArrayList<>();
+    public static List<GraphicsCard> getGraphicsCards() {
+        List<GraphicsCard> cardList = new ArrayList<>();
         // Enumerate all devices and add if required
         List<String> devices = Executor.runNative("prtconf -pv");
         if (devices.isEmpty()) {
@@ -133,7 +133,7 @@ final class SolarisGraphicsCard extends AbstractGraphicsCard {
                     vendorId.isEmpty() ? Normal.UNKNOWN : vendorId,
                     versionInfoList.isEmpty() ? Normal.UNKNOWN : String.join(", ", versionInfoList), 0L));
         }
-        return cardList;
+        return Collections.unmodifiableList(cardList);
     }
 
 }

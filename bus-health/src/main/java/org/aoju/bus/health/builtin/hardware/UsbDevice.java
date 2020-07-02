@@ -26,13 +26,15 @@ package org.aoju.bus.health.builtin.hardware;
 
 import org.aoju.bus.core.annotation.Immutable;
 
+import java.util.List;
+
 /**
  * A USB device is a device connected via a USB port, possibly
  * internally/permanently. Hubs may contain ports to which other devices connect
  * in a recursive fashion.
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -88,6 +90,6 @@ public interface UsbDevice extends Comparable<UsbDevice> {
      * @return An array of other devices connected to this hub, if any, or an empty
      * array if none
      */
-    UsbDevice[] getConnectedDevices();
+    List<UsbDevice> getConnectedDevices();
 
 }

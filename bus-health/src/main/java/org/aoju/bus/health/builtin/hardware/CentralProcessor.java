@@ -31,6 +31,7 @@ import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Builder;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -44,7 +45,7 @@ import static org.aoju.bus.health.Memoize.memoize;
  * 多个逻辑处理器(操作系统看到的内容，可能包括超线程内核)
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -82,7 +83,7 @@ public interface CentralProcessor {
      *
      * @return 逻辑处理器阵列
      */
-    LogicalProcessor[] getLogicalProcessors();
+    List<LogicalProcessor> getLogicalProcessors();
 
     /**
      * 通过计算来自{@link #getSystemCpuLoadTicks()}的滴答声与来自先

@@ -24,16 +24,17 @@
  ********************************************************************************/
 package org.aoju.bus.health.windows.drivers;
 
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.windows.WmiQuery;
+import org.aoju.bus.health.windows.WmiKit;
 import org.aoju.bus.health.windows.WmiQueryHandler;
 
 /**
  * Utility to query Open Hardware Monitor WMI data for Sensors
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -55,7 +56,7 @@ public final class OhmSensor {
         StringBuilder sb = new StringBuilder(SENSOR);
         sb.append(" WHERE Parent = \"").append(identifier);
         sb.append("\" AND SensorType=\"").append(sensorType).append('\"');
-        com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery ohmSensorQuery = new com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery(WmiQuery.OHM_NAMESPACE, sb.toString(),
+        WmiQuery<ValueProperty> ohmSensorQuery = new WmiQuery<>(WmiKit.OHM_NAMESPACE, sb.toString(),
                 ValueProperty.class);
         return WmiQueryHandler.createInstance().queryWMI(ohmSensorQuery);
     }
@@ -64,7 +65,7 @@ public final class OhmSensor {
      * Sensor value property
      */
     public enum ValueProperty {
-        VALUE;
+        VALUE
     }
 
 }

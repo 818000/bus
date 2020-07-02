@@ -27,7 +27,7 @@ package org.aoju.bus.health.builtin.hardware;
 import org.aoju.bus.core.annotation.Immutable;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.health.Builder;
+import org.aoju.bus.health.Formats;
 
 /**
  * A region on a hard disk or other secondary storage, so that an operating
@@ -36,7 +36,7 @@ import org.aoju.bus.health.Builder;
  * actual disk.
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -170,7 +170,7 @@ public class HWPartition {
         sb.append(getName()).append(Symbol.SPACE);
         sb.append(Symbol.PARENTHESE_LEFT).append(getType()).append(") ");
         sb.append("Maj:Min=").append(getMajor()).append(Symbol.COLON).append(getMinor()).append(", ");
-        sb.append("size: ").append(Builder.formatBytes(getSize()));
+        sb.append("size: ").append(Formats.formatBytesDecimal(getSize()));
         sb.append(getMountPoint().isEmpty() ? Normal.EMPTY : " @ " + getMountPoint());
         return sb.toString();
     }

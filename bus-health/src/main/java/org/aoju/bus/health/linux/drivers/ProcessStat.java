@@ -29,24 +29,39 @@ import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.tuple.Triple;
 import org.aoju.bus.health.Builder;
+import org.aoju.bus.health.builtin.software.OSProcess;
 import org.aoju.bus.health.linux.ProcPath;
 
 import java.io.File;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility to read process statistics from {@code /proc/[pid]/stat}
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
 public final class ProcessStat {
 
-    private static final Pattern DIGITS = Pattern.compile("\\d+");
+    /**
+     * Constant defining the number of integer values in {@code /proc/pid/stat}. 2.6
+     * Kernel has 44 elements, 3.3 has 47, and 3.5 has 52.
+     */
+    public static final int PROC_PID_STAT_LENGTH;
+
+    static {
+        String stat = Builder.getStringFromFile(ProcPath.SELF_STAT);
+        if (!stat.isEmpty() && stat.contains(")")) {
+            // add 3 to account for pid, process name in prarenthesis, and state
+            PROC_PID_STAT_LENGTH = Builder.countStringToLongArray(stat, ' ') + 3;
+        } else {
+            // Default assuming recent kernel
+            PROC_PID_STAT_LENGTH = 52;
+        }
+    }
 
     private ProcessStat() {
     }
@@ -85,6 +100,32 @@ public final class ProcessStat {
     }
 
     /**
+     * Reads the statistics in {@code /proc/[pid]/statm} and returns the results.
+     *
+     * @param pid The process ID for which to fetch stats
+     * @return An EnumMap where the numeric values in {@link PidStatM} are mapped to
+     * a {@link Long} value.
+     * <p>
+     * If the process doesn't exist, returns null.
+     */
+    public static Map<PidStatM, Long> getPidStatM(int pid) {
+        String statm = Builder.getStringFromFile(String.format(ProcPath.PID_STATM, pid));
+        if (statm.isEmpty()) {
+            // If pid doesn't exist
+            return null;
+        }
+        // Split the fields
+        String[] split = RegEx.SPACES.split(statm);
+
+        Map<PidStatM, Long> statmMap = new EnumMap<>(PidStatM.class);
+        PidStatM[] enumArray = PidStatM.class.getEnumConstants();
+        for (int i = 0; i < enumArray.length && i < split.length; i++) {
+            statmMap.put(enumArray[i], Builder.parseLongOrDefault(split[i], 0L));
+        }
+        return statmMap;
+    }
+
+    /**
      * Gets an array of files in the /proc directory with only numeric digit
      * filenames, corresponding to processes
      *
@@ -92,8 +133,57 @@ public final class ProcessStat {
      */
     public static File[] getPidFiles() {
         File procdir = new File(ProcPath.PROC);
-        File[] pids = procdir.listFiles(f -> DIGITS.matcher(f.getName()).matches());
+        File[] pids = procdir.listFiles(f -> RegEx.NUMBERS.matcher(f.getName()).matches());
         return pids != null ? pids : new File[0];
+    }
+
+    /**
+     * Gets an List of thread ids for a process from the {@code /proc/[pid]/task/}
+     * directory with only numeric digit filenames, corresponding to the threads.
+     *
+     * @param pid process id
+     * @return A list of thread id.
+     */
+    public static List<Integer> getThreadIds(int pid) {
+        File threadDir = new File(String.format(ProcPath.TASK_PATH, pid));
+        File[] threads = threadDir
+                .listFiles(file -> RegEx.NUMBERS.matcher(file.getName()).matches() && Integer.valueOf(file.getName()) != pid);
+        return (threads != null) ? Arrays.stream(threads)
+                .map(thread -> Builder.parseIntOrDefault(thread.getName(), 0)).collect(Collectors.toList())
+                : Collections.emptyList();
+    }
+
+    /***
+     * Returns Enum STATE for the state value obtained from status file of any
+     * process/thread.
+     *
+     * @param stateValue
+     *            state value from the status file
+     * @return OSProcess.State
+     */
+    public static OSProcess.State getState(char stateValue) {
+        OSProcess.State state;
+        switch (stateValue) {
+            case 'R':
+                state = OSProcess.State.RUNNING;
+                break;
+            case 'S':
+                state = OSProcess.State.SLEEPING;
+                break;
+            case 'D':
+                state = OSProcess.State.WAITING;
+                break;
+            case 'Z':
+                state = OSProcess.State.ZOMBIE;
+                break;
+            case 'T':
+                state = OSProcess.State.STOPPED;
+                break;
+            default:
+                state = OSProcess.State.OTHER;
+                break;
+        }
+        return state;
     }
 
     /**
@@ -381,4 +471,39 @@ public final class ProcessStat {
          */
         EXIT_CODE;
     }
+
+    /**
+     * Enum corresponding to the fields in the output of {@code /proc/[pid]/statm}
+     */
+    public enum PidStatM {
+        /**
+         * Total program size
+         */
+        SIZE,
+        /**
+         * Resident set size
+         */
+        RESIDENT,
+        /**
+         * Number of resident shared pages (i.e., backed by a file)
+         */
+        SHARED,
+        /**
+         * Text (code)
+         */
+        TEXT,
+        /**
+         * Library (unused since Linux 2.6; always 0)
+         */
+        LIB,
+        /**
+         * Data + stack
+         */
+        DATA,
+        /**
+         * Dirty pages (unused since Linux 2.6; always 0)
+         */
+        DT
+    }
+
 }

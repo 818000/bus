@@ -47,13 +47,35 @@ import java.util.List;
  * WindowsNetworkParams class.
  *
  * @author Kimi Liu
- * @version 6.0.0
+ * @version 6.0.1
  * @since JDK 1.8+
  */
 @ThreadSafe
 final class WindowsNetworkParams extends AbstractNetworkParams {
 
     private static final int COMPUTER_NAME_DNS_DOMAIN_FULLY_QUALIFIED = 3;
+
+    private static String parseIpv4Route() {
+        List<String> lines = Executor.runNative("route print -4 0.0.0.0");
+        for (String line : lines) {
+            String[] fields = RegEx.SPACES.split(line.trim());
+            if (fields.length > 2 && "0.0.0.0".equals(fields[0])) {
+                return fields[2];
+            }
+        }
+        return Normal.EMPTY;
+    }
+
+    private static String parseIpv6Route() {
+        List<String> lines = Executor.runNative("route print -6 ::/0");
+        for (String line : lines) {
+            String[] fields = RegEx.SPACES.split(line.trim());
+            if (fields.length > 3 && "::/0".equals(fields[2])) {
+                return fields[3];
+            }
+        }
+        return Normal.EMPTY;
+    }
 
     @Override
     public String getDomainName() {
@@ -112,28 +134,6 @@ final class WindowsNetworkParams extends AbstractNetworkParams {
     @Override
     public String getIpv6DefaultGateway() {
         return parseIpv6Route();
-    }
-
-    private String parseIpv4Route() {
-        List<String> lines = Executor.runNative("route print -4 0.0.0.0");
-        for (String line : lines) {
-            String[] fields = RegEx.SPACES.split(line.trim());
-            if (fields.length > 2 && "0.0.0.0".equals(fields[0])) {
-                return fields[2];
-            }
-        }
-        return Normal.EMPTY;
-    }
-
-    private String parseIpv6Route() {
-        List<String> lines = Executor.runNative("route print -6 ::/0");
-        for (String line : lines) {
-            String[] fields = RegEx.SPACES.split(line.trim());
-            if (fields.length > 3 && "::/0".equals(fields[2])) {
-                return fields[3];
-            }
-        }
-        return Normal.EMPTY;
     }
 
 }
