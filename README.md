@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://www.aoju.org"><img src="https://org-aoju.oss-cn-shanghai.aliyuncs.com/BUS_800x300.png" width="45%"></a>
+	<a href="https://www.aoju.org"><img src="http://cdn.macaws.cn/BUS_800x300.png" width="45%"></a>
 </p>
 <p align="center">
 	<a href="https://www.aoju.org">https://www.aoju.org</a>
