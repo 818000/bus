@@ -42,7 +42,7 @@ import java.util.*;
  * implementation specific means of file storage.
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -147,7 +147,7 @@ public class AixFileSystem extends AbstractFileSystem {
                     description = "Mount Point";
                 }
 
-                fsList.add(new AixOSFileStore(name, volume, name, path, options, "", "", description, type, freeSpace,
+                fsList.add(new AixOSFileStore(name, volume, name, path, options, Normal.EMPTY, Normal.EMPTY, description, type, freeSpace,
                         usableSpace, totalSpace, inodeFreeMap.getOrDefault(volume, 0L),
                         inodeTotalMap.getOrDefault(volume, 0L)));
             }

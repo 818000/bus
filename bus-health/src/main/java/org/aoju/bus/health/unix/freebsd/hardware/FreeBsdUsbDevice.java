@@ -37,7 +37,7 @@ import java.util.*;
  * FreeBsd Usb Device
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @Immutable
@@ -181,7 +181,7 @@ public class FreeBsdUsbDevice extends AbstractUsbDevice {
         }
         Collections.sort(usbDevices);
         return new FreeBsdUsbDevice(nameMap.getOrDefault(devPath, vendorId + ":" + productId),
-                vendorMap.getOrDefault(devPath, ""), vendorId, productId, serialMap.getOrDefault(devPath, ""), devPath,
+                vendorMap.getOrDefault(devPath, Normal.EMPTY), vendorId, productId, serialMap.getOrDefault(devPath, Normal.EMPTY), devPath,
                 usbDevices);
     }
 

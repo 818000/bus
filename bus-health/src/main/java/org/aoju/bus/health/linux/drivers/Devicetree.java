@@ -25,13 +25,14 @@
 package org.aoju.bus.health.linux.drivers;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.health.Builder;
 
 /**
  * Utility to read info from the devicetree
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -48,7 +49,7 @@ public final class Devicetree {
     public static String queryModel() {
         String modelStr = Builder.getStringFromFile("/sys/firmware/devicetree/base/model");
         if (!modelStr.isEmpty()) {
-            return modelStr.replace("Machine: ", "");
+            return modelStr.replace("Machine: ", Normal.EMPTY);
         }
         return null;
     }

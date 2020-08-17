@@ -43,7 +43,7 @@ import java.util.function.Supplier;
  * Memory obtained by perfstat_memory_total_t
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -90,7 +90,7 @@ final class AixGlobalMemory extends AbstractGlobalMemory {
         List<PhysicalMemory> pmList = new ArrayList<>();
         boolean isMemModule = false;
         String bankLabel = Normal.UNKNOWN;
-        String locator = "";
+        String locator = Normal.EMPTY;
         long capacity = 0L;
         for (String line : lscfg.get()) {
             String s = line.trim();

@@ -36,7 +36,7 @@ import java.util.*;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class BasicBulkDataDescriptor implements BulkDataDescriptor {
@@ -72,6 +72,17 @@ public class BasicBulkDataDescriptor implements BulkDataDescriptor {
             case Tag.AudioSampleData:
             case Tag.CurveData:
             case Tag.SpectroscopyData:
+            case Tag.RedPaletteColorLookupTableData:
+            case Tag.GreenPaletteColorLookupTableData:
+            case Tag.BluePaletteColorLookupTableData:
+            case Tag.AlphaPaletteColorLookupTableData:
+            case Tag.LargeRedPaletteColorLookupTableData:
+            case Tag.LargeGreenPaletteColorLookupTableData:
+            case Tag.LargeBluePaletteColorLookupTableData:
+            case Tag.SegmentedRedPaletteColorLookupTableData:
+            case Tag.SegmentedGreenPaletteColorLookupTableData:
+            case Tag.SegmentedBluePaletteColorLookupTableData:
+            case Tag.SegmentedAlphaPaletteColorLookupTableData:
             case Tag.OverlayData:
             case Tag.EncapsulatedDocument:
             case Tag.FloatPixelData:

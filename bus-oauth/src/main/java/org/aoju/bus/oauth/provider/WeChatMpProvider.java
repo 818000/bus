@@ -37,12 +37,13 @@ import org.aoju.bus.oauth.magic.AccToken;
 import org.aoju.bus.oauth.magic.Callback;
 import org.aoju.bus.oauth.magic.Message;
 import org.aoju.bus.oauth.magic.Property;
+import org.aoju.bus.oauth.metric.OauthScope;
 
 /**
  * 微信公众平台登录
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class WeChatMpProvider extends AbstractProvider {
@@ -143,8 +144,8 @@ public class WeChatMpProvider extends AbstractProvider {
                 .queryParam("appid", context.getAppKey())
                 .queryParam("redirect_uri", context.getRedirectUri())
                 .queryParam("response_type", "code")
-                .queryParam("scope", "snsapi_userinfo")
                 .queryParam("state", getRealState(state).concat("#wechat_redirect"))
+                .queryParam("scope", this.getScopes(",", false, getScopes(true, OauthScope.WechatMp.values())))
                 .build();
     }
 

@@ -38,7 +38,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public final class TaskExecutor {
@@ -158,8 +158,9 @@ public final class TaskExecutor {
         Throwable lastCause = throwable.getCause();
         if (lastCause != null) {
             initRootCause(lastCause, cause);
+        } else {
+            throwable.initCause(cause);
         }
-        throwable.initCause(cause);
     }
 
     /**

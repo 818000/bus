@@ -24,6 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.gitlab;
 
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.gitlab.models.*;
 
 import javax.ws.rs.core.GenericType;
@@ -42,7 +43,7 @@ import java.util.stream.Stream;
  * <a href="https://docs.gitlab.com/ee/api/pipeline_triggers.html">Pipeline Triggers API</a>
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class PipelineApi extends AbstractApi implements Constants {
@@ -567,7 +568,7 @@ public class PipelineApi extends AbstractApi implements Constants {
      */
     public PipelineSchedule takeOwnershipPipelineSchedule(Object projectIdOrPath, Integer pipelineScheduleId) throws GitLabApiException {
 
-        Response response = post(Response.Status.OK, "", "projects", getProjectIdOrPath(projectIdOrPath), "pipeline_schedules", pipelineScheduleId, "take_ownership");
+        Response response = post(Response.Status.OK, Normal.EMPTY, "projects", getProjectIdOrPath(projectIdOrPath), "pipeline_schedules", pipelineScheduleId, "take_ownership");
         return (response.readEntity(PipelineSchedule.class));
     }
 

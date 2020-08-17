@@ -45,7 +45,7 @@ import java.util.*;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ApplicationEntity implements Serializable {
@@ -664,7 +664,7 @@ public class ApplicationEntity implements Serializable {
     }
 
     public StringBuilder promptTo(StringBuilder sb, String indent) {
-        String indent2 = indent + "  ";
+        String indent2 = indent + Symbol.SPACE;
         Property.appendLine(sb, indent, "ApplicationEntity[title: ", aet);
         Property.appendLine(sb, indent2, "desc: ", description);
         Property.appendLine(sb, indent2, "acceptor: ", acceptor);

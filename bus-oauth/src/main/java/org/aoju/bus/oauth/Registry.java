@@ -30,7 +30,7 @@ import org.aoju.bus.core.lang.exception.AuthorizedException;
  * 内置的各api需要的url, 用枚举类分平台类型管理
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public enum Registry implements Complex {
@@ -124,25 +124,6 @@ public enum Registry implements Complex {
         @Override
         public String userInfo() {
             return "https://coding.net/api/account/current_user";
-        }
-    },
-    /**
-     * csdn
-     */
-    CSDN {
-        @Override
-        public String authorize() {
-            return "https://api.csdn.net/oauth2/authorize";
-        }
-
-        @Override
-        public String accessToken() {
-            return "https://api.csdn.net/oauth2/access_token";
-        }
-
-        @Override
-        public String userInfo() {
-            return "https://api.csdn.net/user/getinfo";
         }
     },
     /**

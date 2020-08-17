@@ -39,14 +39,14 @@ import java.util.Map;
 /**
  * Bean转换器,支持：
  * <pre>
- * Map =》 Bean
- * Bean =》 Bean
- * ValueProvider =》 Bean
+ * Map = Bean
+ * Bean = Bean
+ * ValueProvider = Bean
  * </pre>
  *
  * @param <T> Bean类型
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class BeanConverter<T> extends AbstractConverter<T> {

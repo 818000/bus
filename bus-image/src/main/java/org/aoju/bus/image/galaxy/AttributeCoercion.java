@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class AttributeCoercion implements Serializable, Comparable<AttributeCoercion> {
@@ -122,7 +122,7 @@ public class AttributeCoercion implements Serializable, Comparable<AttributeCoer
     }
 
     public StringBuilder promptTo(StringBuilder sb, String indent) {
-        String indent2 = indent + "  ";
+        String indent2 = indent + Symbol.SPACE;
         Property.appendLine(sb, indent,
                 "AttributeCoercion[cn: ", commonName);
         Property.appendLine(sb, indent2, "dimse: ", condition.dimse);

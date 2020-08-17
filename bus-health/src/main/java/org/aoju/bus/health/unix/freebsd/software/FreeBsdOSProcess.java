@@ -28,6 +28,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.health.Builder;
@@ -43,7 +44,7 @@ import java.util.function.Supplier;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -52,7 +53,7 @@ public class FreeBsdOSProcess extends AbstractOSProcess {
     private Supplier<Integer> bitness = Memoize.memoize(this::queryBitness);
 
     private String name;
-    private String path = "";
+    private String path = Normal.EMPTY;
     private String commandLine;
     private String user;
     private String userID;

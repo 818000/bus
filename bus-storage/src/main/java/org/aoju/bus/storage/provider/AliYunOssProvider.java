@@ -30,6 +30,7 @@ import com.aliyun.oss.common.comm.ResponseMessage;
 import com.aliyun.oss.model.*;
 import com.google.common.collect.Maps;
 import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.storage.Builder;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
  * 存储服务-阿里云
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class AliYunOssProvider extends AbstractProvider {
@@ -185,7 +186,7 @@ public class AliYunOssProvider extends AbstractProvider {
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
                     .errmsg(Builder.ErrorCode.SUCCESS.getMsg())
-                    .data(Attachs.builder().name(fileName).size("" + response.getContentLength()).path(response.getUri()))
+                    .data(Attachs.builder().name(fileName).size(Normal.EMPTY + response.getContentLength()).path(response.getUri()))
                     .build();
 
         } catch (Exception e) {

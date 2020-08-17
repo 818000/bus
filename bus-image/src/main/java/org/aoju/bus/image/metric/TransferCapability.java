@@ -37,7 +37,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class TransferCapability implements Serializable {
@@ -213,7 +213,7 @@ public class TransferCapability implements Serializable {
     }
 
     public StringBuilder promptTo(StringBuilder sb, String indent) {
-        String indent2 = indent + "  ";
+        String indent2 = indent + Symbol.SPACE;
         Property.appendLine(sb, indent, "TransferCapability[cn: ", commonName);
         Property.appendLine(sb, indent2, "role: ", role);
         sb.append(indent2).append("as: ");

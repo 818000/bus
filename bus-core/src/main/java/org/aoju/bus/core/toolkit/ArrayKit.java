@@ -41,7 +41,7 @@ import java.util.*;
  * 数组工具类
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ArrayKit {
@@ -599,6 +599,28 @@ public class ArrayKit {
             }
         }
         return false;
+    }
+
+    /**
+     * 多个字段是否全为null
+     *
+     * @param <T>   数组元素类型
+     * @param array 被检查的数组
+     * @return 多个字段是否全为null
+     */
+    public static <T> boolean isAllNull(T... array) {
+        return null == firstNonNull(array);
+    }
+
+    /**
+     * 多个字段是否全部不为null
+     *
+     * @param <T>   数组元素类型
+     * @param array 被检查的数组
+     * @return 多个字段是否全部不为null
+     */
+    public static <T> boolean isAllNotNull(T... array) {
+        return false == hasNull(array);
     }
 
     /**

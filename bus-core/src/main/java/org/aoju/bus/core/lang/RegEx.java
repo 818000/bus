@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * 正则表达式
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class RegEx {
@@ -162,13 +162,13 @@ public class RegEx {
     /**
      * UUID
      */
-    public static final String UUID_PATTERN = "^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$";
-    public static final Pattern UUID = Pattern.compile(UUID_PATTERN);
+    public static final String UUID_PATTERN = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
+    public static final Pattern UUID = Pattern.compile(UUID_PATTERN, Pattern.CASE_INSENSITIVE);
     /**
      * 不带横线的UUID
      */
-    public static final String UUID_SIMPLE_PATTERN = "^[0-9a-z]{32}$";
-    public static final Pattern UUID_SIMPLE = Pattern.compile(UUID_SIMPLE_PATTERN);
+    public static final String UUID_SIMPLE_PATTERN = "^[0-9a-f]{32}$";
+    public static final Pattern UUID_SIMPLE = Pattern.compile(UUID_SIMPLE_PATTERN, Pattern.CASE_INSENSITIVE);
     /**
      * 中国车牌号码
      */

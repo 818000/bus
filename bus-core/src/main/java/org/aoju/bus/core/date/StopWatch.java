@@ -57,7 +57,7 @@ import java.util.List;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class StopWatch {
@@ -345,8 +345,8 @@ public class StopWatch {
             pf.setMinimumIntegerDigits(3);
             pf.setGroupingUsed(false);
             for (TaskInfo task : getTaskInfo()) {
-                sb.append(nf.format(task.getTimeNanos())).append("  ");
-                sb.append(pf.format((double) task.getTimeNanos() / getTotalTimeNanos())).append("  ");
+                sb.append(nf.format(task.getTimeNanos())).append(Symbol.SPACE);
+                sb.append(pf.format((double) task.getTimeNanos() / getTotalTimeNanos())).append(Symbol.SPACE);
                 sb.append(task.getTaskName()).append(FileKit.getLineSeparator());
             }
         }

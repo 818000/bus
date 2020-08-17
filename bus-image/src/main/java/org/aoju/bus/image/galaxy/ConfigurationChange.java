@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ConfigurationChange {
@@ -99,7 +99,7 @@ public class ConfigurationChange {
             sb.append(obj.changeType).append(Symbol.C_SPACE).append(obj.dn).append('\n');
             if (obj.attributes != null) {
                 for (ModifiedAttribute attr : obj.attributes) {
-                    sb.append("  ").append(attr.name).append(": ")
+                    sb.append(Symbol.SPACE).append(attr.name).append(": ")
                             .append(attr.removedValues).append("=>")
                             .append(attr.addedValues).append('\n');
                 }

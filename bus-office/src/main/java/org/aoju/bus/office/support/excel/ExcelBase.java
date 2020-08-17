@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @param <T> 子类类型,用于返回this
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ExcelBase<T extends ExcelBase<T>> implements Closeable {
@@ -319,6 +319,16 @@ public class ExcelBase<T extends ExcelBase<T>> implements Closeable {
     public CellStyle createCellStyle(String locationRef) {
         final CellLocation cellLocation = ExcelKit.toLocation(locationRef);
         return createCellStyle(cellLocation.getX(), cellLocation.getY());
+    }
+
+    /**
+     * 创建单元格样式
+     *
+     * @return {@link CellStyle}
+     * @see Workbook#createCellStyle()
+     */
+    public CellStyle createCellStyle() {
+        return StyleKit.createCellStyle(this.workbook);
     }
 
     /**

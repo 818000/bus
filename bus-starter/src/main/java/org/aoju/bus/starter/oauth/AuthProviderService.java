@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 授权服务提供
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class AuthProviderService {
@@ -93,8 +93,6 @@ public class AuthProviderService {
             return new BaiduProvider(context, extendCache);
         } else if (Registry.CODING.equals(type)) {
             return new CodingProvider(context, extendCache);
-        } else if (Registry.CSDN.equals(type)) {
-            return new CsdnProvider(context, extendCache);
         } else if (Registry.DINGTALK.equals(type)) {
             return new DingTalkProvider(context, extendCache);
         } else if (Registry.DOUYIN.equals(type)) {

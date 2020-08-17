@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * A CPU
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -99,8 +99,8 @@ final class AixCentralProcessor extends AbstractCentralProcessor {
             }
         }
 
-        String cpuModel = "";
-        String cpuStepping = "";
+        String cpuModel = Normal.EMPTY;
+        String cpuStepping = Normal.EMPTY;
         String machineId = Native.toString(config.machineID);
         if (machineId.isEmpty()) {
             machineId = Executor.getFirstAnswer("uname -m");

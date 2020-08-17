@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * 时间工具类
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class DateKit {
@@ -391,7 +391,7 @@ public class DateKit {
 
     /**
      * 获得指定日期的分钟数部分
-     * 例如：10:04:15.250 =》 4
+     * 例如：10:04:15.250 = 4
      *
      * @param date 日期
      * @return 分钟数

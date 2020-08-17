@@ -51,7 +51,7 @@ import java.util.TreeMap;
  * 今日头条登录
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class TwitterProvider extends AbstractProvider {
@@ -209,7 +209,7 @@ public class TwitterProvider extends AbstractProvider {
     }
 
     private String buildHeader(Map<String, String> params) {
-        final StringBuilder sb = new StringBuilder(PREAMBLE + " ");
+        final StringBuilder sb = new StringBuilder(PREAMBLE + Symbol.SPACE);
 
         for (Map.Entry<String, String> param : params.entrySet()) {
             sb.append(param.getKey()).append("=\"").append(UriKit.encode(param.getValue())).append(Symbol.C_DOUBLE_QUOTES).append(", ");

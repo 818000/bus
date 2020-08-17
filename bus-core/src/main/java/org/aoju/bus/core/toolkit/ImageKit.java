@@ -55,7 +55,7 @@ import java.util.Random;
  * 彩色转黑白、文字水印、图片水印等
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ImageKit {
@@ -461,7 +461,7 @@ public class ImageKit {
     }
 
     /**
-     * 图像类型转换：GIF=》JPG、GIF=》PNG、PNG=》JPG、PNG=》GIF(X)、BMP=》PNG
+     * 图像类型转换：GIF= JPG、GIF= PNG、PNG= JPG、PNG= GIF(X)、BMP= PNG
      *
      * @param srcImageFile  源图像文件
      * @param destImageFile 目标图像文件
@@ -488,7 +488,7 @@ public class ImageKit {
     }
 
     /**
-     * 图像类型转换：GIF=》JPG、GIF=》PNG、PNG=》JPG、PNG=》GIF(X)、BMP=》PNG
+     * 图像类型转换：GIF= JPG、GIF= PNG、PNG= JPG、PNG= GIF(X)、BMP= PNG
      * 此方法并不关闭流
      *
      * @param srcStream  源图像流
@@ -501,7 +501,7 @@ public class ImageKit {
 
 
     /**
-     * 图像类型转换：GIF=》JPG、GIF=》PNG、PNG=》JPG、PNG=》GIF(X)、BMP=》PNG
+     * 图像类型转换：GIF= JPG、GIF= PNG、PNG= JPG、PNG= GIF(X)、BMP= PNG
      * 此方法并不关闭流
      *
      * @param srcImage        源图像流

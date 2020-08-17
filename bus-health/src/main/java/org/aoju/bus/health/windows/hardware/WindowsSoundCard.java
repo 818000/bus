@@ -41,7 +41,7 @@ import java.util.List;
  * Sound Card data obtained from registry
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 @Immutable
@@ -79,7 +79,7 @@ final class WindowsSoundCard extends AbstractSoundCard {
             try {
                 if (Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, fullKey, "Driver")) {
                     soundCards.add(new WindowsSoundCard(
-                            Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, fullKey, "Driver") + " "
+                            Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, fullKey, "Driver") + Symbol.SPACE
                                     + Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, fullKey,
                                     "DriverVersion"),
                             Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, fullKey, "ProviderName")

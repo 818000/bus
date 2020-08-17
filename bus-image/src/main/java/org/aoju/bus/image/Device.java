@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
  * 设备信息
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class Device implements Serializable {
@@ -1259,7 +1259,7 @@ public class Device implements Serializable {
     }
 
     public StringBuilder promptTo(StringBuilder sb, String indent) {
-        String indent2 = indent + "  ";
+        String indent2 = indent + Symbol.SPACE;
         Property.appendLine(sb, indent, "Device[name: ", deviceName);
         Property.appendLine(sb, indent2, "desc: ", description);
         Property.appendLine(sb, indent2, "installed: ", installed);

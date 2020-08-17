@@ -51,7 +51,7 @@ import java.util.TimeZone;
  * 包装java.utils.Date
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class DateTime extends Date {
@@ -542,7 +542,7 @@ public class DateTime extends Date {
 
     /**
      * 获得指定日期的分钟数部分
-     * 例如：10:04:15.250 =》 4
+     * 例如：10:04:15.250 = 4
      *
      * @return 分钟数
      */

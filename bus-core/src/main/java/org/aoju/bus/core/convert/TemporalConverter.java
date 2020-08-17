@@ -51,7 +51,7 @@ import java.util.Objects;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class TemporalConverter extends AbstractConverter<TemporalAccessor> {
@@ -68,7 +68,7 @@ public class TemporalConverter extends AbstractConverter<TemporalAccessor> {
      * @param targetType 目标类型
      */
     public TemporalConverter(Class<?> targetType) {
-        this.targetType = targetType;
+        this(targetType, null);
     }
 
     /**

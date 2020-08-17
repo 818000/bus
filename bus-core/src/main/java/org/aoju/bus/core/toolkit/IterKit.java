@@ -37,7 +37,7 @@ import java.util.function.Function;
  * {@link Iterable} 和 {@link Iterator} 相关工具类
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class IterKit {
@@ -188,7 +188,7 @@ public class IterKit {
 
     /**
      * 字段值与列表值对应的Map,常用于元素对象中有唯一ID时需要按照这个ID查找对象的情况
-     * 例如：车牌号 =》车
+     * 例如：车牌号 = 车
      *
      * @param <K>       字段名对应值得类型,不确定请使用Object
      * @param <V>       对象类型
@@ -202,7 +202,7 @@ public class IterKit {
 
     /**
      * 字段值与列表值对应的Map,常用于元素对象中有唯一ID时需要按照这个ID查找对象的情况
-     * 例如：车牌号 =》车
+     * 例如：车牌号 = 车
      *
      * @param <K>       字段名对应值得类型,不确定请使用Object
      * @param <V>       对象类型

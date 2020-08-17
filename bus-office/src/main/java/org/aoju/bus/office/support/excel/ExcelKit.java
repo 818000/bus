@@ -44,7 +44,7 @@ import java.io.OutputStream;
  * Excel工具类
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class ExcelKit {
@@ -575,7 +575,7 @@ public class ExcelKit {
 
     /**
      * 将Excel中地址标识符(例如A11，B5)等转换为行列表示
-     * 例如：A11 -》 x:0,y:10，B5-》x:1,y:4
+     * 例如：A11 -  x:0,y:10，B5 - x:1,y:4
      *
      * @param locationRef 单元格地址标识符，例如A11，B5
      * @return 坐标点，x表示行，从0开始，y表示列，从0开始

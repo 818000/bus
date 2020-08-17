@@ -44,7 +44,7 @@ import java.util.Map;
  * 美团登录
  *
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public class MeituanProvider extends AbstractProvider {
@@ -126,12 +126,8 @@ public class MeituanProvider extends AbstractProvider {
 
     @Override
     public String authorize(String state) {
-        return Builder.fromUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("app_id", context.getAppKey())
-                .queryParam("redirect_uri", context.getRedirectUri())
-                .queryParam("state", getRealState(state))
-                .queryParam("scope", Normal.EMPTY)
+        return Builder.fromUrl(super.authorize(state))
+                .queryParam("scope", "")
                 .build();
     }
 

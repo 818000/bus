@@ -25,6 +25,7 @@
 package org.aoju.bus.gitlab.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.gitlab.GitLabApiForm;
 import org.aoju.bus.gitlab.JacksonJson;
 
@@ -34,7 +35,7 @@ import java.util.Map;
 
 /**
  * @author Kimi Liu
- * @version 6.0.5
+ * @version 6.0.6
  * @since JDK 1.8+
  */
 public abstract class NotificationService {
@@ -265,7 +266,7 @@ public abstract class NotificationService {
 
     @JsonIgnore
     protected String getProperty(String prop) {
-        return ((String) getProperty(prop, ""));
+        return getProperty(prop, Normal.EMPTY);
     }
 
     @JsonIgnore
