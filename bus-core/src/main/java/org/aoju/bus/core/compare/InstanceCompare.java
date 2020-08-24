@@ -25,65 +25,65 @@
 package org.aoju.bus.core.compare;
 
 import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.toolkit.ArrayKit;
 
 import java.util.Comparator;
 
 /**
- * 按照数组的顺序正序排列,数组的元素位置决定了对象的排序先后
- * 如果参与排序的元素并不在数组中,则排序在前
+ * 按照指定类型顺序排序，对象顺序取决于对象对应的类在数组中的位置
  *
- * @param <T> 被排序元素类型
+ * @param <T> 用于比较的对象类型
  * @author Kimi Liu
  * @version 6.0.6
  * @since JDK 1.8+
  */
-public class IndexedCompare<T> implements Comparator<T> {
+public class InstanceCompare<T> implements Comparator<T> {
 
-    private final boolean atEndIfMiss;
-    private final T[] array;
+	private final boolean atEndIfMiss;
+	private final Class<?>[] instanceOrder;
 
-    /**
-     * 构造
-     *
-     * @param obj 参与排序的数组，数组的元素位置决定了对象的排序先后
-     */
-    public IndexedCompare(T... obj) {
-        this(false, obj);
-    }
+	/**
+	 * 构造
+	 *
+	 * @param instanceOrder 用于比较排序的对象类型数组，排序按照数组位置排序
+	 */
+	public InstanceCompare(Class<?>... instanceOrder) {
+		this(false, instanceOrder);
+	}
 
-    /**
-     * 构造
-     *
-     * @param atEndIfMiss 如果不在列表中是否排在后边
-     * @param obj         参与排序的数组，数组的元素位置决定了对象的排序先后
-     */
-    public IndexedCompare(boolean atEndIfMiss, T... obj) {
-        Assert.notNull(obj, "'objs' array must not be null");
-        this.atEndIfMiss = atEndIfMiss;
-        this.array = obj;
-    }
+	/**
+	 * 构造
+	 *
+	 * @param atEndIfMiss   如果不在列表中是否排在后边
+	 * @param instanceOrder 用于比较排序的对象类型数组，排序按照数组位置排序
+	 */
+	public InstanceCompare(boolean atEndIfMiss, Class<?>... instanceOrder) {
+		Assert.notNull(instanceOrder, "'instanceOrder' array must not be null");
+		this.atEndIfMiss = atEndIfMiss;
+		this.instanceOrder = instanceOrder;
+	}
 
-    @Override
-    public int compare(T o1, T o2) {
-        final int index1 = getOrder(o1);
-        final int index2 = getOrder(o2);
+	@Override
+	public int compare(T o1, T o2) {
+		int i1 = getOrder(o1);
+		int i2 = getOrder(o2);
+		return Integer.compare(i1, i2);
+	}
 
-        return Integer.compare(index1, index2);
-    }
-
-    /**
-     * 查找对象类型所在列表的位置
-     *
-     * @param object 对象
-     * @return 位置，未找到位置根据{@link #atEndIfMiss}取不同值，false返回-1，否则返回列表长度
-     */
-    private int getOrder(T object) {
-        int order = ArrayKit.indexOf(array, object);
-        if (order < 0) {
-            order = this.atEndIfMiss ? this.array.length : -1;
-        }
-        return order;
-    }
+	/**
+	 * 查找对象类型所在列表的位置
+	 *
+	 * @param object 对象
+	 * @return 位置，未找到位置根据{@link #atEndIfMiss}取不同值，false返回-1，否则返回列表长度
+	 */
+	private int getOrder(T object) {
+		if (object != null) {
+			for (int i = 0; i < this.instanceOrder.length; i++) {
+				if (this.instanceOrder[i].isInstance(object)) {
+					return i;
+				}
+			}
+		}
+		return this.atEndIfMiss ? this.instanceOrder.length : -1;
+	}
 
 }
