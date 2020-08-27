@@ -22,28 +22,89 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.base.entity;
+package org.aoju.bus.starter.swagger;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.persistence.Id;
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.starter.BusXExtend;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Entity 实体
+ * swagger配置项
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
 @Data
-public abstract class Entity implements Serializable {
+@ConfigurationProperties(prefix = BusXExtend.SWAGGER)
+public class SwaggerProperties {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * swagger会解析的包路径
+     **/
+    private String basePackage = Normal.EMPTY;
 
-    @Id
-    @ApiModelProperty("主键")
-    protected String id;
+    /**
+     * 标题
+     **/
+    private String title = Normal.EMPTY;
+
+    /**
+     * 描述
+     **/
+    private String description = Normal.EMPTY;
+
+    /**
+     * 版本
+     **/
+    private String version = Normal.EMPTY;
+
+    /**
+     * 许可证
+     **/
+    private String license = Normal.EMPTY;
+
+    /**
+     * 许可证URL
+     **/
+    private String licenseUrl = Normal.EMPTY;
+
+    /**
+     * 服务条款URL
+     **/
+    private String termsOfServiceUrl = Normal.EMPTY;
+
+    /**
+     * host信息
+     **/
+    private String host = Normal.EMPTY;
+
+    /**
+     * 联系人信息
+     */
+    private Contact contact = new Contact();
+
+    @Data
+    @NoArgsConstructor
+    public static class Contact {
+
+        /**
+         * 联系人
+         **/
+        private String name = Normal.EMPTY;
+
+        /**
+         * 联系人url
+         **/
+        private String url = Normal.EMPTY;
+
+        /**
+         * 联系人email
+         **/
+        private String email = Normal.EMPTY;
+
+    }
 
 }
