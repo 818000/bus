@@ -22,29 +22,98 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.validate.strategy;
+package org.aoju.bus.extra.json;
 
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.validate.Context;
-import org.aoju.bus.validate.annotation.Chinese;
-import org.aoju.bus.validate.validators.Matcher;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
- * 中文校验
+ * JSON服务提供者
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
-public class ChineseStrategy implements Matcher<String, Chinese> {
+public interface JsonProvider {
 
-    @Override
-    public boolean on(String object, Chinese annotation, Context context) {
-        if (ObjectKit.isEmpty(object)) {
-            return false;
-        }
-        return object.matches(RegEx.CHINESE_PATTERN);
-    }
+    /**
+     * 解析对象为Json字符串
+     *
+     * @param object 要转换的对象
+     * @return 返回对象的json字符串
+     */
+    String toJsonString(Object object);
+
+    /**
+     * 解析对象为Json字符串
+     *
+     * @param object 要转换的对象
+     * @param format 日期格式，如"yyyy年MM月dd日 HH时mm分ss秒"
+     * @return 返回对象的json字符串
+     */
+    String toJsonString(Object object, String format);
+
+    /**
+     * 解析json字符串到指定类型的对象
+     *
+     * @param json  要解析的json字符串
+     * @param clazz 类对象class
+     * @param <T>   泛型参数类型
+     * @return 返回解析后的对象
+     */
+    <T> T toPojo(String json, Class<T> clazz);
+
+    /**
+     * 从Map转换到对象
+     *
+     * @param map   Map对象
+     * @param clazz 与Map可兼容的对象类型
+     * @param <T>   泛型参数类型
+     * @return 返回Map转换得到的对象
+     */
+    <T> T toPojo(Map map, Class<T> clazz);
+
+    /**
+     * 解析json字符串到List
+     *
+     * @param json 要解析的json字符串
+     * @return 返回List
+     */
+    List toList(String json);
+
+    /**
+     * 按指定的Type解析json字符串到List
+     *
+     * @param json 要解析的json字符串
+     * @param type {@link Type}
+     * @param <T>  泛型参数类型
+     * @return 返回List
+     */
+    <T> List<T> toList(String json, final Type type);
+
+    /**
+     * 解析json字符串到Map
+     *
+     * @param json 要解析的json字符串
+     * @return 返回Map
+     */
+    Map toMap(String json);
+
+    /**
+     * 转换对象到Map
+     *
+     * @param object 与Map可兼容的对象
+     * @return 返回Map对象
+     */
+    Map toMap(Object object);
+
+    /**
+     * 判断是否为标准json
+     *
+     * @param json 字符串
+     * @return the true/false
+     */
+    boolean isJson(String json);
 
 }

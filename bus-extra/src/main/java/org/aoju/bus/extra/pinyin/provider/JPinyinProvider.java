@@ -22,29 +22,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.validate.strategy;
+package org.aoju.bus.extra.pinyin.provider;
 
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.validate.Context;
-import org.aoju.bus.validate.annotation.Chinese;
-import org.aoju.bus.validate.validators.Matcher;
+import com.github.stuxuhai.jpinyin.PinyinException;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.toolkit.ArrayKit;
 
 /**
- * 中文校验
+ * Jpinyin引擎
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
-public class ChineseStrategy implements Matcher<String, Chinese> {
+public class JPinyinProvider extends AbstractPinyinProvider {
+
+    //设置汉子拼音输出的格式
+    PinyinFormat format;
+
+    public JPinyinProvider() {
+        this(null);
+    }
+
+    public JPinyinProvider(PinyinFormat format) {
+        init(format);
+    }
+
+    public void init(PinyinFormat format) {
+        if (null == format) {
+            // 不加声调
+            format = PinyinFormat.WITHOUT_TONE;
+        }
+        this.format = format;
+    }
 
     @Override
-    public boolean on(String object, Chinese annotation, Context context) {
-        if (ObjectKit.isEmpty(object)) {
-            return false;
+    public String getPinyin(char c) {
+        String[] results = PinyinHelper.convertToPinyinArray(c, format);
+        return ArrayKit.isEmpty(results) ? String.valueOf(c) : results[0];
+    }
+
+    @Override
+    public String getPinyin(String str, String separator) {
+        try {
+            return PinyinHelper.convertToPinyinString(str, separator, format);
+        } catch (PinyinException e) {
+            throw new InstrumentException(e);
         }
-        return object.matches(RegEx.CHINESE_PATTERN);
     }
 
 }

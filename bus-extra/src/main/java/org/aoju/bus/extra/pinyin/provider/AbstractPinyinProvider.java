@@ -22,29 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.validate.strategy;
+package org.aoju.bus.extra.pinyin.provider;
 
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.validate.Context;
-import org.aoju.bus.validate.annotation.Chinese;
-import org.aoju.bus.validate.validators.Matcher;
+import org.aoju.bus.extra.pinyin.PinyinProvider;
 
 /**
- * 中文校验
+ * 拼音默认实现
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
-public class ChineseStrategy implements Matcher<String, Chinese> {
-
-    @Override
-    public boolean on(String object, Chinese annotation, Context context) {
-        if (ObjectKit.isEmpty(object)) {
-            return false;
-        }
-        return object.matches(RegEx.CHINESE_PATTERN);
-    }
+public abstract class AbstractPinyinProvider implements PinyinProvider {
 
 }
