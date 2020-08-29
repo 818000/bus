@@ -22,29 +22,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.validate.strategy;
+package org.aoju.bus.extra.pinyin;
 
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.validate.Context;
-import org.aoju.bus.validate.annotation.Chinese;
-import org.aoju.bus.validate.validators.Matcher;
+import org.aoju.bus.core.instance.Instances;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.logger.Logger;
+
+import java.util.Iterator;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 
 /**
- * 中文校验
+ * 用于根据用户引入的拼音库jar
+ * 自动创建对应的拼音引擎对象
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
-public class ChineseStrategy implements Matcher<String, Chinese> {
+public class PinyinFactory {
 
-    @Override
-    public boolean on(String object, Chinese annotation, Context context) {
-        if (ObjectKit.isEmpty(object)) {
-            return false;
+    /**
+     * 获得单例的 {@link PinyinProvider}
+     *
+     * @return 单例的 {@link PinyinProvider}
+     */
+    public static PinyinProvider get() {
+        return Instances.singletion(PinyinFactory.class).create();
+    }
+
+    /**
+     * 根据用户引入的拼音引擎jar，自动创建对应的拼音引擎对象
+     * 推荐创建的引擎单例使用，此方法每次调用会返回新的引擎
+     *
+     * @return {@link PinyinProvider}
+     */
+    public static PinyinProvider create() {
+        final PinyinProvider engine = doCreate(PinyinProvider.class);
+        Logger.debug("Use [{}] provider as default.", StringKit.removeSuffix(engine.getClass().getSimpleName(), "Provider"));
+        return engine;
+    }
+
+    /**
+     * 根据用户引入的拼音引擎jar，自动创建对应的拼音引擎对象
+     * 推荐创建的引擎单例使用，此方法每次调用会返回新的引擎
+     *
+     * @param clazz 解析器
+     * @param <T>   泛型参数类型
+     * @return {@link PinyinProvider}
+     */
+    public static <T> T doCreate(Class<T> clazz) {
+        final Iterator<T> iterator = ServiceLoader.load(clazz).iterator();
+        while (iterator.hasNext()) {
+            try {
+                return iterator.next();
+            } catch (ServiceConfigurationError e) {
+                throw new InstrumentException("No pinyin jar found ! Please add one of it to your project !");
+            }
         }
-        return object.matches(RegEx.CHINESE_PATTERN);
+        return null;
     }
 
 }

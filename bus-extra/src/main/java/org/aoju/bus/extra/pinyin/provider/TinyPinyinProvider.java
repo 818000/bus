@@ -22,29 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.validate.strategy;
+package org.aoju.bus.extra.pinyin.provider;
 
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.validate.Context;
-import org.aoju.bus.validate.annotation.Chinese;
-import org.aoju.bus.validate.validators.Matcher;
+import com.github.promeg.pinyinhelper.Pinyin;
 
 /**
- * 中文校验
+ * TinyPinyin引擎
  *
  * @author Kimi Liu
  * @version 6.0.8
  * @since JDK 1.8+
  */
-public class ChineseStrategy implements Matcher<String, Chinese> {
+public class TinyPinyinProvider extends AbstractPinyinProvider {
+
+    /**
+     * 构造
+     */
+    public TinyPinyinProvider() {
+    }
+
+    /**
+     * 构造
+     *
+     * @param config 配置
+     */
+    public TinyPinyinProvider(Pinyin.Config config) {
+        Pinyin.init(config);
+    }
 
     @Override
-    public boolean on(String object, Chinese annotation, Context context) {
-        if (ObjectKit.isEmpty(object)) {
-            return false;
+    public String getPinyin(char c) {
+        if (false == Pinyin.isChinese(c)) {
+            return String.valueOf(c);
         }
-        return object.matches(RegEx.CHINESE_PATTERN);
+        return Pinyin.toPinyin(c).toLowerCase();
+    }
+
+    @Override
+    public String getPinyin(String str, String separator) {
+        return Pinyin.toPinyin(str, separator).toLowerCase();
     }
 
 }
