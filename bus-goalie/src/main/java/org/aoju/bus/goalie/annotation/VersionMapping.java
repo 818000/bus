@@ -22,88 +22,75 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter;
+package org.aoju.bus.goalie.annotation;
+
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.lang.annotation.*;
 
 /**
- * 全局扩展配置
- *
  * @author Kimi Liu
  * @version 6.0.9
- * @since JDK 1.8+
+ * @since JDK 1.8++
  */
-public class BusXExtend {
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@RequestMapping
+@ApiVersion
+@ClientVersion
+public @interface VersionMapping {
 
     /**
-     * 数据源配置
+     * Alias for {@link RequestMapping#name}.
      */
-    public static final String DATASOURCE = "spring.datasource";
+    @AliasFor(annotation = RequestMapping.class)
+    String name() default "";
+
     /**
-     * 缓存配置
+     * Alias for {@link RequestMapping#value}.
      */
-    public static final String CACHE = "extend.cache";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] value() default {};
+
     /**
-     * 跨域支持
+     * Alias for {@link RequestMapping#path}.
      */
-    public static final String CORS = "extend.cors";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] path() default {};
+
     /**
-     * Druid监控
+     * Alias for {@link RequestMapping#params}.
      */
-    public static final String DRUID = "extend.druid";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] params() default {};
+
     /**
-     * Druid监控
+     * Alias for {@link RequestMapping#headers}.
      */
-    public static final String DUBBO = "extend.dubbo";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] headers() default {};
+
     /**
-     * 路由配置
+     * Alias for {@link RequestMapping#consumes}.
      */
-    public static final String GOALIE = "extend.goalie";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] consumes() default {};
+
     /**
-     * 国际化支持
+     * Alias for {@link RequestMapping#produces}.
      */
-    public static final String I18N = "extend.i18n";
-    /**
-     * 图像解析
-     */
-    public static final String IMAGE = "extend.image";
-    /**
-     * 限流支持
-     */
-    public static final String LIMITER = "extend.limiter";
-    /**
-     * Mybatis/Mapper
-     */
-    public static final String MYBATIS = "extend.mybatis";
-    /**
-     * 消息通知
-     */
-    public static final String NOTIFY = "extend.notify";
-    /**
-     * 授权登陆
-     */
-    public static final String OAUTH = "extend.oauth";
-    /**
-     * 文件预览
-     */
-    public static final String OFFICE = "extend.office";
-    /**
-     * 数据脱敏
-     */
-    public static final String SENSITIVE = "extend.sensitive";
-    /**
-     * websocket
-     */
-    public static final String WEBSOCKET = "extend.websocket";
-    /**
-     * 存储设置
-     */
-    public static final String STORAGE = "extend.storage";
-    /**
-     * XSS/重复读取失效
-     */
-    public static final String WRAPPER = "extend.wrapper";
-    /**
-     * 工作/临时目录等
-     */
-    public static final String WORK = "extend.work";
+    @AliasFor(annotation = RequestMapping.class)
+    String[] produces() default {};
+
+    @AliasFor(annotation = ApiVersion.class, attribute = "value")
+    String apiVersion() default "";
+
+    @AliasFor(annotation = ClientVersion.class, attribute = "value")
+    TerminalVersion[] terminalVersion() default {};
+
+    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
+    String[] terminalExpression() default {};
 
 }

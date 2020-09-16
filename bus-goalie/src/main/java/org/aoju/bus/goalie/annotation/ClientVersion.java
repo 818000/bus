@@ -22,88 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter;
+package org.aoju.bus.goalie.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * 全局扩展配置
- *
  * @author Kimi Liu
  * @version 6.0.9
- * @since JDK 1.8+
+ * @since JDK 1.8++
  */
-public class BusXExtend {
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+public @interface ClientVersion {
+
+    TerminalVersion[] value() default {};
 
     /**
-     * 数据源配置
+     * @return 从string表达式解析，和上述效果一致
      */
-    public static final String DATASOURCE = "spring.datasource";
-    /**
-     * 缓存配置
-     */
-    public static final String CACHE = "extend.cache";
-    /**
-     * 跨域支持
-     */
-    public static final String CORS = "extend.cors";
-    /**
-     * Druid监控
-     */
-    public static final String DRUID = "extend.druid";
-    /**
-     * Druid监控
-     */
-    public static final String DUBBO = "extend.dubbo";
-    /**
-     * 路由配置
-     */
-    public static final String GOALIE = "extend.goalie";
-    /**
-     * 国际化支持
-     */
-    public static final String I18N = "extend.i18n";
-    /**
-     * 图像解析
-     */
-    public static final String IMAGE = "extend.image";
-    /**
-     * 限流支持
-     */
-    public static final String LIMITER = "extend.limiter";
-    /**
-     * Mybatis/Mapper
-     */
-    public static final String MYBATIS = "extend.mybatis";
-    /**
-     * 消息通知
-     */
-    public static final String NOTIFY = "extend.notify";
-    /**
-     * 授权登陆
-     */
-    public static final String OAUTH = "extend.oauth";
-    /**
-     * 文件预览
-     */
-    public static final String OFFICE = "extend.office";
-    /**
-     * 数据脱敏
-     */
-    public static final String SENSITIVE = "extend.sensitive";
-    /**
-     * websocket
-     */
-    public static final String WEBSOCKET = "extend.websocket";
-    /**
-     * 存储设置
-     */
-    public static final String STORAGE = "extend.storage";
-    /**
-     * XSS/重复读取失效
-     */
-    public static final String WRAPPER = "extend.wrapper";
-    /**
-     * 工作/临时目录等
-     */
-    public static final String WORK = "extend.work";
+    String[] expression() default {};
 
 }
