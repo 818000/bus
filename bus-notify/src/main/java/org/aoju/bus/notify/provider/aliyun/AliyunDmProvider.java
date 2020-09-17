@@ -26,33 +26,51 @@ package org.aoju.bus.notify.provider.aliyun;
 
 import org.aoju.bus.core.lang.Fields;
 import org.aoju.bus.core.lang.Http;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.http.Httpx;
 import org.aoju.bus.notify.Context;
 import org.aoju.bus.notify.magic.Message;
+import org.aoju.bus.notify.provider.email.NativeDmProperty;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 阿里云短信
+ * 阿里云邮件
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @version 6.0.9
- * @since JDK1.8+
+ * @since JDK 1.8+
  */
-public class AliyunSmsProvider extends AliyunProvider<AliyunSmsProperty, Context> {
+public class AliyunDmProvider extends AliyunProvider<AliyunDmProperty, Context> {
 
     /**
-     * 阿里云短信产品域名
+     * 阿里云邮件产品域名
      */
-    private static final String ALIYUN_SMS_DOMAIN = "dysmsapi.aliyuncs.com";
+    private static final String ALIYUN_DM_DOMAIN = "dm.aliyuncs.com";
 
-    public AliyunSmsProvider(Context properties) {
+    public AliyunDmProvider(Context properties) {
         super(properties);
     }
 
+    /**
+     * 发送邮件逻辑处理
+     *
+     * @param entity 请求对象
+     * @return 处理结果响应
+     * @throws InstrumentException 异常信息
+     */
     @Override
-    public Message send(AliyunSmsProperty entity) {
+    public Message send(AliyunDmProperty entity) throws InstrumentException {
+        if (StringKit.isEmpty(entity.getContent())) {
+            throw new InstrumentException("Email content cannot be empty");
+        } else if (StringKit.isEmpty(entity.getReceive())) {
+            throw new InstrumentException("Email address cannot be empty");
+        } else if (StringKit.isEmpty(entity.getSubject())) {
+            throw new InstrumentException("Email subject cannot be empty");
+        }
+
         SimpleDateFormat df = new SimpleDateFormat(Fields.UTC_PATTERN);
         // 这里一定要设置GMT时区
         df.setTimeZone(new SimpleTimeZone(0, "GMT"));
@@ -65,13 +83,25 @@ public class AliyunSmsProvider extends AliyunProvider<AliyunSmsProperty, Context
         paras.put("Timestamp", df.format(new Date()));
         paras.put("Format", "JSON");
         // 2. 业务API参数
-        paras.put("Action", "SendSms");
-        paras.put("Version", "2017-05-25");
+        paras.put("Action", "SingleSendMail");
+        paras.put("Version", "2015-11-23");
         paras.put("RegionId", "cn-hangzhou");
-        paras.put("PhoneNumbers", entity.getReceive());
-        paras.put("SignName", properties.getSignName());
-        paras.put("TemplateParam", entity.getTemplateParam());
-        paras.put("TemplateCode", entity.getTempCode());
+
+        paras.put("Subject", entity.getSubject());
+        paras.put("FromAlias", entity.getSender());
+        paras.put("ToAddress", entity.getReceive());
+
+        if (NativeDmProperty.ContentType.HTML.equals(entity.getContentType())) {
+            paras.put("HtmlBody", entity.getContent());
+        } else if (NativeDmProperty.ContentType.TEXT.equals(entity.getContentType())) {
+            paras.put("TextBody", entity.getContent());
+        }
+
+        paras.put("ReplyAddress", entity.getSender());
+        paras.put("ReplyToAddress", entity.getSender());
+        paras.put("ReplyAddressAlias", entity.getSender());
+
+        paras.put("ClickTrace", getSign(paras));
 
         paras.put("Signature", getSign(paras));
 
@@ -79,7 +109,7 @@ public class AliyunSmsProvider extends AliyunProvider<AliyunSmsProperty, Context
         for (String str : paras.keySet()) {
             map.put(specialUrlEncode(str), specialUrlEncode(paras.get(str)));
         }
-        return checkResponse(Httpx.get(Http.HTTPS_PREFIX + ALIYUN_SMS_DOMAIN, map));
+        return checkResponse(Httpx.get(Http.HTTPS_PREFIX + ALIYUN_DM_DOMAIN, map));
     }
 
 }
