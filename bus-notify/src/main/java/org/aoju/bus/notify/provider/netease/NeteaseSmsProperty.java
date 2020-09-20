@@ -22,64 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.notify.provider.aliyun;
+package org.aoju.bus.notify.provider.netease;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.Http;
-import org.aoju.bus.http.Httpx;
-import org.aoju.bus.notify.Context;
-import org.aoju.bus.notify.magic.Message;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.aoju.bus.notify.magic.Property;
 
 /**
- * 阿里云短信
+ * 网易云短信模版
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @version 6.0.9
  * @since JDK1.8+
  */
-public class AliyunSmsProvider extends AliyunProvider<AliyunSmsProperty, Context> {
+@Getter
+@Setter
+@SuperBuilder
+public class NeteaseSmsProperty extends Property {
 
     /**
-     * 阿里云短信产品域名
+     * 模版id
      */
-    private static final String ALIYUN_SMS_API = "dysmsapi.aliyuncs.com";
+    String templateId;
 
-    public AliyunSmsProvider(Context properties) {
-        super(properties);
-    }
 
-    @Override
-    public Message send(AliyunSmsProperty entity) {
-        SimpleDateFormat df = new SimpleDateFormat(Fields.UTC_PATTERN);
-        // 这里一定要设置GMT时区
-        df.setTimeZone(new SimpleTimeZone(0, "GMT"));
-        Map<String, String> params = new HashMap<>();
-        // 1. 系统参数
-        params.put("SignatureMethod", "HMAC-SHA1");
-        params.put("SignatureNonce", UUID.randomUUID().toString());
-        params.put("AccessKeyId", properties.getAppKey());
-        params.put("SignatureVersion", "1.0");
-        params.put("Timestamp", df.format(new Date()));
-        params.put("Format", "JSON");
-        // 2. 业务API参数
-        params.put("Action", "SendSms");
-        params.put("Version", "2017-05-25");
-        params.put("RegionId", "cn-hangzhou");
-        params.put("PhoneNumbers", entity.getReceive());
-        params.put("SignName", properties.getSignName());
-        params.put("TemplateParam", entity.getTemplateParam());
-        params.put("TemplateCode", entity.getTempCode());
-
-        params.put("Signature", getSign(params));
-
-        Map<String, Object> map = new HashMap<>();
-        for (String str : params.keySet()) {
-            map.put(specialUrlEncode(str), specialUrlEncode(params.get(str)));
-        }
-        return checkResponse(Httpx.get(Http.HTTPS_PREFIX + ALIYUN_SMS_API, map));
-    }
+    /**
+     * 模版参数
+     */
+    String params;
 
 }
