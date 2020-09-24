@@ -40,7 +40,7 @@ import java.util.*;
  * 字典对象,扩充了HashMap中的方法
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class Dict extends LinkedHashMap<String, Object> implements BasicType<String> {
@@ -176,9 +176,9 @@ public class Dict extends LinkedHashMap<String, Object> implements BasicType<Str
         String key = null;
         for (int i = 0; i < keysAndValues.length; i++) {
             if (i % 2 == 0) {
-                dict.put(key, keysAndValues[i]);
-            } else {
                 key = Convert.toString(keysAndValues[i]);
+            } else {
+                dict.put(key, keysAndValues[i]);
             }
         }
 

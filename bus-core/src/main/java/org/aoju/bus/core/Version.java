@@ -34,7 +34,7 @@ import org.aoju.bus.core.toolkit.StringKit;
  * Version is Licensed under the MIT License, Version 3.0.0 (the "License")
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public enum Version {
@@ -42,7 +42,9 @@ public enum Version {
     NIL(Normal.EMPTY),
     LT(Symbol.LT),
     GT(Symbol.GT),
+    GTE(Symbol.GT + Symbol.EQUAL),
     LE(Symbol.LE),
+    LTE(Symbol.LE + Symbol.EQUAL),
     GE(Symbol.GE),
     NE(Symbol.NOT + Symbol.EQUAL),
     EQ(Symbol.EQUAL + Symbol.EQUAL);
@@ -85,7 +87,7 @@ public enum Version {
     }
 
     public static String get() {
-        return "6.0.9.RELEASE";
+        return "6.1.0.RELEASE";
     }
 
     /**

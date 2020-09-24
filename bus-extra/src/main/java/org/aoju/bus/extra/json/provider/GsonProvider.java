@@ -34,7 +34,7 @@ import java.util.*;
  * Gson 解析器
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class GsonProvider extends AbstractJsonProvider {
@@ -108,6 +108,11 @@ public class GsonProvider extends AbstractJsonProvider {
         TypeToken<List<Object>> typeToken = new TypeToken<List<Object>>() {
         };
         return gson.fromJson(json, typeToken.getType());
+    }
+
+    @Override
+    public <T> List<T> toList(String json, Class<T> clazz) {
+        return gson.fromJson(json, (Type) clazz);
     }
 
     @Override

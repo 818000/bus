@@ -38,7 +38,7 @@ import java.util.Map;
  * 快速获取注解对象、注解值等工具封装
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class AnnoKit {
@@ -77,6 +77,17 @@ public class AnnoKit {
      */
     public static <A extends Annotation> A getAnnotation(AnnotatedElement annotationEle, Class<A> annotationType) {
         return (null == annotationEle) ? null : toCombination(annotationEle).getAnnotation(annotationType);
+    }
+
+    /**
+     * 检查是否包含指定注解指定注解
+     *
+     * @param annotationEle  {@link AnnotatedElement}，可以是Class/Method/Field/Constructor/ReflectPermission
+     * @param annotationType 注解类型
+     * @return 是否包含指定注解
+     */
+    public static boolean hasAnnotation(AnnotatedElement annotationEle, Class<? extends Annotation> annotationType) {
+        return null != getAnnotation(annotationEle, annotationType);
     }
 
     /**

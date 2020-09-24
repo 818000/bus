@@ -30,7 +30,7 @@ import org.aoju.bus.core.lang.exception.AuthorizedException;
  * 内置的各api需要的url, 用枚举类分平台类型管理
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public enum Registry implements Complex {
@@ -210,31 +210,6 @@ public enum Registry implements Complex {
         @Override
         public String userInfo() {
             return "https://graph.facebook.com/v3.3/me";
-        }
-    },
-    /**
-     * 飞书
-     * 注意：该平台暂时存在问题，待修复完成后会重新发版
-     */
-    FEISHU {
-        @Override
-        public String authorize() {
-            return "https://open.feishu.cn/connect/qrconnect/page/sso/";
-        }
-
-        @Override
-        public String accessToken() {
-            return "https://open.feishu.cn/connect/qrconnect/oauth2/access_token/";
-        }
-
-        @Override
-        public String userInfo() {
-            return "https://open.feishu.cn/connect/qrconnect/oauth2/user_info/";
-        }
-
-        @Override
-        public String refresh() {
-            return "https://open.feishu.cn/connect/qrconnect/oauth2/access_token/";
         }
     },
     /**

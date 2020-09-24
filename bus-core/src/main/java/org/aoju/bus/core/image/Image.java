@@ -50,7 +50,7 @@ import java.nio.file.Path;
  * 图像编辑器
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class Image implements Serializable {
@@ -351,8 +351,9 @@ public class Image implements Serializable {
         double heightRatio = MathKit.div(height, srcHeight);
         double widthRatio = MathKit.div(width, srcWidth);
 
-        if (widthRatio == heightRatio) {
-            // 长宽都按照相同比例缩放时,返回缩放后的图片
+        // 浮点数之间的等值判断,基本数据类型不能用==比较,包装数据类型不能用equals来判断
+        if (MathKit.equals(heightRatio, widthRatio)) {
+            // 长宽都按照相同比例缩放时，返回缩放后的图片
             scale(width, height);
         } else if (widthRatio < heightRatio) {
             // 宽缩放比例多就按照宽缩放
@@ -367,15 +368,14 @@ public class Image implements Serializable {
         srcHeight = srcImage.getHeight(null);
         srcWidth = srcImage.getWidth(null);
 
-        if (null == fixedColor) {// 补白
-            fixedColor = Color.WHITE;
-        }
         final BufferedImage image = new BufferedImage(width, height, getTypeInt());
         Graphics2D g = image.createGraphics();
 
         // 设置背景
-        g.setBackground(fixedColor);
-        g.clearRect(0, 0, width, height);
+        if (null != fixedColor) {
+            g.setBackground(fixedColor);
+            g.clearRect(0, 0, width, height);
+        }
 
         // 在中间贴图
         g.drawImage(srcImage, (width - srcWidth) / 2, (height - srcHeight) / 2, srcWidth, srcHeight, fixedColor, null);

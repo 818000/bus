@@ -54,7 +54,7 @@ import java.util.zip.Checksum;
  * 文件工具类
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class FileKit {
@@ -2762,6 +2762,19 @@ public class FileKit {
      * @throws InstrumentException 异常
      */
     public static PrintWriter getPrintWriter(File file, String charset, boolean isAppend) throws InstrumentException {
+        return new PrintWriter(getWriter(file, charset, isAppend));
+    }
+
+    /**
+     * 获得一个打印写入对象，可以有print
+     *
+     * @param file     文件
+     * @param charset  字符集
+     * @param isAppend 是否追加
+     * @return 打印对象
+     * @throws InstrumentException 异常
+     */
+    public static PrintWriter getPrintWriter(File file, java.nio.charset.Charset charset, boolean isAppend) throws InstrumentException {
         return new PrintWriter(getWriter(file, charset, isAppend));
     }
 

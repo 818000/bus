@@ -41,7 +41,7 @@ import java.util.Map;
  * Jackson 解析器
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class JacksonProvider extends AbstractJsonProvider {
@@ -94,6 +94,15 @@ public class JacksonProvider extends AbstractJsonProvider {
     public List toList(String json) {
         try {
             return objectMapper.readValue(json, LinkedList.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public <T> List<T> toList(String json, Class<T> clazz) {
+        try {
+            return (List<T>) objectMapper.readValue(json, clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

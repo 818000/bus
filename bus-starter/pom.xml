@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-starter</artifactId>
-    <version>6.0.9</version>
+    <version>6.1.0</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -50,6 +50,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bus-crypto</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.aoju</groupId>
+            <artifactId>bus-goalie</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>

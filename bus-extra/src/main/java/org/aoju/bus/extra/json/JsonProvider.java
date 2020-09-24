@@ -32,7 +32,7 @@ import java.util.Map;
  * JSON服务提供者
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public interface JsonProvider {
@@ -81,6 +81,16 @@ public interface JsonProvider {
      * @return 返回List
      */
     List toList(String json);
+
+    /**
+     * 按指定的Type解析json字符串到List
+     *
+     * @param json  要解析的json字符串
+     * @param clazz 类对象class
+     * @param <T>   泛型参数类型
+     * @return 返回List
+     */
+    <T> List<T> toList(String json, Class<T> clazz);
 
     /**
      * 按指定的Type解析json字符串到List

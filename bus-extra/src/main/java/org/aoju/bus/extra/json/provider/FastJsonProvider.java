@@ -25,7 +25,6 @@
 package org.aoju.bus.extra.json.provider;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
@@ -39,7 +38,7 @@ import java.util.Map;
  * FastJson 解析器
  *
  * @author Kimi Liu
- * @version 6.0.9
+ * @version 6.1.0
  * @since JDK 1.8+
  */
 public class FastJsonProvider extends AbstractJsonProvider {
@@ -90,6 +89,11 @@ public class FastJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
+    public <T> List<T> toList(String json, Class<T> clazz) {
+        return JSON.parseArray(json, clazz);
+    }
+
+    @Override
     public <T> List<T> toList(String json, Type type) {
         TypeReference<T> typeReference = new TypeReference<T>() {
             @Override
@@ -114,10 +118,10 @@ public class FastJsonProvider extends AbstractJsonProvider {
     public boolean isJson(String json) {
         try {
             JSON.parseObject(json);
-        } catch (JSONException ex) {
+        } catch (RuntimeException ex) {
             try {
                 JSON.parseArray(json);
-            } catch (JSONException ex1) {
+            } catch (RuntimeException ex1) {
                 return false;
             }
         }
