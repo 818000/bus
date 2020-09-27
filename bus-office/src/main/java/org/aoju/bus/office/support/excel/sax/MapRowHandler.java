@@ -24,98 +24,52 @@
  ********************************************************************************/
 package org.aoju.bus.office.support.excel.sax;
 
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.IterKit;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * 单元格数据类型枚举
+ * Map形式的行处理器
+ * 将一行数据转换为Map，key为指定行，value为当前行对应位置的值
  *
  * @author Kimi Liu
  * @version 6.1.0
  * @since JDK 1.8+
  */
-public enum CellDataType {
+public abstract class MapRowHandler extends AbstractRowHandler<Map<String, Object>> {
 
     /**
-     * Boolean类型
+     * 标题所在行（从0开始计数）
      */
-    BOOL("b"),
+    private final int headerRowIndex;
     /**
-     * 类型错误
+     * 标题行
      */
-    ERROR("e"),
-    /**
-     * 计算结果类型
-     */
-    FORMULA("str"),
-    /**
-     * 富文本类型
-     */
-    INLINESTR("inlineStr"),
-    /**
-     * 共享字符串索引类型
-     */
-    SSTINDEX("s"),
-    /**
-     * 数字类型
-     */
-    NUMBER(Normal.EMPTY),
-    /**
-     * 日期类型
-     */
-    DATE("m/d/yy"),
-    /**
-     * 空类型
-     */
-    NULL(Normal.EMPTY);
-
-    /**
-     * 属性值
-     */
-    private final String name;
+    List<String> headerList;
 
     /**
      * 构造
      *
-     * @param name 类型属性值
+     * @param headerRowIndex 标题所在行（从0开始计数）
+     * @param startRowIndex  读取起始行（包含，从0开始计数）
+     * @param endRowIndex    读取结束行（包含，从0开始计数）
      */
-    CellDataType(String name) {
-        this.name = name;
+    public MapRowHandler(int headerRowIndex, int startRowIndex, int endRowIndex) {
+        super(startRowIndex, endRowIndex);
+        this.headerRowIndex = headerRowIndex;
+        this.convertFunc = (rowList) -> IterKit.toMap(headerList, rowList);
     }
 
-    /**
-     * 类型字符串转为枚举
-     *
-     * @param name 类型字符串
-     * @return 类型枚举
-     */
-    public static CellDataType of(String name) {
-        if (null == name) {
-            //默认数字
-            return NUMBER;
+    @Override
+    public void handle(int sheetIndex, long rowIndex, List<Object> rowList) {
+        if (rowIndex == this.headerRowIndex) {
+            this.headerList = CollKit.unmodifiable(Convert.toList(String.class, rowList));
+            return;
         }
-
-        if (BOOL.name.equals(name)) {
-            return BOOL;
-        } else if (ERROR.name.equals(name)) {
-            return ERROR;
-        } else if (INLINESTR.name.equals(name)) {
-            return INLINESTR;
-        } else if (SSTINDEX.name.equals(name)) {
-            return SSTINDEX;
-        } else if (FORMULA.name.equals(name)) {
-            return FORMULA;
-        } else {
-            return NULL;
-        }
-    }
-
-    /**
-     * 获取对应类型的属性值
-     *
-     * @return 属性值
-     */
-    public String getName() {
-        return name;
+        super.handle(sheetIndex, rowIndex, rowList);
     }
 
 }
