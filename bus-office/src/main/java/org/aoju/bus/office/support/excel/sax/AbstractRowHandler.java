@@ -24,98 +24,62 @@
  ********************************************************************************/
 package org.aoju.bus.office.support.excel.sax;
 
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Func;
+
+import java.util.List;
 
 /**
- * 单元格数据类型枚举
+ * 抽象行数据处理器，通过实现{@link #handle(int, long, List)} 处理原始数据
+ * 并调用{@link #handleData(int, long, Object)}处理经过转换后的数据。
  *
+ * @param <T> 转换后的数据类型
  * @author Kimi Liu
  * @version 6.1.0
  * @since JDK 1.8+
  */
-public enum CellDataType {
+public abstract class AbstractRowHandler<T> implements RowHandler {
 
     /**
-     * Boolean类型
+     * 读取起始行（包含，从0开始计数）
      */
-    BOOL("b"),
+    protected final int startRowIndex;
     /**
-     * 类型错误
+     * 读取结束行（包含，从0开始计数）
      */
-    ERROR("e"),
+    protected final int endRowIndex;
     /**
-     * 计算结果类型
+     * 行数据转换函数
      */
-    FORMULA("str"),
-    /**
-     * 富文本类型
-     */
-    INLINESTR("inlineStr"),
-    /**
-     * 共享字符串索引类型
-     */
-    SSTINDEX("s"),
-    /**
-     * 数字类型
-     */
-    NUMBER(Normal.EMPTY),
-    /**
-     * 日期类型
-     */
-    DATE("m/d/yy"),
-    /**
-     * 空类型
-     */
-    NULL(Normal.EMPTY);
-
-    /**
-     * 属性值
-     */
-    private final String name;
+    protected Func.Func1<List<Object>, T> convertFunc;
 
     /**
      * 构造
      *
-     * @param name 类型属性值
+     * @param startRowIndex 读取起始行（包含，从0开始计数）
+     * @param endRowIndex   读取结束行（包含，从0开始计数）
      */
-    CellDataType(String name) {
-        this.name = name;
+    public AbstractRowHandler(int startRowIndex, int endRowIndex) {
+        this.startRowIndex = startRowIndex;
+        this.endRowIndex = endRowIndex;
+    }
+
+    @Override
+    public void handle(int sheetIndex, long rowIndex, List<Object> rowList) {
+        Assert.notNull(convertFunc);
+        if (rowIndex < this.startRowIndex || rowIndex > this.endRowIndex) {
+            return;
+        }
+        handleData(sheetIndex, rowIndex, convertFunc.callWithRuntimeException(rowList));
     }
 
     /**
-     * 类型字符串转为枚举
+     * 处理转换后的数据
      *
-     * @param name 类型字符串
-     * @return 类型枚举
+     * @param sheetIndex 当前Sheet序号
+     * @param rowIndex   当前行号，从0开始计数
+     * @param data       行数据
      */
-    public static CellDataType of(String name) {
-        if (null == name) {
-            //默认数字
-            return NUMBER;
-        }
-
-        if (BOOL.name.equals(name)) {
-            return BOOL;
-        } else if (ERROR.name.equals(name)) {
-            return ERROR;
-        } else if (INLINESTR.name.equals(name)) {
-            return INLINESTR;
-        } else if (SSTINDEX.name.equals(name)) {
-            return SSTINDEX;
-        } else if (FORMULA.name.equals(name)) {
-            return FORMULA;
-        } else {
-            return NULL;
-        }
-    }
-
-    /**
-     * 获取对应类型的属性值
-     *
-     * @return 属性值
-     */
-    public String getName() {
-        return name;
-    }
+    public abstract void handleData(int sheetIndex, long rowIndex, T data);
 
 }

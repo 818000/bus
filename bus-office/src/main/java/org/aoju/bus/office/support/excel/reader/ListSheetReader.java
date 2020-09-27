@@ -22,100 +22,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.office.support.excel.sax;
+package org.aoju.bus.office.support.excel.reader;
 
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.toolkit.CollKit;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 单元格数据类型枚举
+ * 读取{@link Sheet}为List列表形式
  *
  * @author Kimi Liu
  * @version 6.1.0
  * @since JDK 1.8+
  */
-public enum CellDataType {
+public class ListSheetReader extends AbstractSheetReader<List<List<Object>>> {
 
     /**
-     * Boolean类型
+     * 是否首行作为标题行转换别名
      */
-    BOOL("b"),
-    /**
-     * 类型错误
-     */
-    ERROR("e"),
-    /**
-     * 计算结果类型
-     */
-    FORMULA("str"),
-    /**
-     * 富文本类型
-     */
-    INLINESTR("inlineStr"),
-    /**
-     * 共享字符串索引类型
-     */
-    SSTINDEX("s"),
-    /**
-     * 数字类型
-     */
-    NUMBER(Normal.EMPTY),
-    /**
-     * 日期类型
-     */
-    DATE("m/d/yy"),
-    /**
-     * 空类型
-     */
-    NULL(Normal.EMPTY);
-
-    /**
-     * 属性值
-     */
-    private final String name;
+    private final boolean aliasFirstLine;
 
     /**
      * 构造
      *
-     * @param name 类型属性值
+     * @param startRowIndex  起始行（包含，从0开始计数）
+     * @param endRowIndex    结束行（包含，从0开始计数）
+     * @param aliasFirstLine 是否首行作为标题行转换别名
      */
-    CellDataType(String name) {
-        this.name = name;
+    public ListSheetReader(int startRowIndex, int endRowIndex, boolean aliasFirstLine) {
+        super(startRowIndex, endRowIndex);
+        this.aliasFirstLine = aliasFirstLine;
     }
 
-    /**
-     * 类型字符串转为枚举
-     *
-     * @param name 类型字符串
-     * @return 类型枚举
-     */
-    public static CellDataType of(String name) {
-        if (null == name) {
-            //默认数字
-            return NUMBER;
-        }
+    @Override
+    public List<List<Object>> read(Sheet sheet) {
+        final List<List<Object>> resultList = new ArrayList<>();
 
-        if (BOOL.name.equals(name)) {
-            return BOOL;
-        } else if (ERROR.name.equals(name)) {
-            return ERROR;
-        } else if (INLINESTR.name.equals(name)) {
-            return INLINESTR;
-        } else if (SSTINDEX.name.equals(name)) {
-            return SSTINDEX;
-        } else if (FORMULA.name.equals(name)) {
-            return FORMULA;
-        } else {
-            return NULL;
+        int startRowIndex = Math.max(this.startRowIndex, sheet.getFirstRowNum());// 读取起始行（包含）
+        int endRowIndex = Math.min(this.endRowIndex, sheet.getLastRowNum());// 读取结束行（包含）
+        List<Object> rowList;
+        for (int i = startRowIndex; i <= endRowIndex; i++) {
+            rowList = readRow(sheet, i);
+            if (CollKit.isNotEmpty(rowList) || false == ignoreEmptyRow) {
+                if (aliasFirstLine && i == startRowIndex) {
+                    // 第一行作为标题行，替换别名
+                    rowList = Convert.toList(Object.class, aliasHeader(rowList));
+                }
+                resultList.add(rowList);
+            }
         }
-    }
-
-    /**
-     * 获取对应类型的属性值
-     *
-     * @return 属性值
-     */
-    public String getName() {
-        return name;
+        return resultList;
     }
 
 }
