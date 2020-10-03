@@ -22,55 +22,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.goalie.annotation;
+package org.aoju.bus.office.support.excel.sax;
 
-import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.IterKit;
 
-import java.lang.annotation.*;
+import java.util.List;
+import java.util.Map;
 
 /**
+ * Map形式的行处理器
+ * 将一行数据转换为Map，key为指定行，value为当前行对应位置的值
+ *
  * @author Kimi Liu
  * @version 6.1.0
- * @since JDK 1.8++
+ * @since JDK 1.8+
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface VersionMapping {
+public abstract class MapRowHandler extends AbstractRowHandler<Map<String, Object>> {
 
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default Normal.EMPTY;
+    /**
+     * 标题所在行（从0开始计数）
+     */
+    private final int headerRowIndex;
+    /**
+     * 标题行
+     */
+    List<String> headerList;
 
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
+    /**
+     * 构造
+     *
+     * @param headerRowIndex 标题所在行（从0开始计数）
+     * @param startRowIndex  读取起始行（包含，从0开始计数）
+     * @param endRowIndex    读取结束行（包含，从0开始计数）
+     */
+    public MapRowHandler(int headerRowIndex, int startRowIndex, int endRowIndex) {
+        super(startRowIndex, endRowIndex);
+        this.headerRowIndex = headerRowIndex;
+        this.convertFunc = (rowList) -> IterKit.toMap(headerList, rowList);
+    }
 
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    @Override
+    public void handle(int sheetIndex, long rowIndex, List<Object> rowList) {
+        if (rowIndex == this.headerRowIndex) {
+            this.headerList = CollKit.unmodifiable(Convert.toList(String.class, rowList));
+            return;
+        }
+        super.handle(sheetIndex, rowIndex, rowList);
+    }
 
 }

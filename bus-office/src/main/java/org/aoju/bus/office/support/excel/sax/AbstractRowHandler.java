@@ -22,55 +22,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.goalie.annotation;
+package org.aoju.bus.office.support.excel.sax;
 
-import org.aoju.bus.core.lang.Normal;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Func;
 
-import java.lang.annotation.*;
+import java.util.List;
 
 /**
+ * 抽象行数据处理器，通过实现{@link #handle(int, long, List)} 处理原始数据
+ * 并调用{@link #handleData(int, long, Object)}处理经过转换后的数据。
+ *
+ * @param <T> 转换后的数据类型
  * @author Kimi Liu
  * @version 6.1.0
- * @since JDK 1.8++
+ * @since JDK 1.8+
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@RequestMapping
-@ApiVersion
-@ClientVersion
-public @interface VersionMapping {
+public abstract class AbstractRowHandler<T> implements RowHandler {
 
-    @AliasFor(annotation = RequestMapping.class)
-    String name() default Normal.EMPTY;
+    /**
+     * 读取起始行（包含，从0开始计数）
+     */
+    protected final int startRowIndex;
+    /**
+     * 读取结束行（包含，从0开始计数）
+     */
+    protected final int endRowIndex;
+    /**
+     * 行数据转换函数
+     */
+    protected Func.Func1<List<Object>, T> convertFunc;
 
-    @AliasFor(annotation = RequestMapping.class)
-    String[] value() default {};
+    /**
+     * 构造
+     *
+     * @param startRowIndex 读取起始行（包含，从0开始计数）
+     * @param endRowIndex   读取结束行（包含，从0开始计数）
+     */
+    public AbstractRowHandler(int startRowIndex, int endRowIndex) {
+        this.startRowIndex = startRowIndex;
+        this.endRowIndex = endRowIndex;
+    }
 
-    @AliasFor(annotation = RequestMapping.class)
-    String[] path() default {};
+    @Override
+    public void handle(int sheetIndex, long rowIndex, List<Object> rowList) {
+        Assert.notNull(convertFunc);
+        if (rowIndex < this.startRowIndex || rowIndex > this.endRowIndex) {
+            return;
+        }
+        handleData(sheetIndex, rowIndex, convertFunc.callWithRuntimeException(rowList));
+    }
 
-    @AliasFor(annotation = RequestMapping.class)
-    String[] params() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] headers() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] consumes() default {};
-
-    @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
-
-    @AliasFor(annotation = ApiVersion.class, attribute = "value")
-    String apiVersion() default Normal.EMPTY;
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "value")
-    TerminalVersion[] terminalVersion() default {};
-
-    @AliasFor(annotation = ClientVersion.class, attribute = "expression")
-    String[] terminalExpression() default {};
+    /**
+     * 处理转换后的数据
+     *
+     * @param sheetIndex 当前Sheet序号
+     * @param rowIndex   当前行号，从0开始计数
+     * @param data       行数据
+     */
+    public abstract void handleData(int sheetIndex, long rowIndex, T data);
 
 }
