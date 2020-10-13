@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class ExcelWriter extends ExcelBase<ExcelWriter> {
@@ -1037,7 +1037,7 @@ public class ExcelWriter extends ExcelBase<ExcelWriter> {
 
     class IndexedComparator<T> implements Comparator<T> {
 
-        private T[] array;
+        private final T[] array;
 
         /**
          * 构造

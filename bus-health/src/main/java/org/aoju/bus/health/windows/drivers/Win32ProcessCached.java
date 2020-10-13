@@ -27,6 +27,7 @@ package org.aoju.bus.health.windows.drivers;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 import org.aoju.bus.core.annotation.GuardeBy;
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.windows.WmiKit;
@@ -40,7 +41,7 @@ import java.util.function.Supplier;
  * Utility to query WMI class {@code Win32_Process} using cache
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -115,7 +116,7 @@ public final class Win32ProcessCached {
                     commandLineCache.clear();
                 }
                 // Iterate results and put in map. Save value for current PID along the way
-                String result = "";
+                String result = Normal.EMPTY;
                 for (int i = 0; i < commandLineAllProcs.getResultCount(); i++) {
                     int pid = WmiKit.getUint32(commandLineAllProcs, Win32Process.CommandLineProperty.PROCESSID, i);
                     String cl = WmiKit.getString(commandLineAllProcs, Win32Process.CommandLineProperty.COMMANDLINE, i);

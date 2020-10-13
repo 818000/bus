@@ -38,14 +38,14 @@ import java.util.concurrent.ConcurrentMap;
  * {@link java.text.SimpleDateFormat} 的线程安全版本,用于将 {@link Date} 格式化输出
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class FastDatePrinter extends AbstractFormater implements DatePrinter {
 
     private static final long serialVersionUID = 1L;
     private static final int MAX_DIGITS = 10; // log10(Integer.MAX_VALUE) ~= 9.3
-    private static final ConcurrentMap<TimeZoneDisplayKey, String> cTimeZoneDisplayCache = new ConcurrentHashMap<>(7);
+    private static final ConcurrentMap<TimeZoneDisplayKey, String> C_TIME_ZONE_DISPLAY_CACHE = new ConcurrentHashMap<>(7);
     /**
      * 规则列表.
      */
@@ -156,11 +156,11 @@ public class FastDatePrinter extends AbstractFormater implements DatePrinter {
      */
     static String getTimeZoneDisplay(final TimeZone tz, final boolean daylight, final int style, final Locale locale) {
         final TimeZoneDisplayKey key = new TimeZoneDisplayKey(tz, daylight, style, locale);
-        String value = cTimeZoneDisplayCache.get(key);
+        String value = C_TIME_ZONE_DISPLAY_CACHE.get(key);
         if (value == null) {
             // This is a very slow call, so cache the results.
             value = tz.getDisplayName(daylight, style, locale);
-            final String prior = cTimeZoneDisplayCache.putIfAbsent(key, value);
+            final String prior = C_TIME_ZONE_DISPLAY_CACHE.putIfAbsent(key, value);
             if (prior != null) {
                 value = prior;
             }

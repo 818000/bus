@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class Attributes implements Serializable {
@@ -2527,7 +2527,7 @@ public class Attributes implements Serializable {
         for (Attributes item : sq) {
             if (++lines > limit)
                 break;
-            sb.append(prefix).append("Item #").append(++itemNo).append('\n');
+            sb.append(prefix).append("Item #").append(++itemNo).append(Symbol.C_LF);
             lines += item.appendAttributes(limit - lines, maxWidth, sb, prefix);
         }
         return lines;
@@ -2542,7 +2542,7 @@ public class Attributes implements Serializable {
             if (sb.length() > maxLength)
                 sb.setLength(maxLength);
         }
-        sb.append('\n');
+        sb.append(Symbol.C_LF);
         return sb;
     }
 

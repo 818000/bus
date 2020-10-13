@@ -29,6 +29,7 @@ import com.sun.jna.platform.win32.Cfgmgr32;
 import com.sun.jna.platform.win32.Cfgmgr32Util;
 import com.sun.jna.ptr.IntByReference;
 import org.aoju.bus.core.annotation.Immutable;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.core.lang.tuple.Triple;
@@ -47,7 +48,7 @@ import java.util.*;
  * Windows Usb Device
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -145,7 +146,7 @@ public class WindowsUsbDevice extends AbstractUsbDevice {
                 String name = WmiKit.getString(pnpEntity, Win32PnPEntity.PnPEntityProperty.NAME, i);
                 String vendor = WmiKit.getString(pnpEntity, Win32PnPEntity.PnPEntityProperty.MANUFACTURER, i);
                 deviceStringCache.put(pnpDeviceID,
-                        Triple.of(name, vendor, pnpToSerialMap.getOrDefault(pnpDeviceID, "")));
+                        Triple.of(name, vendor, pnpToSerialMap.getOrDefault(pnpDeviceID, Normal.EMPTY)));
                 Logger.debug("Adding {} to USB device cache.", pnpDeviceID);
             }
         }

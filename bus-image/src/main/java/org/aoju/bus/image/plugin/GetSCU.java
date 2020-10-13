@@ -48,7 +48,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class GetSCU implements AutoCloseable {
@@ -161,7 +161,7 @@ public class GetSCU implements AutoCloseable {
     public void setStorageDirectory(File storageDir) {
         if (storageDir != null) {
             if (storageDir.mkdirs()) {
-                System.out.println("M-WRITE " + storageDir);
+                Logger.info("M-WRITE " + storageDir);
             }
         }
         this.storageDir = storageDir;

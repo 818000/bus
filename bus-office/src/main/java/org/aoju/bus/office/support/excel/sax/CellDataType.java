@@ -30,10 +30,11 @@ import org.aoju.bus.core.lang.Normal;
  * 单元格数据类型枚举
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public enum CellDataType {
+
     /**
      * Boolean类型
      */
@@ -70,7 +71,7 @@ public enum CellDataType {
     /**
      * 属性值
      */
-    private String name;
+    private final String name;
 
     /**
      * 构造

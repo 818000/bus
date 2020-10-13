@@ -51,7 +51,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class Connection implements Serializable {
@@ -1186,13 +1186,13 @@ public class Connection implements Serializable {
             int b;
             while ((b = in.read()) != -1) {
                 write(b);
-                if (b == '\n') {
+                if (b == Symbol.C_LF) {
                     if (eol) {
                         rsp = new String(super.buf, 0, super.count, StandardCharsets.US_ASCII);
                         return;
                     }
                     eol = true;
-                } else if (b != '\r') {
+                } else if (b != Symbol.C_CR) {
                     eol = false;
                 }
             }

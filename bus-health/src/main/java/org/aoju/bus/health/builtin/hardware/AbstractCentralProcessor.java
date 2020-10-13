@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * A CPU.
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -67,7 +67,7 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
     /**
      * 创建一个处理器
      */
-    public AbstractCentralProcessor() {
+    protected AbstractCentralProcessor() {
         // 填充逻辑处理器阵列
         this.logicalProcessors = Collections.unmodifiableList(initProcessorCounts());
         // I初始化处理器数
@@ -361,12 +361,12 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getProcessorIdentifier().getName());
-        sb.append("\n ").append(getPhysicalPackageCount()).append(" physical CPU package(s)");
-        sb.append("\n ").append(getPhysicalProcessorCount()).append(" physical CPU core(s)");
-        sb.append("\n ").append(getLogicalProcessorCount()).append(" logical CPU(s)");
-        sb.append('\n').append("Identifier: ").append(getProcessorIdentifier().getIdentifier());
-        sb.append('\n').append("ProcessorID: ").append(getProcessorIdentifier().getProcessorID());
-        sb.append('\n').append("Microarchitecture: ").append(getProcessorIdentifier().getMicroarchitecture());
+        sb.append(Symbol.LF).append(getPhysicalPackageCount()).append(" physical CPU package(s)");
+        sb.append(Symbol.LF).append(getPhysicalProcessorCount()).append(" physical CPU core(s)");
+        sb.append(Symbol.LF).append(getLogicalProcessorCount()).append(" logical CPU(s)");
+        sb.append(Symbol.C_LF).append("Identifier: ").append(getProcessorIdentifier().getIdentifier());
+        sb.append(Symbol.C_LF).append("ProcessorID: ").append(getProcessorIdentifier().getProcessorID());
+        sb.append(Symbol.C_LF).append("Microarchitecture: ").append(getProcessorIdentifier().getMicroarchitecture());
         return sb.toString();
     }
 

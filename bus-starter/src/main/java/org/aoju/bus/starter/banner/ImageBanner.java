@@ -26,6 +26,7 @@ package org.aoju.bus.starter.banner;
 
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
+import org.aoju.bus.logger.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -41,7 +42,7 @@ import java.util.Map.Entry;
  * ASCII艺术产生的图像文件
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class ImageBanner {
@@ -231,7 +232,7 @@ public class ImageBanner {
             BufferedImage resizedImage = resizeImage(sourceImage, maxWidth, aspectRatio);
             banner = imageToBanner(resizedImage, invert, cie94);
         } catch (Exception ex) {
-            System.out.println("WARNING ! Image banner not printable: " + this.image + " (" + ex.getClass()
+            Logger.warn("WARNING ! Image banner not printable: " + this.image + " (" + ex.getClass()
                     + ": '" + ex.getMessage() + "')");
             ex.printStackTrace();
         } finally {

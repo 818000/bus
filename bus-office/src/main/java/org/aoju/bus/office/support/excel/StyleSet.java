@@ -32,12 +32,16 @@ import java.io.Serializable;
  * 样式集合,此样式集合汇集了整个工作簿的样式,用于减少样式的创建和冗余
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class StyleSet implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * 工作簿引用
+     */
+    private final Workbook workbook;
     /**
      * 标题样式
      */
@@ -54,10 +58,6 @@ public class StyleSet implements Serializable {
      * 默认日期样式
      */
     protected CellStyle cellStyleForDate;
-    /**
-     * 工作簿引用
-     */
-    private Workbook workbook;
 
     /**
      * 构造

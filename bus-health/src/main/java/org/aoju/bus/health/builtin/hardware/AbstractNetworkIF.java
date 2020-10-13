@@ -38,12 +38,13 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * 网络接口信息
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -108,33 +109,42 @@ public abstract class AbstractNetworkIF implements NetworkIF {
     }
 
     /**
-     * 返回不是环回且具有硬件地址的网络接口
+     * Returns network interfaces on this machine.
      *
-     * @return 网络接口的列表
+     * @param includeLocalInterfaces include local interfaces in the result
+     * @return A list of network interfaces
      */
-    protected static List<NetworkInterface> getNetworkInterfaces() {
-        List<NetworkInterface> result = new ArrayList<>();
-        Enumeration<NetworkInterface> interfaces = null;
+    protected static List<NetworkInterface> getNetworkInterfaces(boolean includeLocalInterfaces) {
+        List<NetworkInterface> interfaces = getAllNetworkInterfaces();
+        return includeLocalInterfaces ? interfaces
+                : getAllNetworkInterfaces().stream().filter(networkInterface1 -> !isLocalInterface(networkInterface1))
+                .collect(Collectors.toList());
+    }
 
+    /**
+     * Returns all network interfaces.
+     *
+     * @return A list of network interfaces
+     */
+    private static List<NetworkInterface> getAllNetworkInterfaces() {
         try {
-            interfaces = NetworkInterface.getNetworkInterfaces();
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            return interfaces == null ? Collections.emptyList() : Collections.list(interfaces);
         } catch (SocketException ex) {
             Logger.error("Socket exception when retrieving interfaces: {}", ex.getMessage());
         }
-        if (interfaces != null) {
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface netint = interfaces.nextElement();
-                try {
-                    if (!netint.isLoopback() && netint.getHardwareAddress() != null) {
-                        result.add(netint);
-                    }
-                } catch (SocketException ex) {
-                    Logger.error("Socket exception when retrieving interface \"{}\": {}", netint.getName(),
-                            ex.getMessage());
-                }
-            }
+
+        return Collections.emptyList();
+    }
+
+    private static boolean isLocalInterface(NetworkInterface networkInterface) {
+        try {
+            return networkInterface.isLoopback() || networkInterface.getHardwareAddress() == null;
+        } catch (SocketException e) {
+            Logger.error("Socket exception when retrieving interface information for {}: {}", networkInterface,
+                    e.getMessage());
         }
-        return result;
+        return false;
     }
 
     private static Properties queryVmMacAddrProps() {
@@ -210,23 +220,23 @@ public abstract class AbstractNetworkIF implements NetworkIF {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Name: ").append(getName()).append(Symbol.SPACE).append(Symbol.PARENTHESE_LEFT).append(getDisplayName()).append(Symbol.PARENTHESE_RIGHT).append("\n");
-        sb.append("  MAC Address: ").append(getMacaddr()).append("\n");
-        sb.append("  MTU: ").append(getMTU()).append(", ").append("Speed: ").append(getSpeed()).append("\n");
+        sb.append("Name: ").append(getName()).append(Symbol.SPACE).append(Symbol.PARENTHESE_LEFT).append(getDisplayName()).append(Symbol.PARENTHESE_RIGHT).append(Symbol.LF);
+        sb.append("  MAC Address: ").append(getMacaddr()).append(Symbol.LF);
+        sb.append("  MTU: ").append(getMTU()).append(", ").append("Speed: ").append(getSpeed()).append(Symbol.LF);
         String[] ipv4withmask = getIPv4addr();
         if (this.ipv4.length == this.subnetMasks.length) {
             for (int i = 0; i < this.subnetMasks.length; i++) {
                 ipv4withmask[i] += Symbol.SLASH + this.subnetMasks[i];
             }
         }
-        sb.append("  IPv4: ").append(Arrays.toString(ipv4withmask)).append("\n");
+        sb.append("  IPv4: ").append(Arrays.toString(ipv4withmask)).append(Symbol.LF);
         String[] ipv6withprefixlength = getIPv6addr();
         if (this.ipv6.length == this.prefixLengths.length) {
             for (int j = 0; j < this.prefixLengths.length; j++) {
                 ipv6withprefixlength[j] += Symbol.SLASH + this.prefixLengths[j];
             }
         }
-        sb.append("  IPv6: ").append(Arrays.toString(ipv6withprefixlength)).append("\n");
+        sb.append("  IPv6: ").append(Arrays.toString(ipv6withprefixlength)).append(Symbol.LF);
         sb.append("  Traffic: received ").append(getPacketsRecv()).append(" packets/")
                 .append(Formats.formatBytes(getBytesRecv())).append(" (" + getInErrors() + " err, ")
                 .append(getInDrops() + " drop);");

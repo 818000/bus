@@ -24,7 +24,8 @@
  ********************************************************************************/
 package org.aoju.bus.cron.listener;
 
-import org.aoju.bus.cron.TaskExecutor;
+import org.aoju.bus.cron.Executor;
+import org.aoju.bus.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,12 @@ import java.util.List;
  * 监听调度器,统一管理监听
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class TaskListenerManager {
 
-    private List<TaskListener> listeners = new ArrayList<>();
+    private final List<TaskListener> listeners = new ArrayList<>();
 
     /**
      * 增加监听器
@@ -69,14 +70,14 @@ public class TaskListenerManager {
     /**
      * 通知所有监听任务启动器启动
      *
-     * @param executor {@link TaskExecutor}
+     * @param executor {@link Executor}
      */
-    public void notifyTaskStart(TaskExecutor executor) {
+    public void notifyTaskStart(Executor executor) {
         synchronized (listeners) {
-            int size = listeners.size();
-            for (int i = 0; i < size; i++) {
-                TaskListener listenerl = listeners.get(i);
-                listenerl.onStart(executor);
+            for (TaskListener listener : listeners) {
+                if (null != listener) {
+                    listener.onStart(executor);
+                }
             }
         }
     }
@@ -84,14 +85,12 @@ public class TaskListenerManager {
     /**
      * 通知所有监听任务启动器成功结束
      *
-     * @param executor {@link TaskExecutor}
+     * @param executor {@link Executor}
      */
-    public void notifyTaskSucceeded(TaskExecutor executor) {
+    public void notifyTaskSucceeded(Executor executor) {
         synchronized (listeners) {
-            int size = listeners.size();
-            for (int i = 0; i < size; i++) {
-                TaskListener listenerl = listeners.get(i);
-                listenerl.onSucceeded(executor);
+            for (TaskListener listener : listeners) {
+                listener.onSucceeded(executor);
             }
         }
     }
@@ -100,17 +99,18 @@ public class TaskListenerManager {
      * 通知所有监听任务启动器结束并失败
      * 无监听将打印堆栈到命令行
      *
-     * @param executor  {@link TaskExecutor}
+     * @param executor  {@link Executor}
      * @param exception 失败原因
      */
-    public void notifyTaskFailed(TaskExecutor executor, Throwable exception) {
+    public void notifyTaskFailed(Executor executor, Throwable exception) {
         synchronized (listeners) {
             int size = listeners.size();
             if (size > 0) {
-                for (int i = 0; i < size; i++) {
-                    TaskListener listenerl = listeners.get(i);
-                    listenerl.onFailed(executor, exception);
+                for (TaskListener listener : listeners) {
+                    listener.onFailed(executor, exception);
                 }
+            } else {
+                Logger.error(exception, exception.getMessage());
             }
         }
     }

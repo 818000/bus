@@ -55,7 +55,7 @@ import java.util.Set;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class StoreSCU implements AutoCloseable {
@@ -276,7 +276,7 @@ public class StoreSCU implements AutoCloseable {
                         break;
                     }
                 }
-                String[] ss = (String[]) StringKit.split(line, '\t').toArray();
+                String[] ss = (String[]) StringKit.split(line, Symbol.C_HT).toArray();
                 try {
                     send(new File(ss[4]), Long.parseLong(ss[3]), ss[1], ss[0], ss[2]);
                 } catch (Exception e) {
@@ -304,13 +304,13 @@ public class StoreSCU implements AutoCloseable {
         }
 
         fileInfos.write(iuid);
-        fileInfos.write('\t');
+        fileInfos.write(Symbol.C_HT);
         fileInfos.write(cuid);
-        fileInfos.write('\t');
+        fileInfos.write(Symbol.C_HT);
         fileInfos.write(ts);
-        fileInfos.write('\t');
+        fileInfos.write(Symbol.C_HT);
         fileInfos.write(Long.toString(endFmi));
-        fileInfos.write('\t');
+        fileInfos.write(Symbol.C_HT);
         fileInfos.write(f.getPath());
         fileInfos.newLine();
 

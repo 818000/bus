@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class ExecCmd {
@@ -75,7 +75,7 @@ public class ExecCmd {
 
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
-                sb.append("\n");
+                sb.append(Symbol.LF);
             }
 
             bufferedReader.close();
@@ -122,7 +122,7 @@ public class ExecCmd {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line);
-                sb.append("\n");
+                sb.append(Symbol.LF);
             }
             bufferedReader.close();
             p.destroy();

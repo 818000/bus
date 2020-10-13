@@ -25,6 +25,8 @@
 package org.aoju.bus.gitlab;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,7 +39,7 @@ import java.util.Map.Entry;
  * with a GitLab API endpoint.
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class GitLabApiException extends Exception {
@@ -116,7 +118,7 @@ public class GitLabApiException extends Exception {
                                 }
 
                                 if (values.size() > 0) {
-                                    buf.append((buf.length() > 0 ? ", " : "")).append(fieldName);
+                                    buf.append((buf.length() > 0 ? ", " : Normal.EMPTY)).append(fieldName);
                                 }
                             }
 
@@ -132,7 +134,7 @@ public class GitLabApiException extends Exception {
                             }
 
                             if (values.size() > 0) {
-                                this.message = String.join("\n", values);
+                                this.message = String.join(Symbol.LF, values);
                             }
 
                         } else if (jsonMessage.isTextual()) {

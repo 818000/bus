@@ -38,7 +38,7 @@ import java.util.TreeMap;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class MultipartInputStream extends FilterInputStream {
@@ -227,7 +227,7 @@ public class MultipartInputStream extends FilterInputStream {
         }
 
         boolean append(byte b) {
-            if (b == '\n' && length > 0 && buffer[length - 1] == '\r') {
+            if (b == Symbol.C_LF && length > 0 && buffer[length - 1] == Symbol.C_CR) {
                 length--;
                 return false;
             }

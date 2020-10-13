@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  * Ini file's Section
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class IniSectionImpl extends AbstractElement implements IniSection {
@@ -94,7 +94,7 @@ public class IniSectionImpl extends AbstractElement implements IniSection {
      */
     @Override
     public String toPropertiesString() {
-        StringJoiner joiner = new StringJoiner(System.getProperty("line.separator", "\n"));
+        StringJoiner joiner = new StringJoiner(System.getProperty("line.separator", Symbol.LF));
         joiner.add(toString());
         for (IniProperty p : this) {
             joiner.add(p);

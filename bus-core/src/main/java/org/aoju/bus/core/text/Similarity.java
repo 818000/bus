@@ -33,12 +33,12 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * 局部敏感hash,用于海量文本去重
+ * 文本相似度计算,局部敏感hash,用于海量文本去重
  * 局部敏感hash定义：假定两个字符串具有一定的相似性,
  * 在hash之后,仍然能保持这种相似性,就称之为局部敏感hash
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class Similarity {

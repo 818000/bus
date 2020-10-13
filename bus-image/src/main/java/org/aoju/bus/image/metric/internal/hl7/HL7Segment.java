@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class HL7Segment implements Serializable {
@@ -136,14 +136,14 @@ public class HL7Segment implements Serializable {
                                 String charsetName) {
         int off = pos.getIndex();
         int end = off;
-        while (end < size && b[end] != '\r' && b[end] != '\n')
+        while (end < size && b[end] != Symbol.C_CR && b[end] != Symbol.C_LF)
             end++;
 
         int len = end - off;
         if (len == 0)
             return null;
 
-        if (++end < size && (b[end] == '\r' || b[end] == '\n'))
+        if (++end < size && (b[end] == Symbol.C_CR || b[end] == Symbol.C_LF))
             end++;
 
         pos.setIndex(end);

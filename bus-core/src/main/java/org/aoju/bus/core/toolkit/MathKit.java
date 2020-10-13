@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -161,7 +161,7 @@ public class MathKit {
         }
 
         String value = values[0];
-        BigDecimal result = new BigDecimal(null == value ? Symbol.ZERO : value);
+        BigDecimal result = null == value ? BigDecimal.ZERO : new BigDecimal(value);
         for (int i = 1; i < values.length; i++) {
             value = values[i];
             if (null != value) {
@@ -417,18 +417,15 @@ public class MathKit {
      * @return 积
      */
     public static BigDecimal mul(String... values) {
-        if (ArrayKit.isEmpty(values)) {
+        if (ArrayKit.isEmpty(values) || ArrayKit.hasNull(values)) {
             return BigDecimal.ZERO;
         }
 
-        String value = values[0];
-        BigDecimal result = new BigDecimal(null == value ? Symbol.ZERO : value);
+        BigDecimal result = new BigDecimal(values[0]);
         for (int i = 1; i < values.length; i++) {
-            value = values[i];
-            if (null != value) {
-                result = result.multiply(new BigDecimal(value));
-            }
+            result = result.multiply(new BigDecimal(values[i]));
         }
+
         return result;
     }
 
@@ -440,17 +437,13 @@ public class MathKit {
      * @return 积
      */
     public static BigDecimal mul(BigDecimal... values) {
-        if (ArrayKit.isEmpty(values)) {
+        if (ArrayKit.isEmpty(values) || ArrayKit.hasNull(values)) {
             return BigDecimal.ZERO;
         }
 
-        BigDecimal value = values[0];
-        BigDecimal result = null == value ? BigDecimal.ZERO : value;
+        BigDecimal result = values[0];
         for (int i = 1; i < values.length; i++) {
-            value = values[i];
-            if (null != value) {
-                result = result.multiply(value);
-            }
+            result = result.multiply(values[i]);
         }
         return result;
     }
@@ -1147,27 +1140,33 @@ public class MathKit {
      * @return 随机int数组
      */
     public static int[] generateRandomNumber(int begin, int end, int size) {
+        return generateRandomNumber(begin, end, size, ArrayKit.range(begin, end));
+    }
+
+    /**
+     * 生成不重复随机数 根据给定的最小数字和最大数字，以及随机数的个数，产生指定的不重复的数组
+     *
+     * @param begin 最小数字（包含该数）
+     * @param end   最大数字（不包含该数）
+     * @param size  指定产生随机数的个数
+     * @param seed  种子，用于取随机数的int池
+     * @return 随机int数组
+     */
+    public static int[] generateRandomNumber(int begin, int end, int size, int[] seed) {
         if (begin > end) {
             int temp = begin;
             begin = end;
             end = temp;
         }
-        // 加入逻辑判断,确保begin<end并且size不能大于该表示范围
-        if ((end - begin) < size) {
-            throw new InstrumentException("Size is larger than range between begin and end!");
-        }
-        // 种子你可以随意生成,但不能重复
-        int[] seed = new int[end - begin];
+        // 加入逻辑判断，确保begin<end并且size不能大于该表示范围
+        Assert.isTrue((end - begin) > size, "Size is larger than range between begin and end!");
+        Assert.isTrue(seed.length > size, "Size is larger than seed size!");
 
-        for (int i = begin; i < end; i++) {
-            seed[i - begin] = i;
-        }
-        int[] ranArr = new int[size];
-        Random ran = new Random();
-        // 数量你可以自己定义
+        final int[] ranArr = new int[size];
+        // 数量你可以自己定义。
         for (int i = 0; i < size; i++) {
             // 得到一个位置
-            int j = ran.nextInt(seed.length - i);
+            int j = RandomKit.randomInt(seed.length - i);
             // 得到那个位置的数值
             ranArr[i] = seed[j];
             // 将最后一个未用的数字放到这里
@@ -1577,10 +1576,11 @@ public class MathKit {
      * @return 是否相等
      */
     public static boolean equals(BigDecimal bigNum1, BigDecimal bigNum2) {
-        Assert.notNull(bigNum1);
-        Assert.notNull(bigNum2);
         if (bigNum1 == bigNum2) {
             return true;
+        }
+        if (bigNum1 == null || bigNum2 == null) {
+            return false;
         }
         return 0 == bigNum1.compareTo(bigNum2);
     }
@@ -1595,7 +1595,20 @@ public class MathKit {
      * @return 是否相等
      */
     public static boolean equals(double num1, double num2) {
-        return equals(toBigDecimal(num1), toBigDecimal(num2));
+        return Double.doubleToLongBits(num1) == Double.doubleToLongBits(num2);
+    }
+
+    /**
+     * 比较大小，值相等 返回true
+     * 此方法通过调用{@link Double#doubleToLongBits(double)}方法来判断是否相等
+     * 此方法判断值相等时忽略精度的，即0.00 == 0
+     *
+     * @param num1 数字1
+     * @param num2 数字2
+     * @return 是否相等
+     */
+    public static boolean equals(float num1, float num2) {
+        return Float.floatToIntBits(num1) == Float.floatToIntBits(num2);
     }
 
     /**
@@ -2722,6 +2735,31 @@ public class MathKit {
     }
 
     /**
+     * 可读的文件大小
+     *
+     * @param size Long类型大小
+     * @return 大小
+     */
+    public static String format(long size) {
+        if (size <= 0) {
+            return Symbol.ZERO;
+        }
+        int digitGroups = Math.min(Normal.CAPACITY_NAMES.length - 1, (int) (Math.log10(size) / Math.log10(1024)));
+        return new DecimalFormat("#,##0.##")
+                .format(size / Math.pow(1024, digitGroups)) + " " + Normal.CAPACITY_NAMES[digitGroups];
+    }
+
+    /**
+     * 解析数据大小字符串，转换为bytes大小
+     *
+     * @param text 数据大小字符串，类似于：12KB, 5MB等
+     * @return bytes大小
+     */
+    public static long parse(String text) {
+        return MathKit.parse(text, null).toBytes();
+    }
+
+    /**
      * 获取指定数据大小文本对应的{@link MathKit}对象，如果无单位指定，默认获取{@link Normal#CAPACITY_NAMES}
      * <p>
      * 例如：
@@ -2736,31 +2774,6 @@ public class MathKit {
      */
     public static MathKit parse(CharSequence text) {
         return parse(text, null);
-    }
-
-    /**
-     * 解析数据大小字符串，转换为bytes大小
-     *
-     * @param text 数据大小字符串，类似于：12KB, 5MB等
-     * @return bytes大小
-     */
-    public static long parse(String text) {
-        return MathKit.parse(text, null).toBytes();
-    }
-
-    /**
-     * 可读的文件大小
-     *
-     * @param size Long类型大小
-     * @return 大小
-     */
-    public static String format(long size) {
-        if (size <= 0) {
-            return Symbol.ZERO;
-        }
-        int digitGroups = Math.min(Normal.CAPACITY_NAMES.length - 1, (int) (Math.log10(size) / Math.log10(1024)));
-        return new DecimalFormat("#,##0.##")
-                .format(size / Math.pow(1024, digitGroups)) + " " + Normal.CAPACITY_NAMES[digitGroups];
     }
 
     /**

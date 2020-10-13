@@ -26,6 +26,8 @@ package org.aoju.bus.gitlab;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.aoju.bus.core.lang.Charset;
+import org.aoju.bus.core.lang.Normal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +51,7 @@ import java.util.regex.Pattern;
  * proper functionality.  It may not work on earlier or later versions.</p>
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public final class AccessToken {
@@ -153,7 +155,7 @@ public final class AccessToken {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Charset", "utf-8");
+            connection.setRequestProperty("Charset", Charset.DEFAULT_UTF_8);
             connection.setRequestProperty("Cookie", cookies);
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(10000);
@@ -164,7 +166,7 @@ public final class AccessToken {
             StringBuilder formData = new StringBuilder();
             addFormData(formData, "authenticity_token", csrfToken);
             addFormData(formData, "personal_access_token[name]", tokenName);
-            addFormData(formData, "personal_access_token[expires_at]", "");
+            addFormData(formData, "personal_access_token[expires_at]", Normal.EMPTY);
 
             if (scopes != null && scopes.size() > 0) {
                 for (Scope scope : scopes) {
@@ -317,7 +319,7 @@ public final class AccessToken {
             }
 
             content = content.substring(0, indexOfLinkEnd);
-            String scopesText = "";
+            String scopesText = Normal.EMPTY;
             if (scopes != null && scopes.size() > 0) {
                 final StringJoiner joiner = new StringJoiner(", ");
                 scopes.forEach(s -> joiner.add(s.toString()));
@@ -338,7 +340,7 @@ public final class AccessToken {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Charset", "utf-8");
+            connection.setRequestProperty("Charset", Charset.DEFAULT_UTF_8);
             connection.setRequestProperty("Cookie", cookies);
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(10000);
@@ -599,7 +601,7 @@ public final class AccessToken {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", USER_AGENT);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty("Charset", "utf-8");
+            connection.setRequestProperty("Charset", Charset.DEFAULT_UTF_8);
 
             connection.setRequestProperty("Cookie", cookies);
             connection.setReadTimeout(10000);
@@ -718,7 +720,7 @@ public final class AccessToken {
         formData.append(name);
         formData.append("=");
         try {
-            formData.append(URLEncoder.encode(value, "UTF-8"));
+            formData.append(URLEncoder.encode(value, Charset.DEFAULT_UTF_8));
             return (formData);
         } catch (Exception e) {
             throw new GitLabApiException(e);

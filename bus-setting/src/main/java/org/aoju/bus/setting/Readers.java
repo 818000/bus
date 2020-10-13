@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * Setting文件加载器
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class Readers {
@@ -372,7 +372,7 @@ public class Readers {
         Format format = getFormatter();
         List<IniElement> iniElements = new ArrayList<>();
         // new line split
-        String newLineSplit = System.getProperty("line.separator", "\n");
+        String newLineSplit = System.getProperty("line.separator", Symbol.LF);
         StringBuilder line = new StringBuilder(builderCapacity);
 
         int ch;

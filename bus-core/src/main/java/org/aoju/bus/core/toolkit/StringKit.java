@@ -28,6 +28,7 @@ import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.*;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.text.Builders;
+import org.aoju.bus.core.text.Similarity;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
  * 用于MD5,加解密和字符串编码转换
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class StringKit {
@@ -166,11 +167,12 @@ public class StringKit {
             return false;
         }
         int len = value.length();
-        boolean isAllMatch = true;
         for (int i = 0; i < len; i++) {
-            isAllMatch &= matcher.match(value.charAt(i));
+            if (false == matcher.match(value.charAt(i))) {
+                return false;
+            }
         }
-        return isAllMatch;
+        return true;
     }
 
     /**
@@ -2646,10 +2648,10 @@ public class StringKit {
         if (null == str) {
             return null;
         }
-        if (count <= 0) {
+        if (count <= 0 || str.length() == 0) {
             return Normal.EMPTY;
         }
-        if (count == 1 || str.length() == 0) {
+        if (count == 1) {
             return str.toString();
         }
 
@@ -3232,7 +3234,7 @@ public class StringKit {
      * @return 移除后的字符串
      */
     public static String removeAll(CharSequence str, CharSequence strToRemove) {
-        if (isEmpty(str)) {
+        if (isEmpty(str) || isEmpty(strToRemove)) {
             return toString(str);
         }
         return str.toString().replace(strToRemove, Normal.EMPTY);
@@ -4181,6 +4183,9 @@ public class StringKit {
      * @return 是否开始
      */
     public static boolean startWith(CharSequence str, char c) {
+        if (true == isEmpty(str)) {
+            return false;
+        }
         return c == str.charAt(0);
     }
 
@@ -4290,6 +4295,9 @@ public class StringKit {
      * @return 是否结尾
      */
     public static boolean endWith(CharSequence str, char c) {
+        if (isEmpty(str)) {
+            return false;
+        }
         return c == str.charAt(str.length() - 1);
     }
 
@@ -6081,6 +6089,29 @@ public class StringKit {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 计算两个字符串的相似度
+     *
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 相似度
+     */
+    public static double similar(String str1, String str2) {
+        return Similarity.similar(str1, str2);
+    }
+
+    /**
+     * 计算两个字符串的相似度百分比
+     *
+     * @param str1  字符串1
+     * @param str2  字符串2
+     * @param scale 相似度
+     * @return 相似度百分比
+     */
+    public static String similar(String str1, String str2, int scale) {
+        return Similarity.similar(str1, str2, scale);
     }
 
     /**

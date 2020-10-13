@@ -24,6 +24,7 @@
  ********************************************************************************/
 package org.aoju.bus.image.galaxy.data;
 
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 
 import java.io.UnsupportedEncodingException;
@@ -36,7 +37,7 @@ import java.util.StringTokenizer;
 
 /**
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class SpecificCharacterSet {
@@ -131,7 +132,7 @@ public class SpecificCharacterSet {
         if (codes != null && codes.length == 1 && codes[0].startsWith("ISO 2022")) {
             switch (codes[0]) {
                 case "ISO 2022 IR 6":
-                    codes[0] = "";
+                    codes[0] = Normal.EMPTY;
                     return true;
                 case "ISO 2022 IR 100":
                     codes[0] = "ISO_IR 100";

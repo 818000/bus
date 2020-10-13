@@ -42,7 +42,7 @@ import java.util.Map;
  * ESCAPE信息
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 public class EscapeCodeValues {
@@ -456,8 +456,8 @@ public class EscapeCodeValues {
         ESCAPE_XSI_MAP.put(Symbol.SINGLE_QUOTE, "\\'");
         ESCAPE_XSI_MAP.put(Symbol.SPACE, "\\ ");
         ESCAPE_XSI_MAP.put(Symbol.HT, "\\\t");
-        ESCAPE_XSI_MAP.put(Symbol.CRLF, "");
-        ESCAPE_XSI_MAP.put(Symbol.LF, "");
+        ESCAPE_XSI_MAP.put(Symbol.CRLF, Normal.EMPTY);
+        ESCAPE_XSI_MAP.put(Symbol.LF, Normal.EMPTY);
         ESCAPE_XSI_MAP.put(Symbol.STAR, "\\*");
         ESCAPE_XSI_MAP.put(Symbol.QUESTION_MARK, "\\?");
         ESCAPE_XSI_MAP.put(Symbol.BRACKET_LEFT, "\\[");

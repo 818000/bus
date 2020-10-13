@@ -35,7 +35,7 @@ import java.util.List;
  * USB设备
  *
  * @author Kimi Liu
- * @version 6.1.0
+ * @version 6.1.1
  * @since JDK 1.8+
  */
 @Immutable
@@ -49,8 +49,8 @@ public abstract class AbstractUsbDevice implements UsbDevice {
     private final String uniqueDeviceId;
     private final List<UsbDevice> connectedDevices;
 
-    public AbstractUsbDevice(String name, String vendor, String vendorId, String productId, String serialNumber,
-                             String uniqueDeviceId, List<UsbDevice> connectedDevices) {
+    protected AbstractUsbDevice(String name, String vendor, String vendorId, String productId, String serialNumber,
+                                String uniqueDeviceId, List<UsbDevice> connectedDevices) {
         this.name = name;
         this.vendor = vendor;
         this.vendorId = vendorId;
@@ -77,7 +77,7 @@ public abstract class AbstractUsbDevice implements UsbDevice {
             sb.append(" [s/n: ").append(usbDevice.getSerialNumber()).append(Symbol.C_BRACKET_RIGHT);
         }
         for (UsbDevice connected : usbDevice.getConnectedDevices()) {
-            sb.append('\n').append(indentUsb(connected, indent + 4));
+            sb.append(Symbol.C_LF).append(indentUsb(connected, indent + 4));
         }
         return sb.toString();
     }
