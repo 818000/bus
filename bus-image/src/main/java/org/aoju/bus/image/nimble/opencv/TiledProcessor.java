@@ -24,59 +24,62 @@
  ********************************************************************************/
 package org.aoju.bus.image.nimble.opencv;
 
-import org.aoju.bus.core.lang.Normal;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
 
 /**
  * @author Kimi Liu
  * @version 6.1.1
  * @since JDK 1.8+
  */
-public class TiledAlgorithm {
+public class TiledProcessor {
 
-  private final int mTileSize;
-  private final int mPadding;
-  private final int mBorderType;
-
-  TiledAlgorithm(int tileSize, int padding, int borderType) {
-    this.mTileSize = tileSize;
-    this.mPadding = padding;
-    this.mBorderType = borderType;
+  public Mat blur(Mat input, int numberOfTimes) {
+    Mat sourceImage;
+    Mat destImage = input.clone();
+    for (int i = 0; i < numberOfTimes; i++) {
+      sourceImage = destImage.clone();
+      // Imgproc.blur(sourceImage, destImage, new Size(3.0, 3.0));
+      process(sourceImage, destImage, 256);
+    }
+    return destImage;
   }
 
-  void process(Mat sourceImage, Mat resultImage) {
+  public void process(Mat sourceImage, Mat resultImage, int tileSize) {
+
     if (sourceImage.rows() != resultImage.rows() || sourceImage.cols() != resultImage.cols()) {
-      throw new IllegalStateException(Normal.EMPTY);
+      throw new IllegalStateException("");
     }
 
-    final int rows = (sourceImage.rows() / mTileSize) + (sourceImage.rows() % mTileSize != 0 ? 1 : 0);
-    final int cols = (sourceImage.cols() / mTileSize) + (sourceImage.cols() % mTileSize != 0 ? 1 : 0);
+    final int rowTiles =
+            (sourceImage.rows() / tileSize) + (sourceImage.rows() % tileSize != 0 ? 1 : 0);
+    final int colTiles =
+            (sourceImage.cols() / tileSize) + (sourceImage.cols() % tileSize != 0 ? 1 : 0);
 
-    Mat tileInput = new Mat();
-    Mat tileOutput = new Mat();
+    Mat tileInput = new Mat(tileSize, tileSize, sourceImage.type());
+    Mat tileOutput = new Mat(tileSize, tileSize, sourceImage.type());
 
-    for (int rowTile = 0; rowTile < rows; rowTile++) {
-      for (int colTile = 0; colTile < cols; colTile++) {
-        Rect srcTile = new Rect(
-                colTile * mTileSize - mPadding,
-                rowTile * mTileSize - mPadding,
-                mTileSize + 2 * mPadding,
-                mTileSize + 2 * mPadding);
-        Rect dstTile = new Rect(colTile * mTileSize, rowTile * mTileSize, mTileSize, mTileSize);
+    int boderType = Core.BORDER_DEFAULT;
+    int mPadding = 3;
 
-        copySourceTile(sourceImage, tileInput, srcTile);
+    for (int rowTile = 0; rowTile < rowTiles; rowTile++) {
+      for (int colTile = 0; colTile < colTiles; colTile++) {
+        Rect srcTile =
+                new Rect(
+                        colTile * tileSize - mPadding,
+                        rowTile * tileSize - mPadding,
+                        tileSize + 2 * mPadding,
+                        tileSize + 2 * mPadding);
+        Rect dstTile = new Rect(colTile * tileSize, rowTile * tileSize, tileSize, tileSize);
+        copyTileFromSource(sourceImage, tileInput, srcTile, boderType);
         processTileImpl(tileInput, tileOutput);
-        copyTileToResultImage(tileOutput, resultImage, dstTile);
+        copyTileToResultImage(
+                tileOutput, resultImage, new Rect(mPadding, mPadding, tileSize, tileSize), dstTile);
       }
     }
   }
 
-  private void copyTileToResultImage(Mat tileOutput, Mat resultImage, Rect dstTile) {
-    Rect srcTile = new Rect(mPadding, mPadding, mTileSize, mTileSize);
-
+  private void copyTileToResultImage(Mat tileOutput, Mat resultImage, Rect srcTile, Rect dstTile) {
     Point br = dstTile.br();
 
     if (br.x >= resultImage.cols()) {
@@ -99,11 +102,10 @@ public class TiledAlgorithm {
   }
 
   private void processTileImpl(Mat tileInput, Mat tileOutput) {
-    // TODO Auto-generated method stub
-
+    Imgproc.blur(tileInput, tileOutput, new Size(7.0, 7.0));
   }
 
-  private void copySourceTile(Mat sourceImage, Mat tileInput, Rect tile) {
+  private void copyTileFromSource(Mat sourceImage, Mat tileInput, Rect tile, int mBorderType) {
     Point tl = tile.tl();
     Point br = tile.br();
 
