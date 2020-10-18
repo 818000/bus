@@ -22,78 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.core.convert;
+package org.aoju.bus.extra.pinyin.provider;
 
-import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.exception.InstrumentException;
-import org.aoju.bus.core.toolkit.IoKit;
-import org.aoju.bus.core.toolkit.XmlKit;
-
-import java.io.InputStream;
-import java.io.Reader;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.util.TimeZone;
+import com.rnkrsoft.bopomofo4j.Bopomofo4j;
+import com.rnkrsoft.bopomofo4j.ToneType;
+import org.aoju.bus.core.lang.Normal;
 
 /**
- * 字符串转换器
+ * 封装了Bopomofo4j的引擎
  *
  * @author Kimi Liu
  * @version 6.1.1
  * @since JDK 1.8+
  */
-public class StringConverter extends AbstractConverter<String> {
+public class Bopomofo4jProvider extends AbstractPinyinProvider {
 
-    /**
-     * Clob字段值转字符串
-     *
-     * @param clob {@link Clob}
-     * @return 字符串
-     */
-    private static String clobToString(Clob clob) {
-        Reader reader = null;
-        try {
-            reader = clob.getCharacterStream();
-            return IoKit.read(reader);
-        } catch (SQLException e) {
-            throw new InstrumentException(e);
-        } finally {
-            IoKit.close(reader);
-        }
-    }
-
-    /**
-     * Blob字段值转字符串
-     *
-     * @param blob {@link Blob}
-     * @return 字符串
-     */
-    private static String blobToString(Blob blob) {
-        InputStream in = null;
-        try {
-            in = blob.getBinaryStream();
-            return IoKit.read(in, Charset.UTF_8);
-        } catch (SQLException e) {
-            throw new InstrumentException(e);
-        } finally {
-            IoKit.close(in);
-        }
+    public Bopomofo4jProvider() {
+        Bopomofo4j.local();
     }
 
     @Override
-    protected String convertInternal(Object value) {
-        if (value instanceof TimeZone) {
-            return ((TimeZone) value).getID();
-        } else if (value instanceof org.w3c.dom.Node) {
-            return XmlKit.toString((org.w3c.dom.Node) value);
-        } else if (value instanceof Clob) {
-            return clobToString((Clob) value);
-        } else if (value instanceof Blob) {
-            return blobToString((Blob) value);
-        }
+    public String getPinyin(char c) {
+        return Bopomofo4j.pinyin(String.valueOf(c), ToneType.WITHOUT_TONE, false, false, Normal.EMPTY);
+    }
 
-        return convertString(value);
+    @Override
+    public String getPinyin(String str, String separator) {
+        return Bopomofo4j.pinyin(str, ToneType.WITHOUT_TONE, false, false, separator);
     }
 
 }
