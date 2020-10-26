@@ -22,77 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.core.map;
+package org.aoju.bus.core.convert;
 
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
- * 自定义键的Map,默认HashMap实现
+ * {@link AtomicIntegerArray}转换器
  *
- * @param <K> 键类型
- * @param <V> 值类型
  * @author Kimi Liu
  * @version 6.1.1
  * @since JDK 1.8+
  */
-public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
+public class AtomicIntegerArrayConverter extends AbstractConverter<AtomicIntegerArray> {
 
-    /**
-     * 构造
-     * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
-     *
-     * @param m Map 被包装的Map
-     */
-    public CustomKeyMap(Map<K, V> m) {
-        super(m);
-    }
-
-    @Override
-    public V get(Object key) {
-        return super.get(customKey(key));
-    }
-
-    @Override
-    public V put(K key, V value) {
-        return super.put((K) customKey(key), value);
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        m.forEach(this::put);
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        return super.containsKey(customKey(key));
-    }
-
-    @Override
-    public V remove(Object key) {
-        return super.remove(customKey(key));
-    }
-
-    @Override
-    public boolean remove(Object key, Object value) {
-        return super.remove(customKey(key), value);
-    }
-
-    @Override
-    public boolean replace(K key, V oldValue, V newValue) {
-        return super.replace((K) customKey(key), oldValue, newValue);
-    }
-
-    @Override
-    public V replace(K key, V value) {
-        return super.replace((K) customKey(key), value);
-    }
-
-    /**
-     * 自定义键
-     *
-     * @param key KEY
-     * @return 自定义KEY
-     */
-    protected abstract Object customKey(Object key);
+	@Override
+	protected AtomicIntegerArray convertInternal(Object value) {
+		return new AtomicIntegerArray(Convert.convert(int[].class, value));
+	}
 
 }
