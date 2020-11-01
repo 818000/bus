@@ -24,62 +24,68 @@
  ********************************************************************************/
 package org.aoju.bus.cron;
 
-import org.aoju.bus.cron.factory.CronTask;
-import org.aoju.bus.cron.factory.Task;
+import java.util.TimeZone;
 
 /**
- * 作业执行器
- * 执行具体的作业,执行完毕销毁
+ * 定时任务配置类
  *
  * @author Kimi Liu
  * @version 6.1.1
  * @since JDK 1.8+
  */
-public class Executor implements Runnable {
+public class Configure {
 
-    private final Scheduler scheduler;
-    private final CronTask task;
+	/**
+	 * 时区
+	 */
+	protected TimeZone timezone = TimeZone.getDefault();
+	/**
+	 * 是否支持秒匹配
+	 */
+	protected boolean matchSecond;
 
-    /**
-     * 构造
-     *
-     * @param scheduler 调度器
-     * @param task      被执行的任务
-     */
-    public Executor(Scheduler scheduler, CronTask task) {
-        this.scheduler = scheduler;
-        this.task = task;
-    }
+	public Configure() {
 
-    /**
-     * 获得原始任务对象
-     *
-     * @return 任务对象
-     */
-    public Task getTask() {
-        return this.task.getRaw();
-    }
+	}
 
-    /**
-     * 获得原始任务对象
-     *
-     * @return 任务对象
-     */
-    public CronTask getCronTask() {
-        return this.task;
-    }
+	/**
+	 * 获得时区，默认为 {@link TimeZone#getDefault()}
+	 *
+	 * @return 时区
+	 */
+	public TimeZone getTimeZone() {
+		return this.timezone;
+	}
 
-    @Override
-    public void run() {
-        try {
-            scheduler.listenerManager.notifyTaskStart(this);
-            task.execute();
-            scheduler.listenerManager.notifyTaskSucceeded(this);
-        } catch (Exception e) {
-            scheduler.listenerManager.notifyTaskFailed(this, e);
-        } finally {
-            scheduler.manager.notifyExecutorCompleted(this);
-        }
-    }
+	/**
+	 * 设置时区
+	 *
+	 * @param timezone 时区
+	 * @return this
+	 */
+	public Configure setTimeZone(TimeZone timezone) {
+		this.timezone = timezone;
+		return this;
+	}
+
+	/**
+	 * 是否支持秒匹配
+	 *
+	 * @return <code>true</code>使用，<code>false</code>不使用
+	 */
+	public boolean isMatchSecond() {
+		return this.matchSecond;
+	}
+
+	/**
+	 * 设置是否支持秒匹配，默认不使用
+	 *
+	 * @param isMatchSecond <code>true</code>支持，<code>false</code>不支持
+	 * @return this
+	 */
+	public Configure setMatchSecond(boolean isMatchSecond) {
+		this.matchSecond = isMatchSecond;
+		return this;
+	}
 
 }
