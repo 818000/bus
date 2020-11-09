@@ -22,64 +22,77 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.cron;
+package org.aoju.bus.cron.factory;
 
-import org.aoju.bus.cron.factory.CronTask;
-import org.aoju.bus.cron.factory.Task;
+import org.aoju.bus.cron.pattern.CronPattern;
 
 /**
- * 作业执行器
- * 执行具体的作业,执行完毕销毁
+ * 定时作业，除了定义了作业，也定义了作业的执行周期以及ID
  *
  * @author Kimi Liu
  * @version 6.1.1
  * @since JDK 1.8+
  */
-public class Executor implements Runnable {
+public class CronTask implements Task {
 
-    private final Scheduler scheduler;
-    private final CronTask task;
+	private final String id;
+	private final Task task;
+	private CronPattern pattern;
 
-    /**
-     * 构造
-     *
-     * @param scheduler 调度器
-     * @param task      被执行的任务
-     */
-    public Executor(Scheduler scheduler, CronTask task) {
-        this.scheduler = scheduler;
-        this.task = task;
-    }
+	/**
+	 * 构造
+	 *
+	 * @param id      ID
+	 * @param pattern 表达式
+	 * @param task    作业
+	 */
+	public CronTask(String id, CronPattern pattern, Task task) {
+		this.id = id;
+		this.pattern = pattern;
+		this.task = task;
+	}
 
-    /**
-     * 获得原始任务对象
-     *
-     * @return 任务对象
-     */
-    public Task getTask() {
-        return this.task.getRaw();
-    }
+	@Override
+	public void execute() {
+		task.execute();
+	}
 
-    /**
-     * 获得原始任务对象
-     *
-     * @return 任务对象
-     */
-    public CronTask getCronTask() {
-        return this.task;
-    }
+	/**
+	 * 获取作业ID
+	 *
+	 * @return 作业ID
+	 */
+	public String getId() {
+		return id;
+	}
 
-    @Override
-    public void run() {
-        try {
-            scheduler.listenerManager.notifyTaskStart(this);
-            task.execute();
-            scheduler.listenerManager.notifyTaskSucceeded(this);
-        } catch (Exception e) {
-            scheduler.listenerManager.notifyTaskFailed(this, e);
-        } finally {
-            scheduler.manager.notifyExecutorCompleted(this);
-        }
-    }
+	/**
+	 * 获取表达式
+	 *
+	 * @return 表达式
+	 */
+	public CronPattern getPattern() {
+		return pattern;
+	}
+
+	/**
+	 * 设置新的定时表达式
+	 *
+	 * @param pattern 表达式
+	 * @return this
+	 */
+	public CronTask setPattern(CronPattern pattern) {
+		this.pattern = pattern;
+		return this;
+	}
+
+	/**
+	 * 获取原始作业
+	 *
+	 * @return 作业
+	 */
+	public Task getRaw() {
+		return this.task;
+	}
 
 }
