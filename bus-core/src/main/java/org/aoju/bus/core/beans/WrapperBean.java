@@ -22,28 +22,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie;
-
-import org.aoju.bus.goalie.handler.CustomWebMvcRegistrations;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
+package org.aoju.bus.core.beans;
 
 /**
- * 路由自动配置
+ * 为了解决反射过程中,需要传递null参数,但是会丢失参数类型而设立的包装类
  *
+ * @param <T> Null值对应的类型
  * @author Kimi Liu
  * @version 6.1.1
- * @since JDK 1.8++
+ * @since JDK 1.8+
  */
-@ConditionalOnWebApplication
-@EnableConfigurationProperties(value = {GoalieProperties.class})
-public class GoalieConfiguration {
+public class WrapperBean<T> {
 
-    @Bean
-    public WebMvcRegistrations customWebMvcRegistrations() {
-        return new CustomWebMvcRegistrations();
+    private final Class<T> clazz;
+
+    /**
+     * @param clazz null的类型
+     */
+    public WrapperBean(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
+    /**
+     * 获取null值对应的类型
+     *
+     * @return 类型
+     */
+    public Class<T> getWrappedClass() {
+        return clazz;
     }
 
 }
