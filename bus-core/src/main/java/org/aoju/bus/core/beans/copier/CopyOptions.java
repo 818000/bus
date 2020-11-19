@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.beans.copier;
 
@@ -37,7 +38,7 @@ import java.util.Map;
  * 3、忽略的属性列表,设置一个属性列表,不拷贝这些属性值
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class CopyOptions {
@@ -89,7 +90,7 @@ public class CopyOptions {
     /**
      * 创建拷贝选项
      *
-     * @return 拷贝选项
+     * @return this
      */
     public static CopyOptions create() {
         return new CopyOptions();
@@ -101,7 +102,7 @@ public class CopyOptions {
      * @param editable         限制的类或接口,必须为目标对象的实现接口或父类,用于限制拷贝的属性
      * @param ignoreNullValue  是否忽略空值,当源对象的值为null时,true: 忽略而不注入此值,false: 注入null
      * @param ignoreProperties 忽略的属性列表,设置一个属性列表,不拷贝这些属性值
-     * @return 拷贝选项
+     * @return this
      */
     public static CopyOptions create(Class<?> editable, boolean ignoreNullValue, String... ignoreProperties) {
         return new CopyOptions(editable, ignoreNullValue, ignoreProperties);
@@ -111,7 +112,7 @@ public class CopyOptions {
      * 设置限制的类或接口,必须为目标对象的实现接口或父类,用于限制拷贝的属性
      *
      * @param editable 限制的类或接口
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setEditable(Class<?> editable) {
         this.editable = editable;
@@ -122,7 +123,7 @@ public class CopyOptions {
      * 设置是否忽略空值,当源对象的值为null时,true: 忽略而不注入此值,false: 注入null
      *
      * @param ignoreNullVall 是否忽略空值,当源对象的值为null时,true: 忽略而不注入此值,false: 注入null
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setIgnoreNullValue(boolean ignoreNullVall) {
         this.ignoreNullValue = ignoreNullVall;
@@ -133,7 +134,7 @@ public class CopyOptions {
      * 设置忽略的目标对象中属性列表,设置一个属性列表,不拷贝这些属性值
      *
      * @param ignoreProperties 忽略的目标对象中属性列表,设置一个属性列表,不拷贝这些属性值
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setIgnoreProperties(String... ignoreProperties) {
         this.ignoreProperties = ignoreProperties;
@@ -144,7 +145,7 @@ public class CopyOptions {
      * 设置是否忽略字段的注入错误
      *
      * @param ignoreError 是否忽略注入错误
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setIgnoreError(boolean ignoreError) {
         this.ignoreError = ignoreError;
@@ -155,7 +156,7 @@ public class CopyOptions {
      * 设置是否忽略字段的注入错误
      *
      * @param ignoreCase 是否忽略大小写
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setIgnoreCase(boolean ignoreCase) {
         this.ignoreCase = ignoreCase;
@@ -166,7 +167,7 @@ public class CopyOptions {
      * 设置拷贝属性的字段映射,用于不同的属性之前拷贝做对应表用
      *
      * @param fieldMapping 拷贝属性的字段映射,用于不同的属性之前拷贝做对应表用
-     * @return CopyOptions
+     * @return this
      */
     public CopyOptions setFieldMapping(Map<String, String> fieldMapping) {
         this.fieldMapping = fieldMapping;

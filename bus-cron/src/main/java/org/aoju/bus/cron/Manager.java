@@ -21,9 +21,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.cron;
 
+import org.aoju.bus.cron.factory.CronTask;
 import org.aoju.bus.cron.factory.Task;
 
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ import java.util.List;
  * 负责管理作业的启动、停止等
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class Manager {
@@ -55,14 +57,11 @@ public class Manager {
      * @param task {@link Task}
      * @return {@link Executor}
      */
-    public Executor spawnExecutor(Task task) {
+    public Executor spawnExecutor(CronTask task) {
         final Executor executor = new Executor(this.scheduler, task);
         synchronized (this.executors) {
             this.executors.add(executor);
         }
-        // 子线程是否为deamon线程取决于父线程,因此此处无需显示调用
-        // executor.setDaemon(this.scheduler.daemon);
-//		executor.start();
         this.scheduler.threadExecutor.execute(executor);
         return executor;
     }

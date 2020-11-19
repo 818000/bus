@@ -76,19 +76,6 @@ public class LineSegmentDetector extends Algorithm {
     }
 
     /**
-     * Draws two groups of lines in blue and red, counting the non overlapping (mismatching) pixels.
-     *
-     * @param size   The size of the image, where lines1 and lines2 were found.
-     * @param lines1 The first group of lines that needs to be drawn. It is visualized in blue color.
-     * @param lines2 The second group of lines. They visualized in red color.
-     *               in order for lines1 and lines2 to be drawn in the above mentioned colors.
-     * @return automatically generated
-     */
-    public int compareSegments(Size size, Mat lines1, Mat lines2) {
-        return compareSegments_1(nativeObj, size.width, size.height, lines1.nativeObj, lines2.nativeObj);
-    }
-
-    /**
      * Finds lines in the input image.
      * <p>
      * This is the output of the default parameters of the algorithm on the above shown image.
@@ -119,6 +106,19 @@ public class LineSegmentDetector extends Algorithm {
      */
     public void detect(Mat _image, Mat _lines, Mat width, Mat prec, Mat nfa) {
         detect_0(nativeObj, _image.nativeObj, _lines.nativeObj, width.nativeObj, prec.nativeObj, nfa.nativeObj);
+    }
+
+    /**
+     * Draws two groups of lines in blue and red, counting the non overlapping (mismatching) pixels.
+     *
+     * @param size   The size of the image, where lines1 and lines2 were found.
+     * @param lines1 The first group of lines that needs to be drawn. It is visualized in blue color.
+     * @param lines2 The second group of lines. They visualized in red color.
+     *               in order for lines1 and lines2 to be drawn in the above mentioned colors.
+     * @return automatically generated
+     */
+    public int compareSegments(Size size, Mat lines1, Mat lines2) {
+        return compareSegments_1(nativeObj, size.width, size.height, lines1.nativeObj, lines2.nativeObj);
     }
 
     /**

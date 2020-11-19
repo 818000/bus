@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -37,7 +38,7 @@ import java.util.*;
  * 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class ReflectKit {
@@ -410,7 +411,7 @@ public class ReflectKit {
     }
 
     /**
-     * 获得一个类中所有字段列表,直接反射获取,无缓存
+     * 获得一个类中所有构造列表,直接反射获取,无缓存
      *
      * @param beanClass 类
      * @return 字段列表
@@ -431,14 +432,7 @@ public class ReflectKit {
      */
     public static Field getField(Class<?> beanClass, String name) throws SecurityException {
         final Field[] fields = getFields(beanClass);
-        if (ArrayKit.isNotEmpty(fields)) {
-            for (Field field : fields) {
-                if ((name.equals(getFieldName(field)))) {
-                    return field;
-                }
-            }
-        }
-        return null;
+        return ArrayKit.firstNonNull((field) -> name.equals(getFieldName(field)), fields);
     }
 
     /**
@@ -461,12 +455,12 @@ public class ReflectKit {
     /**
      * 获得一个类中所有字段列表,直接反射获取,无缓存
      *
-     * @param beanClass           类
-     * @param withSuperClassFieds 是否包括父类的字段列表
+     * @param beanClass            类
+     * @param withSuperClassFields 是否包括父类的字段列表
      * @return 字段列表
      * @throws SecurityException 安全检查异常
      */
-    public static Field[] getFields(Class<?> beanClass, boolean withSuperClassFieds) throws SecurityException {
+    public static Field[] getFields(Class<?> beanClass, boolean withSuperClassFields) throws SecurityException {
         Assert.notNull(beanClass);
 
         Field[] allFields = null;
@@ -479,7 +473,7 @@ public class ReflectKit {
             } else {
                 allFields = ArrayKit.append(allFields, declaredFields);
             }
-            searchType = withSuperClassFieds ? searchType.getSuperclass() : null;
+            searchType = withSuperClassFields ? searchType.getSuperclass() : null;
         }
 
         return allFields;
@@ -1018,7 +1012,6 @@ public class ReflectKit {
     public static String getSetMethodName(String fieldName) {
         return Normal.SET + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
-
 
     /**
      * 设置方法为可访问(私有方法可以被外部调用)

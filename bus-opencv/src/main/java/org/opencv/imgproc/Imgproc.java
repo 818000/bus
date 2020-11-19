@@ -13,62 +13,6 @@ import java.util.List;
 
 public class Imgproc {
 
-    // C++: enum HersheyFonts
-    public static final int
-            FONT_HERSHEY_SIMPLEX = 0,
-            FONT_HERSHEY_PLAIN = 1,
-            FONT_HERSHEY_DUPLEX = 2,
-            FONT_HERSHEY_COMPLEX = 3,
-            FONT_HERSHEY_TRIPLEX = 4,
-            FONT_HERSHEY_COMPLEX_SMALL = 5,
-            FONT_HERSHEY_SCRIPT_SIMPLEX = 6,
-            FONT_HERSHEY_SCRIPT_COMPLEX = 7,
-            FONT_ITALIC = 16;
-    // C++: enum InterpolationMasks
-    public static final int
-            INTER_BITS = 5,
-            INTER_BITS2 = INTER_BITS * 2,
-            INTER_TAB_SIZE = 1 << INTER_BITS,
-            INTER_TAB_SIZE2 = INTER_TAB_SIZE * INTER_TAB_SIZE;
-    // C++: enum MorphTypes
-    public static final int
-            MORPH_ERODE = 0,
-            MORPH_DILATE = 1,
-            MORPH_OPEN = 2,
-            MORPH_CLOSE = 3,
-            MORPH_GRADIENT = 4,
-            MORPH_TOPHAT = 5,
-            MORPH_BLACKHAT = 6,
-            MORPH_HITMISS = 7;
-    // C++: enum FloodFillFlags
-    public static final int
-            FLOODFILL_FIXED_RANGE = 1 << 16,
-            FLOODFILL_MASK_ONLY = 1 << 17;
-    // C++: enum HoughModes
-    public static final int
-            HOUGH_STANDARD = 0,
-            HOUGH_PROBABILISTIC = 1,
-            HOUGH_MULTI_SCALE = 2,
-            HOUGH_GRADIENT = 3,
-            HOUGH_GRADIENT_ALT = 4;
-    // C++: enum ConnectedComponentsAlgorithmsTypes
-    public static final int
-            CCL_WU = 0,
-            CCL_DEFAULT = -1,
-            CCL_GRANA = 1;
-    // C++: enum RetrievalModes
-    public static final int
-            RETR_EXTERNAL = 0,
-            RETR_LIST = 1,
-            RETR_CCOMP = 2,
-            RETR_TREE = 3,
-            RETR_FLOODFILL = 4;
-    // C++: enum GrabCutClasses
-    public static final int
-            GC_BGD = 0,
-            GC_FGD = 1,
-            GC_PR_BGD = 2,
-            GC_PR_FGD = 3;
     // C++: enum ColormapTypes
     public static final int
             COLORMAP_AUTUMN = 0,
@@ -91,7 +35,94 @@ public class Imgproc {
             COLORMAP_CIVIDIS = 17,
             COLORMAP_TWILIGHT = 18,
             COLORMAP_TWILIGHT_SHIFTED = 19,
-            COLORMAP_TURBO = 20;
+            COLORMAP_TURBO = 20,
+            COLORMAP_DEEPGREEN = 21;
+
+
+    // C++: enum HersheyFonts
+    public static final int
+            FONT_HERSHEY_SIMPLEX = 0,
+            FONT_HERSHEY_PLAIN = 1,
+            FONT_HERSHEY_DUPLEX = 2,
+            FONT_HERSHEY_COMPLEX = 3,
+            FONT_HERSHEY_TRIPLEX = 4,
+            FONT_HERSHEY_COMPLEX_SMALL = 5,
+            FONT_HERSHEY_SCRIPT_SIMPLEX = 6,
+            FONT_HERSHEY_SCRIPT_COMPLEX = 7,
+            FONT_ITALIC = 16;
+
+
+    // C++: enum InterpolationMasks
+    public static final int
+            INTER_BITS = 5,
+            INTER_BITS2 = INTER_BITS * 2,
+            INTER_TAB_SIZE = 1 << INTER_BITS,
+            INTER_TAB_SIZE2 = INTER_TAB_SIZE * INTER_TAB_SIZE;
+
+
+    // C++: enum MorphTypes
+    public static final int
+            MORPH_ERODE = 0,
+            MORPH_DILATE = 1,
+            MORPH_OPEN = 2,
+            MORPH_CLOSE = 3,
+            MORPH_GRADIENT = 4,
+            MORPH_TOPHAT = 5,
+            MORPH_BLACKHAT = 6,
+            MORPH_HITMISS = 7;
+
+
+    // C++: enum FloodFillFlags
+    public static final int
+            FLOODFILL_FIXED_RANGE = 1 << 16,
+            FLOODFILL_MASK_ONLY = 1 << 17;
+
+
+    // C++: enum HoughModes
+    public static final int
+            HOUGH_STANDARD = 0,
+            HOUGH_PROBABILISTIC = 1,
+            HOUGH_MULTI_SCALE = 2,
+            HOUGH_GRADIENT = 3,
+            HOUGH_GRADIENT_ALT = 4;
+
+
+    // C++: enum ConnectedComponentsAlgorithmsTypes
+    public static final int
+            CCL_WU = 0,
+            CCL_DEFAULT = -1,
+            CCL_GRANA = 1;
+
+
+    // C++: enum RetrievalModes
+    public static final int
+            RETR_EXTERNAL = 0,
+            RETR_LIST = 1,
+            RETR_CCOMP = 2,
+            RETR_TREE = 3,
+            RETR_FLOODFILL = 4;
+
+
+    // C++: enum GrabCutClasses
+    public static final int
+            GC_BGD = 0,
+            GC_FGD = 1,
+            GC_PR_BGD = 2,
+            GC_PR_FGD = 3;
+    // C++: enum InterpolationFlags
+    public static final int
+            INTER_NEAREST = 0,
+            INTER_LINEAR = 1,
+            INTER_CUBIC = 2,
+            INTER_AREA = 3,
+            INTER_LANCZOS4 = 4,
+            INTER_LINEAR_EXACT = 5,
+            INTER_NEAREST_EXACT = 6,
+            INTER_MAX = 7,
+            WARP_FILL_OUTLIERS = 8,
+            WARP_INVERSE_MAP = 16;
+
+
     // C++: enum HistCompMethods
     public static final int
             HISTCMP_CORREL = 0,
@@ -101,37 +132,14 @@ public class Imgproc {
             HISTCMP_HELLINGER = HISTCMP_BHATTACHARYYA,
             HISTCMP_CHISQR_ALT = 4,
             HISTCMP_KL_DIV = 5;
+
+
     // C++: enum LineTypes
     public static final int
             FILLED = -1,
             LINE_4 = 4,
             LINE_8 = 8,
             LINE_AA = 16;
-    // C++: enum InterpolationFlags
-    public static final int
-            INTER_NEAREST = 0,
-            INTER_LINEAR = 1,
-            INTER_CUBIC = 2,
-            INTER_AREA = 3,
-            INTER_LANCZOS4 = 4,
-            INTER_LINEAR_EXACT = 5,
-            INTER_MAX = 7,
-            WARP_FILL_OUTLIERS = 8,
-            WARP_INVERSE_MAP = 16;
-    // C++: enum SpecialFilter
-    public static final int
-            FILTER_SCHARR = -1;
-    // C++: enum ContourApproximationModes
-    public static final int
-            CHAIN_APPROX_NONE = 1,
-            CHAIN_APPROX_SIMPLE = 2,
-            CHAIN_APPROX_TC89_L1 = 3,
-            CHAIN_APPROX_TC89_KCOS = 4;
-    // C++: enum RectanglesIntersectTypes
-    public static final int
-            INTERSECT_NONE = 0,
-            INTERSECT_PARTIAL = 1,
-            INTERSECT_FULL = 2;
     // C++: enum <unnamed>
     public static final int
             CV_GAUSSIAN_5x5 = 7,
@@ -174,15 +182,41 @@ public class Imgproc {
             CV_HOUGH_PROBABILISTIC = 1,
             CV_HOUGH_MULTI_SCALE = 2,
             CV_HOUGH_GRADIENT = 3;
+
+
+    // C++: enum SpecialFilter
+    public static final int
+            FILTER_SCHARR = -1;
+
+
+    // C++: enum ContourApproximationModes
+    public static final int
+            CHAIN_APPROX_NONE = 1,
+            CHAIN_APPROX_SIMPLE = 2,
+            CHAIN_APPROX_TC89_L1 = 3,
+            CHAIN_APPROX_TC89_KCOS = 4;
+
+
+    // C++: enum RectanglesIntersectTypes
+    public static final int
+            INTERSECT_NONE = 0,
+            INTERSECT_PARTIAL = 1,
+            INTERSECT_FULL = 2;
+
+
     // C++: enum ShapeMatchModes
     public static final int
             CONTOURS_MATCH_I1 = 1,
             CONTOURS_MATCH_I2 = 2,
             CONTOURS_MATCH_I3 = 3;
+
+
     // C++: enum WarpPolarMode
     public static final int
             WARP_POLAR_LINEAR = 0,
             WARP_POLAR_LOG = 256;
+
+
     // C++: enum ColorConversionCodes
     public static final int
             COLOR_BGR2BGRA = 0,
@@ -391,11 +425,15 @@ public class Imgproc {
             COLOR_BayerRG2RGBA = COLOR_BayerBG2BGRA,
             COLOR_BayerGR2RGBA = COLOR_BayerGB2BGRA,
             COLOR_COLORCVT_MAX = 143;
+
+
     // C++: enum LineSegmentDetectorModes
     public static final int
             LSD_REFINE_NONE = 0,
             LSD_REFINE_STD = 1,
             LSD_REFINE_ADV = 2;
+
+
     // C++: enum ThresholdTypes
     public static final int
             THRESH_BINARY = 0,
@@ -863,7 +901,7 @@ public class Imgproc {
     public static Point phaseCorrelate(Mat src1, Mat src2, Mat window, double[] response) {
         double[] response_out = new double[1];
         Point retVal = new Point(phaseCorrelate_0(src1.nativeObj, src2.nativeObj, window.nativeObj, response_out));
-        if (response != null) response[0] = (double) response_out[0];
+        if (response != null) response[0] = response_out[0];
         return retVal;
     }
 
@@ -1856,7 +1894,7 @@ public class Imgproc {
      * represents the background label. ltype specifies the output label image type, an important
      * consideration based on the total number of labels or alternatively the total number of pixels in
      * the source image. ccltype specifies the connected components labeling algorithm to use, currently
-     * Grana (BBDT) and Wu's (SAUF) algorithms are supported, see the #ConnectedComponentsAlgorithmsTypes
+     * Grana (BBDT) and Wu's (SAUF) CITE: Wu2009 algorithms are supported, see the #ConnectedComponentsAlgorithmsTypes
      * for details. Note that SAUF algorithm forces a row major ordering of labels while BBDT does not.
      * This function uses parallel version of both Grana and Wu's algorithms if at least one allowed
      * parallel framework is enabled and if the rows of the image are at least twice the number returned by #getNumberOfCPUs.
@@ -1919,16 +1957,16 @@ public class Imgproc {
      * represents the background label. ltype specifies the output label image type, an important
      * consideration based on the total number of labels or alternatively the total number of pixels in
      * the source image. ccltype specifies the connected components labeling algorithm to use, currently
-     * Grana's (BBDT) and Wu's (SAUF) algorithms are supported, see the #ConnectedComponentsAlgorithmsTypes
+     * Grana's (BBDT) and Wu's (SAUF) CITE: Wu2009 algorithms are supported, see the #ConnectedComponentsAlgorithmsTypes
      * for details. Note that SAUF algorithm forces a row major ordering of labels while BBDT does not.
      * This function uses parallel version of both Grana and Wu's algorithms (statistics included) if at least one allowed
      * parallel framework is enabled and if the rows of the image are at least twice the number returned by #getNumberOfCPUs.
      *
      * @param image        the 8-bit single-channel image to be labeled
      * @param labels       destination labeled image
-     * @param stats        statistics output for each label, including the background label, see below for
-     *                     available statistics. Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
-     *                     #ConnectedComponentsTypes. The data type is CV_32S.
+     * @param stats        statistics output for each label, including the background label.
+     *                     Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
+     *                     #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.
      * @param centroids    centroid output for each label, including the background label. Centroids are
      *                     accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.
      * @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively
@@ -1948,9 +1986,9 @@ public class Imgproc {
     /**
      * @param image        the 8-bit single-channel image to be labeled
      * @param labels       destination labeled image
-     * @param stats        statistics output for each label, including the background label, see below for
-     *                     available statistics. Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
-     *                     #ConnectedComponentsTypes. The data type is CV_32S.
+     * @param stats        statistics output for each label, including the background label.
+     *                     Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
+     *                     #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.
      * @param centroids    centroid output for each label, including the background label. Centroids are
      *                     accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.
      * @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively
@@ -1964,9 +2002,9 @@ public class Imgproc {
     /**
      * @param image        the 8-bit single-channel image to be labeled
      * @param labels       destination labeled image
-     * @param stats        statistics output for each label, including the background label, see below for
-     *                     available statistics. Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
-     *                     #ConnectedComponentsTypes. The data type is CV_32S.
+     * @param stats        statistics output for each label, including the background label.
+     *                     Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
+     *                     #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.
      * @param centroids    centroid output for each label, including the background label. Centroids are
      *                     accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.
      * @param connectivity 8 or 4 for 8-way or 4-way connectivity respectively
@@ -1979,9 +2017,9 @@ public class Imgproc {
     /**
      * @param image     the 8-bit single-channel image to be labeled
      * @param labels    destination labeled image
-     * @param stats     statistics output for each label, including the background label, see below for
-     *                  available statistics. Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
-     *                  #ConnectedComponentsTypes. The data type is CV_32S.
+     * @param stats     statistics output for each label, including the background label.
+     *                  Statistics are accessed via stats(label, COLUMN) where COLUMN is one of
+     *                  #ConnectedComponentsTypes, selecting the statistic. The data type is CV_32S.
      * @param centroids centroid output for each label, including the background label. Centroids are
      *                  accessed via centroids(label, 0) for x and centroids(label, 1) for y. The data type CV_64F.
      * @return automatically generated
@@ -4176,7 +4214,7 @@ public class Imgproc {
      * <p>
      * \(\texttt{K} =  \frac{1}{\texttt{ksize.width*ksize.height}} \begin{bmatrix} 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \hdotsfor{6} \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \end{bmatrix}\)
      * <p>
-     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(),
+     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(), ksize,
      * anchor, true, borderType)`.
      *
      * @param src        input image; it can have any number of channels, which are processed independently, but
@@ -4199,7 +4237,7 @@ public class Imgproc {
      * <p>
      * \(\texttt{K} =  \frac{1}{\texttt{ksize.width*ksize.height}} \begin{bmatrix} 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \hdotsfor{6} \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \end{bmatrix}\)
      * <p>
-     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(),
+     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(), ksize,
      * anchor, true, borderType)`.
      *
      * @param src    input image; it can have any number of channels, which are processed independently, but
@@ -4221,7 +4259,7 @@ public class Imgproc {
      * <p>
      * \(\texttt{K} =  \frac{1}{\texttt{ksize.width*ksize.height}} \begin{bmatrix} 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \hdotsfor{6} \\ 1 &amp; 1 &amp; 1 &amp;  \cdots &amp; 1 &amp; 1  \\ \end{bmatrix}\)
      * <p>
-     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(),
+     * The call {@code blur(src, dst, ksize, anchor, borderType)} is equivalent to `boxFilter(src, dst, src.type(), ksize,
      * anchor, true, borderType)`.
      *
      * @param src   input image; it can have any number of channels, which are processed independently, but
@@ -4249,7 +4287,7 @@ public class Imgproc {
      * <p>
      * where
      * <p>
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      * <p>
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4278,7 +4316,7 @@ public class Imgproc {
      * <p>
      * where
      * <p>
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      * <p>
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4306,7 +4344,7 @@ public class Imgproc {
      * <p>
      * where
      * <p>
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      * <p>
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4333,7 +4371,7 @@ public class Imgproc {
      * <p>
      * where
      * <p>
-     * \(\alpha = \fork{\frac{1}{\texttt{ksize.width*ksize.height}}}{when \texttt{normalize=true}}{1}{otherwise}\)
+     * \(\alpha = \begin{cases} \frac{1}{\texttt{ksize.width*ksize.height}} &amp; \texttt{when } \texttt{normalize=true}  \\1 &amp; \texttt{otherwise}\end{cases}\)
      * <p>
      * Unnormalized box filter is useful for computing various integral characteristics over each pixel
      * neighborhood, such as covariance matrices of image derivatives (used in dense optical flow
@@ -4869,8 +4907,8 @@ public class Imgproc {
     /**
      * Refines the corner locations.
      * <p>
-     * The function iterates to find the sub-pixel accurate location of corners or radial saddle points, as
-     * shown on the figure below.
+     * The function iterates to find the sub-pixel accurate location of corners or radial saddle
+     * points as described in CITE: forstner1987fast, and as shown on the figure below.
      * <p>
      * ![image](pics/cornersubpix.png)
      * <p>
@@ -5109,6 +5147,9 @@ public class Imgproc {
      * @param code  Color space conversion code (see the description below).
      * @param dstCn number of channels in the destination image; if the parameter is 0, the number of the
      *              channels is derived automatically from src and code.
+     *              <p>
+     *              The function can do the following transformations:
+     *
      *              <ul>
      *                <li>
      *                 Demosaicing using bilinear interpolation
@@ -5156,6 +5197,9 @@ public class Imgproc {
      * @param dst  output image of the same size and depth as src.
      * @param code Color space conversion code (see the description below).
      *             channels is derived automatically from src and code.
+     *             <p>
+     *             The function can do the following transformations:
+     *
      *             <ul>
      *               <li>
      *                Demosaicing using bilinear interpolation
@@ -6288,7 +6332,7 @@ public class Imgproc {
      * <p>
      * The function does actually compute correlation, not the convolution:
      * <p>
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      * <p>
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6323,7 +6367,7 @@ public class Imgproc {
      * <p>
      * The function does actually compute correlation, not the convolution:
      * <p>
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      * <p>
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6357,7 +6401,7 @@ public class Imgproc {
      * <p>
      * The function does actually compute correlation, not the convolution:
      * <p>
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      * <p>
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -6390,7 +6434,7 @@ public class Imgproc {
      * <p>
      * The function does actually compute correlation, not the convolution:
      * <p>
-     * \(\texttt{dst} (x,y) =  \sum _{ \stackrel{0\leq x' &lt; \texttt{kernel.cols},}{0\leq y' &lt; \texttt{kernel.rows}} }  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
+     * \(\texttt{dst} (x,y) =  \sum _{ \substack{0\leq x' &lt; \texttt{kernel.cols}\\{0\leq y' &lt; \texttt{kernel.rows}}}}  \texttt{kernel} (x',y')* \texttt{src} (x+x'- \texttt{anchor.x} ,y+y'- \texttt{anchor.y} )\)
      * <p>
      * That is, the kernel is not mirrored around the anchor point. If you need a real convolution, flip
      * the kernel using #flip and set the new anchor to `(kernel.cols - anchor.x - 1, kernel.rows -
@@ -7401,9 +7445,10 @@ public class Imgproc {
      * Compares a template against overlapped image regions.
      * <p>
      * The function slides through image , compares the overlapped patches of size \(w \times h\) against
-     * templ using the specified method and stores the comparison results in result . Here are the formulae
-     * for the available comparison methods ( \(I\) denotes image, \(T\) template, \(R\) result ). The summation
-     * is done over template and/or the image patch: \(x' = 0...w-1, y' = 0...h-1\)
+     * templ using the specified method and stores the comparison results in result . #TemplateMatchModes
+     * describes the formulae for the available comparison methods ( \(I\) denotes image, \(T\)
+     * template, \(R\) result, \(M\) the optional mask ). The summation is done over template and/or
+     * the image patch: \(x' = 0...w-1, y' = 0...h-1\)
      * <p>
      * After the function finishes the comparison, the best matches can be found as global minimums (when
      * #TM_SQDIFF was used) or maximums (when #TM_CCORR or #TM_CCOEFF was used) using the
@@ -7418,8 +7463,12 @@ public class Imgproc {
      * @param result Map of comparison results. It must be single-channel 32-bit floating-point. If image
      *               is \(W \times H\) and templ is \(w \times h\) , then result is \((W-w+1) \times (H-h+1)\) .
      * @param method Parameter specifying the comparison method, see #TemplateMatchModes
-     * @param mask   Mask of searched template. It must have the same datatype and size with templ. It is
-     *               not set by default. Currently, only the #TM_SQDIFF and #TM_CCORR_NORMED methods are supported.
+     * @param mask   Optional mask. It must have the same size as templ. It must either have the same number
+     *               of channels as template or only one channel, which is then used for all template and
+     *               image channels. If the data type is #CV_8U, the mask is interpreted as a binary mask,
+     *               meaning only elements where mask is nonzero are used and are kept unchanged independent
+     *               of the actual mask value (weight equals 1). For data tpye #CV_32F, the mask values are
+     *               used as weights. The exact formulas are documented in #TemplateMatchModes.
      */
     public static void matchTemplate(Mat image, Mat templ, Mat result, int method, Mat mask) {
         matchTemplate_0(image.nativeObj, templ.nativeObj, result.nativeObj, method, mask.nativeObj);
@@ -7429,9 +7478,10 @@ public class Imgproc {
      * Compares a template against overlapped image regions.
      * <p>
      * The function slides through image , compares the overlapped patches of size \(w \times h\) against
-     * templ using the specified method and stores the comparison results in result . Here are the formulae
-     * for the available comparison methods ( \(I\) denotes image, \(T\) template, \(R\) result ). The summation
-     * is done over template and/or the image patch: \(x' = 0...w-1, y' = 0...h-1\)
+     * templ using the specified method and stores the comparison results in result . #TemplateMatchModes
+     * describes the formulae for the available comparison methods ( \(I\) denotes image, \(T\)
+     * template, \(R\) result, \(M\) the optional mask ). The summation is done over template and/or
+     * the image patch: \(x' = 0...w-1, y' = 0...h-1\)
      * <p>
      * After the function finishes the comparison, the best matches can be found as global minimums (when
      * #TM_SQDIFF was used) or maximums (when #TM_CCORR or #TM_CCOEFF was used) using the
@@ -7446,7 +7496,11 @@ public class Imgproc {
      * @param result Map of comparison results. It must be single-channel 32-bit floating-point. If image
      *               is \(W \times H\) and templ is \(w \times h\) , then result is \((W-w+1) \times (H-h+1)\) .
      * @param method Parameter specifying the comparison method, see #TemplateMatchModes
-     *               not set by default. Currently, only the #TM_SQDIFF and #TM_CCORR_NORMED methods are supported.
+     *               of channels as template or only one channel, which is then used for all template and
+     *               image channels. If the data type is #CV_8U, the mask is interpreted as a binary mask,
+     *               meaning only elements where mask is nonzero are used and are kept unchanged independent
+     *               of the actual mask value (weight equals 1). For data tpye #CV_32F, the mask values are
+     *               used as weights. The exact formulas are documented in #TemplateMatchModes.
      */
     public static void matchTemplate(Mat image, Mat templ, Mat result, int method) {
         matchTemplate_1(image.nativeObj, templ.nativeObj, result.nativeObj, method);

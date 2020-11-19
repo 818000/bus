@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.extra.json.provider;
 
@@ -32,7 +33,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ import java.util.Map;
  * Jackson 解析器
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class JacksonProvider extends AbstractJsonProvider {
@@ -91,7 +91,7 @@ public class JacksonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public List toList(String json) {
+    public <T> List<T> toList(String json) {
         try {
             return objectMapper.readValue(json, LinkedList.class);
         } catch (IOException e) {
@@ -124,17 +124,17 @@ public class JacksonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Map toMap(String json) {
+    public <K, V> Map<K, V> toMap(String json) {
         try {
-            return objectMapper.readValue(json, LinkedHashMap.class);
+            return objectMapper.readValue(json, Map.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Map toMap(Object object) {
-        return objectMapper.convertValue(object, LinkedHashMap.class);
+    public <K, V> Map<K, V> toMap(Object object) {
+        return objectMapper.convertValue(object, Map.class);
     }
 
     @Override

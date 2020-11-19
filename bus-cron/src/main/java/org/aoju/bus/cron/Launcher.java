@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.cron;
 
@@ -30,14 +31,20 @@ package org.aoju.bus.cron;
  * 检查完毕后启动器结束
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class Launcher implements Runnable {
 
-    private Scheduler scheduler;
-    private long millis;
+    private final Scheduler scheduler;
+    private final long millis;
 
+    /**
+     * 构造
+     *
+     * @param scheduler {@link Scheduler}
+     * @param millis    毫秒数
+     */
     public Launcher(Scheduler scheduler, long millis) {
         this.scheduler = scheduler;
         this.millis = millis;
@@ -46,7 +53,7 @@ public class Launcher implements Runnable {
     @Override
     public void run() {
         //匹配秒部分由用户定义决定,始终不匹配年
-        scheduler.repertoire.executeTaskIfMatchInternal(millis);
+        scheduler.repertoire.executeTaskIfMatch(this.scheduler, this.millis);
 
         //结束通知
         scheduler.supervisor.notifyLauncherCompleted(this);

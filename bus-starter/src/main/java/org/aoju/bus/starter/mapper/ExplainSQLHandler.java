@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.starter.mapper;
 
@@ -28,6 +29,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.CallableStatementHandler;
@@ -44,7 +46,7 @@ import org.apache.ibatis.session.RowBounds;
  * 防止全表更新与删除
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
@@ -65,7 +67,7 @@ public class ExplainSQLHandler extends AbstractSqlParserHandler implements Inter
                 boolean sqlChangedFlag = false;
                 MetaObject metaObject = SystemMetaObject.forObject(realTarget(SystemMetaObject.forObject(handler).getOriginalObject()));
 
-                String sql = (String) metaObject.getValue(DELEGATE_BOUNDSQL_SQL);
+                String sql = ((String) metaObject.getValue(DELEGATE_BOUNDSQL_SQL)).replaceAll("[\\s]+", Symbol.SPACE);
                 if (this.allowProcess(metaObject)) {
                     try {
                         StringBuilder sqlStringBuilder = new StringBuilder();

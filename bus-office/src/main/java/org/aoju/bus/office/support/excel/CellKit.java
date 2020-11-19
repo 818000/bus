@@ -21,15 +21,19 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.office.support.excel;
 
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.toolkit.DateKit;
+import org.aoju.bus.core.toolkit.ObjectKit;
+import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.office.support.excel.cell.CellEditor;
 import org.aoju.bus.office.support.excel.cell.CellLocation;
 import org.aoju.bus.office.support.excel.cell.FormulaCellValue;
+import org.aoju.bus.office.support.excel.cell.NullCell;
 import org.aoju.bus.office.support.excel.editors.TrimEditor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -44,13 +48,12 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Excel表格中单元格工具类
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class CellKit {
@@ -87,10 +90,7 @@ public class CellKit {
      * @return 值, 类型可能为：Date、Double、Boolean、String
      */
     public static Object getCellValue(Cell cell, CellEditor cellEditor) {
-        if (null == cell) {
-            return null;
-        }
-        return getCellValue(cell, cell.getCellType(), cellEditor);
+        return getCellValue(cell, null, cellEditor);
     }
 
     /**
@@ -118,14 +118,18 @@ public class CellKit {
         if (null == cell) {
             return null;
         }
+        if (cell instanceof NullCell) {
+            return null == cellEditor ? null : cellEditor.edit(cell, null);
+        }
         if (null == cellType) {
             cellType = cell.getCellType();
         }
 
-        if (CellType.BLANK == cellType) {
-            // 空白单元格可能为合并单元格
-            cell = getMergedRegionCell(cell);
-            cellType = cell.getCellType();
+        // 尝试获取合并单元格，如果是合并单元格，则重新获取单元格类型
+        final Cell mergedCell = getMergedRegionCell(cell);
+        if (mergedCell != cell) {
+            cell = mergedCell;
+            cellType = cell.getCellTypeEnum();
         }
 
         Object value;
@@ -245,6 +249,47 @@ public class CellKit {
     }
 
     /**
+     * 为特定单元格添加批注
+     *
+     * @param cell   单元格
+     * @param text   批注内容
+     * @param author 作者
+     * @param anchor 批注的位置、大小等信息，null表示使用默认
+     */
+    public static void setComment(Cell cell, String text, String author, ClientAnchor anchor) {
+        final Sheet sheet = cell.getSheet();
+        final Workbook wb = sheet.getWorkbook();
+        final Drawing<?> drawing = sheet.createDrawingPatriarch();
+        final CreationHelper factory = wb.getCreationHelper();
+        if (anchor == null) {
+            anchor = factory.createClientAnchor();
+            anchor.setCol1(cell.getColumnIndex() + 1);
+            anchor.setCol2(cell.getColumnIndex() + 3);
+            anchor.setRow1(cell.getRowIndex());
+            anchor.setRow2(cell.getRowIndex() + 2);
+        }
+        Comment comment = drawing.createCellComment(anchor);
+        comment.setString(factory.createRichTextString(text));
+        comment.setAuthor(StringKit.nullToEmpty(author));
+        cell.setCellComment(comment);
+    }
+
+    /**
+     * 获取单元格，如果单元格不存在，返回{@link NullCell}
+     *
+     * @param row       Excel表的行
+     * @param cellIndex 列号
+     * @return {@link Row}
+     */
+    public static Cell getCell(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if (null == cell) {
+            return new NullCell(row, cellIndex);
+        }
+        return cell;
+    }
+
+    /**
      * 获取已有行或创建新行
      *
      * @param row       Excel表的行
@@ -353,7 +398,7 @@ public class CellKit {
      * @return 合并单元格的值
      */
     public static Object getMergedRegionValue(Sheet sheet, int x, int y) {
-        return getCellValue(getMergedRegionCell(sheet, x, y));
+        return getCellValue(SheetUtil.getCell(sheet, x, y));
     }
 
     /**
@@ -364,7 +409,12 @@ public class CellKit {
      * @return 合并单元格
      */
     public static Cell getMergedRegionCell(Cell cell) {
-        return getMergedRegionCell(cell.getSheet(), cell.getColumnIndex(), cell.getRowIndex());
+        if (null == cell) {
+            return null;
+        }
+        return ObjectKit.defaultIfNull(
+                getMergedCell(cell.getSheet(), cell.getColumnIndex(), cell.getRowIndex()),
+                cell);
     }
 
     /**
@@ -377,26 +427,30 @@ public class CellKit {
      * @return 合并单元格，如果非合并单元格，返回坐标对应的单元格
      */
     public static Cell getMergedRegionCell(Sheet sheet, int x, int y) {
-        final List<CellRangeAddress> addrs = sheet.getMergedRegions();
+        return ObjectKit.defaultIfNull(
+                getMergedCell(sheet, x, y),
+                SheetUtil.getCell(sheet, y, x));
+    }
 
-        int firstColumn;
-        int lastColumn;
-        int firstRow;
-        int lastRow;
-        for (CellRangeAddress ca : addrs) {
-            firstColumn = ca.getFirstColumn();
-            lastColumn = ca.getLastColumn();
-            firstRow = ca.getFirstRow();
-            lastRow = ca.getLastRow();
-
-            if (y >= firstRow && y <= lastRow) {
-                if (x >= firstColumn && x <= lastColumn) {
-                    return SheetUtil.getCell(sheet, firstRow, firstColumn);
-                }
+    /**
+     * 获取合并单元格，非合并单元格返回<code>null</code>
+     * 传入的x,y坐标（列行数）可以是合并单元格范围内的任意一个单元格
+     *
+     * @param sheet {@link Sheet}
+     * @param x     列号，从0开始，可以是合并单元格范围中的任意一列
+     * @param y     行号，从0开始，可以是合并单元格范围中的任意一行
+     * @return 合并单元格，如果非合并单元格，返回<code>null</code>
+     */
+    private static Cell getMergedCell(Sheet sheet, int x, int y) {
+        final int sheetMergeCount = sheet.getNumMergedRegions();
+        CellRangeAddress ca;
+        for (int i = 0; i < sheetMergeCount; i++) {
+            ca = sheet.getMergedRegion(i);
+            if (ca.isInRange(y, x)) {
+                return SheetUtil.getCell(sheet, ca.getFirstRow(), ca.getFirstColumn());
             }
         }
-
-        return SheetUtil.getCell(sheet, y, x);
+        return null;
     }
 
     /**
@@ -451,10 +505,11 @@ public class CellKit {
         // m月d日 --------- 58
         // HH:mm---------- 20
         // h时mm分 -------- 32
-        if (formatIndex == 14 || formatIndex == 31 || formatIndex == 57 || formatIndex == 58 || formatIndex == 20 || formatIndex == 32) {
+        if (formatIndex == 14 || formatIndex == 31 ||
+                formatIndex == 57 || formatIndex == 58 ||
+                formatIndex == 20 || formatIndex == 32) {
             return true;
         }
-
         return DateUtil.isCellDateFormatted(cell);
     }
 

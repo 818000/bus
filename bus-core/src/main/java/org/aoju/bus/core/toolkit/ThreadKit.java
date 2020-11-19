@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -36,7 +37,7 @@ import java.util.concurrent.*;
  * 线程池工具
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class ThreadKit {
@@ -189,6 +190,21 @@ public class ThreadKit {
      */
     public static Future<?> execAsync(Runnable runnable) {
         return GlobalThread.submit(runnable);
+    }
+
+    /**
+     * 执行异步方法
+     *
+     * @param runnable 需要执行的方法体
+     * @param isDaemon 是否守护线程。守护线程会在主线程结束后自动结束
+     * @return 执行的方法体
+     */
+    public static Runnable execAsync(Runnable runnable, boolean isDaemon) {
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(isDaemon);
+        thread.start();
+
+        return runnable;
     }
 
     /**

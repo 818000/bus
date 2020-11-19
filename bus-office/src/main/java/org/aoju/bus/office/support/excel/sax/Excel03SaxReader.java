@@ -21,11 +21,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.office.support.excel.sax;
 
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.ObjectKit;
@@ -50,7 +50,7 @@ import java.util.List;
  * Excel2003格式的事件-用户模型方式读取器,统一将此归类为Sax读取
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class Excel03SaxReader implements HSSFListener, ExcelSaxReader<Excel03SaxReader> {
@@ -308,12 +308,8 @@ public class Excel03SaxReader implements HSSFListener, ExcelSaxReader<Excel03Sax
                 break;
             case NumberRecord.sid: // 数字类型
                 final NumberRecord numrec = (NumberRecord) record;
-                final String formatString = formatListener.getFormatString(numrec);
-                if (StringKit.contains(formatString, Symbol.DOT)) {
-                    //浮点数
-                    value = numrec.getValue();
-                } else if (StringKit.containsAny(formatString, Symbol.SLASH, Symbol.COLON, "年", "月", "日", "时", "分", "秒")) {
-                    //日期
+                if (ExcelSaxKit.isDateFormat(numrec, formatListener)) {
+                    // 可能为日期格式
                     value = ExcelSaxKit.getDateValue(numrec.getValue());
                 } else {
                     final double doubleValue = numrec.getValue();

@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.office.support.excel;
 
@@ -51,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class ExcelWriter extends ExcelBase<ExcelWriter> {
@@ -849,6 +850,20 @@ public class ExcelWriter extends ExcelBase<ExcelWriter> {
     public ExcelWriter setStyle(CellStyle style, String locationRef) {
         final CellLocation cellLocation = ExcelKit.toLocation(locationRef);
         return setStyle(style, cellLocation.getX(), cellLocation.getY());
+    }
+
+    /**
+     * 设置行样式
+     *
+     * @param y     Y坐标，从0计数，即行号
+     * @param style 样式
+     * @return this
+     * @see Row#setRowStyle(CellStyle)
+     * @since 5.4.5
+     */
+    public ExcelWriter setRowStyle(int y, CellStyle style) {
+        getOrCreateRow(y).setRowStyle(style);
+        return this;
     }
 
     /**

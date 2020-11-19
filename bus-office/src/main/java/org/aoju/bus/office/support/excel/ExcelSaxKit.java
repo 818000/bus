@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.office.support.excel;
 
@@ -31,6 +32,8 @@ import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.DateKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.office.support.excel.sax.*;
+import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -48,7 +51,7 @@ import java.io.InputStream;
  * Sax方式读取Excel相关工具类
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class ExcelSaxKit {
@@ -215,6 +218,19 @@ public class ExcelSaxKit {
     }
 
     /**
+     * 判断数字Record中是否为日期格式
+     *
+     * @param numrec         单元格记录
+     * @param formatListener {@link FormatTrackingHSSFListener}
+     * @return 是否为日期格式
+     */
+    public static boolean isDateFormat(NumberRecord numrec, FormatTrackingHSSFListener formatListener) {
+        final int formatIndex = formatListener.getFormatIndex(numrec);
+        final String formatString = formatListener.getFormatString(numrec);
+        return org.apache.poi.ss.usermodel.DateUtil.isADateFormat(formatIndex, formatString);
+    }
+
+    /**
      * 获取数字类型值
      *
      * @param value        值
@@ -228,8 +244,7 @@ public class ExcelSaxKit {
         double numValue = Double.parseDouble(value);
         // 普通数字
         if (null != numFmtString && numFmtString.indexOf(Symbol.C_DOT) < 0) {
-            final long longPart = (long) numValue;
-            // 对于无小数部分的数字类型,转为Long
+            return (long) numValue;
         }
         return numValue;
     }

@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -46,7 +47,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -1778,14 +1779,14 @@ public class MathKit {
      * @return A String.
      */
     public static String toStr(Number number) {
-        if (null == number) {
-            throw new NullPointerException("Number is null !");
+        Assert.notNull(number, "Number is null !");
+
+        // BigDecimal单独处理，使用非科学计数法
+        if (number instanceof BigDecimal) {
+            return toStr((BigDecimal) number);
         }
 
-        if (false == ObjectKit.isValidIfNumber(number)) {
-            throw new IllegalArgumentException("Number is non-finite!");
-        }
-
+        Assert.isTrue(isValidNumber(number), "Number is non-finite!");
         // 去掉小数点儿后多余的0
         String string = number.toString();
         if (string.indexOf(Symbol.C_DOT) > 0 && string.indexOf('e') < 0 && string.indexOf('E') < 0) {
@@ -1800,6 +1801,18 @@ public class MathKit {
     }
 
     /**
+     * {@link BigDecimal}数字转字符串
+     * 调用{@link BigDecimal#toPlainString()}，并去除尾小数点儿后多余的0
+     *
+     * @param bigDecimal A {@link BigDecimal}
+     * @return A String.
+     */
+    public static String toStr(BigDecimal bigDecimal) {
+        Assert.notNull(bigDecimal, "BigDecimal is null !");
+        return bigDecimal.stripTrailingZeros().toPlainString();
+    }
+
+    /**
      * 数字转{@link BigDecimal}
      *
      * @param number 数字
@@ -1809,6 +1822,17 @@ public class MathKit {
         if (null == number) {
             return BigDecimal.ZERO;
         }
+
+        if (number instanceof BigDecimal) {
+            return (BigDecimal) number;
+        } else if (number instanceof Long) {
+            return new BigDecimal((Long) number);
+        } else if (number instanceof Integer) {
+            return new BigDecimal((Integer) number);
+        } else if (number instanceof BigInteger) {
+            return new BigDecimal((BigInteger) number);
+        }
+
         return toBigDecimal(number.toString());
     }
 
@@ -1820,6 +1844,36 @@ public class MathKit {
      */
     public static BigDecimal toBigDecimal(String number) {
         return (null == number) ? BigDecimal.ZERO : new BigDecimal(number);
+    }
+
+    /**
+     * 数字转{@link BigInteger}
+     *
+     * @param number 数字
+     * @return {@link BigInteger}
+     */
+    public static BigInteger toBigInteger(Number number) {
+        if (null == number) {
+            return BigInteger.ZERO;
+        }
+
+        if (number instanceof BigInteger) {
+            return (BigInteger) number;
+        } else if (number instanceof Long) {
+            return BigInteger.valueOf((Long) number);
+        }
+
+        return toBigInteger(number.longValue());
+    }
+
+    /**
+     * 数字转{@link BigInteger}
+     *
+     * @param number 数字
+     * @return {@link BigInteger}
+     */
+    public static BigInteger toBigInteger(String number) {
+        return (null == number) ? BigInteger.ZERO : new BigInteger(number);
     }
 
     /**
@@ -2176,6 +2230,10 @@ public class MathKit {
      * @return 去掉标识的字符串
      */
     private static String removeNumberFlag(String number) {
+        // 去掉千位分隔符
+        if (StringKit.contains(number, Symbol.C_COMMA)) {
+            number = StringKit.removeAll(number, Symbol.C_COMMA);
+        }
         // 去掉类型标识的结尾
         final int lastPos = number.length() - 1;
         final char lastCharUpper = Character.toUpperCase(number.charAt(lastPos));
@@ -2814,6 +2872,23 @@ public class MathKit {
     private static String determineDataUnit(String suffix, String defaultUnit) {
         String defaultUnitToUse = (defaultUnit != null ? defaultUnit : Normal.CAPACITY_NAMES[0]);
         return (StringKit.isNotEmpty(suffix) ? Normal.getCapacity(suffix) : defaultUnitToUse);
+    }
+
+    /**
+     * 检查是否为有效的数字
+     * 检查Double和Float是否为无限大，或者Not a Number
+     * 非数字类型和Null将返回true
+     *
+     * @param number 被检查类型
+     * @return 检查结果，非数字类型和Null将返回true
+     */
+    public static boolean isValidNumber(Number number) {
+        if (number instanceof Double) {
+            return (false == ((Double) number).isInfinite()) && (false == ((Double) number).isNaN());
+        } else if (number instanceof Float) {
+            return (false == ((Float) number).isInfinite()) && (false == ((Float) number).isNaN());
+        }
+        return true;
     }
 
     /**

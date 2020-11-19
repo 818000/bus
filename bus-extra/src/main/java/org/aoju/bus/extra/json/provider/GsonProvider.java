@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.extra.json.provider;
 
@@ -34,7 +35,7 @@ import java.util.*;
  * Gson 解析器
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class GsonProvider extends AbstractJsonProvider {
@@ -46,10 +47,10 @@ public class GsonProvider extends AbstractJsonProvider {
      */
     public GsonProvider() {
         gson = new GsonBuilder()
-                .setLenient()
                 // 解决gson序列化时出现整型变为浮点型的问题
                 .registerTypeAdapter(new TypeToken<Map<Object, Object>>() {
-                        }.getType(), (JsonDeserializer<Map<Object, Object>>) (jsonElement, type, jsonDeserializationContext) -> {
+                        }.getType(),
+                        (JsonDeserializer<Map<Object, Object>>) (jsonElement, type, jsonDeserializationContext) -> {
                             Map<Object, Object> map = new LinkedHashMap<>();
                             JsonObject jsonObject = jsonElement.getAsJsonObject();
                             Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
@@ -104,7 +105,7 @@ public class GsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public List toList(String json) {
+    public <T> List<T> toList(String json) {
         TypeToken<List<Object>> typeToken = new TypeToken<List<Object>>() {
         };
         return gson.fromJson(json, typeToken.getType());
@@ -121,14 +122,14 @@ public class GsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Map toMap(String json) {
+    public <K, V> Map<K, V> toMap(String json) {
         TypeToken<Map<Object, Object>> typeToken = new TypeToken<Map<Object, Object>>() {
         };
         return gson.fromJson(json, typeToken.getType());
     }
 
     @Override
-    public Map toMap(Object object) {
+    public <K, V> Map<K, V> toMap(Object object) {
         TypeToken<Map<Object, Object>> typeToken = new TypeToken<Map<Object, Object>>() {
         };
         return gson.fromJson(gson.toJson(object), typeToken.getType());

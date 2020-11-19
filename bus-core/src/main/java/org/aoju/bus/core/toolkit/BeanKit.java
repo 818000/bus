@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -41,13 +42,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Bean工具类
  * 把一个拥有对属性进行set和get方法的类
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class BeanKit {
@@ -1045,6 +1047,16 @@ public class BeanKit {
             modifier &= modifierTypes[i].getValue();
         }
         return modifier;
+    }
+
+    /**
+     * 遍历Bean的属性
+     *
+     * @param clazz  Bean类
+     * @param action 每个元素的处理类
+     */
+    public static void forEach(Class<?> clazz, Consumer<? super BeanDesc.PropDesc> action) {
+        getBeanDesc(clazz).getProps().forEach(action);
     }
 
     /**

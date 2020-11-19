@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
@@ -65,6 +66,26 @@ public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
     @Override
     public boolean containsKey(Object key) {
         return super.containsKey(customKey(key));
+    }
+
+    @Override
+    public V remove(Object key) {
+        return super.remove(customKey(key));
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        return super.remove(customKey(key), value);
+    }
+
+    @Override
+    public boolean replace(K key, V oldValue, V newValue) {
+        return super.replace((K) customKey(key), oldValue, newValue);
+    }
+
+    @Override
+    public V replace(K key, V value) {
+        return super.replace((K) customKey(key), value);
     }
 
     /**

@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -55,7 +56,7 @@ import java.util.Random;
  * 彩色转黑白、文字水印、图片水印等
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class ImageKit {
@@ -1062,41 +1063,52 @@ public class ImageKit {
 
     /**
      * {@link java.awt.Image} 转 {@link BufferedImage}
-     * 首先尝试强转,否则新建一个{@link BufferedImage}后重新绘制
+     * 首先尝试强转，否则新建一个{@link BufferedImage}后重新绘制，使用 {@link BufferedImage#TYPE_INT_RGB} 模式
      *
-     * @param image {@link java.awt.Image}
+     * @param img {@link java.awt.Image}
      * @return {@link BufferedImage}
      */
-    public static BufferedImage toBufferedImage(java.awt.Image image) {
-        if (image instanceof BufferedImage) {
-            return (BufferedImage) image;
+    public static BufferedImage toBufferedImage(java.awt.Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
         }
 
-        return copyImage(image, BufferedImage.TYPE_INT_RGB);
+        return copyImage(img, BufferedImage.TYPE_INT_RGB);
     }
 
     /**
      * {@link java.awt.Image} 转 {@link BufferedImage}
-     * 如果源图片的RGB模式与目标模式一致,则直接转换,否则重新绘制
+     * 如果源图片的RGB模式与目标模式一致，则直接转换，否则重新绘制
+     * 默认的，png图片使用 {@link BufferedImage#TYPE_INT_ARGB}模式，其它使用 {@link BufferedImage#TYPE_INT_RGB} 模式
      *
      * @param image     {@link java.awt.Image}
-     * @param imageType 目标图片类型
+     * @param imageType 目标图片类型，例如jpg或png等
      * @return {@link BufferedImage}
      */
     public static BufferedImage toBufferedImage(java.awt.Image image, String imageType) {
+        final int type = imageType.equalsIgnoreCase(FileType.TYPE_PNG)
+                ? BufferedImage.TYPE_INT_ARGB
+                : BufferedImage.TYPE_INT_RGB;
+        return toBufferedImage(image, type);
+    }
+
+    /**
+     * {@link java.awt.Image} 转 {@link BufferedImage}
+     * 如果源图片的RGB模式与目标模式一致，则直接转换，否则重新绘制
+     *
+     * @param image     {@link java.awt.Image}
+     * @param imageType 目标图片类型，{@link BufferedImage}中的常量，例如黑白等
+     * @return {@link BufferedImage}
+     */
+    public static BufferedImage toBufferedImage(java.awt.Image image, int imageType) {
         BufferedImage bufferedImage;
-        if (false == imageType.equalsIgnoreCase(FileType.TYPE_PNG)) {
-            // 当目标为非PNG类图片时,源图片统一转换为RGB格式
-            if (image instanceof BufferedImage) {
-                bufferedImage = (BufferedImage) image;
-                if (BufferedImage.TYPE_INT_RGB != bufferedImage.getType()) {
-                    bufferedImage = copyImage(image, BufferedImage.TYPE_INT_RGB);
-                }
-            } else {
-                bufferedImage = copyImage(image, BufferedImage.TYPE_INT_RGB);
+        if (image instanceof BufferedImage) {
+            bufferedImage = (BufferedImage) image;
+            if (imageType != bufferedImage.getType()) {
+                bufferedImage = copyImage(image, imageType);
             }
         } else {
-            bufferedImage = toBufferedImage(image);
+            bufferedImage = copyImage(image, imageType);
         }
         return bufferedImage;
     }
@@ -1426,8 +1438,9 @@ public class ImageKit {
             imageType = FileType.TYPE_JPG;
         }
 
-        final ImageWriter writer = getWriter(image, imageType);
-        return write(toBufferedImage(image, imageType), writer, destImageStream, quality);
+        final BufferedImage bufferedImage = toBufferedImage(image, imageType);
+        final ImageWriter writer = getWriter(bufferedImage, imageType);
+        return write(bufferedImage, writer, destImageStream, quality);
     }
 
     /**

@@ -21,9 +21,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.cron;
 
+import org.aoju.bus.core.key.UUID;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.thread.ExecutorBuilder;
@@ -36,13 +38,15 @@ import org.aoju.bus.cron.factory.Task;
 import org.aoju.bus.cron.listener.TaskListener;
 import org.aoju.bus.cron.listener.TaskListenerManager;
 import org.aoju.bus.cron.pattern.CronPattern;
+import org.aoju.bus.logger.Logger;
 import org.aoju.bus.setting.magic.PopSetting;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.TimeZone;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 任务调度器
@@ -50,65 +54,64 @@ import java.util.concurrent.ExecutorService;
  * 调度器启动流程：
  *
  * <pre>
- * 启动Timer -  启动TaskLauncher -  启动TaskExecutor
+ * 启动Timer -  启动Launcher -  启动Executor
  * </pre>
  * <p>
  * 调度器关闭流程:
  *
  * <pre>
- * 关闭Timer -  关闭所有运行中的TaskLauncher -  关闭所有运行中的TaskExecutor
+ * 关闭Timer -  关闭所有运行中的Launcher -  关闭所有运行中的Executor
  * </pre>
  * <p>
  * 其中：
  *
  * <pre>
- * <strong>TaskLauncher</strong>：定时器每分钟调用一次(如果{@link Scheduler#isMatchSecond()}为<code>true</code>每秒调用一次),
- * 负责检查<strong>TaskTable</strong>是否有匹配到此时间运行的Task
+ * <strong>Launcher</strong>：定时器每分钟调用一次(如果{@link Scheduler#isMatchSecond()}为<code>true</code>每秒调用一次),
+ * 负责检查<strong>Repertoire</strong>是否有匹配到此时间运行的Task
  * </pre>
  *
  * <pre>
- * <strong>TaskExecutor</strong>：TaskLauncher匹配成功后,触发TaskExecutor执行具体的作业,执行完毕销毁
+ * <strong>Executor</strong>：Launcher匹配成功后,触发Executor执行具体的作业,执行完毕销毁
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class Scheduler {
 
     /**
-     * 是否支持秒匹配
+     * 同步锁
      */
-    protected boolean matchSecond = false;
+    private final Lock lock = new ReentrantLock();
     /**
      * 是否为守护线程
      */
     protected boolean daemon;
     /**
-     * 定时任务表
-     */
-    protected Repertoire repertoire = new Repertoire(this);
-    /**
-     * 启动器管理器
+     * 启动管理器
      */
     protected Supervisor supervisor;
     /**
-     * 执行器管理器
+     * 执行管理器
      */
     protected Manager manager;
-    /**
-     * 监听管理器列表
-     */
-    protected TaskListenerManager listenerManager = new TaskListenerManager();
     /**
      * 线程池
      */
     protected ExecutorService threadExecutor;
-    private Object lock = new Object();
     /**
-     * 时区
+     * 定时任务配置
      */
-    private TimeZone timezone;
+    protected Configure config = new Configure();
+    /**
+     * 定时任务表
+     */
+    protected Repertoire repertoire = new Repertoire();
+    /**
+     * 监听管理器列表
+     */
+    protected TaskListenerManager listenerManager = new TaskListenerManager();
     /**
      * 是否已经启动
      */
@@ -119,23 +122,23 @@ public class Scheduler {
     private CronTimer timer;
 
     /**
-     * 获得时区,默认为 {@link TimeZone#getDefault()}
+     * 设置时区
      *
-     * @return 时区
+     * @param timeZone 时区
+     * @return this
      */
-    public TimeZone getTimeZone() {
-        return timezone != null ? timezone : TimeZone.getDefault();
+    public Scheduler setTimeZone(TimeZone timeZone) {
+        this.config.setTimeZone(timeZone);
+        return this;
     }
 
     /**
-     * 设置时区
+     * 是否为守护线程
      *
-     * @param timezone 时区
-     * @return this
+     * @return 是否为守护线程
      */
-    public Scheduler setTimeZone(TimeZone timezone) {
-        this.timezone = timezone;
-        return this;
+    public boolean isDaemon() {
+        return this.daemon;
     }
 
     /**
@@ -147,22 +150,16 @@ public class Scheduler {
      * @throws InstrumentException 定时任务已经启动抛出此异常
      */
     public Scheduler setDaemon(boolean on) throws InstrumentException {
-        synchronized (lock) {
-            if (started) {
+        lock.lock();
+        try {
+            if (this.started) {
                 throw new InstrumentException("Scheduler already started!");
             }
             this.daemon = on;
+        } finally {
+            lock.unlock();
         }
         return this;
-    }
-
-    /**
-     * 是否为守护线程
-     *
-     * @return 是否为守护线程
-     */
-    public boolean isDeamon() {
-        return this.daemon;
     }
 
     /**
@@ -171,7 +168,7 @@ public class Scheduler {
      * @return <code>true</code>使用,<code>false</code>不使用
      */
     public boolean isMatchSecond() {
-        return this.matchSecond;
+        return this.config.isMatchSecond();
     }
 
     /**
@@ -181,7 +178,7 @@ public class Scheduler {
      * @return this
      */
     public Scheduler setMatchSecond(boolean isMatchSecond) {
-        this.matchSecond = isMatchSecond;
+        this.config.setMatchSecond(isMatchSecond);
         return this;
     }
 
@@ -225,6 +222,7 @@ public class Scheduler {
                         jobClass = group + Symbol.DOT + jobClass;
                     }
                     final String pattern = entry.getValue();
+                    Logger.debug("Load job: {} {}", pattern, jobClass);
                     try {
                         schedule(pattern, new InvokeTask(jobClass));
                     } catch (Exception e) {
@@ -321,6 +319,15 @@ public class Scheduler {
     }
 
     /**
+     * 获取定时任务表，注意此方法返回非复制对象，对返回对象的修改将影响已有定时任务
+     *
+     * @return 定时任务表 {@link Repertoire}
+     */
+    public Repertoire getTaskTable() {
+        return this.repertoire;
+    }
+
+    /**
      * 获得指定id的{@link CronPattern}
      *
      * @param id ID
@@ -364,7 +371,7 @@ public class Scheduler {
      * @return this
      */
     public Scheduler clear() {
-        this.repertoire = new Repertoire(this);
+        this.repertoire = new Repertoire();
         return this;
     }
 
@@ -392,7 +399,8 @@ public class Scheduler {
      * @return this
      */
     public Scheduler start() {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (this.started) {
                 throw new InstrumentException("Schedule is started!");
             }
@@ -408,6 +416,8 @@ public class Scheduler {
             timer.setDaemon(this.daemon);
             timer.start();
             this.started = true;
+        } finally {
+            lock.unlock();
         }
         return this;
     }
@@ -431,7 +441,8 @@ public class Scheduler {
      * @return this
      */
     public Scheduler stop(boolean clearTasks) {
-        synchronized (lock) {
+        lock.lock();
+        try {
             if (false == started) {
                 throw new IllegalStateException("Scheduler not started !");
             }
@@ -451,6 +462,8 @@ public class Scheduler {
 
             // 修改标志
             started = false;
+        } finally {
+            lock.unlock();
         }
         return this;
     }

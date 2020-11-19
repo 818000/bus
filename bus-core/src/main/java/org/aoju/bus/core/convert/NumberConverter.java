@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.convert;
 
@@ -36,6 +37,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Function;
 
 /**
  * 数字转换器
@@ -52,7 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class NumberConverter extends AbstractConverter<Number> {
@@ -72,30 +76,35 @@ public class NumberConverter extends AbstractConverter<Number> {
         this.targetType = (null == clazz) ? Number.class : clazz;
     }
 
-    @Override
-    protected Number convertInternal(Object value) {
-        return convertInternal(value, this.targetType);
-    }
+    /**
+     * 转换对象为数字
+     *
+     * @param value      对象值
+     * @param targetType 目标的数字类型
+     * @param toStrFunc  转换为字符串的函数
+     * @return 转换后的数字
+     */
+    protected static Number convert(Object value, Class<?> targetType, Function<Object, String> toStrFunc) {
+        if (value instanceof Enum) {
+            return convert(((Enum<?>) value).ordinal(), targetType, toStrFunc);
+        }
 
-    private Number convertInternal(Object value, Class<?> targetType) {
         if (Byte.class == targetType) {
             if (value instanceof Number) {
                 return ((Number) value).byteValue();
             } else if (value instanceof Boolean) {
                 return BooleanKit.toByteObj((Boolean) value);
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply(value);
             return StringKit.isBlank(valueStr) ? null : Byte.valueOf(valueStr);
-
         } else if (Short.class == targetType) {
             if (value instanceof Number) {
                 return ((Number) value).shortValue();
             } else if (value instanceof Boolean) {
                 return BooleanKit.toShortObj((Boolean) value);
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : Short.valueOf(valueStr);
-
         } else if (Integer.class == targetType) {
             if (value instanceof Number) {
                 return ((Number) value).intValue();
@@ -108,17 +117,15 @@ public class NumberConverter extends AbstractConverter<Number> {
             } else if (value instanceof TemporalAccessor) {
                 return (int) DateKit.toInstant((TemporalAccessor) value).toEpochMilli();
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : MathKit.parseInt(valueStr);
-
         } else if (AtomicInteger.class == targetType) {
-            final Number number = convertInternal(value, Integer.class);
+            final Number number = convert(value, Integer.class, toStrFunc);
             if (null != number) {
                 final AtomicInteger intValue = new AtomicInteger();
                 intValue.set(number.intValue());
                 return intValue;
             }
-            return null;
         } else if (Long.class == targetType) {
             if (value instanceof Number) {
                 return ((Number) value).longValue();
@@ -131,24 +138,30 @@ public class NumberConverter extends AbstractConverter<Number> {
             } else if (value instanceof TemporalAccessor) {
                 return DateKit.toInstant((TemporalAccessor) value).toEpochMilli();
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : MathKit.parseLong(valueStr);
-
         } else if (AtomicLong.class == targetType) {
-            final Number number = convertInternal(value, Long.class);
+            final Number number = convert(value, Long.class, toStrFunc);
             if (null != number) {
                 final AtomicLong longValue = new AtomicLong();
                 longValue.set(number.longValue());
                 return longValue;
             }
-            return null;
+        } else if (LongAdder.class == targetType) {
+            //jdk8 新增
+            final Number number = convert(value, Long.class, toStrFunc);
+            if (null != number) {
+                final LongAdder longValue = new LongAdder();
+                longValue.add(number.longValue());
+                return longValue;
+            }
         } else if (Float.class == targetType) {
             if (value instanceof Number) {
                 return ((Number) value).floatValue();
             } else if (value instanceof Boolean) {
                 return BooleanKit.toFloatObj((Boolean) value);
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : Float.valueOf(valueStr);
 
         } else if (Double.class == targetType) {
@@ -157,26 +170,30 @@ public class NumberConverter extends AbstractConverter<Number> {
             } else if (value instanceof Boolean) {
                 return BooleanKit.toDoubleObj((Boolean) value);
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : Double.valueOf(valueStr);
-
+        } else if (DoubleAdder.class == targetType) {
+            final Number number = convert(value, Long.class, toStrFunc);
+            if (null != number) {
+                final DoubleAdder doubleAdder = new DoubleAdder();
+                doubleAdder.add(number.doubleValue());
+                return doubleAdder;
+            }
         } else if (BigDecimal.class == targetType) {
-            return toBigDecimal(value);
-
+            return toBigDecimal(value, toStrFunc);
         } else if (BigInteger.class == targetType) {
-            return toBigInteger(value);
-
+            return toBigInteger(value, toStrFunc);
         } else if (Number.class == targetType) {
             if (value instanceof Number) {
                 return (Number) value;
             } else if (value instanceof Boolean) {
                 return BooleanKit.toInteger((Boolean) value);
             }
-            final String valueStr = convertString(value);
+            final String valueStr = toStrFunc.apply((value));
             return StringKit.isBlank(valueStr) ? null : MathKit.parseNumber(valueStr);
         }
 
-        throw new UnsupportedOperationException(StringKit.format("Unsupport Number type: {}", this.targetType.getName()));
+        throw new UnsupportedOperationException(StringKit.format("Unsupport Number type: {}", targetType.getName()));
     }
 
     /**
@@ -184,26 +201,18 @@ public class NumberConverter extends AbstractConverter<Number> {
      * 如果给定的值为空,或者转换失败,返回默认值
      * 转换失败不会报错
      *
-     * @param value 被转换的值
+     * @param value   被转换的值
+     * @param strFunc 转换为字符串的函数规则
      * @return 结果
      */
-    private BigDecimal toBigDecimal(Object value) {
-        if (value instanceof Long) {
-            return new BigDecimal((Long) value);
-        } else if (value instanceof Integer) {
-            return new BigDecimal((Integer) value);
-        } else if (value instanceof BigInteger) {
-            return new BigDecimal((BigInteger) value);
+    private static BigDecimal toBigDecimal(Object value, Function<Object, String> strFunc) {
+        if (value instanceof Number) {
+            return MathKit.toBigDecimal((Number) value);
         } else if (value instanceof Boolean) {
             return new BigDecimal((boolean) value ? 1 : 0);
         }
 
-        //对于Double类型,先要转换为String,避免精度问题
-        final String valueStr = convertString(value);
-        if (StringKit.isBlank(valueStr)) {
-            return null;
-        }
-        return new BigDecimal(valueStr);
+        return MathKit.toBigDecimal(strFunc.apply(value));
     }
 
     /**
@@ -211,20 +220,23 @@ public class NumberConverter extends AbstractConverter<Number> {
      * 如果给定的值为空,或者转换失败,返回默认值
      * 转换失败不会报错
      *
-     * @param value 被转换的值
+     * @param value   被转换的值
+     * @param strFunc 转换为字符串的函数规则
      * @return 结果
      */
-    private BigInteger toBigInteger(Object value) {
+    private static BigInteger toBigInteger(Object value, Function<Object, String> strFunc) {
         if (value instanceof Long) {
             return BigInteger.valueOf((Long) value);
         } else if (value instanceof Boolean) {
             return BigInteger.valueOf((boolean) value ? 1 : 0);
         }
-        final String valueStr = convertString(value);
-        if (StringKit.isBlank(valueStr)) {
-            return null;
-        }
-        return new BigInteger(valueStr);
+
+        return MathKit.toBigInteger(strFunc.apply(value));
+    }
+
+    @Override
+    protected Number convertInternal(Object value) {
+        return convert(value, this.targetType, this::convertString);
     }
 
     @Override

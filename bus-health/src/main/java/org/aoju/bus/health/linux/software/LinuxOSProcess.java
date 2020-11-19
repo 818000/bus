@@ -21,11 +21,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.health.linux.software;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.RegEx;
+import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.Memoize;
@@ -53,7 +55,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -103,6 +105,33 @@ public class LinuxOSProcess extends AbstractOSProcess {
         super(pid);
         this.commandLine = Builder.getStringFromFile(String.format(ProcPath.PID_CMDLINE, pid));
         updateAttributes();
+    }
+
+    /**
+     * If some details couldn't be read from ProcPath.PID_STATUS try reading it from
+     * ProcPath.PID_STAT
+     *
+     * @param status status map to fill.
+     * @param stat   string to read from.
+     */
+    private static void getMissingDetails(Map<String, String> status, String stat) {
+        if (status == null || stat == null) {
+            return;
+        }
+
+        int nameStart = stat.indexOf('(');
+        int nameEnd = stat.indexOf(')');
+        if (StringKit.isBlank(status.get("Name")) && nameStart > 0 && nameStart < nameEnd) {
+            // remove leading and trailing parentheses
+            String statName = stat.substring(nameStart + 1, nameEnd);
+            status.put("Name", statName);
+        }
+
+        // As per man, the next item after the name is the state
+        if (StringKit.isBlank(status.get("State")) && nameEnd > 0 && stat.length() > nameEnd + 2) {
+            String statState = String.valueOf(stat.charAt(nameEnd + 2));
+            status.put("State", statState);
+        }
     }
 
     @Override
@@ -298,6 +327,11 @@ public class LinuxOSProcess extends AbstractOSProcess {
             this.state = State.INVALID;
             return false;
         }
+
+        // If some details couldn't be read from ProcPath.PID_STATUS try reading it from
+        // ProcPath.PID_STAT
+        getMissingDetails(status, stat);
+
         long now = System.currentTimeMillis();
 
         // We can get name and status more easily from /proc/pid/status which we

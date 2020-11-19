@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
@@ -46,6 +47,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -54,7 +56,7 @@ import java.util.stream.Collectors;
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class CollKit {
@@ -1357,6 +1359,30 @@ public class CollKit {
     }
 
     /**
+     * 对集合按照指定长度分段，每一个段为单独的集合，返回这个集合的列表
+     *
+     * @param <T>  集合元素类型
+     * @param list 列表
+     * @param size 每个段的长度
+     * @return 分段列表
+     */
+    public static <T> List<List<T>> split(List<T> list, int size) {
+        if (isEmpty(list)) {
+            return Collections.emptyList();
+        }
+
+        List<List<T>> result = new ArrayList<>(list.size() / size + 1);
+        int offset = 0;
+        for (int toIdx = size; toIdx <= list.size(); offset = toIdx, toIdx += size) {
+            result.add(list.subList(offset, toIdx));
+        }
+        if (offset < list.size()) {
+            result.add(list.subList(offset, list.size()));
+        }
+        return result;
+    }
+
+    /**
      * 对集合按照指定长度分段,每一个段为单独的集合,返回这个集合的列表
      *
      * @param <T>        集合元素类型
@@ -1571,7 +1597,7 @@ public class CollKit {
      * @param <R>        结果类型
      * @param collection 原集合
      * @param func       编辑函数
-     * @param ignoreNull 是否忽略空值
+     * @param ignoreNull 是否忽略空值，这里的空值包括函数处理前和处理后的null值
      * @return 抽取后的新列表
      */
     public static <T, R> List<R> map(Iterable<T> collection, Function<? super T, ? extends R> func, boolean ignoreNull) {
@@ -1581,8 +1607,11 @@ public class CollKit {
         }
 
         R value;
-        for (T bean : collection) {
-            value = func.apply(bean);
+        for (T t : collection) {
+            if (null == t && ignoreNull) {
+                continue;
+            }
+            value = func.apply(t);
             if (null == value && ignoreNull) {
                 continue;
             }
@@ -1641,19 +1670,16 @@ public class CollKit {
      * @return 满足条件的第一个元素
      */
     public static <T> T findOneByField(Iterable<T> collection, final String fieldName, final Object fieldValue) {
-        return findOne(collection, new Filter<T>() {
-            @Override
-            public boolean accept(T t) {
-                if (t instanceof Map) {
-                    final Map<?, ?> map = (Map<?, ?>) t;
-                    final Object value = map.get(fieldName);
-                    return ObjectKit.equal(value, fieldValue);
-                }
-
-                // 普通Bean
-                final Object value = ReflectKit.getFieldValue(t, fieldName);
+        return findOne(collection, t -> {
+            if (t instanceof Map) {
+                final Map<?, ?> map = (Map<?, ?>) t;
+                final Object value = map.get(fieldName);
                 return ObjectKit.equal(value, fieldValue);
             }
+
+            // 普通Bean
+            final Object value = ReflectKit.getFieldValue(t, fieldName);
+            return ObjectKit.equal(value, fieldValue);
         });
     }
 
@@ -3055,6 +3081,223 @@ public class CollKit {
         List<T> unmodifiableList = new ArrayList<>(ts.length);
         Collections.addAll(unmodifiableList, ts);
         return Collections.unmodifiableList(unmodifiableList);
+    }
+
+    /**
+     * 获取Collection或者iterator的大小，此方法可以处理的对象类型如下：
+     * <ul>
+     * <li>Collection - the collection size
+     * <li>Map - the map size
+     * <li>Array - the array size
+     * <li>Iterator - the number of elements remaining in the iterator
+     * <li>Enumeration - the number of elements remaining in the enumeration
+     * </ul>
+     *
+     * @param object 可以为空的对象
+     * @return 如果object为空则返回0
+     * @throws IllegalArgumentException 参数object不是Collection或者iterator
+     */
+    public static int size(final Object object) {
+        if (object == null) {
+            return 0;
+        }
+
+        int total = 0;
+        if (object instanceof Map<?, ?>) {
+            total = ((Map<?, ?>) object).size();
+        } else if (object instanceof Collection<?>) {
+            total = ((Collection<?>) object).size();
+        } else if (object instanceof Iterable<?>) {
+            total = size(object);
+        } else if (object instanceof Iterator<?>) {
+            total = size(object);
+        } else if (object instanceof Enumeration<?>) {
+            final Enumeration<?> it = (Enumeration<?>) object;
+            while (it.hasMoreElements()) {
+                total++;
+                it.nextElement();
+            }
+        } else if (ArrayKit.isArray(object)) {
+            total = ArrayKit.length(object);
+        } else {
+            throw new IllegalArgumentException("Unsupported object type: " + object.getClass().getName());
+        }
+        return total;
+    }
+
+    /**
+     * 将collection转化为类型不变的map
+     * <B>{@code Collection<E>  ---->  Map<T,E>}</B>
+     *
+     * @param collection 需要转化的集合
+     * @param key        E类型转化为T类型的lambda方法
+     * @param <V>        collection中的泛型
+     * @param <K>        map中的key类型
+     * @return 转化后的map
+     */
+    public static <V, K> Map<K, V> toIdentityMap(Collection<V> collection, Function<V, K> key) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        return collection.stream().collect(Collectors.toMap(key, Function.identity()));
+    }
+
+    /**
+     * 将Collection转化为map(value类型与collection的泛型不同)
+     * <B>{@code Collection<E> -----> Map<T,U>  }</B>
+     *
+     * @param collection 需要转化的集合
+     * @param key        E类型转化为T类型的lambda方法
+     * @param value      E类型转化为U类型的lambda方法
+     * @param <E>        collection中的泛型
+     * @param <K>        map中的key类型
+     * @param <V>        map中的value类型
+     * @return 转化后的map
+     */
+    public static <E, K, V> Map<K, V> toMap(Collection<E> collection, Function<E, K> key, Function<E, V> value) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        return collection.stream().collect(Collectors.toMap(key, value));
+    }
+
+    /**
+     * 将collection按照规则(比如有相同的班级id)分类成map
+     * <B>{@code Collection<E> -------> Map<T,List<E>> } </B>
+     *
+     * @param collection 需要分类的集合
+     * @param key        分类的规则
+     * @param <E>        collection中的泛型
+     * @param <K>        map中的key类型
+     * @return 分类后的map
+     */
+    public static <E, K> Map<K, List<E>> groupByKey(Collection<E> collection, Function<E, K> key) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        return collection
+                .stream()
+                .collect(Collectors.groupingBy(key, Collectors.toList()));
+    }
+
+    /**
+     * 将collection按照两个规则(比如有相同的年级id,班级id)分类成双层map
+     * <B>{@code Collection<E>  --->  Map<T,Map<U,List<E>>> } </B>
+     *
+     * @param collection 需要分类的集合
+     * @param key1       第一个分类的规则
+     * @param key2       第二个分类的规则
+     * @param <E>        集合元素类型
+     * @param <K>        第一个map中的key类型
+     * @param <U>        第二个map中的key类型
+     * @return 分类后的map
+     */
+    public static <E, K, U> Map<K, Map<U, List<E>>> groupBy2Key(Collection<E> collection, Function<E, K> key1, Function<E, U> key2) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        return collection
+                .stream()
+                .collect(Collectors.groupingBy(key1, Collectors.groupingBy(key2, Collectors.toList())));
+    }
+
+    /**
+     * 将collection按照两个规则(比如有相同的年级id,班级id)分类成双层map
+     * <B>{@code Collection<E>  --->  Map<T,Map<U,E>> } </B>
+     *
+     * @param collection 需要分类的集合
+     * @param key1       第一个分类的规则
+     * @param key2       第二个分类的规则
+     * @param <T>        第一个map中的key类型
+     * @param <U>        第二个map中的key类型
+     * @param <E>        collection中的泛型
+     * @return 分类后的map
+     */
+    public static <E, T, U> Map<T, Map<U, E>> group2Map(Collection<E> collection, Function<E, T> key1, Function<E, U> key2) {
+        if (isEmpty(collection) || key1 == null || key2 == null) {
+            return Collections.emptyMap();
+        }
+        return collection
+                .stream()
+                .collect(Collectors.groupingBy(key1, Collectors.toMap(key2, Function.identity())));
+    }
+
+    /**
+     * 将collection转化为List集合，但是两者的泛型不同
+     * <B>{@code Collection<E>  ------>  List<T> } </B>
+     *
+     * @param collection 需要转化的集合
+     * @param function   collection中的泛型转化为list泛型的lambda表达式
+     * @param <E>        collection中的泛型
+     * @param <T>        List中的泛型
+     * @return 转化后的list
+     */
+    public static <E, T> List<T> toList(Collection<E> collection, Function<E, T> function) {
+        if (isEmpty(collection)) {
+            return Collections.emptyList();
+        }
+        return collection
+                .stream()
+                .map(function)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将collection转化为Set集合，但是两者的泛型不同
+     * <B>{@code Collection<E>  ------>  Set<T> } </B>
+     *
+     * @param collection 需要转化的集合
+     * @param function   collection中的泛型转化为set泛型的lambda表达式
+     * @param <E>        collection中的泛型
+     * @param <T>        Set中的泛型
+     * @return 转化后的Set
+     */
+    public static <E, T> Set<T> toSet(Collection<E> collection, Function<E, T> function) {
+        if (isEmpty(collection) || function == null) {
+            return Collections.emptySet();
+        }
+        return collection
+                .stream()
+                .map(function)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+
+    /**
+     * 合并两个相同key类型的map
+     *
+     * @param map1  第一个需要合并的 map
+     * @param map2  第二个需要合并的 map
+     * @param merge 合并的lambda，将key  value1 value2合并成最终的类型,注意value可能为空的情况
+     * @param <K>   map中的key类型
+     * @param <X>   第一个 map的value类型
+     * @param <Y>   第二个 map的value类型
+     * @param <V>   最终map的value类型
+     * @return 合并后的map
+     */
+    public static <K, X, Y, V> Map<K, V> merge(Map<K, X> map1, Map<K, Y> map2, BiFunction<X, Y, V> merge) {
+        if (MapKit.isEmpty(map1) && MapKit.isEmpty(map2)) {
+            return Collections.emptyMap();
+        } else if (MapKit.isEmpty(map1)) {
+            map1 = Collections.emptyMap();
+        } else if (MapKit.isEmpty(map2)) {
+            map2 = Collections.emptyMap();
+        }
+        Set<K> key = new HashSet<>();
+        key.addAll(map1.keySet());
+        key.addAll(map2.keySet());
+        Map<K, V> map = new HashMap<>();
+        for (K t : key) {
+            X x = map1.get(t);
+            Y y = map2.get(t);
+            V z = merge.apply(x, y);
+            if (z != null) {
+                map.put(t, z);
+            }
+        }
+        return map;
     }
 
     /**

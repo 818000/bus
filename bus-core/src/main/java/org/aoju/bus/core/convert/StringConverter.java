@@ -21,20 +21,79 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.core.convert;
+
+import org.aoju.bus.core.lang.Charset;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.toolkit.IoKit;
+import org.aoju.bus.core.toolkit.XmlKit;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.SQLException;
+import java.util.TimeZone;
 
 /**
  * 字符串转换器
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class StringConverter extends AbstractConverter<String> {
 
+    /**
+     * Clob字段值转字符串
+     *
+     * @param clob {@link Clob}
+     * @return 字符串
+     */
+    private static String clobToString(Clob clob) {
+        Reader reader = null;
+        try {
+            reader = clob.getCharacterStream();
+            return IoKit.read(reader);
+        } catch (SQLException e) {
+            throw new InstrumentException(e);
+        } finally {
+            IoKit.close(reader);
+        }
+    }
+
+    /**
+     * Blob字段值转字符串
+     *
+     * @param blob {@link Blob}
+     * @return 字符串
+     */
+    private static String blobToString(Blob blob) {
+        InputStream in = null;
+        try {
+            in = blob.getBinaryStream();
+            return IoKit.read(in, Charset.UTF_8);
+        } catch (SQLException e) {
+            throw new InstrumentException(e);
+        } finally {
+            IoKit.close(in);
+        }
+    }
+
     @Override
     protected String convertInternal(Object value) {
+        if (value instanceof TimeZone) {
+            return ((TimeZone) value).getID();
+        } else if (value instanceof org.w3c.dom.Node) {
+            return XmlKit.toString((org.w3c.dom.Node) value);
+        } else if (value instanceof Clob) {
+            return clobToString((Clob) value);
+        } else if (value instanceof Blob) {
+            return blobToString((Blob) value);
+        }
+
         return convertString(value);
     }
 

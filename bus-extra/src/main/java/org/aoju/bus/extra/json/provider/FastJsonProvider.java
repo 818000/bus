@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.extra.json.provider;
 
@@ -29,7 +30,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.lang.reflect.Type;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ import java.util.Map;
  * FastJson 解析器
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public class FastJsonProvider extends AbstractJsonProvider {
@@ -84,7 +84,7 @@ public class FastJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public List toList(String json) {
+    public <T> List<T> toList(String json) {
         return JSON.parseObject(json, LinkedList.class);
     }
 
@@ -105,13 +105,13 @@ public class FastJsonProvider extends AbstractJsonProvider {
     }
 
     @Override
-    public Map toMap(String json) {
-        return JSON.parseObject(json, LinkedHashMap.class);
+    public <K, V> Map<K, V> toMap(String json) {
+        return JSON.parseObject(json, Map.class);
     }
 
     @Override
-    public Map toMap(Object object) {
-        return JSON.parseObject(JSON.toJSONString(object), LinkedHashMap.class);
+    public <K, V> Map<K, V> toMap(Object object) {
+        return toMap(JSON.toJSONString(object));
     }
 
     @Override

@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.health.windows.drivers;
 
@@ -42,7 +43,7 @@ import java.util.Map;
  * backup from Performance Counters or WMI
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -92,7 +93,11 @@ public final class ThreadPerformanceData {
                         .longValue() / 10_000L;
                 int priority = ((Integer) threadInstanceMap.get(ThreadInformation.ThreadPerformanceProperty.PRIORITYCURRENT)).intValue();
                 int threadState = ((Integer) threadInstanceMap.get(ThreadInformation.ThreadPerformanceProperty.THREADSTATE)).intValue();
-                long startAddr = ((Long) threadInstanceMap.get(ThreadInformation.ThreadPerformanceProperty.STARTADDRESS)).longValue();
+                // Start address is pointer sized when fetched from registry, so this could be
+                // either Integer (uint32) or Long depending on OS bitness
+                Object addr = threadInstanceMap.get(ThreadInformation.ThreadPerformanceProperty.STARTADDRESS);
+                long startAddr = addr.getClass().equals(Long.class) ? (Long) addr
+                        : Integer.toUnsignedLong((Integer) addr);
                 int contextSwitches = ((Integer) threadInstanceMap.get(ThreadInformation.ThreadPerformanceProperty.CONTEXTSWITCHESPERSEC))
                         .intValue();
                 threadMap.put(tid, new PerfCounterBlock(name, tid, pid, now - upTime, user, kernel, priority,

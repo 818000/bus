@@ -21,6 +21,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     *
  * THE SOFTWARE.                                                                 *
+ *                                                                               *
  ********************************************************************************/
 package org.aoju.bus.extra.json;
 
@@ -32,7 +33,7 @@ import java.util.Map;
  * JSON服务提供者
  *
  * @author Kimi Liu
- * @version 6.1.1
+ * @version 6.1.2
  * @since JDK 1.8+
  */
 public interface JsonProvider {
@@ -78,9 +79,10 @@ public interface JsonProvider {
      * 解析json字符串到List
      *
      * @param json 要解析的json字符串
+     * @param <T>  泛型参数类型
      * @return 返回List
      */
-    List toList(String json);
+    <T> List<T> toList(String json);
 
     /**
      * 按指定的Type解析json字符串到List
@@ -106,17 +108,21 @@ public interface JsonProvider {
      * 解析json字符串到Map
      *
      * @param json 要解析的json字符串
+     * @param <K>  键类型
+     * @param <V>  值类型
      * @return 返回Map
      */
-    Map toMap(String json);
+    <K, V> Map<K, V> toMap(String json);
 
     /**
      * 转换对象到Map
      *
      * @param object 与Map可兼容的对象
+     * @param <K>    键类型
+     * @param <V>    值类型
      * @return 返回Map对象
      */
-    Map toMap(Object object);
+    <K, V> Map<K, V> toMap(Object object);
 
     /**
      * 判断是否为标准json
