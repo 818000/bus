@@ -23,47 +23,59 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.filter;
+package org.aoju.bus.goalie;
 
-import org.aoju.bus.goalie.Context;
-import org.aoju.bus.starter.goalie.GoalieConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
+import lombok.Data;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * 参数过滤
+ * 上下文传参
  *
  * @author Justubborn
- * @since 2020/10/29
+ * @since 2020/10/30
  */
-@Component
-@ConditionalOnBean(GoalieConfiguration.class)
-@Order(FilterOrders.FIRST)
-public class FirstFilter implements WebFilter {
+@Data
+public class Context {
 
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        if (Objects.equals(request.getMethod(), HttpMethod.GET)) {
-            MultiValueMap<String, String> params = request.getQueryParams();
-            Context.get(exchange).setRequestMap(params.toSingleValueMap());
-            return chain.filter(exchange);
-        } else {
-            return exchange.getFormData().flatMap(params -> {
-                Context.get(exchange).setRequestMap(params.toSingleValueMap());
-                return chain.filter(exchange);
-            });
-        }
+    /**
+     * 交换内容
+     */
+    private final static String $ = "_context";
+
+    /**
+     * 请求参数
+     */
+    private Map<String, String> requestMap;
+
+    /**
+     * 返回body
+     */
+    private Flux<DataBuffer> body;
+
+    private Assets assets;
+
+    public static Context get(ServerWebExchange exchange) {
+        Context context = exchange.getAttribute(Context.$);
+
+        return Optional.ofNullable(context).orElseGet(() -> {
+            Context empty = new Context();
+            exchange.getAttributes().put(Context.$, empty);
+            return empty;
+        });
+    }
+
+    public static Context get(ServerRequest request) {
+        return (Context) request.attribute(Context.$).orElseGet(() -> {
+            Context empty = new Context();
+            request.attributes().put(Context.$, empty);
+            return empty;
+        });
     }
 
 }

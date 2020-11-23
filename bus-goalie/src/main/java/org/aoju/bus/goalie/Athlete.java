@@ -23,47 +23,50 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.goalie.filter;
+package org.aoju.bus.goalie;
 
-import org.aoju.bus.goalie.Context;
-import org.aoju.bus.starter.goalie.GoalieConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.aoju.bus.core.collection.ConcurrentHashSet;
+import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.logger.Logger;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.Set;
 
 /**
- * 参数过滤
+ * 服务端
  *
  * @author Justubborn
- * @since 2020/10/29
+ * @since 2020/10/27
  */
-@Component
-@ConditionalOnBean(GoalieConfiguration.class)
-@Order(FilterOrders.FIRST)
-public class FirstFilter implements WebFilter {
+public class Athlete {
 
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        if (Objects.equals(request.getMethod(), HttpMethod.GET)) {
-            MultiValueMap<String, String> params = request.getQueryParams();
-            Context.get(exchange).setRequestMap(params.toSingleValueMap());
-            return chain.filter(exchange);
-        } else {
-            return exchange.getFormData().flatMap(params -> {
-                Context.get(exchange).setRequestMap(params.toSingleValueMap());
-                return chain.filter(exchange);
-            });
+    private final HttpServer httpServer;
+    private final Set<Assets> assets = new ConcurrentHashSet<>();
+    private final List<Registry> assetRegistries;
+    private DisposableServer disposableServer;
+
+    public Athlete(HttpServer httpServer, List<Registry> assetRegistries) {
+        this.httpServer = httpServer;
+        this.assetRegistries = assetRegistries;
+    }
+
+    public Set<Assets> getAssets() {
+        return assets;
+    }
+
+    private void init() {
+        if (CollKit.isNotEmpty(assetRegistries)) {
+            assetRegistries.forEach(registry -> assets.addAll(registry.init()));
         }
+        disposableServer = httpServer.bindNow();
+        Logger.info("reactor server start on port:{} success", disposableServer.port());
+    }
+
+    private void destroy() {
+        disposableServer.disposeNow();
+        Logger.info("reactor server stop on port:{} success", disposableServer.port());
     }
 
 }
