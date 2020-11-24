@@ -23,101 +23,39 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket.plugins;
 
-import java.nio.ByteBuffer;
+import org.aoju.bus.socket.AioSession;
+import org.aoju.bus.socket.MessageProcessor;
+import org.aoju.bus.socket.NetMonitor;
+import org.aoju.bus.socket.StateMachine;
 
 /**
- * 虚拟ByteBuffer缓冲区
- *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public interface Plugin<T> extends NetMonitor {
 
     /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
+     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
+     * 若返回false,则当前消息将被忽略
+     * 若返回true,该消息会正常秩序MessageProcessor.process.
      *
-     * @see ByteBuffer#slice()
+     * @param session 会话
+     * @param t       对象
+     * @return the true/false
      */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
+    boolean preProcess(AioSession session, T t);
 
     /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
+     * 监听状态机事件
      *
-     * @return 真实缓冲区
+     * @param stateMachine 状态
+     * @param session      会话
+     * @param throwable    线程
+     * @see MessageProcessor#stateEvent(AioSession, StateMachine, Throwable)
      */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
-    }
+    void stateEvent(StateMachine stateMachine, AioSession session, Throwable throwable);
 
 }

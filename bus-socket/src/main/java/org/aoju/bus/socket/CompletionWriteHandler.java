@@ -23,101 +23,45 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import java.nio.channels.CompletionHandler;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 读写事件回调处理类
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
-
-    /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
-
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
+final class CompletionWriteHandler<T> implements CompletionHandler<Integer, TcpAioSession<T>> {
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public void completed(final Integer result, final TcpAioSession<T> aioSession) {
+        try {
+            NetMonitor monitor = aioSession.getServerConfig().getMonitor();
+            if (monitor != null) {
+                monitor.afterWrite(aioSession, result);
+            }
+            aioSession.writeCompleted();
+        } catch (Exception e) {
+            failed(e, aioSession);
+        }
+    }
+
+
+    @Override
+    public void failed(Throwable exc, TcpAioSession<T> aioSession) {
+        try {
+            aioSession.getServerConfig().getProcessor().stateEvent(aioSession, StateMachine.OUTPUT_EXCEPTION, exc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            aioSession.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

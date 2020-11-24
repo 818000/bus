@@ -23,101 +23,64 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket.plugins;
 
-import java.nio.ByteBuffer;
+import org.aoju.bus.core.io.ByteBuffer;
+import org.aoju.bus.socket.BufferFactory;
+import org.aoju.bus.socket.secure.ClientAuth;
+import org.aoju.bus.socket.secure.SslService;
+import org.aoju.bus.socket.secure.SslSocketChannel;
+
+import java.io.InputStream;
+import java.nio.channels.AsynchronousSocketChannel;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * SSL/TLS通信插件
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public final class SslPlugin<T> extends AbstractPlugin<T> {
 
-    /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
+    private final ByteBuffer bufferPool;
+    private SslService sslService;
+    private boolean init = false;
 
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
+    public SslPlugin() {
+        this.bufferPool = BufferFactory.DISABLED_BUFFER_FACTORY.create();
     }
 
-    int getParentPosition() {
-        return parentPosition;
+    public SslPlugin(ByteBuffer bufferPool) {
+        this.bufferPool = bufferPool;
     }
 
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
+    public void initForServer(InputStream keyStoreInputStream, String keyStorePassword, String keyPassword, ClientAuth clientAuth) {
+        initCheck();
+        sslService = new SslService(false, clientAuth);
+        sslService.initKeyStore(keyStoreInputStream, keyStorePassword, keyPassword);
     }
 
-    int getParentLimit() {
-        return parentLimit;
+    public void initForClient() {
+        initForClient(null, null);
     }
 
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
+    public void initForClient(InputStream trustInputStream, String trustPassword) {
+        initCheck();
+        sslService = new SslService(true, null);
+        sslService.initTrust(trustInputStream, trustPassword);
     }
 
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
+    private void initCheck() {
+        if (init) {
+            throw new RuntimeException("plugin is already init");
         }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
+        init = true;
     }
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public final AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel channel) {
+        return new SslSocketChannel(channel, sslService, bufferPool.allocateBufferPage());
     }
 
 }

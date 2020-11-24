@@ -23,101 +23,71 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 网络监控器，提供通讯层面监控功能的接口。
+ * <p>
+ * bus-socket并未单独提供配置监控服务的接口，用户在使用时仅需在MessageProcessor实现类中同时实现当前NetMonitor接口即可。
+ * 在注册消息处理器时，若服务监测到该处理器同时实现了NetMonitor接口，则该监视器便会生效。
+ * </p>
+ * <h2>示例：</h2>
+ * <pre>
+ *     public class MessageProcessorImpl implements MessageProcessor,NetMonitor{
+ *
+ *     }
+ * </pre>
+ *
+ * <b>注意:</b>
+ * <p>
+ * 实现本接口时要关注acceptMonitor接口的返回值,如无特殊需求直接返回true，若返回false会拒绝本次连接。
+ * </p>
+ * <b>非必要情况下请勿使用该接口，未来可能会调整接口设计</b>
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public interface NetMonitor {
 
     /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
+     * 监控已接收到的连接
      *
-     * @see ByteBuffer#slice()
+     * @param channel 当前已经建立连接的通道对象
+     * @return 非null:接受该连接,null:拒绝该连接
      */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
+    AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel channel);
 
     /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
+     * 监控触发本次读回调Session的已读数据字节数
      *
-     * @return 真实缓冲区
+     * @param session  当前执行read的AioSession对象
+     * @param readSize 已读数据长度
      */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
+    void afterRead(AioSession session, int readSize);
 
     /**
-     * 设置真实缓冲区
+     * 即将开始读取数据
      *
-     * @param buffer 真实缓冲区
+     * @param session 当前会话对象
      */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
+    void beforeRead(AioSession session);
 
     /**
-     * 释放虚拟缓冲区
+     * 监控触发本次写回调session的已写数据字节数
+     *
+     * @param session   本次执行write回调的AIOSession对象
+     * @param writeSize 本次输出的数据长度
      */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
+    void afterWrite(AioSession session, int writeSize);
 
-    @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
-    }
+    /**
+     * 即将开始写数据
+     *
+     * @param session 当前会话对象
+     */
+    void beforeWrite(AioSession session);
 
 }

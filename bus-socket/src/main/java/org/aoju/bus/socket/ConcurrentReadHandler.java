@@ -23,101 +23,62 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import java.util.concurrent.*;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 读写事件回调处理类
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+final class ConcurrentReadHandler<T> extends CompletionReadHandler<T> {
 
     /**
-     * 当前虚拟buffer的归属内存页
+     * 读回调资源信号量
      */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
+    private final Semaphore semaphore;
 
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
+    private final ThreadLocal<ConcurrentReadHandler<T>> threadLocal = new ThreadLocal<>();
 
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
+    private final LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<>();
+    private final ExecutorService executorService = new ThreadPoolExecutor(1, 1,
+            60L, TimeUnit.SECONDS, taskQueue);
+
+    ConcurrentReadHandler(final Semaphore semaphore) {
+        this.semaphore = semaphore;
     }
 
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public void completed(final Integer result, final TcpAioSession<T> aioSession) {
+        if (threadLocal.get() != null) {
+            super.completed(result, aioSession);
+            return;
+        }
+        if (semaphore.tryAcquire()) {
+            threadLocal.set(this);
+            //处理当前读回调任务
+            super.completed(result, aioSession);
+            Runnable task;
+            while ((task = taskQueue.poll()) != null) {
+                task.run();
+            }
+            semaphore.release();
+            threadLocal.set(null);
+            return;
+        }
+        //线程资源不足,暂时积压任务
+        executorService.execute(() -> ConcurrentReadHandler.super.completed(result, aioSession));
+
     }
 
+    /**
+     * 停止内部线程
+     */
+    public void shutdown() {
+        executorService.shutdown();
+    }
 }
