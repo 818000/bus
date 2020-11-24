@@ -23,101 +23,74 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket.plugins;
 
-import java.nio.ByteBuffer;
+import org.aoju.bus.logger.Logger;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 黑名单插件,bus-socket会拒绝与黑名单中的IP建立连接
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public final class BlackListPlugin<T> extends AbstractPlugin<T> {
 
-    /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
-
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
+    private final ConcurrentLinkedQueue<BlackListRule> ipBlackList = new ConcurrentLinkedQueue<>();
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel channel) {
+        InetSocketAddress inetSocketAddress = null;
+        try {
+            inetSocketAddress = (InetSocketAddress) channel.getRemoteAddress();
+        } catch (IOException e) {
+            Logger.error("get remote address error.", e);
+        }
+        if (inetSocketAddress == null) {
+            return channel;
+        }
+        for (BlackListRule rule : ipBlackList) {
+            if (!rule.access(inetSocketAddress)) {
+                return null;
+            }
+        }
+        return channel;
+    }
+
+    /**
+     * 添加黑名单失败规则
+     *
+     * @param rule 规则
+     */
+    public void addRule(BlackListRule rule) {
+        ipBlackList.add(rule);
+    }
+
+    /**
+     * 移除黑名单规则
+     *
+     * @param rule 规则
+     */
+    public void removeRule(BlackListRule rule) {
+        ipBlackList.remove(rule);
+    }
+
+    /**
+     * 黑名单规则定义
+     */
+    public interface BlackListRule {
+        /**
+         * 是否允许建立连接
+         *
+         * @param address 地址
+         * @return the true/false
+         */
+        boolean access(InetSocketAddress address);
     }
 
 }

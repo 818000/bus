@@ -23,101 +23,58 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import org.aoju.bus.logger.Logger;
+
+import java.util.concurrent.*;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 服务器定时任务
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public abstract class QuickTimer implements Runnable {
 
-    /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
-
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
+    public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "Quick Timer");
+            thread.setDaemon(true);
+            return thread;
         }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
+    });
+
+
+    public QuickTimer() {
+        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(this, getDelay(), getPeriod(), TimeUnit.MILLISECONDS);
+        Logger.info("Regist QuickTimerTask---- " + this.getClass().getSimpleName());
     }
 
-    @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public static void cancelQuickTask() {
+        SCHEDULED_EXECUTOR_SERVICE.shutdown();
     }
+
+    public static ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period) {
+        return SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(command, initialDelay, period, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 获取定时任务的延迟启动时间
+     *
+     * @return the long
+     */
+    protected long getDelay() {
+        return 0;
+    }
+
+    /**
+     * 获取定时任务的执行频率
+     *
+     * @return the long
+     */
+    protected abstract long getPeriod();
 
 }

@@ -23,101 +23,72 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 虚拟ByteBuffer缓冲区
- *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+abstract class GroupMessageProcessor<T> implements MessageProcessor<T>, GroupIo {
+
+    private final Map<String, GroupUnit> sessionGroup = new ConcurrentHashMap<>();
 
     /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
+     * 将AioSession加入群组group
      *
-     * @see ByteBuffer#slice()
+     * @param group
+     * @param session
      */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
-
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
+    @Override
+    public final synchronized void join(String group, AioSession session) {
+        GroupUnit groupUnit = sessionGroup.get(group);
+        if (groupUnit == null) {
+            groupUnit = new GroupUnit();
+            sessionGroup.put(group, groupUnit);
         }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
+        groupUnit.groupList.add(session);
+    }
+
+    @Override
+    public final synchronized void remove(String group, AioSession session) {
+        GroupUnit groupUnit = sessionGroup.get(group);
+        if (groupUnit == null) {
+            return;
+        }
+        groupUnit.groupList.remove(session);
+        if (groupUnit.groupList.isEmpty()) {
+            sessionGroup.remove(group);
         }
     }
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public final void remove(AioSession session) {
+        for (String group : sessionGroup.keySet()) {
+            remove(group, session);
+        }
+    }
+
+    @Override
+    public void writeToGroup(String group, byte[] t) {
+        GroupUnit groupUnit = sessionGroup.get(group);
+        for (AioSession aioSession : groupUnit.groupList) {
+            try {
+                aioSession.writeBuffer().write(t);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class GroupUnit {
+        Set<AioSession> groupList = new HashSet<>();
     }
 
 }

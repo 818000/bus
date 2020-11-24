@@ -23,101 +23,76 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
-import java.nio.ByteBuffer;
+import org.aoju.bus.logger.Logger;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * UDP消息分发器
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+class UdpDispatcher<T> implements Runnable {
 
-    /**
-     * 当前虚拟buffer的归属内存页
-     */
-    private final PageBuffer bufferPage;
-    /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
-     */
-    private ByteBuffer buffer;
-    /**
-     * 是否已回收
-     */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
+    public final RequestTask EXECUTE_TASK_OR_SHUTDOWN = new RequestTask(null, null);
+    private final BlockingQueue<RequestTask> taskQueue = new LinkedBlockingQueue<>();
+    private final MessageProcessor<T> processor;
 
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
-
-    /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
-     */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
-
-    /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
-     */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
-
-    /**
-     * 释放虚拟缓冲区
-     */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
+    public UdpDispatcher(MessageProcessor<T> processor) {
+        this.processor = processor;
     }
 
     @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
+    public void run() {
+        while (true) {
+            try {
+                RequestTask unit = taskQueue.take();
+                if (unit == EXECUTE_TASK_OR_SHUTDOWN) {
+                    Logger.info("shutdown thread:{}", Thread.currentThread());
+                    break;
+                }
+                processor.process(unit.session, unit.request);
+                unit.session.writeBuffer().flush();
+            } catch (InterruptedException e) {
+                Logger.info("InterruptedException", e);
+            } catch (Exception e) {
+                Logger.error(e.getClass().getName(), e);
+            }
+        }
+    }
+
+    /**
+     * 任务分发
+     *
+     * @param session
+     * @param request
+     */
+    public void dispatch(UdpAioSession session, T request) {
+        dispatch(new RequestTask(session, request));
+    }
+
+    /**
+     * 任务分发
+     *
+     * @param requestTask
+     */
+    public void dispatch(RequestTask requestTask) {
+        taskQueue.offer(requestTask);
+    }
+
+    class RequestTask {
+        UdpAioSession session;
+        T request;
+
+        public RequestTask(UdpAioSession session, T request) {
+            this.session = session;
+            this.request = request;
+        }
     }
 
 }

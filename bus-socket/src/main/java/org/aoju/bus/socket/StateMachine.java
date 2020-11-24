@@ -23,101 +23,77 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io;
+package org.aoju.bus.socket;
 
 import java.nio.ByteBuffer;
 
 /**
- * 虚拟ByteBuffer缓冲区
+ * 列举了当前bus-socket所关注的各类状态枚举。
+ *
+ * <p>当前枚举的各状态机事件在发生后都会及时触发{@link MessageProcessor#stateEvent(AioSession, StateMachine, Throwable)}方法。因此用户在实现的{@linkplain MessageProcessor}接口中可对自己关心的状态机事件进行处理。</p>
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public final class VirtualBuffer {
+public enum StateMachine {
 
     /**
-     * 当前虚拟buffer的归属内存页
+     * 连接已建立并构建Session对象
      */
-    private final PageBuffer bufferPage;
+    NEW_SESSION,
     /**
-     * 通过ByteBuffer.slice()隐射出来的虚拟ByteBuffer
-     *
-     * @see ByteBuffer#slice()
+     * 读通道已被关闭
+     * 通常由以下几种情况会触发该状态：
+     * <ol>
+     * <li>对端主动关闭write通道，致使本通常满足了EOF条件</li>
+     * <li>当前AioSession处理完读操作后检测到自身正处于{@link StateMachine#SESSION_CLOSING}状态</li>
+     * </ol>
+     * 未来该状态机可能会废除，并转移至NetMonitor
      */
-    private ByteBuffer buffer;
+    INPUT_SHUTDOWN,
     /**
-     * 是否已回收
+     * 业务处理异常
+     * 执行{@link MessageProcessor#process(AioSession, Object)}期间发生用户未捕获的异常
      */
-    private boolean clean = false;
-    /**
-     * 当前虚拟buffer映射的实际buffer.position
-     */
-    private int parentPosition;
-
-    /**
-     * 当前虚拟buffer映射的实际buffer.limit
-     */
-    private int parentLimit;
-
-    VirtualBuffer(PageBuffer bufferPage, ByteBuffer buffer, int parentPosition, int parentLimit) {
-        this.bufferPage = bufferPage;
-        this.buffer = buffer;
-        this.parentPosition = parentPosition;
-        this.parentLimit = parentLimit;
-    }
-
-    int getParentPosition() {
-        return parentPosition;
-    }
-
-    void setParentPosition(int parentPosition) {
-        this.parentPosition = parentPosition;
-    }
-
-    int getParentLimit() {
-        return parentLimit;
-    }
-
-    void setParentLimit(int parentLimit) {
-        this.parentLimit = parentLimit;
-    }
+    PROCESS_EXCEPTION,
 
     /**
-     * 获取真实缓冲区
-     *
-     * @return 真实缓冲区
+     * 协议解码异常
+     * 执行{@link Protocol#decode(ByteBuffer, AioSession)}期间发生未捕获的异常
      */
-    public ByteBuffer buffer() {
-        return buffer;
-    }
+    DECODE_EXCEPTION,
+    /**
+     * 读操作异常
+     * <p>
+     * 在底层服务执行read操作期间因发生异常情况出发了{@link java.nio.channels.CompletionHandler#failed(Throwable, Object)}
+     * 未来该状态机可能会废除，并转移至NetMonitor
+     */
+    INPUT_EXCEPTION,
+    /**
+     * 写操作异常。
+     * 在底层服务执行write操作期间因发生异常情况出发了{@link java.nio.channels.CompletionHandler#failed(Throwable, Object)}
+     * 未来该状态机可能会废除，并转移至NetMonitor
+     */
+    OUTPUT_EXCEPTION,
+    /**
+     * 会话正在关闭中
+     * 执行了{@link AioSession#close(boolean)}方法，并且当前还存在待输出的数据
+     */
+    SESSION_CLOSING,
+    /**
+     * 会话关闭成功
+     */
+    SESSION_CLOSED,
 
     /**
-     * 设置真实缓冲区
-     *
-     * @param buffer 真实缓冲区
+     * 拒绝接受连接,仅Server端有效
      */
-    void buffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-        clean = false;
-    }
+    REJECT_ACCEPT,
 
     /**
-     * 释放虚拟缓冲区
+     * 服务端接受连接异常
      */
-    public void clean() {
-        if (clean) {
-            throw new UnsupportedOperationException("buffer has cleaned");
-        }
-        clean = true;
-        if (bufferPage != null) {
-            bufferPage.clean(this);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "VirtualBuffer{parentPosition=" + parentPosition + ", parentLimit=" + parentLimit + '}';
-    }
+    ACCEPT_EXCEPTION,
 
 }
