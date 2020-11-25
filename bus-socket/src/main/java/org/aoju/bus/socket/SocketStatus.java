@@ -25,55 +25,79 @@
  ********************************************************************************/
 package org.aoju.bus.socket;
 
-import org.aoju.bus.logger.Logger;
-
-import java.util.concurrent.*;
+import java.nio.ByteBuffer;
 
 /**
- * 服务器定时任务
+ * 列举了当前bus-socket所关注的各类状态枚举
+ *
+ * <pre>
+ * 当前枚举的各状态机事件在发生后都会及时触发
+ * {@link MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)}方法
+ * 因此用户在实现的{@linkplain MessageProcessor}接口中可对自己关心的状态机事件进行处理
+ * </pre>
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public abstract class QuickTimer implements Runnable {
-
-    public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r, "Quick Timer");
-            thread.setDaemon(true);
-            return thread;
-        }
-    });
-
-    public QuickTimer() {
-        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(this, getDelay(), getPeriod(), TimeUnit.MILLISECONDS);
-        Logger.info("Regist QuickTimerTask---- " + this.getClass().getSimpleName());
-    }
-
-    public static void cancelQuickTask() {
-        SCHEDULED_EXECUTOR_SERVICE.shutdown();
-    }
-
-    public static ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period) {
-        return SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(command, initialDelay, period, TimeUnit.MILLISECONDS);
-    }
+public enum SocketStatus {
 
     /**
-     * 获取定时任务的延迟启动时间
-     *
-     * @return the long
+     * 连接已建立并构建Session对象
      */
-    protected long getDelay() {
-        return 0;
-    }
+    NEW_SESSION,
+    /**
+     * 读通道已被关闭
+     * 通常由以下几种情况会触发该状态：
+     * <ol>
+     * <li>对端主动关闭write通道，致使本通常满足了EOF条件</li>
+     * <li>当前AioSession处理完读操作后检测到自身正处于{@link SocketStatus#SESSION_CLOSING}状态</li>
+     * </ol>
+     * 未来该状态机可能会废除，并转移至NetMonitor
+     */
+    INPUT_SHUTDOWN,
+    /**
+     * 业务处理异常
+     * 执行{@link MessageProcessor#process(AioSession, Object)}期间发生用户未捕获的异常
+     */
+    PROCESS_EXCEPTION,
 
     /**
-     * 获取定时任务的执行频率
-     *
-     * @return the long
+     * 协议解码异常
+     * 执行{@link Protocol#decode(ByteBuffer, AioSession)}期间发生未捕获的异常
      */
-    protected abstract long getPeriod();
+    DECODE_EXCEPTION,
+    /**
+     * 读操作异常
+     * <p>
+     * 在底层服务执行read操作期间因发生异常情况出发了{@link java.nio.channels.CompletionHandler#failed(Throwable, Object)}
+     * 未来该状态机可能会废除，并转移至NetMonitor
+     */
+    INPUT_EXCEPTION,
+    /**
+     * 写操作异常。
+     * 在底层服务执行write操作期间因发生异常情况出发了{@link java.nio.channels.CompletionHandler#failed(Throwable, Object)}
+     * 未来该状态机可能会废除，并转移至NetMonitor
+     */
+    OUTPUT_EXCEPTION,
+    /**
+     * 会话正在关闭中
+     * 执行了{@link AioSession#close(boolean)}方法，并且当前还存在待输出的数据
+     */
+    SESSION_CLOSING,
+    /**
+     * 会话关闭成功
+     */
+    SESSION_CLOSED,
+
+    /**
+     * 拒绝接受连接,仅Server端有效
+     */
+    REJECT_ACCEPT,
+
+    /**
+     * 服务端接受连接异常
+     */
+    ACCEPT_EXCEPTION,
 
 }
