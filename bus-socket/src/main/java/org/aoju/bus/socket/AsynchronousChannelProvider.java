@@ -25,55 +25,47 @@
  ********************************************************************************/
 package org.aoju.bus.socket;
 
-import org.aoju.bus.logger.Logger;
+import org.aoju.bus.core.lang.exception.InstrumentException;
 
+import java.io.IOException;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.*;
 
 /**
- * 服务器定时任务
- *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public abstract class QuickTimer implements Runnable {
+public final class AsynchronousChannelProvider extends java.nio.channels.spi.AsynchronousChannelProvider {
 
-    public static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread thread = new Thread(r, "Quick Timer");
-            thread.setDaemon(true);
-            return thread;
+    @Override
+    public java.nio.channels.AsynchronousChannelGroup openAsynchronousChannelGroup(int nThreads, ThreadFactory threadFactory) throws IOException {
+        return new AsynchronousChannelGroup(this, new ThreadPoolExecutor(nThreads, nThreads,
+                0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(nThreads),
+                threadFactory), nThreads);
+    }
+
+    @Override
+    public java.nio.channels.AsynchronousChannelGroup openAsynchronousChannelGroup(ExecutorService executor, int initialSize) throws IOException {
+        return new AsynchronousChannelGroup(this, executor, initialSize);
+    }
+
+    @Override
+    public java.nio.channels.AsynchronousServerSocketChannel openAsynchronousServerSocketChannel(java.nio.channels.AsynchronousChannelGroup group) throws IOException {
+        return new AsynchronousServerSocketChannel(checkAndGet(group));
+    }
+
+    @Override
+    public java.nio.channels.AsynchronousSocketChannel openAsynchronousSocketChannel(java.nio.channels.AsynchronousChannelGroup group) throws IOException {
+        return new AsynchronousSocketChannel(checkAndGet(group), SocketChannel.open());
+    }
+
+    private AsynchronousChannelGroup checkAndGet(java.nio.channels.AsynchronousChannelGroup group) {
+        if (!(group instanceof AsynchronousChannelGroup)) {
+            throw new InstrumentException("invalid class");
         }
-    });
-
-    public QuickTimer() {
-        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(this, getDelay(), getPeriod(), TimeUnit.MILLISECONDS);
-        Logger.info("Regist QuickTimerTask---- " + this.getClass().getSimpleName());
+        return (AsynchronousChannelGroup) group;
     }
-
-    public static void cancelQuickTask() {
-        SCHEDULED_EXECUTOR_SERVICE.shutdown();
-    }
-
-    public static ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period) {
-        return SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(command, initialDelay, period, TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * 获取定时任务的延迟启动时间
-     *
-     * @return the long
-     */
-    protected long getDelay() {
-        return 0;
-    }
-
-    /**
-     * 获取定时任务的执行频率
-     *
-     * @return the long
-     */
-    protected abstract long getPeriod();
 
 }
