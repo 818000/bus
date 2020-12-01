@@ -28,86 +28,70 @@ package org.aoju.bus.core.io.resource;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
 
+import javax.tools.FileObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
- * 资源接口定义
- * 资源可以是文件、URL、ClassPath中的文件亦或者jar包中的文件
+ * {@link FileObject} 资源包装
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public interface Resource {
+public class FileObjectResource implements Resource {
+
+    private final FileObject fileObject;
 
     /**
-     * 获取资源名,例如文件资源的资源名为文件名
+     * 构造
      *
-     * @return 资源名
+     * @param fileObject {@link FileObject}
      */
-    String getName();
-
-    /**
-     * 获得解析后的{@link URL}
-     *
-     * @return 解析后的{@link URL}
-     */
-    URL getUrl();
-
-    /**
-     * 获得 {@link InputStream}
-     *
-     * @return {@link InputStream}
-     */
-    InputStream getStream();
-
-    /**
-     * 获得Reader
-     *
-     * @param charset 编码
-     * @return {@link BufferedReader}
-     */
-    default BufferedReader getReader(Charset charset) {
-        return IoKit.getReader(getStream(), charset);
+    public FileObjectResource(FileObject fileObject) {
+        this.fileObject = fileObject;
     }
 
     /**
-     * 读取资源内容,读取完毕后会关闭流
-     * 关闭流并不影响下一次读取
+     * 获取原始的{@link FileObject}
      *
-     * @param charset 编码
-     * @return 读取资源内容
-     * @throws InstrumentException 包装{@link IOException}
+     * @return {@link FileObject}
      */
-    default String readString(Charset charset) throws InstrumentException {
-        return IoKit.read(getReader(charset));
+    public FileObject getFileObject() {
+        return this.fileObject;
     }
 
-    /**
-     * 读取资源内容,读取完毕后会关闭流
-     * 关闭流并不影响下一次读取
-     *
-     * @return 读取资源内容
-     * @throws InstrumentException 包装IOException
-     */
-    default byte[] readBytes() throws InstrumentException {
-        return IoKit.readBytes(getStream());
+    @Override
+    public String getName() {
+        return this.fileObject.getName();
     }
 
-    /**
-     * 将资源内容写出到流，不关闭输出流，但是关闭资源流
-     *
-     * @param out 输出流
-     * @throws InstrumentException IO异常
-     */
-    default void writeTo(OutputStream out) throws InstrumentException {
-        try (InputStream in = getStream()) {
-            IoKit.copy(in, out);
+    @Override
+    public URL getUrl() {
+        try {
+            return this.fileObject.toUri().toURL();
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public InputStream getStream() {
+        try {
+            return this.fileObject.openInputStream();
+        } catch (IOException e) {
+            throw new InstrumentException(e);
+        }
+    }
+
+    @Override
+    public BufferedReader getReader(Charset charset) {
+        try {
+            return IoKit.getReader(this.fileObject.openReader(false));
         } catch (IOException e) {
             throw new InstrumentException(e);
         }
