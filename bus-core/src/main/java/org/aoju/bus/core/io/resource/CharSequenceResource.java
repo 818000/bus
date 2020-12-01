@@ -29,88 +29,85 @@ import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
 /**
- * 资源接口定义
- * 资源可以是文件、URL、ClassPath中的文件亦或者jar包中的文件
+ * {@link CharSequence}资源，字符串做为资源
  *
  * @author Kimi Liu
  * @version 6.1.2
  * @since JDK 1.8+
  */
-public interface Resource {
+public class CharSequenceResource implements Resource {
 
-    /**
-     * 获取资源名,例如文件资源的资源名为文件名
-     *
-     * @return 资源名
-     */
-    String getName();
+	private final CharSequence data;
+	private final CharSequence name;
+	private final Charset charset;
 
-    /**
-     * 获得解析后的{@link URL}
-     *
-     * @return 解析后的{@link URL}
-     */
-    URL getUrl();
+	/**
+	 * 构造，使用UTF8编码
+	 *
+	 * @param data 资源数据
+	 */
+	public CharSequenceResource(CharSequence data) {
+		this(data, null);
+	}
 
-    /**
-     * 获得 {@link InputStream}
-     *
-     * @return {@link InputStream}
-     */
-    InputStream getStream();
+	/**
+	 * 构造，使用UTF8编码
+	 *
+	 * @param data 资源数据
+	 * @param name 资源名称
+	 */
+	public CharSequenceResource(CharSequence data, String name) {
+		this(data, name, org.aoju.bus.core.lang.Charset.UTF_8);
+	}
 
-    /**
-     * 获得Reader
-     *
-     * @param charset 编码
-     * @return {@link BufferedReader}
-     */
-    default BufferedReader getReader(Charset charset) {
-        return IoKit.getReader(getStream(), charset);
-    }
+	/**
+	 * 构造
+	 *
+	 * @param data    资源数据
+	 * @param name    资源名称
+	 * @param charset 编码
+	 */
+	public CharSequenceResource(CharSequence data, CharSequence name, Charset charset) {
+		this.data = data;
+		this.name = name;
+		this.charset = charset;
+	}
 
-    /**
-     * 读取资源内容,读取完毕后会关闭流
-     * 关闭流并不影响下一次读取
-     *
-     * @param charset 编码
-     * @return 读取资源内容
-     * @throws InstrumentException 包装{@link IOException}
-     */
-    default String readString(Charset charset) throws InstrumentException {
-        return IoKit.read(getReader(charset));
-    }
+	@Override
+	public String getName() {
+		return this.name.toString();
+	}
 
-    /**
-     * 读取资源内容,读取完毕后会关闭流
-     * 关闭流并不影响下一次读取
-     *
-     * @return 读取资源内容
-     * @throws InstrumentException 包装IOException
-     */
-    default byte[] readBytes() throws InstrumentException {
-        return IoKit.readBytes(getStream());
-    }
+	@Override
+	public URL getUrl() {
+		return null;
+	}
 
-    /**
-     * 将资源内容写出到流，不关闭输出流，但是关闭资源流
-     *
-     * @param out 输出流
-     * @throws InstrumentException IO异常
-     */
-    default void writeTo(OutputStream out) throws InstrumentException {
-        try (InputStream in = getStream()) {
-            IoKit.copy(in, out);
-        } catch (IOException e) {
-            throw new InstrumentException(e);
-        }
-    }
+	@Override
+	public InputStream getStream() {
+		return new ByteArrayInputStream(readBytes());
+	}
+
+	@Override
+	public BufferedReader getReader(Charset charset) {
+		return IoKit.getReader(new StringReader(this.data.toString()));
+	}
+
+	@Override
+	public String readString(Charset charset) throws InstrumentException {
+		return this.data.toString();
+	}
+
+	@Override
+	public byte[] readBytes() throws InstrumentException {
+		return this.data.toString().getBytes(this.charset);
+	}
 
 }
