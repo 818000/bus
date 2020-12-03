@@ -27,6 +27,7 @@ package org.aoju.bus.crypto.asymmetric;
 
 import org.aoju.bus.core.codec.BCD;
 import org.aoju.bus.core.codec.Base64;
+import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.HexKit;
@@ -43,7 +44,7 @@ import java.security.PublicKey;
  *
  * @param <T> 返回自身类型
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public abstract class Safety<T extends Safety<T>> extends Keys<T> {
@@ -307,6 +308,7 @@ public abstract class Safety<T extends Safety<T>> extends Keys<T> {
      * @return 解密后的密文
      */
     public byte[] decryptFromBcd(String data, KeyType keyType, java.nio.charset.Charset charset) {
+        Assert.notNull(data, "Bcd string must be not null!");
         final byte[] dataBytes = BCD.ascToBcd(StringKit.bytes(data, charset));
         return decrypt(dataBytes, keyType);
     }

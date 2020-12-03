@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -1588,7 +1588,7 @@ public class MathKit {
 
     /**
      * 比较大小，值相等 返回true
-     * 此方法通过调用{@link BigDecimal#compareTo(BigDecimal)}方法来判断是否相等
+     * 此方法通过调用{@link Double#doubleToLongBits(double)}方法来判断是否相等
      * 此方法判断值相等时忽略精度的，即0.00 == 0
      *
      * @param num1 数字1
@@ -1601,7 +1601,7 @@ public class MathKit {
 
     /**
      * 比较大小，值相等 返回true
-     * 此方法通过调用{@link Double#doubleToLongBits(double)}方法来判断是否相等
+     * 此方法通过调用{@link Float#floatToIntBits(float)}方法来判断是否相等
      * 此方法判断值相等时忽略精度的，即0.00 == 0
      *
      * @param num1 数字1

@@ -38,7 +38,7 @@ import java.util.Map;
  * FastJson 解析器
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class FastJsonProvider extends AbstractJsonProvider {
@@ -112,6 +112,11 @@ public class FastJsonProvider extends AbstractJsonProvider {
     @Override
     public <K, V> Map<K, V> toMap(Object object) {
         return toMap(JSON.toJSONString(object));
+    }
+
+    @Override
+    public <T> T getValue(String json, String field) {
+        return (T) JSON.parseObject(json).get(field);
     }
 
     @Override

@@ -26,14 +26,14 @@
 package org.aoju.bus.core.io.streams;
 
 import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.Lang;
+import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class StringInputStream extends ByteArrayInputStream {
@@ -54,7 +54,7 @@ public class StringInputStream extends ByteArrayInputStream {
         try {
             return str.toString().getBytes(charset.name());
         } catch (UnsupportedEncodingException e) {
-            throw Lang.wrapThrow(e);
+            throw new InstrumentException(e);
         }
     }
 

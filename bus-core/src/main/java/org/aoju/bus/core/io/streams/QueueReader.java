@@ -35,15 +35,15 @@ import java.util.LinkedList;
  * 队列InputStream
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class QueueReader extends Reader {
 
     //原始流
-    private Reader is;
+    private final Reader is;
     //缓存
-    private LinkedList<Integer> cache = new LinkedList<>();
+    private final LinkedList<Integer> cache = new LinkedList<>();
     //peek索引
     private int peekindex = 0;
     //是否到流尾

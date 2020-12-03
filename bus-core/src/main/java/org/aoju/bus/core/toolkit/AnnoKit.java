@@ -31,6 +31,7 @@ import java.lang.annotation.*;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import java.util.Map;
  * 快速获取注解对象、注解值等工具封装
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class AnnoKit {
@@ -212,6 +213,18 @@ public class AnnoKit {
      */
     public static boolean isInherited(Class<? extends Annotation> annotationType) {
         return annotationType.isAnnotationPresent(Inherited.class);
+    }
+
+    /**
+     * 设置新的注解的属性(字段)值
+     *
+     * @param annotation      注解对象
+     * @param annotationField 注解属性(字段)名称
+     * @param value           要更新的属性值
+     */
+    public static void setValue(Annotation annotation, String annotationField, Object value) {
+        final Map memberValues = (Map) ReflectKit.getFieldValue(Proxy.getInvocationHandler(annotation), "memberValues");
+        memberValues.put(annotationField, value);
     }
 
 }

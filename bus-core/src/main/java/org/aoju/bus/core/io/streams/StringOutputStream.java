@@ -33,14 +33,14 @@ import java.io.OutputStream;
 
 /**
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class StringOutputStream extends OutputStream {
 
-    private StringBuilder sb;
+    private final StringBuilder sb;
+    private final String charset;
     private ByteArrayOutputStream baos;
-    private String charset;
 
     public StringOutputStream(StringBuilder sb) {
         this(sb, Charset.DEFAULT_UTF_8);

@@ -46,18 +46,22 @@ import java.util.Arrays;
  * 不可变的字节序列.
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class ByteString implements Serializable, Comparable<ByteString> {
 
     public static final ByteString EMPTY = ByteString.of();
-    final byte[] data;
     public transient int hashCode;
-    transient String utf8;
+
+    private byte[] data;
+    private transient String utf8;
 
     public ByteString(byte[] data) {
         this.data = data;
+    }
+
+    public ByteString() {
     }
 
     public static ByteString of(byte... data) {

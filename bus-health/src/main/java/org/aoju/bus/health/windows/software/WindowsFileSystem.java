@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
  * represented by a drive letter, e.g., "A:\" and "C:\"
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -225,7 +225,7 @@ public class WindowsFileSystem extends AbstractFileSystem {
             String volume;
             if (type != 4) {
                 char[] chrVolume = new char[BUFSIZE];
-                Kernel32.INSTANCE.GetVolumeNameForVolumeMountPoint(name + "\\", chrVolume, BUFSIZE);
+                Kernel32.INSTANCE.GetVolumeNameForVolumeMountPoint(name + Symbol.BACKSLASH, chrVolume, BUFSIZE);
                 volume = new String(chrVolume).trim();
             } else {
                 volume = WmiKit.getString(drives, LogicalDiskProperty.PROVIDERNAME, i);

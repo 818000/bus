@@ -31,12 +31,12 @@ import java.io.RandomAccessFile;
 
 /**
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class RandomFileOutputStream extends OutputStream {
 
-    private RandomAccessFile raf;
+    private final RandomAccessFile raf;
 
     public RandomFileOutputStream(RandomAccessFile raf) {
         this.raf = raf;

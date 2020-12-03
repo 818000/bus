@@ -36,14 +36,14 @@ import org.aoju.bus.core.toolkit.*;
  * 传入的path所指向的资源必须存在,否则报错
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class ClassPathResource extends UriResource {
 
-    private String path;
-    private ClassLoader classLoader;
-    private Class<?> clazz;
+    private final String path;
+    private final ClassLoader classLoader;
+    private final Class<?> clazz;
 
     /**
      * 构造

@@ -39,7 +39,7 @@ import java.math.BigInteger;
  * <p>
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class HexKit {
@@ -373,7 +373,7 @@ public class HexKit {
         final int length = hexStr.length();
         final StringBuilder builder = StringKit.builder(length + length / 2);
         builder.append(hexStr.charAt(0)).append(hexStr.charAt(1));
-        for (int i = 1; i < length - 1; i += 2) {
+        for (int i = 2; i < length - 1; i += 2) {
             builder.append(Symbol.C_SPACE).append(hexStr.charAt(i)).append(hexStr.charAt(i + 1));
         }
         return builder.toString();

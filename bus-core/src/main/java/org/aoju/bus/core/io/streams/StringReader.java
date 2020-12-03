@@ -30,12 +30,12 @@ import java.io.Reader;
 
 /**
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class StringReader extends Reader {
 
-    private CharSequence cs;
+    private final CharSequence cs;
     private int index;
 
     public StringReader(CharSequence cs) {

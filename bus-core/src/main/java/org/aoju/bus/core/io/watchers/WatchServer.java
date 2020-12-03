@@ -42,12 +42,16 @@ import java.util.Map;
  * 文件监听服务，此服务可以同时监听多个路径
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class WatchServer extends Thread implements Closeable, Serializable {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * WatchKey 和 Path的对应表
+     */
+    private final Map<WatchKey, Path> watchKeyPathMap = new HashMap<>();
     /**
      * 监听事件列表
      */
@@ -64,10 +68,6 @@ public class WatchServer extends Thread implements Closeable, Serializable {
      * 监听选项，例如监听频率等
      */
     private WatchEvent.Modifier[] modifiers;
-    /**
-     * WatchKey 和 Path的对应表
-     */
-    private Map<WatchKey, Path> watchKeyPathMap = new HashMap<>();
 
     /**
      * 初始化

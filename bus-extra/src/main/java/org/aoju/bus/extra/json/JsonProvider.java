@@ -33,7 +33,7 @@ import java.util.Map;
  * JSON服务提供者
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public interface JsonProvider {
@@ -123,6 +123,16 @@ public interface JsonProvider {
      * @return 返回Map对象
      */
     <K, V> Map<K, V> toMap(Object object);
+
+    /**
+     * 获取json字符串指定属性值
+     *
+     * @param json  要解析的json字符串
+     * @param field 属性名称
+     * @param <T>   泛型参数类型
+     * @return 返回解析后的属性值
+     */
+    <T> T getValue(String json, String field);
 
     /**
      * 判断是否为标准json

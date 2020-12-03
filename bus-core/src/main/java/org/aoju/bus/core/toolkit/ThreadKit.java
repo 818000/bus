@@ -37,7 +37,7 @@ import java.util.concurrent.*;
  * 线程池工具
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class ThreadKit {
@@ -539,6 +539,12 @@ public class ThreadKit {
             } catch (InterruptedException e) {
                 // ignore
             }
+        }
+    }
+
+    public static final class FastBufferThread extends Thread {
+        public FastBufferThread(Runnable target, String name) {
+            super(target, name);
         }
     }
 

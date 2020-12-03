@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ import java.util.Map;
  * 用于执行系统命令的工具
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class RuntimeKit {
@@ -272,6 +273,45 @@ public class RuntimeKit {
     }
 
     /**
+     * 获得当前进程的PID
+     * 当失败时返回-1
+     *
+     * @return the int
+     */
+    public static int getPid() {
+        String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+        String[] split = jvmName.split("@");
+        if (split.length != 2) {
+            return -1;
+        }
+
+        try {
+            return Integer.parseInt(split[0]);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    /**
+     * 返回应用启动到现在的毫秒数
+     *
+     * @return the long
+     */
+    public static long getUpTime() {
+        return ManagementFactory.getRuntimeMXBean().getUptime();
+    }
+
+    /**
+     * 返回输入的JVM参数列表
+     *
+     * @return the string
+     */
+    public static String getVmArguments() {
+        List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+        return CollKit.join(vmArguments, Symbol.SPACE);
+    }
+
+    /**
      * 获得完整消息,包括异常名,消息格式为：{SimpleClassName}: {ThrowableMessage}
      *
      * @param e 异常
@@ -310,6 +350,16 @@ public class RuntimeKit {
     }
 
     /**
+     * 将指定的消息包装为运行时异常
+     *
+     * @param message 异常消息
+     * @return 运行时异常
+     */
+    public static RuntimeException wrapRuntime(String message) {
+        return new RuntimeException(message);
+    }
+
+    /**
      * 包装一个异常
      *
      * @param <T>           对象
@@ -338,6 +388,15 @@ public class RuntimeKit {
             throw (Error) throwable;
         }
         throw new UndeclaredThrowableException(throwable);
+    }
+
+    /**
+     * 将消息包装为运行时异常并抛出
+     *
+     * @param message 异常消息
+     */
+    public static void wrapRuntimeAndThrow(String message) {
+        throw new RuntimeException(message);
     }
 
     /**

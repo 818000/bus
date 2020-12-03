@@ -26,11 +26,12 @@
 package org.aoju.bus.starter.goalie.filter;
 
 import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.goalie.reactor.ExchangeContext;
+import org.aoju.bus.goalie.Context;
+import org.aoju.bus.starter.goalie.GoalieConfiguration;
 import org.aoju.bus.starter.goalie.GoalieProperties;
-import org.aoju.bus.starter.goalie.ReactorConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -41,15 +42,16 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 /**
- * 解密
+ * 数据解密
  *
  * @author Justubborn
  * @since 2020/11/7
  */
 @Component
-@ConditionalOnBean(ReactorConfiguration.class)
-@Order(FilterOrders.DECRYPT)
+@ConditionalOnBean(GoalieConfiguration.class)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 public class DecryptFilter implements WebFilter {
+
     @Autowired
     GoalieProperties.Server.Decrypt decrypt;
 
@@ -57,7 +59,7 @@ public class DecryptFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerWebExchange.Builder builder = exchange.mutate();
         if (decrypt.isEnabled()) {
-            doDecrypt(ExchangeContext.get(exchange).getRequestMap());
+            doDecrypt(Context.get(exchange).getRequestMap());
         }
 
         return chain.filter(builder.build());

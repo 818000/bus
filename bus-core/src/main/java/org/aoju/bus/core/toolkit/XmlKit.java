@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
  * 工具类封装了XML文档的创建、读取、写出和部分XML操作
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class XmlKit {
@@ -514,6 +514,7 @@ public class XmlKit {
             final Transformer xformer = factory.newTransformer();
             if (indent > 0) {
                 xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                xformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
                 xformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
             }
             if (StringKit.isNotBlank(charset)) {
@@ -1155,6 +1156,36 @@ public class XmlKit {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * map 转xml
+     *
+     * @param map    map 对象
+     * @param buffer 返回字符
+     */
+    @SuppressWarnings("unchecked")
+    public static void toXml(Map<String, Object> map, StringBuffer buffer) {
+        map.forEach((key, value) -> {
+            if (value instanceof Map) {
+                buffer.append("<").append(key).append(">");
+                toXml((Map<String, Object>) value, buffer);
+                buffer.append("</").append(key).append(">");
+            } else if (value instanceof List) {
+                List<Object> list = (List<Object>) value;
+                for (Object object : list) {
+                    buffer.append("<").append(key).append(">");
+                    toXml((Map<String, Object>) object, buffer);
+                    buffer.append("</").append(key).append(">");
+                }
+            } else {
+                buffer.append("<").append(key).append(">")
+                        .append(value)
+                        .append("</").append(key).append(">");
+            }
+
+        });
+
     }
 
     /**

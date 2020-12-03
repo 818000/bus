@@ -47,7 +47,7 @@ import java.net.URLDecoder;
 
 /**
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class ResultBody extends AbstractBody implements Body {
@@ -311,10 +311,10 @@ public class ResultBody extends AbstractBody implements Body {
     }
 
     private String resolveFilePath(String dirPath, String fileName) {
-        if (dirPath.endsWith("\\") || dirPath.endsWith(Symbol.SLASH)) {
+        if (dirPath.endsWith(Symbol.BACKSLASH) || dirPath.endsWith(Symbol.SLASH)) {
             return dirPath + fileName;
         }
-        return dirPath + "\\" + fileName;
+        return dirPath + Symbol.BACKSLASH + fileName;
     }
 
     private String indexFileName(String fileName, int index) {

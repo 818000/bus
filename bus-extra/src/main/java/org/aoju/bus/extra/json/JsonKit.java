@@ -33,7 +33,7 @@ import java.util.Map;
  * json工具类,通过SPI自动识别
  *
  * @author Kimi Liu
- * @version 6.1.2
+ * @version 6.1.3
  * @since JDK 1.8+
  */
 public class JsonKit {
@@ -144,6 +144,18 @@ public class JsonKit {
      */
     public static Map toMap(Object object) {
         return getProvider().toMap(object);
+    }
+
+    /**
+     * 获取json字符串指定属性值
+     *
+     * @param json  要解析的json字符串
+     * @param field 属性名称
+     * @param <T>   泛型参数类型
+     * @return 返回解析后的属性值
+     */
+    public static <T> T getValue(String json, String field) {
+        return getProvider().getValue(json, field);
     }
 
     /**
