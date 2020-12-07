@@ -23,50 +23,83 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.mac.drivers;
+package org.aoju.bus.health.unix.freebsd;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.mac.SystemB;
-import com.sun.jna.platform.mac.SystemB.Statfs;
 import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.RegEx;
+import org.aoju.bus.health.Builder;
+import org.aoju.bus.health.Executor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Utility to query fsstat
+ * Reads from procstat into a map
  *
  * @author Kimi Liu
  * @version 6.1.3
  * @since JDK 1.8+
  */
 @ThreadSafe
-public final class Fsstat {
+public final class ProcstatKit {
 
-    private Fsstat() {
+    private ProcstatKit() {
     }
 
     /**
-     * Query fsstat to map partitions to mount points
+     * Gets a map containing current working directory info
      *
-     * @return A map with partitions as the key and mount points as the value
+     * @param pid a process ID, optional
+     * @return a map of process IDs to their current working directory. If
+     * {@code pid} is a negative number, all processes are returned;
+     * otherwise the map may contain only a single element for {@code pid}
      */
-    public static Map<String, String> queryPartitionToMountMap() {
-        Map<String, String> mountPointMap = new HashMap<>();
-        // Use statfs to populate mount point map
-        int numfs = SystemB.INSTANCE.getfsstat64(null, 0, 0);
-        // Create array to hold results
-        Statfs[] fs = new Statfs[numfs];
-        // Fill array with results
-        SystemB.INSTANCE.getfsstat64(fs, numfs * new Statfs().size(), SystemB.MNT_NOWAIT);
-        // Iterate all mounted file systems
-        for (Statfs f : fs) {
-            String mntFrom = Native.toString(f.f_mntfromname, Charset.UTF_8);
-            mountPointMap.put(mntFrom.replace("/dev/", Normal.EMPTY), Native.toString(f.f_mntonname, Charset.UTF_8));
+    public static Map<Integer, String> getCwdMap(int pid) {
+        List<String> procstat = Executor.runNative("procstat -f " + (pid < 0 ? "-a" : pid));
+        Map<Integer, String> cwdMap = new HashMap<>();
+        for (String line : procstat) {
+            String[] split = RegEx.SPACES.split(line.trim(), 10);
+            if (split.length == 10 && split[2].equals("cwd")) {
+                cwdMap.put(Builder.parseIntOrDefault(split[0], -1), split[9]);
+            }
         }
-        return mountPointMap;
+        return cwdMap;
+    }
+
+    /**
+     * Gets current working directory info
+     *
+     * @param pid a process ID
+     * @return the current working directory for that process.
+     */
+    public static String getCwd(int pid) {
+        List<String> procstat = Executor.runNative("procstat -f " + pid);
+        for (String line : procstat) {
+            String[] split = RegEx.SPACES.split(line.trim(), 10);
+            if (split.length == 10 && split[2].equals("cwd")) {
+                return split[9];
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Gets open files
+     *
+     * @param pid The process ID
+     * @return the number of open files.
+     */
+    public static long getOpenFiles(int pid) {
+        long fd = 0L;
+        List<String> procstat = Executor.runNative("procstat -f " + pid);
+        for (String line : procstat) {
+            String[] split = RegEx.SPACES.split(line.trim(), 10);
+            if (split.length == 10 && !"Vd-".contains(split[4])) {
+                fd++;
+            }
+        }
+        return fd;
     }
 
 }
