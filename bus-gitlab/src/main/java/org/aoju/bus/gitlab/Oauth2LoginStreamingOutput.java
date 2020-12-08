@@ -25,10 +25,11 @@
  ********************************************************************************/
 package org.aoju.bus.gitlab;
 
+import org.aoju.bus.core.lang.Charset;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This StreamingOutput implementation is utilized to send a OAuth2 token request
@@ -36,7 +37,7 @@ import java.nio.charset.StandardCharsets;
  * contained in a SecretString that is cleared when an instance of this class is finalized.
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class Oauth2LoginStreamingOutput implements StreamingOutput, AutoCloseable {
@@ -56,8 +57,7 @@ public class Oauth2LoginStreamingOutput implements StreamingOutput, AutoCloseabl
 
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
-
-        Writer writer = new BufferedWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8));
+        Writer writer = new BufferedWriter(new OutputStreamWriter(output, Charset.UTF_8));
         writer.write("{ ");
         writer.write("\"grant_type\": \"password\", ");
         writer.write("\"username\": \"" + username + "\", ");

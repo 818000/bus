@@ -40,7 +40,6 @@ import org.aoju.bus.http.socket.WebSocketListener;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Executor;
 
@@ -48,7 +47,7 @@ import java.util.concurrent.Executor;
  * Httpv 客户端接口
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class Httpv {
@@ -374,7 +373,7 @@ public class Httpv {
 
         private int preprocTimeoutTimes = 10;
 
-        private Charset charset = StandardCharsets.UTF_8;
+        private Charset charset = org.aoju.bus.core.lang.Charset.UTF_8;
 
         private String bodyType = org.aoju.bus.http.Builder.FORM;
 

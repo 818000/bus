@@ -31,10 +31,10 @@ import java.nio.channels.Selector;
 
 /**
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-class UdpSelectionKey extends SelectionKey {
+public class UdpSelectionKey extends SelectionKey {
 
     @Override
     public SelectableChannel channel() {

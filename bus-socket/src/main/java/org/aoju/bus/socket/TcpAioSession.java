@@ -58,10 +58,10 @@ import java.util.function.Function;
  * </ol>
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-final class TcpAioSession<T> extends AioSession {
+public class TcpAioSession<T> extends AioSession {
 
     /**
      * 底层通信channel对象

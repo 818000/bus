@@ -29,7 +29,7 @@ package org.aoju.bus.starter;
  * 全局扩展配置
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class BusXExtend {
@@ -91,9 +91,9 @@ public class BusXExtend {
      */
     public static final String SENSITIVE = "extend.sensitive";
     /**
-     * websocket
+     * socket
      */
-    public static final String WEBSOCKET = "extend.websocket";
+    public static final String SOCKET = "extend.socket";
     /**
      * 存储设置
      */

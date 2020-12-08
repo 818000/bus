@@ -36,10 +36,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGroup {
+public class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGroup {
 
     /**
      * 递归回调次数上限
@@ -92,11 +92,12 @@ class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGrou
     private boolean running = true;
 
     /**
-     * Initialize a new instance of this class.
+     * 初始化该类的新实例
      *
-     * @param provider            The asynchronous channel provider for this group
+     * @param provider            此组的异步通道提供程序
      * @param readExecutorService 执行服务
      * @param threadNum           线程数量
+     * @throws IOException 异常
      */
     protected AsynchronousChannelGroup(AsynchronousChannelProvider provider, ExecutorService readExecutorService, int threadNum) throws IOException {
         super(provider);

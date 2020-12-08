@@ -33,7 +33,7 @@ import org.aoju.bus.core.toolkit.StringKit;
  * 基础输出封装
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class Controller {
@@ -93,6 +93,27 @@ public class Controller {
             return Message.builder()
                     .errcode(errcode)
                     .errmsg(errmsg)
+                    .build();
+        }
+        return Message.builder()
+                .errcode(ErrorCode.EM_FAILURE)
+                .errmsg(ErrorCode.require(ErrorCode.EM_FAILURE))
+                .build();
+    }
+
+    /**
+     * 返回值:自定义处理
+     *
+     * @param errcode 错误编码
+     * @param errmsg  错误信息
+     * @param format  输出格式
+     * @return body 返回值
+     */
+    public static Object write(String errcode, String errmsg, String format) {
+        if (StringKit.isNotEmpty(errcode) && StringKit.isNotEmpty(format)) {
+            return Message.builder()
+                    .errcode(errcode)
+                    .errmsg(StringKit.format(format, errmsg))
                     .build();
         }
         return Message.builder()

@@ -33,7 +33,6 @@ import org.aoju.bus.image.galaxy.data.DatePrecision;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
@@ -46,7 +45,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * 日期格式化等工具
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class Format extends java.text.Format {
@@ -638,7 +637,7 @@ public class Format extends java.text.Format {
         String getMD5String(String s) {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
-                digest.update(s == null ? new byte[0] : s.getBytes(StandardCharsets.UTF_8));
+                digest.update(s == null ? new byte[0] : s.getBytes(Charset.UTF_8));
                 return toString32(digest.digest());
             } catch (NoSuchAlgorithmException e) {
                 return s;

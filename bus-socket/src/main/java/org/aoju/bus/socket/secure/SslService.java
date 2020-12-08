@@ -43,10 +43,10 @@ import java.security.cert.X509Certificate;
  * keytool -genkey -validity 36000 -alias www.aoju.org -keyalg RSA -keystore server.keystore
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-public final class SslService {
+public class SslService {
 
     private final boolean isClient;
     private final ClientAuth clientAuth;

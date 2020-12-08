@@ -29,13 +29,12 @@ import org.aoju.bus.core.toolkit.FileKit;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 文件包装器,扩展文件对象
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class FileWrapper {
@@ -43,7 +42,7 @@ public class FileWrapper {
     /**
      * 默认编码：UTF-8
      */
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    public static final Charset DEFAULT_CHARSET = org.aoju.bus.core.lang.Charset.UTF_8;
     protected File file;
     protected Charset charset;
 
@@ -106,4 +105,5 @@ public class FileWrapper {
     public String readableFileSize() {
         return FileKit.readableFileSize(file.length());
     }
+
 }

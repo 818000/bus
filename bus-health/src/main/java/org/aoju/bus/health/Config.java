@@ -33,7 +33,7 @@ import java.util.Properties;
  * The global configuration utility.
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 @NotThreadSafe
@@ -136,7 +136,7 @@ public final class Config {
      */
     public static class PropertyException extends RuntimeException {
 
-        private static final long serialVersionUID = -7482581936621748005L;
+        private static final long serialVersionUID = 1L;
 
         /**
          * @param property The property name

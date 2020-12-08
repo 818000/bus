@@ -35,10 +35,10 @@ import java.nio.channels.AsynchronousChannelGroup;
  * 断链重连插件
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-class ReconnectPlugin<T> extends AbstractPlugin<T> {
+public class ReconnectPlugin<T> extends AbstractPlugin<T> {
 
     private final AsynchronousChannelGroup asynchronousChannelGroup;
     private final QuickAioClient<T> client;

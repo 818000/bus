@@ -25,13 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.http.magic;
 
+import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.http.Httpd;
 import org.aoju.bus.http.bodys.MultipartBody;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +39,7 @@ import java.util.List;
  * POST参数构造器
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class PostBuilder extends RequestBuilder<PostBuilder> {
@@ -107,7 +107,7 @@ public class PostBuilder extends RequestBuilder<PostBuilder> {
 
     public PostBuilder addFile(String partName, String fileName, String content)
             throws UnsupportedEncodingException {
-        return addFile(partName, fileName, content, StandardCharsets.UTF_8.toString());
+        return addFile(partName, fileName, content, Charset.DEFAULT_UTF_8);
     }
 
     public PostBuilder addFile(String partName, String fileName, String content, String charsetName)

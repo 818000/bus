@@ -25,8 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.notify.provider.netease;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import org.aoju.bus.extra.json.JsonKit;
 import org.aoju.bus.http.Httpx;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.notify.Builder;
@@ -44,7 +43,7 @@ import java.util.Map;
  * 网易云抽象类
  *
  * @author Justubborn
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK1.8+
  */
 public abstract class NeteaseProvider<T extends Property, K extends Context> extends AbstractProvider<T, K> {
@@ -100,10 +99,10 @@ public abstract class NeteaseProvider<T extends Property, K extends Context> ext
         Logger.debug("netease send：{}", map);
         String response = Httpx.post(routerUrl, map, header);
         Logger.debug("netease result：{}", response);
-        JSONObject object = JSON.parseObject(response);
+        String code = JsonKit.getValue(response, "Code");
         return Message.builder()
-                .errcode(SUCCESS_RESULT.equals(object.getString("code")) ? Builder.ErrorCode.SUCCESS.getCode() : object.getString("code"))
-                .errmsg(object.getString("desc")).build();
+                .errcode(SUCCESS_RESULT.equals(code) ? Builder.ErrorCode.SUCCESS.getCode() : code)
+                .errmsg(JsonKit.getValue(response, "desc")).build();
     }
 
     /**

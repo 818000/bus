@@ -37,7 +37,7 @@ import java.io.ByteArrayOutputStream;
  * Git验证码
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class GifProvider extends AbstractProvider {
@@ -66,7 +66,7 @@ public class GifProvider extends AbstractProvider {
      * @param height 验证码高度
      */
     public GifProvider(int width, int height) {
-        this(width, height, 100);
+        this(width, height, 5);
     }
 
     /**

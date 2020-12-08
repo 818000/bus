@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -2889,6 +2889,54 @@ public class MathKit {
             return (false == ((Float) number).isInfinite()) && (false == ((Float) number).isNaN());
         }
         return true;
+    }
+
+    /**
+     * 检查value是否在[min,max]范围内
+     *
+     * @param min   最小值
+     * @param max   最大值
+     * @param value 被检查值
+     * @return 检查结果，范围内将返回true，否则返回false
+     */
+    public static boolean isBetween(int min, int max, int value) {
+        return value >= min && value <= max;
+    }
+
+    /**
+     * 检查value是否在[min,max]范围内
+     *
+     * @param min   最小值
+     * @param max   最大值
+     * @param value 被检查值
+     * @return 检查结果，范围内将返回true，否则返回false
+     */
+    public static boolean isBetween(long min, long max, long value) {
+        return value >= min && value <= max;
+    }
+
+    /**
+     * 检查value是否在[min,max]范围内
+     *
+     * @param min   最小值
+     * @param max   最大值
+     * @param value 被检查值
+     * @return 检查结果，范围内将返回true，否则返回false
+     */
+    public static boolean isBetween(float min, float max, float value) {
+        return value >= min && value <= max;
+    }
+
+    /**
+     * 检查value是否在[min,max]范围内
+     *
+     * @param min   最小值
+     * @param max   最大值
+     * @param value 被检查值
+     * @return 检查结果，范围内将返回true，否则返回false
+     */
+    public static boolean isBetween(double min, double max, double value) {
+        return value >= min && value <= max;
     }
 
     /**

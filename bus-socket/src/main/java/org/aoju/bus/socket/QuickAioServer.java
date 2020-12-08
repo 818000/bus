@@ -48,10 +48,10 @@ import java.util.function.Function;
  *
  * @param <T> 消息对象类型
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-public final class QuickAioServer<T> {
+public class QuickAioServer<T> {
 
     private static final String BUS_ASYNCHRONOUS_CHANNEL_PROVIDER = "org.aoju.bus.socket.AsynchronousChannelProvider";
     private static final String AIO_ASYNCHRONOUS_CHANNEL_PROVIDER = "java.nio.channels.spi.AsynchronousChannelProvider";

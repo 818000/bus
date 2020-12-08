@@ -33,10 +33,10 @@ import java.util.Map;
  * Quickly服务端/客户端配置信息 T:解码后生成的对象类型
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-final class ServerConfig<T> {
+public class ServerConfig<T> {
 
     /**
      * 消息体缓存大小,字节

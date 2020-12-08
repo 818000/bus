@@ -38,10 +38,10 @@ import java.nio.channels.AsynchronousSocketChannel;
  * SSL/TLS通信插件
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-public final class SslPlugin<T> extends AbstractPlugin<T> {
+public class SslPlugin<T> extends AbstractPlugin<T> {
 
     private final ByteBuffer bufferPool;
     private SslService sslService;

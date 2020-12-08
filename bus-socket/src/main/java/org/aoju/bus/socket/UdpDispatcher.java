@@ -34,10 +34,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * UDP消息分发器
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-class UdpDispatcher<T> implements Runnable {
+public class UdpDispatcher<T> implements Runnable {
 
     public final RequestTask EXECUTE_TASK_OR_SHUTDOWN = new RequestTask(null, null);
     private final BlockingQueue<RequestTask> taskQueue = new LinkedBlockingQueue<>();

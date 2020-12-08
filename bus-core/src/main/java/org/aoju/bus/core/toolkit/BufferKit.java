@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
  * ByteBuffer的相关介绍见：https://www.cnblogs.com/ruber/p/6857159.html
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class BufferKit {
@@ -213,6 +213,37 @@ public class BufferKit {
         }
 
         return null;
+    }
+
+    /**
+     * 创建新Buffer
+     *
+     * @param data 数据
+     * @return {@link ByteBuffer}
+     */
+    public static ByteBuffer create(byte[] data) {
+        return ByteBuffer.wrap(data);
+    }
+
+    /**
+     * 从字符串创建新Buffer，使用UTF-8编码
+     *
+     * @param data 数据
+     * @return {@link ByteBuffer}
+     */
+    public static ByteBuffer create(CharSequence data) {
+        return create(StringKit.bytes(data));
+    }
+
+    /**
+     * 从字符串创建新Buffer
+     *
+     * @param data    数据
+     * @param charset 编码
+     * @return {@link ByteBuffer}
+     */
+    public static ByteBuffer create(CharSequence data, Charset charset) {
+        return create(StringKit.bytes(data, charset));
     }
 
 }

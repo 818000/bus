@@ -25,12 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.health.mac.drivers;
 
+import com.sun.jna.Native;
 import com.sun.jna.platform.mac.SystemB;
 import com.sun.jna.platform.mac.SystemB.Statfs;
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.Normal;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ import java.util.Map;
  * Utility to query fsstat
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -62,8 +63,8 @@ public final class Fsstat {
         SystemB.INSTANCE.getfsstat64(fs, numfs * new Statfs().size(), SystemB.MNT_NOWAIT);
         // Iterate all mounted file systems
         for (Statfs f : fs) {
-            String mntFrom = new String(f.f_mntfromname, StandardCharsets.UTF_8).trim();
-            mountPointMap.put(mntFrom.replace("/dev/", Normal.EMPTY), new String(f.f_mntonname, StandardCharsets.UTF_8).trim());
+            String mntFrom = Native.toString(f.f_mntfromname, Charset.UTF_8);
+            mountPointMap.put(mntFrom.replace("/dev/", Normal.EMPTY), Native.toString(f.f_mntonname, Charset.UTF_8));
         }
         return mountPointMap;
     }

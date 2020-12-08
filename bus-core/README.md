@@ -1,17 +1,20 @@
 ## 功能概述
+
 核心功能及工具类,包括常量、线程、类加载器、反射、集合、日期等常用工具
 
 ## 运行环境
+
 要求JDK1.8+
 
 ## 快速开始
 
 - 引入依赖
+
 ```xml
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-core</artifactId>
-    <version>6.1.3</version>
+    <version>6.1.5</version>
 </dependency>
 ```
 
@@ -20,6 +23,7 @@
 ###### 由于ClassLoader#getResources(name)方法提供的资源加载能力非常有限，不支持递归和搜索的特性，但是开发一个框架往往需要按照约定或配置去加载一些当前项目的资源或者扫描指定包目录下的类，能提供非常便利的API以满足需求
 
 ## **功能特性**
+
 * 纯JDK的API，无第三方依赖
 * 支持多种路径风格的资源加载
 * 完全惰性加载，避免性能浪费
@@ -28,6 +32,7 @@
 * 传递URLStreamHandler，支持自定义的URLStreamHandler
 
 ## **示例代码**
+
 ```java
 // 从当前的classpath中加载org/aoju/bus/core/loader目录的资源，但不递归加载子目录
 Loaders.std().load("org/aoju/bus/core/loader");
@@ -94,39 +99,40 @@ Filters.all(Filter...filters); // AND 连接的混合过滤器的另一种表达
 Filters.any(Filter...filters); // OR 连接的混合过滤器的另一种表达方式
 ```
 
+## ImageKit使用
 
-##  ImageKit使用
+ImageKit-图片合并功能使用起来相当简单，主要的类只用一个对象，指定背景图片和输出格式，然后加入各种素材元素，设置元素的位置、大小和效果（如圆角、颜色、透明度等），调用merge()
+方法即可merge方法直接返回BufferedImage对象，getInputStream()获得流，方便上传oss等后续操作，或者调用out()方法保存到本地，调试的时候比较方便。
 
-ImageKit-图片合并功能使用起来相当简单，主要的类只用一个对象，指定背景图片和输出格式，然后加入各种素材元素，设置元素的位置、大小和效果（如圆角、颜色、透明度等），调用merge()方法即可merge方法直接返回BufferedImage对象，getInputStream()获得流，方便上传oss等后续操作，或者调用out()方法保存到本地，调试的时候比较方便。
-##  完整示例
+## 完整示例
 
 ```java
-  public void demo() throws Exception {
+  public void demo()throws Exception{
         // 背景图
-        String bgImageUrl = "http://xxx.com/image/bg.jpg";
+        String bgImageUrl="http://xxx.com/image/bg.jpg";
         // 二维码
-        String qrCodeUrl = "http://xxx.com/image/qrCode.png";
+        String qrCodeUrl="http://xxx.com/image/qrCode.png";
         // 商品图
-        String itemUrl = "http://xxx.com/image/item.jpg";
+        String itemUrl="http://xxx.com/image/item.jpg";
         // 水印图
-        BufferedImage waterMark = ImageIO.read(new URL("https://xxx.com/image/mark.jpg"));
+        BufferedImage waterMark=ImageIO.read(new URL("https://xxx.com/image/mark.jpg"));
         // 头像
-        BufferedImage avatar = ImageIO.read(new URL("https://xxx.com/image/avatar.jpg"));
-        String title = "# 最爱的家居";                                       //标题文本
-        String content = "“如果没有那个桌子，可能就没有那个水壶”";  //内容文本
+        BufferedImage avatar=ImageIO.read(new URL("https://xxx.com/image/avatar.jpg"));
+        String title="# 最爱的家居";                                       //标题文本
+        String content="“如果没有那个桌子，可能就没有那个水壶”";  //内容文本
 
         // 背景图（整个图片的宽高和相关计算依赖于背景图，所以背景图的大小是个基准）
-        Image image = ImageKit.merge(bgImageUrl, FileType.TYPE_JPG);
+        Image image=ImageKit.merge(bgImageUrl,FileType.TYPE_JPG);
 
         // 加图片元素（居中绘制，圆角，半透明）
-        image.addImageElement(itemUrl, 0, 300)
-                .setCenter(true)
-                .setRoundCorner(60)
-                .setAlpha(.8f);
+        image.addImageElement(itemUrl,0,300)
+        .setCenter(true)
+        .setRoundCorner(60)
+        .setAlpha(.8f);
 
         // 加文本元素
-        image.addTextElement(title, 60, 100, 960)
-                .setColor(Color.red);
+        image.addTextElement(title,60,100,960)
+        .setColor(Color.red);
         // 合成图片
         image.merge();
         // 输出文件
@@ -134,28 +140,28 @@ ImageKit-图片合并功能使用起来相当简单，主要的类只用一个�
 
 
         // 商品图（设置坐标、宽高和缩放模式，若按宽度缩放，则高度按比例自动计算）
-        image.addImageElement(itemUrl, 0, 160, 837, 0, Scale.Mode.WIDTH)
-                .setRoundCorner(46)     //设置圆角
-                .setCenter(true);       //居中绘制，会忽略x坐标参数，改为自动计算
+        image.addImageElement(itemUrl,0,160,837,0,Scale.Mode.WIDTH)
+        .setRoundCorner(46)     //设置圆角
+        .setCenter(true);       //居中绘制，会忽略x坐标参数，改为自动计算
 
         // 标题（默认字体为阿里普惠、黑色，也可以自己指定Font对象）
-        image.addTextElement(title, 55, 150, 1400);
+        image.addTextElement(title,55,150,1400);
 
         // 内容（设置文本自动换行，需要指定最大宽度（超出则换行）、最大行数（超出则丢弃）、行高）
-        image.addTextElement(content, "微软雅黑", 40, 150, 1480)
-                .setAutoBreakLine(837, 2, 60);
+        image.addTextElement(content,"微软雅黑",40,150,1480)
+        .setAutoBreakLine(837,2,60);
 
         // 头像（圆角设置一定的大小，可以把头像变成圆的）
-        image.addImageElement(avatar, 200, 1200).setRoundCorner(200);
+        image.addImageElement(avatar,200,1200).setRoundCorner(200);
 
         // 水印（设置透明度，0.0~1.0）
-        image.addImageElement(waterMark, 630, 1200).setAlpha(.8f);
+        image.addImageElement(waterMark,630,1200).setAlpha(.8f);
 
         // 二维码（强制按指定宽度、高度缩放）
-        image.addImageElement(qrCodeUrl, 138, 1707, 186, 186, Scale.Mode.OPTIONAL);
+        image.addImageElement(qrCodeUrl,138,1707,186,186,Scale.Mode.OPTIONAL);
 
         // 元素对象也可以直接new，然后手动加入待绘制列表
-        TextElement textPrice = new TextElement("￥1290", 60, 230, 1300);
+        TextElement textPrice=new TextElement("￥1290",60,230,1300);
         // 红色
         textPrice.setColor(Color.red);
         // 删除线
@@ -166,13 +172,14 @@ ImageKit-图片合并功能使用起来相当简单，主要的类只用一个�
         // 执行图片合并
         image.merge();
         // 获取流（并上传oss等）
-        InputStream is = image.getInputStream();
+        InputStream is=image.getInputStream();
         // 输出文件
         image.out("E://topic.png");
-    }
+        }
 ```
- 
-##  元素支持的特性
+
+## 元素支持的特性
+
 具体`ImageElement`和`TextElement`对象支持的特性如下表：
 
 | 元素类型        | 特性    | 相关方法                                 |

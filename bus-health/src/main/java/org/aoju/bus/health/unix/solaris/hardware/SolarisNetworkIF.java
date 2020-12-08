@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.health.unix.solaris.hardware;
 
+import com.sun.jna.platform.unix.solaris.LibKstat;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.health.builtin.hardware.AbstractNetworkIF;
 import org.aoju.bus.health.builtin.hardware.NetworkIF;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  * SolarisNetworks class.
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -127,11 +128,11 @@ public final class SolarisNetworkIF extends AbstractNetworkIF {
     @Override
     public boolean updateAttributes() {
         try (KstatChain kc = KstatKit.openChain()) {
-            com.sun.jna.platform.unix.solaris.LibKstat.Kstat ksp = kc.lookup("link", -1, getName());
+            LibKstat.Kstat ksp = KstatChain.lookup("link", -1, getName());
             if (ksp == null) { // Solaris 10 compatibility
-                ksp = kc.lookup(null, -1, getName());
+                ksp = KstatChain.lookup(null, -1, getName());
             }
-            if (ksp != null && kc.read(ksp)) {
+            if (ksp != null && KstatChain.read(ksp)) {
                 this.bytesSent = KstatKit.dataLookupLong(ksp, "obytes64");
                 this.bytesRecv = KstatKit.dataLookupLong(ksp, "rbytes64");
                 this.packetsSent = KstatKit.dataLookupLong(ksp, "opackets64");

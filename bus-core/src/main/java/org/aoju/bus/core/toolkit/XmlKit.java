@@ -49,7 +49,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.beans.XMLDecoder;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -61,7 +60,7 @@ import java.util.regex.Pattern;
  * 工具类封装了XML文档的创建、读取、写出和部分XML操作
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 public class XmlKit {
@@ -801,7 +800,7 @@ public class XmlKit {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(javaBean.getClass());
             Unmarshaller um = jaxbContext.createUnmarshaller();
-            return um.unmarshal(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
+            return um.unmarshal(new ByteArrayInputStream(text.getBytes(Charset.UTF_8)));
         } catch (JAXBException e) {
             throw new InstrumentException(e);
         }

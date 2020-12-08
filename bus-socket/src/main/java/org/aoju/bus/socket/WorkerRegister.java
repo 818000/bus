@@ -31,10 +31,10 @@ import java.nio.channels.Selector;
  * selector register callback
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-interface WorkerRegister {
+public interface WorkerRegister {
 
     /**
      * selector回调

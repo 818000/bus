@@ -1,6 +1,6 @@
 package org.aoju.bus.notify.provider.netease;
 
-import com.alibaba.fastjson.JSON;
+import org.aoju.bus.extra.json.JsonKit;
 import org.aoju.bus.notify.Context;
 import org.aoju.bus.notify.magic.Message;
 
@@ -11,7 +11,7 @@ import java.util.Map;
  * 网易云短信消息
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK1.8+
  */
 public class NeteaseSmsProvider extends NeteaseProvider<NeteaseSmsProperty, Context> {
@@ -30,7 +30,7 @@ public class NeteaseSmsProvider extends NeteaseProvider<NeteaseSmsProperty, Cont
         Map<String, Object> params = new HashMap<>();
         params.put("templateid", entity.getTemplateId());
         params.put("mobiles", entity.getReceive());
-        params.put("params", JSON.toJSONString(entity.getParams()));
+        params.put("params", JsonKit.toJsonString(entity.getParams()));
         return post(NETEASE_SMS_API, params);
     }
 

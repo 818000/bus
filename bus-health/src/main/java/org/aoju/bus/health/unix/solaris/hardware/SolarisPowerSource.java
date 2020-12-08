@@ -41,7 +41,7 @@ import java.util.List;
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -54,9 +54,9 @@ public final class SolarisPowerSource extends AbstractPowerSource {
 
     static {
         try (KstatChain kc = KstatKit.openChain()) {
-            if (kc.lookup(KSTAT_BATT_MOD[1], 0, null) != null) {
+            if (KstatChain.lookup(KSTAT_BATT_MOD[1], 0, null) != null) {
                 KSTAT_BATT_IDX = 1;
-            } else if (kc.lookup(KSTAT_BATT_MOD[2], 0, null) != null) {
+            } else if (KstatChain.lookup(KSTAT_BATT_MOD[2], 0, null) != null) {
                 KSTAT_BATT_IDX = 2;
             } else {
                 KSTAT_BATT_IDX = 0;

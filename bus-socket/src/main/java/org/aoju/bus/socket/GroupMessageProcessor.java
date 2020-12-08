@@ -33,10 +33,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Kimi Liu
- * @version 6.1.3
+ * @version 6.1.5
  * @since JDK 1.8+
  */
-abstract class GroupMessageProcessor<T> implements MessageProcessor<T>, GroupIo {
+public abstract class GroupMessageProcessor<T> implements MessageProcessor<T>, GroupIo {
 
     private final Map<String, GroupUnit> sessionGroup = new ConcurrentHashMap<>();
 
