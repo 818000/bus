@@ -23,39 +23,49 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.channel;
 
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.NetMonitor;
-import org.aoju.bus.socket.SocketStatus;
-import org.aoju.bus.socket.process.MessageProcessor;
+import org.aoju.bus.core.lang.exception.InstrumentException;
+
+import java.io.IOException;
+import java.nio.channels.SocketChannel;
+import java.util.concurrent.*;
 
 /**
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-public interface Plugin<T> extends NetMonitor {
+public class AsynchronousChannelProvider extends java.nio.channels.spi.AsynchronousChannelProvider {
 
-    /**
-     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
-     * 若返回false,则当前消息将被忽略
-     * 若返回true,该消息会正常秩序MessageProcessor.process.
-     *
-     * @param session 会话
-     * @param t       对象
-     * @return the true/false
-     */
-    boolean preProcess(AioSession session, T t);
+    @Override
+    public java.nio.channels.AsynchronousChannelGroup openAsynchronousChannelGroup(int nThreads, ThreadFactory threadFactory) throws IOException {
+        return new AsynchronousChannelGroup(this, new ThreadPoolExecutor(nThreads, nThreads,
+                0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(nThreads),
+                threadFactory), nThreads);
+    }
 
-    /**
-     * 监听状态机事件
-     *
-     * @param socketStatus 状态
-     * @param session      会话
-     * @param throwable    线程
-     * @see MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)
-     */
-    void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable);
+    @Override
+    public java.nio.channels.AsynchronousChannelGroup openAsynchronousChannelGroup(ExecutorService executor, int initialSize) throws IOException {
+        return new AsynchronousChannelGroup(this, executor, initialSize);
+    }
+
+    @Override
+    public java.nio.channels.AsynchronousServerSocketChannel openAsynchronousServerSocketChannel(java.nio.channels.AsynchronousChannelGroup group) throws IOException {
+        return new AsynchronousServerSocketChannel(checkAndGet(group));
+    }
+
+    @Override
+    public java.nio.channels.AsynchronousSocketChannel openAsynchronousSocketChannel(java.nio.channels.AsynchronousChannelGroup group) throws IOException {
+        return new AsynchronousSocketChannel(checkAndGet(group), SocketChannel.open());
+    }
+
+    private AsynchronousChannelGroup checkAndGet(java.nio.channels.AsynchronousChannelGroup group) {
+        if (!(group instanceof AsynchronousChannelGroup)) {
+            throw new InstrumentException("invalid class");
+        }
+        return (AsynchronousChannelGroup) group;
+    }
 
 }

@@ -23,39 +23,49 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.handler;
 
-import org.aoju.bus.socket.AioSession;
 import org.aoju.bus.socket.NetMonitor;
 import org.aoju.bus.socket.SocketStatus;
-import org.aoju.bus.socket.process.MessageProcessor;
+import org.aoju.bus.socket.TcpAioSession;
+
+import java.nio.channels.CompletionHandler;
 
 /**
+ * 读写事件回调处理类
+ *
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-public interface Plugin<T> extends NetMonitor {
+public class CompletionWriteHandler<T> implements CompletionHandler<Integer, TcpAioSession<T>> {
 
-    /**
-     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
-     * 若返回false,则当前消息将被忽略
-     * 若返回true,该消息会正常秩序MessageProcessor.process.
-     *
-     * @param session 会话
-     * @param t       对象
-     * @return the true/false
-     */
-    boolean preProcess(AioSession session, T t);
+    @Override
+    public void completed(final Integer result, final TcpAioSession<T> aioSession) {
+        try {
+            NetMonitor monitor = aioSession.getServerConfig().getMonitor();
+            if (monitor != null) {
+                monitor.afterWrite(aioSession, result);
+            }
+            aioSession.writeCompleted();
+        } catch (Exception e) {
+            failed(e, aioSession);
+        }
+    }
 
-    /**
-     * 监听状态机事件
-     *
-     * @param socketStatus 状态
-     * @param session      会话
-     * @param throwable    线程
-     * @see MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)
-     */
-    void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable);
+
+    @Override
+    public void failed(Throwable exc, TcpAioSession<T> aioSession) {
+        try {
+            aioSession.getServerConfig().getProcessor().stateEvent(aioSession, SocketStatus.OUTPUT_EXCEPTION, exc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            aioSession.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
