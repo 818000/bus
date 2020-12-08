@@ -23,39 +23,41 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.process;
 
 import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.NetMonitor;
 import org.aoju.bus.socket.SocketStatus;
-import org.aoju.bus.socket.process.MessageProcessor;
 
 /**
+ * 消息处理器。
+ *
+ * <p>
+ * 通过实现该接口，对完成解码的消息进行业务处理。
+ * </p>
+ *
+ * @param <T> 消息对象实体类型
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-public interface Plugin<T> extends NetMonitor {
+public interface MessageProcessor<T> {
 
     /**
-     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
-     * 若返回false,则当前消息将被忽略
-     * 若返回true,该消息会正常秩序MessageProcessor.process.
+     * 处理接收到的消息
      *
-     * @param session 会话
-     * @param t       对象
-     * @return the true/false
+     * @param session 通信会话
+     * @param msg     待处理的业务消息
      */
-    boolean preProcess(AioSession session, T t);
+    void process(AioSession session, T msg);
 
     /**
-     * 监听状态机事件
+     * 状态机事件,当枚举事件发生时由框架触发该方法
      *
-     * @param socketStatus 状态
-     * @param session      会话
-     * @param throwable    线程
-     * @see MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)
+     * @param session      本次触发状态机的AioSession对象
+     * @param socketStatus 状态枚举
+     * @param throwable    异常对象，如果存在的话
+     * @see SocketStatus
      */
-    void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable);
+    void stateEvent(AioSession session, SocketStatus socketStatus, Throwable throwable);
 
 }

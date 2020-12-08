@@ -23,39 +23,30 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
-
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.NetMonitor;
-import org.aoju.bus.socket.SocketStatus;
-import org.aoju.bus.socket.process.MessageProcessor;
+package org.aoju.bus.socket.security;
 
 /**
+ * 配置引擎请求客户端验证 此选项只对服务器模式的引擎有用
+ *
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-public interface Plugin<T> extends NetMonitor {
+public enum ClientAuth {
 
     /**
-     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
-     * 若返回false,则当前消息将被忽略
-     * 若返回true,该消息会正常秩序MessageProcessor.process.
-     *
-     * @param session 会话
-     * @param t       对象
-     * @return the true/false
+     * 不需要客户端验证
      */
-    boolean preProcess(AioSession session, T t);
-
+    NONE,
     /**
-     * 监听状态机事件
-     *
-     * @param socketStatus 状态
-     * @param session      会话
-     * @param throwable    线程
-     * @see MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)
+     * 请求的客户端验证
+     * 如果设置了此选项并且客户端选择不提供其自身的验证信息,则协商将会继续
      */
-    void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable);
+    OPTIONAL,
+    /**
+     * 必须的客户端验证
+     * 如果设置了此选项并且客户端选择不提供其自身的验证信息,则协商将会停止且引擎将开始它的关闭过程
+     */
+    REQUIRE
 
 }

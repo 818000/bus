@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org sandao and other contributors.               *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,39 +23,37 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
-
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.NetMonitor;
-import org.aoju.bus.socket.SocketStatus;
-import org.aoju.bus.socket.process.MessageProcessor;
+package org.aoju.bus.socket;
 
 /**
+ * 消息处理器
+ *
+ * @param <Request>  请求
+ * @param <Response> 响应
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-public interface Plugin<T> extends NetMonitor {
+public abstract class Handler<Request, Response> {
 
     /**
-     * 对请求消息进行预处理,并决策是否进行后续的MessageProcessor处理
-     * 若返回false,则当前消息将被忽略
-     * 若返回true,该消息会正常秩序MessageProcessor.process.
-     *
-     * @param session 会话
-     * @param t       对象
-     * @return the true/false
+     * 持有下一个处理器的句柄
      */
-    boolean preProcess(AioSession session, T t);
+    protected Handler<Request, Response> nextHandle;
 
     /**
-     * 监听状态机事件
+     * 执行当前处理器逻辑
+     * 当前handle运行完后若还有后续的处理器，需要调用doNext
      *
-     * @param socketStatus 状态
-     * @param session      会话
-     * @param throwable    线程
-     * @see MessageProcessor#stateEvent(AioSession, SocketStatus, Throwable)
+     * @param request  请求
+     * @param response 响应
      */
-    void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable);
+    public abstract void doHandle(Request request, Response response);
+
+    protected final void doNext(Request request, Response response) {
+        if (nextHandle != null) {
+            nextHandle.doHandle(request, response);
+        }
+    }
 
 }
