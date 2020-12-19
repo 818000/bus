@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,54 +23,15 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix.aix.drivers;
-
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.health.Executor;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package org.aoju.bus.core.lang;
 
 /**
- * Utility to query logged in users.
+ * 对齐方式枚举
  *
  * @author Kimi Liu
  * @version 6.1.5
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class Who {
-
-    // sample format:
-    // system boot 2020-06-16 09:12
-    private static final Pattern BOOT_FORMAT_AIX = Pattern.compile("\\D+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d{2}:\\d{2}).*");
-    private static final DateTimeFormatter BOOT_DATE_FORMAT_AIX = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    private Who() {
-    }
-
-    /**
-     * Query {@code who -b} to get boot time
-     *
-     * @return Boot time in milliseconds since the epoch
-     */
-    public static long queryBootTime() {
-        String s = Executor.getFirstAnswer("/usr/bin/who -b");
-        Matcher m = BOOT_FORMAT_AIX.matcher(s);
-        if (m.matches()) {
-            try {
-                return LocalDateTime.parse(m.group(1) + Symbol.SPACE + m.group(2), BOOT_DATE_FORMAT_AIX)
-                        .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-            } catch (DateTimeParseException | NullPointerException e) {
-                // Shouldn't happen with regex matching
-            }
-        }
-        return 0L;
-    }
-
+public enum Align {
+    LEFT, RIGHT, CENTER
 }
