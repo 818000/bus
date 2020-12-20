@@ -36,7 +36,7 @@ import java.util.function.Function;
  * 包装当前会话分配到的虚拟Buffer,提供流式操作方式
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public final class WriteBuffer extends OutputStream {
@@ -60,7 +60,7 @@ public final class WriteBuffer extends OutputStream {
     /**
      * 为当前 WriteBuffer 提供数据存放功能的缓存页
      */
-    private final PageBuffer bufferPage;
+    private final PageBuffer pageBuffer;
     /**
      * 缓冲区数据刷新Function
      */
@@ -98,8 +98,8 @@ public final class WriteBuffer extends OutputStream {
      */
     private byte[] cacheByte;
 
-    public WriteBuffer(PageBuffer bufferPage, Function<WriteBuffer, Void> flushFunction, int chunkSize, int capacity) {
-        this.bufferPage = bufferPage;
+    public WriteBuffer(PageBuffer pageBuffer, Function<WriteBuffer, Void> flushFunction, int chunkSize, int capacity) {
+        this.pageBuffer = pageBuffer;
         this.function = flushFunction;
         this.items = new VirtualBuffer[capacity];
         this.chunkSize = chunkSize;
@@ -137,10 +137,10 @@ public final class WriteBuffer extends OutputStream {
         lock.lock();
         try {
             if (writeInBuf == null) {
-                writeInBuf = bufferPage.allocate(chunkSize);
+                writeInBuf = pageBuffer.allocate(chunkSize);
             }
             writeInBuf.buffer().put(b);
-            flushWriteBuffer();
+            flushWriteBuffer(false);
         } finally {
             lock.unlock();
         }
@@ -148,8 +148,8 @@ public final class WriteBuffer extends OutputStream {
         function.apply(this);
     }
 
-    private void flushWriteBuffer() {
-        if (writeInBuf.buffer().hasRemaining()) {
+    private void flushWriteBuffer(boolean forceFlush) {
+        if (!forceFlush && writeInBuf.buffer().hasRemaining()) {
             return;
         }
         function.apply(this);
@@ -203,7 +203,7 @@ public final class WriteBuffer extends OutputStream {
             waitPreWriteFinish();
             do {
                 if (writeInBuf == null) {
-                    writeInBuf = bufferPage.allocate(Math.max(chunkSize, len));
+                    writeInBuf = pageBuffer.allocate(Math.max(chunkSize, len));
                 }
                 ByteBuffer writeBuffer = writeInBuf.buffer();
                 if (closed) {
@@ -214,8 +214,34 @@ public final class WriteBuffer extends OutputStream {
                 writeBuffer.put(b, off, minSize);
                 off += minSize;
                 len -= minSize;
-                flushWriteBuffer();
+                flushWriteBuffer(false);
             } while (len > 0);
+            notifyWaiting();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void write(ByteBuffer buffer) throws IOException {
+        write(VirtualBuffer.wrap(buffer));
+    }
+
+    public void write(VirtualBuffer virtualBuffer) throws IOException {
+        lock.lock();
+        try {
+            waitPreWriteFinish();
+            if (writeInBuf != null && !virtualBuffer.buffer().isDirect()
+                    && writeInBuf.buffer().remaining() > virtualBuffer.buffer().remaining()) {
+                writeInBuf.buffer().put(virtualBuffer.buffer());
+                virtualBuffer.clean();
+            } else {
+                if (writeInBuf != null) {
+                    flushWriteBuffer(true);
+                }
+                virtualBuffer.buffer().compact();
+                writeInBuf = virtualBuffer;
+            }
+            flushWriteBuffer(false);
             notifyWaiting();
         } finally {
             lock.unlock();

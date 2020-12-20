@@ -29,7 +29,8 @@ package org.aoju.bus.goalie;
  * 常量
  *
  * @author Justubborn
- * @since 2020/11/6
+ * @version 6.1.6
+ * @since JDK 1.8+
  */
 public interface Consts {
 
@@ -38,6 +39,8 @@ public interface Consts {
     String VERSION = "v";
 
     String FORMAT = "format";
+
+    String SIGN = "sign";
 
     String X_ACCESS_TOKEN = "X-Access-Token";
 

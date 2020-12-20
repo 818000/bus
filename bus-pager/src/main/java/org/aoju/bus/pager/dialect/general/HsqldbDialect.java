@@ -41,7 +41,7 @@ import java.util.Map;
  * 数据库方言 hsqldb
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class HsqldbDialect extends AbstractSqlDialect {
@@ -50,10 +50,10 @@ public class HsqldbDialect extends AbstractSqlDialect {
     public Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey) {
         paramMap.put(PAGEPARAMETER_FIRST, page.getPageSize());
         paramMap.put(PAGEPARAMETER_SECOND, page.getStartRow());
-        //处理pageKey
+        // 处理pageKey
         pageKey.update(page.getPageSize());
         pageKey.update(page.getStartRow());
-        //处理参数配置
+        // 处理参数配置
         if (boundSql.getParameterMappings() != null) {
             List<ParameterMapping> newParameterMappings = new ArrayList<>(boundSql.getParameterMappings());
             if (page.getPageSize() > 0) {
@@ -80,4 +80,5 @@ public class HsqldbDialect extends AbstractSqlDialect {
         }
         return sqlBuilder.toString();
     }
+
 }

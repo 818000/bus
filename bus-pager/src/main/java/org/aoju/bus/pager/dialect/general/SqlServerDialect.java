@@ -48,7 +48,7 @@ import java.util.Properties;
  * 数据库方言 sqlserver
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SqlServerDialect extends AbstractSqlDialect {
@@ -102,7 +102,7 @@ public class SqlServerDialect extends AbstractSqlDialect {
 
     @Override
     public String getPageSql(String sql, Page page, CacheKey pageKey) {
-        //处理pageKey
+        // 处理pageKey
         pageKey.update(page.getStartRow());
         pageKey.update(page.getPageSize());
         String cacheSql = CACHE_PAGESQL.get(sql);

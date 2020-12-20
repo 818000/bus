@@ -43,7 +43,7 @@ import java.util.zip.*;
  * 压缩工具类
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class ZipKit {
@@ -874,7 +874,6 @@ public class ZipKit {
      * @param zipFile 压缩文件
      * @param path    需要提取文件的文件名或路径
      * @return 压缩文件流，如果未找到返回{@code null}
-     * @since 5.5.2
      */
     public static InputStream get(ZipFile zipFile, String path) {
         final ZipEntry entry = zipFile.getEntry(path);

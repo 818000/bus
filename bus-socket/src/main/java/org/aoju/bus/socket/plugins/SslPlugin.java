@@ -27,9 +27,9 @@ package org.aoju.bus.socket.plugins;
 
 import org.aoju.bus.core.io.ByteBuffer;
 import org.aoju.bus.socket.BufferFactory;
-import org.aoju.bus.socket.secure.ClientAuth;
-import org.aoju.bus.socket.secure.SslService;
-import org.aoju.bus.socket.secure.SslSocketChannel;
+import org.aoju.bus.socket.security.ClientAuth;
+import org.aoju.bus.socket.security.SslService;
+import org.aoju.bus.socket.security.SslSocketChannel;
 
 import java.io.InputStream;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -38,7 +38,7 @@ import java.nio.channels.AsynchronousSocketChannel;
  * SSL/TLS通信插件
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SslPlugin<T> extends AbstractPlugin<T> {
@@ -80,7 +80,7 @@ public class SslPlugin<T> extends AbstractPlugin<T> {
 
     @Override
     public final AsynchronousSocketChannel shouldAccept(AsynchronousSocketChannel channel) {
-        return new SslSocketChannel(channel, sslService, bufferPool.allocateBufferPage());
+        return new SslSocketChannel(channel, sslService, bufferPool.allocatePageBuffer());
     }
 
 }

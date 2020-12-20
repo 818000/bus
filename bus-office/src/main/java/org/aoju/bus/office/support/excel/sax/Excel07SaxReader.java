@@ -32,6 +32,7 @@ import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.MathKit;
 import org.aoju.bus.core.toolkit.ObjectKit;
 import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.office.Builder;
 import org.aoju.bus.office.support.excel.ExcelSaxKit;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -57,7 +58,7 @@ import java.util.List;
  * Excel2007格式说明见：http://www.cnblogs.com/wangmingshun/p/6654143.html
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class Excel07SaxReader extends DefaultHandler implements ExcelSaxReader<Excel07SaxReader> {
@@ -183,14 +184,13 @@ public class Excel07SaxReader extends DefaultHandler implements ExcelSaxReader<E
      * @param idOrRid    Excel中的sheet id或者rid编号，rid必须加rId前缀，例如rId1，如果为-1处理所有编号的sheet
      * @return this
      * @throws InstrumentException POI异常
-     * @since 5.4.4
      */
     public Excel07SaxReader read(XSSFReader xssfReader, String idOrRid) throws InstrumentException {
-        // 获取共享样式表
+        // 获取共享样式表，样式非必须
         try {
-            stylesTable = xssfReader.getStylesTable();
-        } catch (Exception e) {
-            //ignore
+            this.stylesTable = xssfReader.getStylesTable();
+        } catch (IOException | InvalidFormatException ignore) {
+            // ignore
         }
 
         // 获取共享字符串表
@@ -410,7 +410,7 @@ public class Excel07SaxReader extends DefaultHandler implements ExcelSaxReader<E
                 this.numFmtString = ObjectKit.defaultIfNull(
                         xssfCellStyle.getDataFormatString(),
                         BuiltinFormats.getBuiltinFormat(numFmtIndex));
-                if (CellDataType.NUMBER == this.cellDataType && ExcelSaxKit.isDateFormat(numFmtIndex, numFmtString)) {
+                if (CellDataType.NUMBER == this.cellDataType && Builder.isDateFormat(numFmtIndex, numFmtString)) {
                     cellDataType = CellDataType.DATE;
                 }
             }

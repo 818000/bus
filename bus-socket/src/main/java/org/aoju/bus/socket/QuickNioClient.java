@@ -28,6 +28,7 @@ package org.aoju.bus.socket;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.ThreadKit;
+import org.aoju.bus.socket.handler.ChannelSocketHandler;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -42,7 +43,7 @@ import java.util.Iterator;
  * NIO客户端
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class QuickNioClient implements Closeable {

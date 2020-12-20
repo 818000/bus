@@ -41,7 +41,7 @@ import java.util.Map;
  * 数据库方言 informix
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class InformixDialect extends AbstractSqlDialect {
@@ -50,10 +50,10 @@ public class InformixDialect extends AbstractSqlDialect {
     public Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey) {
         paramMap.put(PAGEPARAMETER_FIRST, page.getStartRow());
         paramMap.put(PAGEPARAMETER_SECOND, page.getPageSize());
-        //处理pageKey
+        // 处理pageKey
         pageKey.update(page.getStartRow());
         pageKey.update(page.getPageSize());
-        //处理参数配置
+        // 处理参数配置
         if (boundSql.getParameterMappings() != null) {
             List<ParameterMapping> newParameterMappings = new ArrayList<>();
             if (page.getStartRow() > 0) {

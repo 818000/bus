@@ -42,10 +42,11 @@ import java.util.Properties;
  * sqlserver 基于 RowBounds 的分页
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SqlServerRowBoundsDialect extends AbstractRowBoundsDialect {
+
     protected SqlServerParser pageSql = new SqlServerParser();
     protected ReplaceSql replaceSql;
 
@@ -60,7 +61,7 @@ public class SqlServerRowBoundsDialect extends AbstractRowBoundsDialect {
 
     @Override
     public String getPageSql(String sql, RowBounds rowBounds, CacheKey pageKey) {
-        //处理pageKey
+        // 处理pageKey
         pageKey.update(rowBounds.getOffset());
         pageKey.update(rowBounds.getLimit());
         sql = replaceSql.replace(sql);

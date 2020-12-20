@@ -25,6 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.socket;
 
+import org.aoju.bus.socket.process.MessageProcessor;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -37,7 +39,7 @@ import java.nio.ByteBuffer;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public enum SocketStatus {
@@ -98,6 +100,6 @@ public enum SocketStatus {
     /**
      * 服务端接受连接异常
      */
-    ACCEPT_EXCEPTION,
+    ACCEPT_EXCEPTION
 
 }

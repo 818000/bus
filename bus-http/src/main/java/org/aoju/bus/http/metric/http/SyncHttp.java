@@ -41,7 +41,7 @@ import java.util.concurrent.CountDownLatch;
  * 同步 Http 请求任务
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SyncHttp extends CoverHttp<SyncHttp> {
@@ -114,12 +114,12 @@ public class SyncHttp extends CoverHttp<SyncHttp> {
         if (method == null || method.isEmpty()) {
             throw new IllegalArgumentException("Request method method cannot be empty!");
         }
-        RealResult result = new RealResult(this, httpClient.executor());
+        RealResult result = new RealResult(this, httpv.executor());
         SyncHttpCall httpCall = new SyncHttpCall();
         // 注册标签任务
         registeTagTask(httpCall);
         CountDownLatch latch = new CountDownLatch(1);
-        httpClient.preprocess(this, () -> {
+        httpv.preprocess(this, () -> {
             synchronized (httpCall) {
                 if (httpCall.canceled) {
                     result.exception(State.CANCELED, null);

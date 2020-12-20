@@ -35,12 +35,12 @@ import org.apache.ibatis.session.RowBounds;
  * 基于 CountSqlParser 的智能 Count 查询
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public abstract class AbstractDialect implements Dialect {
 
-    //处理SQL
+    // 处理SQL
     protected CountSqlParser countSqlParser = new CountSqlParser();
 
     @Override

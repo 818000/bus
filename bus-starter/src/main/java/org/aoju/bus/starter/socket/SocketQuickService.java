@@ -1,15 +1,15 @@
 package org.aoju.bus.starter.socket;
 
-import org.aoju.bus.socket.MessageProcessor;
 import org.aoju.bus.socket.Protocol;
 import org.aoju.bus.socket.QuickAioServer;
+import org.aoju.bus.socket.process.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 /**
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SocketQuickService {

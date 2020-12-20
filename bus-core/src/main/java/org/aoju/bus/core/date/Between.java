@@ -36,7 +36,7 @@ import java.util.Date;
  * 日期间隔
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class Between {
@@ -123,7 +123,7 @@ public class Between {
 
     /**
      * 计算两个日期相差月数
-     * 在非重置情况下,如果起始日期的天小于结束日期的天,月数要少算1(不足1个月)
+     * 在非重置情况下,如果起始日期的天大于结束日期的天,月数要少算1(不足1个月)
      *
      * @param isReset 是否重置时间为起始时间(重置天时分秒)
      * @return 相差月数

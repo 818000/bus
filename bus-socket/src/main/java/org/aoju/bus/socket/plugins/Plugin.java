@@ -26,13 +26,13 @@
 package org.aoju.bus.socket.plugins;
 
 import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.MessageProcessor;
 import org.aoju.bus.socket.NetMonitor;
 import org.aoju.bus.socket.SocketStatus;
+import org.aoju.bus.socket.process.MessageProcessor;
 
 /**
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public interface Plugin<T> extends NetMonitor {

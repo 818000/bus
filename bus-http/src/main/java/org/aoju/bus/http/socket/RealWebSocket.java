@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public final class RealWebSocket implements WebSocket, WebSocketReader.FrameCallback {
@@ -522,11 +522,9 @@ public final class RealWebSocket implements WebSocket, WebSocketReader.FrameCall
                 if (streamsToClose != null) {
                     listener.onClosed(this, receivedCloseCode, receivedCloseReason);
                 }
-
             } else {
                 throw new AssertionError();
             }
-
             return true;
         } finally {
             IoKit.close(streamsToClose);

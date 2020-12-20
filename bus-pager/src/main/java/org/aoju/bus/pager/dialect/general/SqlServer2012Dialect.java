@@ -36,7 +36,7 @@ import java.util.Map;
  * 数据库方言 sqlserver2012
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class SqlServer2012Dialect extends SqlServerDialect {
@@ -45,10 +45,10 @@ public class SqlServer2012Dialect extends SqlServerDialect {
     public Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey) {
         paramMap.put(PAGEPARAMETER_FIRST, page.getStartRow());
         paramMap.put(PAGEPARAMETER_SECOND, page.getPageSize());
-        //处理pageKey
+        // 处理pageKey
         pageKey.update(page.getStartRow());
         pageKey.update(page.getPageSize());
-        //处理参数配置
+        // 处理参数配置
         handleParameter(boundSql, ms);
         return paramMap;
     }

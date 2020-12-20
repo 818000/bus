@@ -29,6 +29,9 @@ import org.aoju.bus.core.io.PageBuffer;
 import org.aoju.bus.core.io.VirtualBuffer;
 import org.aoju.bus.core.io.WriteBuffer;
 import org.aoju.bus.core.toolkit.IoKit;
+import org.aoju.bus.socket.handler.CompletionReadHandler;
+import org.aoju.bus.socket.handler.CompletionWriteHandler;
+import org.aoju.bus.socket.process.MessageProcessor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +61,7 @@ import java.util.function.Function;
  * </ol>
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class TcpAioSession<T> extends AioSession {
@@ -106,15 +109,15 @@ public class TcpAioSession<T> extends AioSession {
      * @param config                 配置项
      * @param completionReadHandler  读回调
      * @param completionWriteHandler 写回调
-     * @param bufferPage             绑定内存页
+     * @param pageBuffer             绑定内存页
      */
-    TcpAioSession(AsynchronousSocketChannel channel, final ServerConfig<T> config, CompletionReadHandler<T> completionReadHandler, CompletionWriteHandler<T> completionWriteHandler, PageBuffer bufferPage) {
+    TcpAioSession(AsynchronousSocketChannel channel, final ServerConfig<T> config, CompletionReadHandler<T> completionReadHandler, CompletionWriteHandler<T> completionWriteHandler, PageBuffer pageBuffer) {
         this.channel = channel;
         this.completionReadHandler = completionReadHandler;
         this.completionWriteHandler = completionWriteHandler;
         this.serverConfig = config;
 
-        this.readBuffer = bufferPage.allocate(config.getReadBufferSize());
+        this.readBuffer = pageBuffer.allocate(config.getReadBufferSize());
 
         Function<WriteBuffer, Void> flushFunction = var -> {
             if (!semaphore.tryAcquire()) {
@@ -128,7 +131,7 @@ public class TcpAioSession<T> extends AioSession {
             }
             return null;
         };
-        byteBuf = new WriteBuffer(bufferPage, flushFunction, serverConfig.getWriteBufferSize(), serverConfig.getWriteBufferCapacity());
+        byteBuf = new WriteBuffer(pageBuffer, flushFunction, serverConfig.getWriteBufferSize(), serverConfig.getWriteBufferCapacity());
         //触发状态机
         config.getProcessor().stateEvent(this, SocketStatus.NEW_SESSION, null);
     }
@@ -144,7 +147,7 @@ public class TcpAioSession<T> extends AioSession {
      * 触发AIO的写操作,
      * 需要调用控制同步
      */
-    void writeCompleted() {
+    public void writeCompleted() {
         if (writeBuffer == null) {
             writeBuffer = byteBuf.poll();
         } else if (!writeBuffer.buffer().hasRemaining()) {
@@ -225,7 +228,7 @@ public class TcpAioSession<T> extends AioSession {
      *
      * @param eof 输入流是否已关闭
      */
-    void readCompleted(boolean eof) {
+    public void readCompleted(boolean eof) {
         if (status == SESSION_STATUS_CLOSED) {
             return;
         }
@@ -345,7 +348,7 @@ public class TcpAioSession<T> extends AioSession {
         }
     }
 
-    ServerConfig<T> getServerConfig() {
+    public ServerConfig<T> getServerConfig() {
         return this.serverConfig;
     }
 

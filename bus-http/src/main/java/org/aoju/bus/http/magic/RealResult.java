@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class RealResult implements Results {
@@ -138,7 +138,7 @@ public class RealResult implements Results {
     }
 
     @Override
-    public Body getBody() {
+    public synchronized Body getBody() {
         if (body == null && response != null) {
             body = new ResultBody(coverHttp, response, taskExecutor);
         }

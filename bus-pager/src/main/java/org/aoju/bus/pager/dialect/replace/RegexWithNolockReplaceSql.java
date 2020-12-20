@@ -31,13 +31,10 @@ import org.aoju.bus.pager.dialect.ReplaceSql;
  * 正则处理 with(nolock),转换为一个 table_PAGEWITHNOLOCK
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class RegexWithNolockReplaceSql implements ReplaceSql {
-
-    //with(nolock)
-    protected String WITHNOLOCK = ", PAGEWITHNOLOCK";
 
     @Override
     public String replace(String sql) {
@@ -48,4 +45,5 @@ public class RegexWithNolockReplaceSql implements ReplaceSql {
     public String restore(String sql) {
         return sql.replaceAll("\\s*(\\w*?)_PAGEWITHNOLOCK", " $1 WITH(NOLOCK)");
     }
+
 }

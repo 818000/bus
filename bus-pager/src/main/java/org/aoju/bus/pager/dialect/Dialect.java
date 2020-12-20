@@ -37,18 +37,26 @@ import java.util.Properties;
  * 数据库方言,针对不同数据库进行实现
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public interface Dialect {
 
-    //分页的id后缀
+    /**
+     * 分页的id后缀
+     */
     String SUFFIX_PAGE = "_PageContext";
-    //count查询的id后缀
+    /**
+     * count查询的id后缀
+     */
     String SUFFIX_COUNT = SUFFIX_PAGE + "_Count";
-    //第一个分页参数
+    /**
+     * 第一个分页参数
+     */
     String PAGEPARAMETER_FIRST = "First" + SUFFIX_PAGE;
-    //第二个分页参数
+    /**
+     * 第二个分页参数
+     */
     String PAGEPARAMETER_SECOND = "Second" + SUFFIX_PAGE;
 
     /**

@@ -26,6 +26,7 @@
 package org.aoju.bus.socket;
 
 import org.aoju.bus.logger.Logger;
+import org.aoju.bus.socket.process.MessageProcessor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -34,7 +35,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * UDP消息分发器
  *
  * @author Kimi Liu
- * @version 6.1.5
+ * @version 6.1.6
  * @since JDK 1.8+
  */
 public class UdpDispatcher<T> implements Runnable {

@@ -43,7 +43,8 @@ import java.util.Optional;
  * 上下文传参
  *
  * @author Justubborn
- * @since 2020/10/30
+ * @version 6.1.6
+ * @since JDK 1.8+
  */
 @Data
 public class Context {
@@ -63,6 +64,10 @@ public class Context {
     private Assets assets;
 
     private Format format = Format.json;
+
+    private boolean needDecrypt = false;
+
+    private long startTime;
 
     public static Context get(ServerWebExchange exchange) {
         Context context = exchange.getAttribute(Context.$);
