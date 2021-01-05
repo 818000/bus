@@ -23,66 +23,74 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.date;
+package org.aoju.bus.core.date.formatter;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.Range;
-import org.aoju.bus.core.toolkit.DateKit;
-
-import java.util.Date;
+import java.io.Serializable;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
- * 日期范围
- *
  * @author Kimi Liu
  * @version 6.1.6
  * @since JDK 1.8+
  */
-public class Boundary extends Range<DateTime> {
+public abstract class AbstractMotd implements DateMotd, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 构造，包含开始和结束日期时间
-     *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
+     * 匹配规则
      */
-    public Boundary(Date start, Date end, final Fields.Type type) {
-        this(start, end, type, 1);
-    }
+    protected final String pattern;
+    /**
+     * 时区
+     */
+    protected final TimeZone timeZone;
+    /**
+     * 语言环境
+     */
+    protected final Locale locale;
 
     /**
-     * 构造，包含开始和结束日期时间
+     * 构造,内部使用
      *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
-     * @param step  步进数
+     * @param pattern  使用{@link java.text.SimpleDateFormat} 相同的日期格式
+     * @param timeZone 非空时区{@link TimeZone}
+     * @param locale   非空{@link Locale} 日期地理位置
      */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step) {
-        this(start, end, type, step, true, true);
+    protected AbstractMotd(final String pattern, final TimeZone timeZone, final Locale locale) {
+        this.pattern = pattern;
+        this.timeZone = timeZone;
+        this.locale = locale;
     }
 
-    /**
-     * 构造
-     *
-     * @param start          起始日期时间
-     * @param end            结束日期时间
-     * @param type           步进类型
-     * @param step           步进数
-     * @param isIncludeStart 是否包含开始的时间
-     * @param isIncludeEnd   是否包含结束的时间
-     */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step, boolean isIncludeStart, boolean isIncludeEnd) {
-        super(DateKit.date(start), DateKit.date(end), (current, end1, index) -> {
-            DateTime dt = current.offset(type, step);
-            if (dt.isAfter(end1)) {
-                return null;
-            }
-            return current.offset(type, step);
-        }, isIncludeStart, isIncludeEnd);
+    @Override
+    public String getPattern() {
+        return pattern;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof FastDatePrinter == false) {
+            return false;
+        }
+        final AbstractMotd other = (AbstractMotd) obj;
+        return pattern.equals(other.pattern) && timeZone.equals(other.timeZone) && locale.equals(other.locale);
+    }
+
+    @Override
+    public int hashCode() {
+        return pattern.hashCode() + 13 * (timeZone.hashCode() + 13 * locale.hashCode());
     }
 
 }

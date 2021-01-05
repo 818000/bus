@@ -23,66 +23,73 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.date;
+package org.aoju.bus.core.date.formatter;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.Range;
-import org.aoju.bus.core.toolkit.DateKit;
-
+import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 日期范围
+ * 日期格式化输出接口
  *
  * @author Kimi Liu
  * @version 6.1.6
  * @since JDK 1.8+
  */
-public class Boundary extends Range<DateTime> {
-
-    private static final long serialVersionUID = 1L;
+public interface DatePrinter extends DateMotd {
 
     /**
-     * 构造，包含开始和结束日期时间
+     * 格式化日期表示的毫秒数
      *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
+     * @param millis 日期毫秒数
+     * @return 格式化的字符串
      */
-    public Boundary(Date start, Date end, final Fields.Type type) {
-        this(start, end, type, 1);
-    }
+    String format(long millis);
 
     /**
-     * 构造，包含开始和结束日期时间
+     * 使用 {@code GregorianCalendar} 格式化 {@code Date}
      *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
-     * @param step  步进数
+     * @param date 日期 {@link Date}
+     * @return 格式化后的字符串
      */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step) {
-        this(start, end, type, step, true, true);
-    }
+    String format(Date date);
 
     /**
-     * 构造
+     * 格式化 {@link Calendar} 对象
      *
-     * @param start          起始日期时间
-     * @param end            结束日期时间
-     * @param type           步进类型
-     * @param step           步进数
-     * @param isIncludeStart 是否包含开始的时间
-     * @param isIncludeEnd   是否包含结束的时间
+     * @param calendar {@link Calendar}
+     * @return 格式化后的字符串
      */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step, boolean isIncludeStart, boolean isIncludeEnd) {
-        super(DateKit.date(start), DateKit.date(end), (current, end1, index) -> {
-            DateTime dt = current.offset(type, step);
-            if (dt.isAfter(end1)) {
-                return null;
-            }
-            return current.offset(type, step);
-        }, isIncludeStart, isIncludeEnd);
-    }
+    String format(Calendar calendar);
+
+    /**
+     * 将毫秒{@code long}值格式化为提供的{@code Appendable}
+     *
+     * @param millis 要格式化的毫秒值
+     * @param buf    要格式化为的缓冲区
+     * @param <B>    附加类类型，通常是StringBuilder或StringBuffer
+     * @return 指定的字符串缓冲区
+     */
+    <B extends Appendable> B format(long millis, B buf);
+
+    /**
+     * 使用{@code GregorianCalendar}将{@code Date}对象格式化为提供的{@code Appendable}
+     *
+     * @param date 格式的日期
+     * @param buf  要格式化为的缓冲区
+     * @param <B>  附加类类型，通常是StringBuilder或StringBuffer
+     * @return 指定的字符串缓冲区
+     */
+    <B extends Appendable> B format(Date date, B buf);
+
+    /**
+     * 将{@code Calendar}对象格式化为提供的{@code Appendable}
+     * 日历上设置的时区仅用于调整时间偏移。解析器构造期间指定的时区将确定格式化字符串中使用的时区
+     *
+     * @param calendar 要格式化的日历
+     * @param buf      要格式化为的缓冲区
+     * @param <B>      附加类类型，通常是StringBuilder或StringBuffer
+     * @return 指定的字符串缓冲区
+     */
+    <B extends Appendable> B format(Calendar calendar, B buf);
 
 }
