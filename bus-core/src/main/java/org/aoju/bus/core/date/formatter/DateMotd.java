@@ -23,66 +23,39 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.date;
+package org.aoju.bus.core.date.formatter;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.Range;
-import org.aoju.bus.core.toolkit.DateKit;
-
-import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
- * 日期范围
+ * 日期基本信息获取接口
  *
  * @author Kimi Liu
  * @version 6.1.6
  * @since JDK 1.8+
  */
-public class Boundary extends Range<DateTime> {
-
-    private static final long serialVersionUID = 1L;
+public interface DateMotd {
 
     /**
-     * 构造，包含开始和结束日期时间
+     * 获得日期格式化或者转换的格式
      *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
+     * @return {@link java.text.SimpleDateFormat}兼容的格式
      */
-    public Boundary(Date start, Date end, final Fields.Type type) {
-        this(start, end, type, 1);
-    }
+    String getPattern();
 
     /**
-     * 构造，包含开始和结束日期时间
+     * 获得时区
      *
-     * @param start 起始日期时间
-     * @param end   结束日期时间
-     * @param type  步进类型
-     * @param step  步进数
+     * @return {@link TimeZone}
      */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step) {
-        this(start, end, type, step, true, true);
-    }
+    TimeZone getTimeZone();
 
     /**
-     * 构造
+     * 获得 日期地理位置
      *
-     * @param start          起始日期时间
-     * @param end            结束日期时间
-     * @param type           步进类型
-     * @param step           步进数
-     * @param isIncludeStart 是否包含开始的时间
-     * @param isIncludeEnd   是否包含结束的时间
+     * @return {@link Locale}
      */
-    public Boundary(Date start, Date end, final Fields.Type type, final int step, boolean isIncludeStart, boolean isIncludeEnd) {
-        super(DateKit.date(start), DateKit.date(end), (current, end1, index) -> {
-            DateTime dt = current.offset(type, step);
-            if (dt.isAfter(end1)) {
-                return null;
-            }
-            return current.offset(type, step);
-        }, isIncludeStart, isIncludeEnd);
-    }
+    Locale getLocale();
 
 }
