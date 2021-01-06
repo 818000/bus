@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.gitlab;
 
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.gitlab.models.Application;
 
 import javax.ws.rs.core.GenericType;
@@ -39,7 +40,7 @@ import java.util.stream.Stream;
  * See <a href="https://docs.gitlab.com/ce/api/applications.html">Applications API at GitLab</a> for more information.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class ApplicationsApi extends AbstractApi {
@@ -138,7 +139,7 @@ public class ApplicationsApi extends AbstractApi {
             throw new GitLabApiException("scopes cannot be null or empty");
         }
 
-        String scopesString = scopes.stream().map(ApplicationScope::toString).collect(Collectors.joining(","));
+        String scopesString = scopes.stream().map(ApplicationScope::toString).collect(Collectors.joining(Symbol.COMMA));
         GitLabApiForm formData = new GitLabApiForm()
                 .withParam("name", name, true)
                 .withParam("redirect_uri", redirectUri, true)

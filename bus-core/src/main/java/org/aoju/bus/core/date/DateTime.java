@@ -25,9 +25,9 @@
  ********************************************************************************/
 package org.aoju.bus.core.date;
 
-import org.aoju.bus.core.date.format.DateParser;
-import org.aoju.bus.core.date.format.DatePrinter;
-import org.aoju.bus.core.date.format.FormatBuilder;
+import org.aoju.bus.core.date.formatter.DateParser;
+import org.aoju.bus.core.date.formatter.DatePrinter;
+import org.aoju.bus.core.date.formatter.FormatBuilder;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Fields;
 import org.aoju.bus.core.lang.exception.InstrumentException;
@@ -49,10 +49,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * 包装java.utils.Date
+ * 包装java.util.Date
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class DateTime extends Date {
@@ -66,7 +66,7 @@ public class DateTime extends Date {
     /**
      * 一周的第一天，默认是周一， 在设置或获得 WEEK_OF_MONTH 或 WEEK_OF_YEAR 字段时，Calendar 必须确定一个月或一年的第一个星期，以此作为参考点。
      */
-    private Fields.Week firstDayOfWeek = Fields.Week.MONDAY;
+    private Fields.Week firstDayOfWeek = Fields.Week.Sun;
     /**
      * 时区
      */
@@ -117,7 +117,7 @@ public class DateTime extends Date {
      */
     public DateTime(Calendar calendar) {
         this(calendar.getTime(), calendar.getTimeZone());
-        this.setFirstDayOfWeek(Fields.Week.of(calendar.getFirstDayOfWeek()));
+        this.setFirstDayOfWeek(Fields.Week.getByCode(calendar.getFirstDayOfWeek()));
     }
 
     /**
@@ -184,7 +184,7 @@ public class DateTime extends Date {
      * @param format  格式
      */
     public DateTime(CharSequence dateStr, String format) {
-        this(dateStr, new SimpleDateFormat(format));
+        this(dateStr, DateKit.newSimpleFormat(format));
     }
 
     /**
@@ -313,17 +313,17 @@ public class DateTime extends Date {
      * 调整日期和时间
      * 如果此对象为可变对象，返回自身，否则返回新对象，设置是否可变对象见{@link #setMutable(boolean)}
      *
-     * @param datePart 调整的部分 {@link Fields.DateField}
-     * @param offset   偏移量，正数为向后偏移，负数为向前偏移
+     * @param type   调整的部分 {@link Fields.Type}
+     * @param offset 偏移量，正数为向后偏移，负数为向前偏移
      * @return 如果此对象为可变对象，返回自身，否则返回新对象
      */
-    public DateTime offset(Fields.DateField datePart, int offset) {
-        if (Fields.DateField.ERA == datePart) {
+    public DateTime offset(Fields.Type type, int offset) {
+        if (Fields.Type.ERA == type) {
             throw new IllegalArgumentException("ERA is not support offset!");
         }
 
         final Calendar cal = toCalendar();
-        cal.add(datePart.getValue(), offset);
+        cal.add(type.getValue(), offset);
 
         DateTime dt = mutable ? this : ObjectKit.clone(this);
         return dt.setTimeInternal(cal.getTimeInMillis());
@@ -333,13 +333,13 @@ public class DateTime extends Date {
      * 调整日期和时间
      * 返回调整后的新{@link DateTime}，不影响原对象
      *
-     * @param datePart 调整的部分 {@link Fields.DateField}
-     * @param offset   偏移量，正数为向后偏移，负数为向前偏移
+     * @param type   调整的部分 {@link Fields.Type}
+     * @param offset 偏移量，正数为向后偏移，负数为向前偏移
      * @return 如果此对象为可变对象，返回自身，否则返回新对象
      */
-    public DateTime offsetNew(Fields.DateField datePart, int offset) {
+    public DateTime offsetNew(Fields.Type type, int offset) {
         final Calendar cal = toCalendar();
-        cal.add(datePart.getValue(), offset);
+        cal.add(type.getValue(), offset);
 
         DateTime dt = ObjectKit.clone(this);
         return dt.setTimeInternal(cal.getTimeInMillis());
@@ -349,10 +349,10 @@ public class DateTime extends Date {
      * 获得日期的某个部分
      * 例如获得年的部分,则使用 getField(Calendar.YEAR)
      *
-     * @param field 表示日期的哪个部分的枚举 {@link Fields.DateField}
+     * @param field 表示日期的哪个部分的枚举 {@link Fields.Type}
      * @return 某个部分的值
      */
-    public int getField(Fields.DateField field) {
+    public int getField(Fields.Type field) {
         return getField(field.getValue());
     }
 
@@ -371,11 +371,11 @@ public class DateTime extends Date {
      * 设置日期的某个部分
      * 如果此对象为可变对象，返回自身，否则返回新对象，设置是否可变对象见{@link #setMutable(boolean)}
      *
-     * @param field 表示日期的哪个部分的枚举 {@link Fields.DateField}
+     * @param field 表示日期的哪个部分的枚举 {@link Fields.Type}
      * @param value 值
      * @return {@link DateTime}
      */
-    public DateTime setField(Fields.DateField field, int value) {
+    public DateTime setField(Fields.Type field, int value) {
         return setField(field.getValue(), value);
     }
 
@@ -413,7 +413,7 @@ public class DateTime extends Date {
      * @return 年的部分
      */
     public int year() {
-        return getField(Fields.DateField.YEAR);
+        return getField(Fields.Type.YEAR);
     }
 
     /**
@@ -440,7 +440,7 @@ public class DateTime extends Date {
      * @return 月份
      */
     public int month() {
-        return getField(Fields.DateField.MONTH);
+        return getField(Fields.Type.MONTH);
     }
 
     /**
@@ -459,7 +459,7 @@ public class DateTime extends Date {
      * @return {@link Fields.Month}
      */
     public Fields.Month monthEnum() {
-        return Fields.Month.of(month());
+        return Fields.Month.getByCode(month());
     }
 
     /**
@@ -471,7 +471,7 @@ public class DateTime extends Date {
      * @return 周
      */
     public int weekOfYear() {
-        return getField(Fields.DateField.WEEK_OF_YEAR);
+        return getField(Fields.Type.WEEK_OF_YEAR);
     }
 
     /**
@@ -483,7 +483,7 @@ public class DateTime extends Date {
      * @return 周
      */
     public int weekOfMonth() {
-        return getField(Fields.DateField.WEEK_OF_MONTH);
+        return getField(Fields.Type.WEEK_OF_MONTH);
     }
 
     /**
@@ -492,7 +492,7 @@ public class DateTime extends Date {
      * @return 天
      */
     public int dayOfMonth() {
-        return getField(Fields.DateField.DAY_OF_MONTH);
+        return getField(Fields.Type.DAY_OF_MONTH);
     }
 
     /**
@@ -501,7 +501,7 @@ public class DateTime extends Date {
      * @return 天
      */
     public int dayOfYear() {
-        return getField(Fields.DateField.DAY_OF_YEAR);
+        return getField(Fields.Type.DAY_OF_YEAR);
     }
 
     /**
@@ -510,7 +510,7 @@ public class DateTime extends Date {
      * @return 星期几
      */
     public int dayOfWeek() {
-        return getField(Fields.DateField.DAY_OF_WEEK);
+        return getField(Fields.Type.DAY_OF_WEEK);
     }
 
     /**
@@ -519,7 +519,7 @@ public class DateTime extends Date {
      * @return 天
      */
     public int dayOfWeekInMonth() {
-        return getField(Fields.DateField.DAY_OF_WEEK_IN_MONTH);
+        return getField(Fields.Type.DAY_OF_WEEK_IN_MONTH);
     }
 
     /**
@@ -528,7 +528,7 @@ public class DateTime extends Date {
      * @return {@link Fields.Week}
      */
     public Fields.Week dayOfWeekEnum() {
-        return Fields.Week.of(dayOfWeek());
+        return Fields.Week.getByCode(dayOfWeek());
     }
 
     /**
@@ -538,7 +538,7 @@ public class DateTime extends Date {
      * @return 小时数
      */
     public int hour(boolean is24HourClock) {
-        return getField(is24HourClock ? Fields.DateField.HOUR_OF_DAY : Fields.DateField.HOUR);
+        return getField(is24HourClock ? Fields.Type.HOUR_OF_DAY : Fields.Type.HOUR);
     }
 
     /**
@@ -548,7 +548,7 @@ public class DateTime extends Date {
      * @return 分钟数
      */
     public int minute() {
-        return getField(Fields.DateField.MINUTE);
+        return getField(Fields.Type.MINUTE);
     }
 
     /**
@@ -557,7 +557,7 @@ public class DateTime extends Date {
      * @return 秒数
      */
     public int second() {
-        return getField(Fields.DateField.SECOND);
+        return getField(Fields.Type.SECOND);
     }
 
     /**
@@ -566,7 +566,7 @@ public class DateTime extends Date {
      * @return 毫秒数
      */
     public int millsecond() {
-        return getField(Fields.DateField.MILLISECOND);
+        return getField(Fields.Type.MILLISECOND);
     }
 
     /**
@@ -575,7 +575,7 @@ public class DateTime extends Date {
      * @return 是否为上午
      */
     public boolean isAM() {
-        return Calendar.AM == getField(Fields.DateField.AM_PM);
+        return Calendar.AM == getField(Fields.Type.AM_PM);
     }
 
     /**
@@ -584,7 +584,7 @@ public class DateTime extends Date {
      * @return 是否为下午
      */
     public boolean isPM() {
-        return Calendar.PM == getField(Fields.DateField.AM_PM);
+        return Calendar.PM == getField(Fields.Type.AM_PM);
     }
 
     /**
@@ -595,16 +595,6 @@ public class DateTime extends Date {
     public boolean isWeekend() {
         final int dayOfWeek = dayOfWeek();
         return Calendar.SATURDAY == dayOfWeek || Calendar.SUNDAY == dayOfWeek;
-    }
-
-    /**
-     * 是否闰年
-     *
-     * @return 是否闰年
-     * @see DateKit#isLeapYear(int)
-     */
-    public boolean isLeapYear() {
-        return new DateKit().isLeapYear(year());
     }
 
     /**
@@ -648,7 +638,7 @@ public class DateTime extends Date {
             locale = Locale.getDefault(Locale.Category.FORMAT);
         }
         final Calendar cal = (null != zone) ? Calendar.getInstance(zone, locale) : Calendar.getInstance(locale);
-        cal.setFirstDayOfWeek(firstDayOfWeek.getValue());
+        cal.setFirstDayOfWeek(firstDayOfWeek.getKey());
         cal.setTime(this);
         return cal;
     }
@@ -694,24 +684,12 @@ public class DateTime extends Date {
     /**
      * 计算相差时长
      *
-     * @param date 对比的日期
-     * @param unit 单位 {@link Fields.Time}
+     * @param date  对比的日期
+     * @param units 单位 {@link Fields.Units}
      * @return 相差时长
      */
-    public long between(Date date, Fields.Time unit) {
-        return new Between(this, date).between(unit);
-    }
-
-    /**
-     * 计算相差时长
-     *
-     * @param date        对比的日期
-     * @param unit        单位 {@link  Fields.Time}
-     * @param formatLevel 格式化级别
-     * @return 相差时长
-     */
-    public String between(Date date, Fields.Time unit, Fields.Level formatLevel) {
-        return new Between(this, date).toString(formatLevel);
+    public long between(Date date, Fields.Units units) {
+        return new Between(this, date).between(units);
     }
 
     /**
@@ -786,8 +764,8 @@ public class DateTime extends Date {
      * 对象是否可变
      * 如果为不可变对象，以下方法将返回新方法：
      * <ul>
-     * <li>{@link DateTime#offset(Fields.DateField, int)}</li>
-     * <li>{@link DateTime#setField(Fields.DateField, int)}</li>
+     * <li>{@link DateTime#offset(Fields.Type, int)}</li>
+     * <li>{@link DateTime#setField(Fields.Type, int)}</li>
      * <li>{@link DateTime#setField(int, int)}</li>
      * </ul>
      * 如果为不可变对象，{@link DateTime#setTime(long)}将抛出异常
@@ -801,8 +779,8 @@ public class DateTime extends Date {
     /**
      * 设置对象是否可变 如果为不可变对象，以下方法将返回新方法：
      * <ul>
-     * <li>{@link DateTime#offset(Fields.DateField, int)}</li>
-     * <li>{@link DateTime#setField(Fields.DateField, int)}</li>
+     * <li>{@link DateTime#offset(Fields.Type, int)}</li>
+     * <li>{@link DateTime#setField(Fields.Type, int)}</li>
      * <li>{@link DateTime#setField(int, int)}</li>
      * </ul>
      * 如果为不可变对象，{@link DateTime#setTime(long)}将抛出异常
@@ -869,15 +847,13 @@ public class DateTime extends Date {
     }
 
     /**
-     * 转为"yyyy-MM-dd " 格式字符串
+     * 转为"yyyy-MM-dd" 格式字符串
      *
-     * @return "yyyy-MM-dd " 格式字符串
+     * @return "yyyy-MM-dd" 格式字符串
      */
-    public String toDateStr() {
+    public String toDateString() {
         if (null != this.timeZone) {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Fields.NORM_DATE_PATTERN);
-            simpleDateFormat.setTimeZone(this.timeZone);
-            return toString(simpleDateFormat);
+            return toString(DateKit.newSimpleFormat(Fields.NORM_DATE_PATTERN, null, timeZone));
         }
         return toString(Fields.NORM_DATE_FORMAT);
     }
@@ -887,11 +863,9 @@ public class DateTime extends Date {
      *
      * @return "HH:mm:ss" 格式字符串
      */
-    public String toTimeStr() {
+    public String toTimeString() {
         if (null != this.timeZone) {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Fields.NORM_TIME_PATTERN);
-            simpleDateFormat.setTimeZone(this.timeZone);
-            return toString(simpleDateFormat);
+            return toString(DateKit.newSimpleFormat(Fields.NORM_TIME_PATTERN, null, timeZone));
         }
         return toString(Fields.NORM_TIME_FORMAT);
     }
@@ -899,7 +873,7 @@ public class DateTime extends Date {
     /**
      * @return 输出精确到毫秒的标准日期形式
      */
-    public String toMsStr() {
+    public String toMsString() {
         return toString(Fields.NORM_DATETIME_MS_FORMAT);
     }
 
@@ -923,9 +897,7 @@ public class DateTime extends Date {
      */
     public String toString(TimeZone timeZone) {
         if (null != timeZone) {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Fields.NORM_DATETIME_PATTERN);
-            simpleDateFormat.setTimeZone(timeZone);
-            return toString(simpleDateFormat);
+            return toString(DateKit.newSimpleFormat(Fields.NORM_DATETIME_PATTERN, null, timeZone));
         }
         return toString(Fields.NORM_DATETIME_FORMAT);
     }
@@ -938,9 +910,7 @@ public class DateTime extends Date {
      */
     public String toString(String format) {
         if (null != this.timeZone) {
-            final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
-            simpleDateFormat.setTimeZone(this.timeZone);
-            return toString(simpleDateFormat);
+            return toString(DateKit.newSimpleFormat(format, null, timeZone));
         }
         return toString(FormatBuilder.getInstance(format));
     }

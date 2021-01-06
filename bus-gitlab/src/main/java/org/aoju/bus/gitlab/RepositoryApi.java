@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.gitlab;
 
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.gitlab.GitLabApi.ApiVersion;
 import org.aoju.bus.gitlab.models.*;
 
@@ -47,7 +48,7 @@ import java.util.stream.Stream;
  * <a href="https://docs.gitlab.com/ce/api/branches.html">Branches API</a>
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class RepositoryApi extends AbstractApi {
@@ -524,7 +525,7 @@ public class RepositoryApi extends AbstractApi {
          */
         Form formData = new GitLabApiForm().withParam("sha", sha);
         Response response = getWithAccepts(Response.Status.OK, formData.asMap(), MediaType.WILDCARD,
-                "projects", getProjectIdOrPath(projectIdOrPath), "repository", "archive" + "." + format.toString());
+                "projects", getProjectIdOrPath(projectIdOrPath), "repository", "archive" + Symbol.DOT + format.toString());
         return (response.readEntity(InputStream.class));
     }
 
@@ -609,7 +610,7 @@ public class RepositoryApi extends AbstractApi {
          */
         Form formData = new GitLabApiForm().withParam("sha", sha);
         Response response = getWithAccepts(Response.Status.OK, formData.asMap(), MediaType.WILDCARD,
-                "projects", getProjectIdOrPath(projectIdOrPath), "repository", "archive" + "." + format.toString());
+                "projects", getProjectIdOrPath(projectIdOrPath), "repository", "archive" + Symbol.DOT + format.toString());
 
         try {
 

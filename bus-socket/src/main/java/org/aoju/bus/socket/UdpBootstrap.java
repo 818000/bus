@@ -27,6 +27,7 @@ package org.aoju.bus.socket;
 
 import org.aoju.bus.core.io.PageBuffer;
 import org.aoju.bus.core.io.VirtualBuffer;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.socket.process.MessageProcessor;
 
@@ -45,7 +46,7 @@ import java.util.Set;
  *
  * @param <R> 请求信息
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class UdpBootstrap<R> {
@@ -134,7 +135,7 @@ public class UdpBootstrap<R> {
                 config.setHost(inetSocketAddress.getHostString());
             }
         } else {
-            config.setHost("");
+            config.setHost(Normal.EMPTY);
         }
 
         if (status == Status.STATUS_RUNNING) {

@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class CollKit {
@@ -803,10 +803,8 @@ public class CollKit {
             return isSorted ? new LinkedHashSet<>() : new HashSet<>();
         }
         int initialCapacity = Math.max((int) (ts.length / .75f) + 1, 16);
-        HashSet<T> set = isSorted ? new LinkedHashSet<>(initialCapacity) : new HashSet<>(initialCapacity);
-        for (T t : ts) {
-            set.add(t);
-        }
+        final HashSet<T> set = isSorted ? new LinkedHashSet<>(initialCapacity) : new HashSet<>(initialCapacity);
+        Collections.addAll(set, ts);
         return set;
     }
 

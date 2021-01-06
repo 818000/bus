@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  * such a way that it could be sub-classed and have its behavior modified.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @Priority(Integer.MIN_VALUE)
@@ -189,7 +189,7 @@ public class MaskingLoggingFilter implements ClientRequestFilter, ClientResponse
     }
 
     protected StringBuilder appendId(final StringBuilder sb, final long id) {
-        sb.append(Long.toString(id)).append(' ');
+        sb.append(id).append(Symbol.C_SPACE);
         return (sb);
     }
 
@@ -198,7 +198,7 @@ public class MaskingLoggingFilter implements ClientRequestFilter, ClientResponse
                 .append(note)
                 .append(" on thread ").append(Thread.currentThread().getName())
                 .append(Symbol.C_LF);
-        appendId(sb, id).append(REQUEST_PREFIX).append(method).append(' ')
+        appendId(sb, id).append(REQUEST_PREFIX).append(method).append(Symbol.C_SPACE)
                 .append(uri.toASCIIString()).append(Symbol.C_LF);
     }
 

@@ -48,7 +48,7 @@ import java.util.*;
  * three-quarters of all installed simply, permissively licensed BSD systems.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -85,7 +85,7 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
             // Usually this works. If it doesn't, fall back to text parsing.
             // Boot time will be the first consecutive string of digits.
             return Builder.parseLongOrDefault(
-                    Executor.getFirstAnswer("sysctl -n kern.boottime").split(",")[0].replaceAll("\\D", Normal.EMPTY),
+                    Executor.getFirstAnswer("sysctl -n kern.boottime").split(Symbol.COMMA)[0].replaceAll("\\D", Normal.EMPTY),
                     System.currentTimeMillis() / 1000);
         }
         // tv now points to a 128-bit timeval structure for boot time.

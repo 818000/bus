@@ -28,6 +28,7 @@ package org.aoju.bus.core.image.painter;
 import org.aoju.bus.core.image.element.AbstractElement;
 import org.aoju.bus.core.image.element.TextElement;
 import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.toolkit.StringKit;
 
 import java.awt.*;
@@ -39,14 +40,13 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class TextPainter implements Painter {
 
     @Override
     public void draw(Graphics2D g, AbstractElement element, int canvasWidth) {
-
         // 强制转成子类
         TextElement textElement = (TextElement) element;
 
@@ -59,19 +59,30 @@ public class TextPainter implements Painter {
         }
 
         for (TextElement textLineElement : textLineElements) {
-            // 设置字体、颜色
+            int textWidth = 0;
+            //设置字体、颜色
             g.setFont(textLineElement.getFont());
             g.setColor(textLineElement.getColor());
 
-            // 设置居中
+            //设置居中
             if (textLineElement.isCenter()) {
-                int textWidth = this.getFrontWidth(textLineElement.getText(), textLineElement.getFont());
+                textWidth = this.getFrontWidth(textLineElement.getText(), textLineElement.getFont());
                 int centerX = (canvasWidth - textWidth) / 2;
                 textLineElement.setX(centerX);
             }
 
-            // 设置透明度
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, textLineElement.getAlpha()));
+            //旋转
+            if (textLineElement.getRotate() != null) {
+                if (textWidth == 0) {
+                    textWidth = this.getFrontWidth(textLineElement.getText(), textLineElement.getFont());
+                }
+                g.rotate(Math.toRadians(textLineElement.getRotate()), textLineElement.getX() + textWidth / 2, textLineElement.getY());
+            }
+
+            //设置透明度
+            if (textLineElement.getAlpha() != 1.0f) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textLineElement.getAlpha()));
+            }
 
             // 带删除线样式的文字要特殊处理
             if (textLineElement.isStrikeThrough() == true) {
@@ -81,6 +92,11 @@ public class TextPainter implements Painter {
                 g.drawString(as.getIterator(), textLineElement.getX(), textLineElement.getY());
             } else {
                 g.drawString(textLineElement.getText(), textLineElement.getX(), textLineElement.getY());
+            }
+
+            //绘制完后反向旋转，以免影响后续元素
+            if (textLineElement.getRotate() != null) {
+                g.rotate(-Math.toRadians(textLineElement.getRotate()), textLineElement.getX() + textWidth / 2, textLineElement.getY());
             }
         }
     }
@@ -120,7 +136,7 @@ public class TextPainter implements Painter {
             }
             // 当前字符
             char c = chars[i];
-            if (isChineseChar(c) || c == ' ' || i == (chars.length - 1)) {
+            if (isChineseChar(c) || c == Symbol.C_SPACE || i == (chars.length - 1)) {
                 // 如果是中文或空格或最后一个字符，一个中文算一个单词, 其他字符遇到空格认为单词结束
                 word += c;
                 hasWord = true;
@@ -198,6 +214,7 @@ public class TextPainter implements Painter {
                 combineTextLine.setStrikeThrough(textElement.isStrikeThrough());
                 combineTextLine.setCenter(textElement.isCenter());
                 combineTextLine.setAlpha(textElement.getAlpha());
+                combineTextLine.setRotate(textElement.getRotate());
                 breakLineElements.add(combineTextLine);
 
                 // 累加高度

@@ -26,6 +26,7 @@
 package org.aoju.bus.health.builtin.software;
 
 import org.aoju.bus.core.annotation.Immutable;
+import org.aoju.bus.core.lang.Normal;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ import java.time.format.DateTimeFormatter;
  * to an operating system.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @Immutable
@@ -97,7 +98,7 @@ public class OSSession {
     public String toString() {
         String loginStr = loginTime == 0 ? "No login"
                 : LocalDateTime.ofInstant(Instant.ofEpochMilli(loginTime), ZoneId.systemDefault()).format(LOGIN_FORMAT);
-        String hostStr = "";
+        String hostStr = Normal.EMPTY;
         if (!host.isEmpty() && !host.equals("::") && !host.equals("0.0.0.0")) {
             hostStr = ", (" + host + ")";
         }

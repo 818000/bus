@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-goalie</artifactId>
-    <version>6.1.6</version>
+    <version>6.1.8</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -91,6 +91,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

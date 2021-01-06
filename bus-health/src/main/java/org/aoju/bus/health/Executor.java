@@ -27,6 +27,7 @@ package org.aoju.bus.health;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.logger.Logger;
 
 import java.io.BufferedReader;
@@ -42,7 +43,7 @@ import java.util.List;
  * execution.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -77,7 +78,7 @@ public final class Executor {
      * string if the command failed
      */
     public static List<String> runNative(String cmdToRun) {
-        String[] cmd = cmdToRun.split(" ");
+        String[] cmd = cmdToRun.split(Symbol.SPACE);
         return runNative(cmd);
     }
 

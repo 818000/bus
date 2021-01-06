@@ -43,7 +43,7 @@ import java.util.Optional;
  * 上下文传参
  *
  * @author Justubborn
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @Data
@@ -93,6 +93,7 @@ public class Context {
     public enum Format {
         xml(new XmlProvider(), MediaType.parseMediaType(MediaType.APPLICATION_XML_VALUE + ";charset=UTF-8")),
         json(new JsonProvider(), MediaType.APPLICATION_JSON),
+        pdf,
         binary;
         private Provider provider;
 

@@ -35,13 +35,15 @@ import org.aoju.bus.health.linux.ProcPath;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * Utility to read process statistics from {@code /proc/[pid]/stat}
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -53,11 +55,14 @@ public final class ProcessStat {
      */
     public static final int PROC_PID_STAT_LENGTH;
 
+    private static final Pattern DIGITS = Pattern.compile("\\d+");
+    private static final Pattern SOCKET = Pattern.compile("socket:\\[(\\d+)\\]");
+
     static {
         String stat = Builder.getStringFromFile(ProcPath.SELF_STAT);
         if (!stat.isEmpty() && stat.contains(")")) {
             // add 3 to account for pid, process name in prarenthesis, and state
-            PROC_PID_STAT_LENGTH = Builder.countStringToLongArray(stat, ' ') + 3;
+            PROC_PID_STAT_LENGTH = Builder.countStringToLongArray(stat, Symbol.C_SPACE) + 3;
         } else {
             // Default assuming recent kernel
             PROC_PID_STAT_LENGTH = 52;
@@ -136,6 +141,32 @@ public final class ProcessStat {
         File procdir = new File(ProcPath.PROC);
         File[] pids = procdir.listFiles(f -> RegEx.NUMBERS.matcher(f.getName()).matches());
         return pids != null ? pids : new File[0];
+    }
+
+    /**
+     * Gets a map of sockets and their corresponding process ID
+     *
+     * @return a map with socket as the key and pid as the value
+     */
+    public static Map<Integer, Integer> querySocketToPidMap() {
+        Map<Integer, Integer> pidMap = new HashMap<>();
+        for (File f : getPidFiles()) {
+            int pid = Builder.parseIntOrDefault(f.getName(), -1);
+            File fdDir = new File(f.getPath() + "/fd");
+            File[] fds = fdDir.listFiles();
+            if (fds != null) {
+                for (File fd : fds) {
+                    String symLink = Builder.readSymlinkTarget(fd);
+                    if (symLink != null) {
+                        Matcher m = SOCKET.matcher(symLink);
+                        if (m.matches()) {
+                            pidMap.put(Builder.parseIntOrDefault(m.group(1), -1), pid);
+                        }
+                    }
+                }
+            }
+        }
+        return pidMap;
     }
 
     /**

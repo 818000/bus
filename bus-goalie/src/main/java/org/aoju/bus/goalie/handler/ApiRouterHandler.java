@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * router handler
  *
  * @author Justubborn
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class ApiRouterHandler {
@@ -78,7 +78,7 @@ public class ApiRouterHandler {
         WebClient.RequestBodySpec bodySpec = webClient
             .method(assets.getHttpMethod())
             .uri(builder.build().encode().toUri())
-            .headers((headers) -> request.headers());
+            .headers((headers) -> headers.addAll(request.headers().asHttpHeaders()));
         if (!HttpMethod.GET.equals(assets.getHttpMethod())) {
             if (request.headers().contentType().isPresent()) {
                 MediaType mediaType = request.headers().contentType().get();

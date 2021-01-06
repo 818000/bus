@@ -28,6 +28,8 @@ package org.aoju.bus.socket;
 import org.aoju.bus.core.io.PageBuffer;
 import org.aoju.bus.core.io.VirtualBuffer;
 import org.aoju.bus.core.io.WriteBuffer;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.logger.Logger;
 
 import java.io.IOException;
@@ -41,13 +43,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * 封装UDP底层真实渠道对象,并提供通信及会话管理
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 public class UdpChannel<Request> {
@@ -156,20 +158,18 @@ public class UdpChannel<Request> {
     UdpAioSession createAndCacheSession(final SocketAddress remote) {
         String key = getSessionKey(remote);
         UdpAioSession session = udpAioSessionConcurrentHashMap.computeIfAbsent(key, s -> {
-            Function<WriteBuffer, Void> function = writeBuffer -> {
+            Consumer<WriteBuffer> consumer = writeBuffer -> {
                 VirtualBuffer virtualBuffer = writeBuffer.poll();
                 if (virtualBuffer == null) {
-                    return null;
+                    return;
                 }
                 try {
                     write(virtualBuffer, remote);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                return null;
             };
-            WriteBuffer writeBuffer = new WriteBuffer(pageBuffer, function, config.getWriteBufferSize(), 1);
+            WriteBuffer writeBuffer = new WriteBuffer(pageBuffer, consumer, config.getWriteBufferSize(), 1);
             return new UdpAioSession(UdpChannel.this, remote, writeBuffer);
         });
         return session;
@@ -181,7 +181,7 @@ public class UdpChannel<Request> {
 
         }
         InetSocketAddress address = (InetSocketAddress) remote;
-        return address.getHostName() + ":" + address.getPort();
+        return address.getHostName() + Symbol.C_COLON + address.getPort();
     }
 
     void removeSession(final SocketAddress remote) {
@@ -209,7 +209,7 @@ public class UdpChannel<Request> {
                 channel = null;
             }
         } catch (IOException e) {
-            Logger.error("", e);
+            Logger.error(Normal.EMPTY, e);
         }
         // 内存回收
         ResponseTask task;

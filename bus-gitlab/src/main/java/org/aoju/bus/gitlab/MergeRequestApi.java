@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.gitlab;
 
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.gitlab.GitLabApi.ApiVersion;
 import org.aoju.bus.gitlab.models.*;
 
@@ -40,7 +41,7 @@ import java.util.stream.Stream;
  * This class implements the client side API for the GitLab merge request calls.
  *
  * @author Kimi Liu
- * @version 6.1.6
+ * @version 6.1.8
  * @see <a href="https://docs.gitlab.com/ce/api/merge_requests.html">Merge requests API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/merge_request_approvals.html">Merge request approvals API at GitLab</a>
  * @since JDK 1.8+
@@ -659,7 +660,7 @@ public class MergeRequestApi extends AbstractApi {
 
         String[] labelsArray = null;
         if (labels != null) {
-            labelsArray = labels.split(",", -1);
+            labelsArray = labels.split(Symbol.COMMA, -1);
         }
 
         MergeRequestParams params = new MergeRequestParams()

@@ -34,7 +34,7 @@ import java.util.Objects;
  * api definition
  *
  * @author Justubborn
- * @version 6.1.6
+ * @version 6.1.8
  * @since JDK 1.8+
  */
 @Data
@@ -52,7 +52,6 @@ public class Assets {
     private boolean firewall;
     private String version;
     private String description;
-
 
 
     @Override
