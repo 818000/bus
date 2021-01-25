@@ -23,118 +23,120 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.gitlab.hooks.system;
 
 import org.aoju.bus.gitlab.JacksonJson;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Kimi Liu
  * @version 6.1.8
  * @since JDK 1.8+
  */
-public class ApprovalRule {
+public class GroupMemberSystemHookEvent extends AbstractSystemHookEvent {
 
-    private Integer id;
-    private String name;
-    private String ruleType;
-    private List<User> eligibleApprovers;
-    private Integer approvalsRequired;
-    private ApprovalRule sourceRule;
-    private List<User> users;
-    private List<Group> groups;
-    private Boolean containsHiddenGroups;
+    public static final String NEW_GROUP_MEMBER_EVENT = "user_add_to_group";
+    public static final String GROUP_MEMBER_REMOVED_EVENT = "user_remove_from_group";
 
-    private List<User> approvedBy;
-    private Boolean approved;
+    private Date createdAt;
+    private Date updatedAt;
+    private String eventName;
+    private String groupAccess;
+    private String groupName;
+    private String groupPath;
+    private Integer groupId;
+    private String userEmail;
+    private String userName;
+    private String userUsername;
+    private Integer userId;
 
-    public Integer getId() {
-        return id;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getName() {
-        return name;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public String getRuleType() {
-        return ruleType;
+    public String getEventName() {
+        return this.eventName;
     }
 
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
-    public List<User> getEligibleApprovers() {
-        return eligibleApprovers;
+    public String getGroupAccess() {
+        return groupAccess;
     }
 
-    public void setEligibleApprovers(List<User> eligibleApprovers) {
-        this.eligibleApprovers = eligibleApprovers;
+    public void setGroupAccess(String groupAccess) {
+        this.groupAccess = groupAccess;
     }
 
-    public Integer getApprovalsRequired() {
-        return approvalsRequired;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setApprovalsRequired(Integer approvalsRequired) {
-        this.approvalsRequired = approvalsRequired;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
-    public ApprovalRule getSourceRule() {
-        return sourceRule;
+    public String getGroupPath() {
+        return groupPath;
     }
 
-    public void setSourceRule(ApprovalRule sourceRule) {
-        this.sourceRule = sourceRule;
+    public void setGroupPath(String groupPath) {
+        this.groupPath = groupPath;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Integer getGroupId() {
+        return groupId;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
-    public List<Group> getGroups() {
-        return groups;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setGroups(List<Group> groups) {
-        this.groups = groups;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public Boolean getContainsHiddenGroups() {
-        return containsHiddenGroups;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setContainsHiddenGroups(Boolean containsHiddenGroups) {
-        this.containsHiddenGroups = containsHiddenGroups;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public List<User> getApprovedBy() {
-        return approvedBy;
+    public String getUserUsername() {
+        return userUsername;
     }
 
-    public void setApprovedBy(List<User> approvedBy) {
-        this.approvedBy = approvedBy;
+    public void setUserUsername(String userUsername) {
+        this.userUsername = userUsername;
     }
 
-    public Boolean getApproved() {
-        return approved;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     @Override

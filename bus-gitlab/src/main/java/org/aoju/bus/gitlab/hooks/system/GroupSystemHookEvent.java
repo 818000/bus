@@ -23,38 +23,57 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.gitlab.hooks.system;
 
 import org.aoju.bus.gitlab.JacksonJson;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Kimi Liu
  * @version 6.1.8
  * @since JDK 1.8+
  */
-public class ApprovalRule {
+public class GroupSystemHookEvent extends AbstractSystemHookEvent {
 
-    private Integer id;
+    public static final String GROUP_CREATE_EVENT = "group_create";
+    public static final String GROUP_DESTROY_EVENT = "group_destroy";
+    public static final String GROUP_RENAME_EVENT = "group_rename";
+
+    private Date createdAt;
+    private Date updatedAt;
+    private String eventName;
     private String name;
-    private String ruleType;
-    private List<User> eligibleApprovers;
-    private Integer approvalsRequired;
-    private ApprovalRule sourceRule;
-    private List<User> users;
-    private List<Group> groups;
-    private Boolean containsHiddenGroups;
+    private String path;
+    private String fullPath;
+    private Integer groupId;
+    private String ownerEmail;
+    private String ownerName;
+    private String oldPath;
+    private String oldFullPath;
 
-    private List<User> approvedBy;
-    private Boolean approved;
-
-    public Integer getId() {
-        return id;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getEventName() {
+        return this.eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public String getName() {
@@ -65,76 +84,60 @@ public class ApprovalRule {
         this.name = name;
     }
 
-    public String getRuleType() {
-        return ruleType;
+    public String getPath() {
+        return path;
     }
 
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public List<User> getEligibleApprovers() {
-        return eligibleApprovers;
+    public String getFullPath() {
+        return fullPath;
     }
 
-    public void setEligibleApprovers(List<User> eligibleApprovers) {
-        this.eligibleApprovers = eligibleApprovers;
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
-    public Integer getApprovalsRequired() {
-        return approvalsRequired;
+    public Integer getGroupId() {
+        return groupId;
     }
 
-    public void setApprovalsRequired(Integer approvalsRequired) {
-        this.approvalsRequired = approvalsRequired;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
-    public ApprovalRule getSourceRule() {
-        return sourceRule;
+    public String getOwnerEmail() {
+        return ownerEmail;
     }
 
-    public void setSourceRule(ApprovalRule sourceRule) {
-        this.sourceRule = sourceRule;
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
-    public List<Group> getGroups() {
-        return groups;
+    public String getOldPath() {
+        return oldPath;
     }
 
-    public void setGroups(List<Group> groups) {
-        this.groups = groups;
+    public void setOldPath(String oldPath) {
+        this.oldPath = oldPath;
     }
 
-    public Boolean getContainsHiddenGroups() {
-        return containsHiddenGroups;
+    public String getOldFullPath() {
+        return oldFullPath;
     }
 
-    public void setContainsHiddenGroups(Boolean containsHiddenGroups) {
-        this.containsHiddenGroups = containsHiddenGroups;
-    }
-
-    public List<User> getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(List<User> approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public Boolean getApproved() {
-        return approved;
-    }
-
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
+    public void setOldFullPath(String oldFullPath) {
+        this.oldFullPath = oldFullPath;
     }
 
     @Override
