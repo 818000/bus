@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -39,14 +39,13 @@ import org.aoju.bus.health.windows.WmiKit;
 import org.aoju.bus.health.windows.drivers.Win32VideoController;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Graphics Card obtained from WMI
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -76,7 +75,7 @@ final class WindowsGraphicsCard extends AbstractGraphicsCard {
      * objects.
      */
     public static List<GraphicsCard> getGraphicsCards() {
-        List<WindowsGraphicsCard> cardList = new ArrayList<>();
+        List<GraphicsCard> cardList = new ArrayList<>();
         if (IS_VISTA_OR_GREATER) {
             WmiResult<Win32VideoController.VideoControllerProperty> cards = Win32VideoController.queryVideoController();
             for (int index = 0; index < cards.getResultCount(); index++) {
@@ -103,7 +102,7 @@ final class WindowsGraphicsCard extends AbstractGraphicsCard {
                         StringKit.isBlank(vendor) ? Normal.UNKNOWN : vendor, versionInfo, vram));
             }
         }
-        return Collections.unmodifiableList(cardList);
+        return cardList;
     }
 
 }

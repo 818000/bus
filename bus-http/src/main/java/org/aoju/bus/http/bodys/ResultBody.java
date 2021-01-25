@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -28,7 +28,7 @@ package org.aoju.bus.http.bodys;
 import org.aoju.bus.core.io.Buffer;
 import org.aoju.bus.core.io.ByteString;
 import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
@@ -47,7 +47,7 @@ import java.net.URLDecoder;
 
 /**
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class ResultBody extends AbstractBody implements Body {
@@ -70,7 +70,7 @@ public class ResultBody extends AbstractBody implements Body {
 
 
     @Override
-    public MediaType getType() {
+    public MimeType getType() {
         ResponseBody body = response.body();
         if (body != null) {
             return body.contentType();

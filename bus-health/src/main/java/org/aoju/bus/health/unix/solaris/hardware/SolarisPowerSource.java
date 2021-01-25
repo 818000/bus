@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -34,14 +34,13 @@ import org.aoju.bus.health.unix.solaris.KstatKit.KstatChain;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -79,10 +78,10 @@ public final class SolarisPowerSource extends AbstractPowerSource {
     /**
      * Gets Battery Information
      *
-     * @return An array of PowerSource objects representing batteries, etc.
+     * @return A list of PowerSource objects representing batteries, etc.
      */
     public static List<PowerSource> getPowerSources() {
-        return Collections.unmodifiableList(Arrays.asList(getPowerSource("BAT0")));
+        return Arrays.asList(getPowerSource("BAT0"));
     }
 
     private static SolarisPowerSource getPowerSource(String name) {

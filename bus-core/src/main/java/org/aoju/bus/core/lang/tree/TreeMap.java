@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -37,14 +37,14 @@ import java.util.List;
  *
  * @param <T> ID类型
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class TreeMap<T> extends LinkedHashMap<String, Object> implements Node<T> {
 
     private static final long serialVersionUID = 1L;
 
-    private TreeEntity TreeEntity;
+    private final TreeEntity TreeEntity;
     private TreeMap<T> parent;
 
     public TreeMap() {
@@ -59,7 +59,7 @@ public class TreeMap<T> extends LinkedHashMap<String, Object> implements Node<T>
     public TreeMap(TreeEntity TreeEntity) {
         super();
         this.TreeEntity = ObjectKit.defaultIfNull(
-                TreeEntity, TreeEntity.DEFAULT);
+                TreeEntity, org.aoju.bus.core.lang.tree.TreeEntity.DEFAULT);
     }
 
     /**

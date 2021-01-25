@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -43,7 +43,7 @@ import java.util.List;
  * Graphics card info obtained by lshw
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -71,7 +71,7 @@ final class LinuxGraphicsCard extends AbstractGraphicsCard {
      * objects.
      */
     public static List<GraphicsCard> getGraphicsCards() {
-        List<LinuxGraphicsCard> cardList = getGraphicsCardsFromLspci();
+        List<GraphicsCard> cardList = getGraphicsCardsFromLspci();
         if (cardList.isEmpty()) {
             cardList = getGraphicsCardsFromLshw();
         }
@@ -80,8 +80,8 @@ final class LinuxGraphicsCard extends AbstractGraphicsCard {
     }
 
     // Faster, use as primary
-    private static List<LinuxGraphicsCard> getGraphicsCardsFromLspci() {
-        List<LinuxGraphicsCard> cardList = new ArrayList<>();
+    private static List<GraphicsCard> getGraphicsCardsFromLspci() {
+        List<GraphicsCard> cardList = new ArrayList<>();
         // Machine readable version
         List<String> lspci = Executor.runNative("lspci -vnnm");
         String name = Normal.UNKNOWN;
@@ -150,8 +150,8 @@ final class LinuxGraphicsCard extends AbstractGraphicsCard {
     }
 
     // Slower, use as backup
-    private static List<LinuxGraphicsCard> getGraphicsCardsFromLshw() {
-        List<LinuxGraphicsCard> cardList = new ArrayList<>();
+    private static List<GraphicsCard> getGraphicsCardsFromLshw() {
+        List<GraphicsCard> cardList = new ArrayList<>();
         List<String> lshw = Executor.runNative("lshw -C display");
         String name = Normal.UNKNOWN;
         String deviceId = Normal.UNKNOWN;

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.beans.copier;
 
-import org.aoju.bus.core.beans.BeanDesc;
+import org.aoju.bus.core.beans.PropertyDescription;
 import org.aoju.bus.core.beans.copier.provider.BeanValueProvider;
 import org.aoju.bus.core.beans.copier.provider.MapValueProvider;
 import org.aoju.bus.core.convert.Convert;
@@ -45,7 +45,7 @@ import java.util.Map;
  *
  * @param <T> 目标对象类型
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class BeanCopier<T> implements Copier<T>, Serializable {
@@ -188,14 +188,14 @@ public class BeanCopier<T> implements Copier<T>, Serializable {
      * @param targetMap 目标的Map
      */
     private void beanToMap(Object bean, Map targetMap) {
-        final Collection<BeanDesc.PropDesc> props = BeanKit.getBeanDesc(bean.getClass()).getProps();
+        final Collection<PropertyDescription> props = BeanKit.getBeanDesc(bean.getClass()).getProps();
         final HashSet<String> ignoreSet = (null != copyOptions.ignoreProperties) ? CollKit.newHashSet(copyOptions.ignoreProperties) : null;
         final CopyOptions copyOptions = this.copyOptions;
 
         String key;
         Method getter;
         Object value;
-        for (BeanDesc.PropDesc prop : props) {
+        for (PropertyDescription prop : props) {
             key = prop.getFieldName();
             // 过滤class属性
             // 得到property对应的getter方法
@@ -249,13 +249,13 @@ public class BeanCopier<T> implements Copier<T>, Serializable {
         final HashSet<String> ignoreSet = (null != copyOptions.ignoreProperties) ? CollKit.newHashSet(copyOptions.ignoreProperties) : null;
         final Map<String, String> fieldReverseMapping = copyOptions.getReversedMapping();
 
-        final Collection<BeanDesc.PropDesc> props = BeanKit.getBeanDesc(actualEditable).getProps();
+        final Collection<PropertyDescription> props = BeanKit.getBeanDesc(actualEditable).getProps();
         Field field;
         String fieldName;
         Object value;
         Method setterMethod;
         Class<?> propClass;
-        for (BeanDesc.PropDesc prop : props) {
+        for (PropertyDescription prop : props) {
             // 获取值
             field = prop.getField();
             fieldName = prop.getFieldName();

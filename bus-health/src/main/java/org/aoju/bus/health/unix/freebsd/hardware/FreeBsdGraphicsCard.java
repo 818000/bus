@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -43,7 +43,7 @@ import java.util.List;
  * Graphics Card info obtained from pciconf
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -72,7 +72,7 @@ final class FreeBsdGraphicsCard extends AbstractGraphicsCard {
      * @return List of {@link FreeBsdGraphicsCard}objects.
      */
     public static List<GraphicsCard> getGraphicsCards() {
-        List<FreeBsdGraphicsCard> cardList = new ArrayList<>();
+        List<GraphicsCard> cardList = new ArrayList<>();
         // Enumerate all devices and add if required
         List<String> devices = Executor.runNative("pciconf -lv");
         if (devices.isEmpty()) {
@@ -132,7 +132,7 @@ final class FreeBsdGraphicsCard extends AbstractGraphicsCard {
                     vendorId.isEmpty() ? Normal.UNKNOWN : vendorId,
                     versionInfo.isEmpty() ? Normal.UNKNOWN : versionInfo, 0L));
         }
-        return Collections.unmodifiableList(cardList);
+        return cardList;
     }
 
 }

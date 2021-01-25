@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -35,14 +35,13 @@ import org.aoju.bus.health.builtin.hardware.AbstractHardwareAbstractionLayer;
 import org.aoju.bus.health.builtin.hardware.GraphicsCard;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Graphics card info obtained by system_profiler SPDisplaysDataType.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -69,7 +68,7 @@ final class MacGraphicsCard extends AbstractGraphicsCard {
      * @return List of {@link MacGraphicsCard} objects.
      */
     public static List<GraphicsCard> getGraphicsCards() {
-        List<MacGraphicsCard> cardList = new ArrayList<>();
+        List<GraphicsCard> cardList = new ArrayList<>();
         List<String> sp = Executor.runNative("system_profiler SPDisplaysDataType");
         String name = Normal.UNKNOWN;
         String deviceId = Normal.UNKNOWN;
@@ -103,7 +102,7 @@ final class MacGraphicsCard extends AbstractGraphicsCard {
         }
         cardList.add(new MacGraphicsCard(name, deviceId, vendor,
                 versionInfoList.isEmpty() ? Normal.UNKNOWN : String.join(", ", versionInfoList), vram));
-        return Collections.unmodifiableList(cardList);
+        return cardList;
     }
 
 }

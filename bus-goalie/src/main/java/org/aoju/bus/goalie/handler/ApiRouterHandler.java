@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * router handler
  *
  * @author Justubborn
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class ApiRouterHandler {
@@ -76,9 +76,9 @@ public class ApiRouterHandler {
             builder.queryParams(multiValueMap);
         }
         WebClient.RequestBodySpec bodySpec = webClient
-            .method(assets.getHttpMethod())
-            .uri(builder.build().encode().toUri())
-            .headers((headers) -> headers.addAll(request.headers().asHttpHeaders()));
+                .method(assets.getHttpMethod())
+                .uri(builder.build().encode().toUri())
+                .headers((headers) -> headers.addAll(request.headers().asHttpHeaders()));
         if (!HttpMethod.GET.equals(assets.getHttpMethod())) {
             if (request.headers().contentType().isPresent()) {
                 MediaType mediaType = request.headers().contentType().get();
@@ -95,7 +95,7 @@ public class ApiRouterHandler {
             }
         }
         Flux<DataBuffer> flux = bodySpec
-            .retrieve().bodyToFlux(DataBuffer.class);
+                .retrieve().bodyToFlux(DataBuffer.class);
         return ServerResponse.ok().body(flux, DataBuffer.class);
     }
 

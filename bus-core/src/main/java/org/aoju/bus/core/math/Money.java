@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -61,7 +61,7 @@ import java.util.Currency;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class Money implements Serializable, Comparable<Money> {
@@ -82,16 +82,14 @@ public class Money implements Serializable, Comparable<Money> {
      * 不同的币种有不同的元/分换算比例,如人民币是100,而日元为1
      */
     private static final int[] CENT_FACTORS = new int[]{1, 10, 100, 1000};
-
-    /**
-     * 金额,以分为单位
-     */
-    private long cent;
-
     /**
      * 币种
      */
     private final Currency currency;
+    /**
+     * 金额,以分为单位
+     */
+    private long cent;
 
     /**
      * 缺省构造器

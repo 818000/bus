@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * 多个逻辑处理器(操作系统看到的内容，可能包括超线程内核)
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -548,16 +548,19 @@ public interface CentralProcessor {
             // Intel is default, no prefix
             StringBuilder sb = new StringBuilder();
             // AMD and ARM properties have prefix
-            if (this.cpuVendor.toUpperCase().contains("AMD")) {
+            String ucVendor = this.cpuVendor.toUpperCase();
+            if (ucVendor.contains("AMD")) {
                 sb.append("amd.");
-            } else if (this.getVendor().toUpperCase().contains("ARM")) {
+            } else if (ucVendor.contains("ARM")) {
                 sb.append("arm.");
-            } else if (this.getVendor().toUpperCase().contains("IBM")) {
+            } else if (ucVendor.contains("IBM")) {
                 // Directly parse the name to POWER#
                 int powerIdx = this.cpuName.indexOf("_POWER");
                 if (powerIdx > 0) {
                     arch = this.cpuName.substring(powerIdx + 1);
                 }
+            } else if (ucVendor.contains("APPLE")) {
+                sb.append("apple.");
             }
             if (StringKit.isBlank(arch) && !sb.toString().equals("arm.")) {
                 // Append family

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * 日期场景属性
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class Fields {
@@ -280,9 +280,9 @@ public class Fields {
     /**
      * 标准日期格式：yyyy年MM月dd日 HH时mm分ss秒
      */
-    public static final String NORM_CN_DATE_TIME_PATTERN = "yyyy年MM月dd日HH时mm分ss秒";
+    public static final String NORM_CN_DATE_TIME_PATTERN = "yyyy年MM月dd日 HH时mm分ss秒";
     /**
-     * 标准日期格式 {@link FormatBuilder}：yyyy年MM月dd日HH时mm分ss秒
+     * 标准日期格式 {@link FormatBuilder}：yyyy年MM月dd日 HH时mm分ss秒
      */
     public static final FormatBuilder NORM_CN_DATE_TIME_FORMAT = FormatBuilder.getInstance(NORM_CN_DATE_TIME_PATTERN);
 
@@ -365,9 +365,18 @@ public class Fields {
      * java.util.Date EEE MMM zzz 缩写数组
      */
     public final static String[] WTB = {
-            "sun", "mon", "tue", "wed", "thu", "fri", "sat",                                     // 星期
-            "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",  // 月份
-            "gmt", "ut", "utc", "est", "edt", "cst", "cdt", "mst", "mdt", "pst", "pdt"           // 时区
+            /**
+             * 星期
+            */
+            "sun", "mon", "tue", "wed", "thu", "fri", "sat",
+            /**
+             * 月份
+            */
+            "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec",
+            /**
+             * 时区
+            */
+            "gmt", "ut", "utc", "est", "edt", "cst", "cdt", "mst", "mdt", "pst", "pdt"
     };
 
     /**
@@ -402,13 +411,6 @@ public class Fields {
      */
     public static final String[] CN_ZHI = {
             "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"
-    };
-
-    /**
-     * 星期
-     */
-    public static final String[] CN_WEEK = {
-            "日", "一", "二", "三", "四", "五", "六"
     };
 
     /**
@@ -478,13 +480,13 @@ public class Fields {
      */
     public static final int[] DAYS_OF_MONTH = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     /**
-     * 闰年表
+     * 闰年表（存在闰月的年份偏移值）
      */
     public static final int[] LEAP_YEAR = {
             6, 14, 19, 25, 33, 36, 38, 41, 44, 52, 55, 79, 117, 136, 147, 150, 155, 158, 185, 193
     };
     /**
-     * 闰月表
+     * 月份表（2个字节表示1年，共16个二进制位，前4位表示闰月月份，后12位表示每月大小）
      */
     public static final int[] LEAP_MONTH = {
             0x00, 0x04, 0xad, 0x08, 0x5a, 0x01, 0xd5, 0x54, 0xb4, 0x09, 0x64, 0x05, 0x59, 0x45, 0x95,
@@ -619,7 +621,7 @@ public class Fields {
          */
         MILLISECOND(Calendar.MILLISECOND);
 
-        private int value;
+        private final int value;
 
         Type(int value) {
             this.value = value;
@@ -707,11 +709,11 @@ public class Fields {
         /**
          * 计算单位
          */
-        private long unit;
+        private final long unit;
         /**
          * 名称
          */
-        private String name;
+        private final String name;
 
         Units(long unit, String name) {
             this.unit = unit;
@@ -1181,8 +1183,8 @@ public class Fields {
          */
         Q4(4, "四季度");
 
-        private int key;
-        private String name;
+        private final int key;
+        private final String name;
 
         Quarter(int key, String name) {
             this.key = key;

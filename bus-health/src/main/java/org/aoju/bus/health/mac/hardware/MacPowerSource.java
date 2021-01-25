@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -38,14 +38,13 @@ import org.aoju.bus.health.builtin.hardware.PowerSource;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -188,7 +187,7 @@ public final class MacPowerSource extends AbstractPowerSource {
         CFStringRef currentCapacityKey = CFStringRef.createCFString("Current Capacity");
         CFStringRef maxCapacityKey = CFStringRef.createCFString("Max Capacity");
         // For each power source, output various info
-        List<MacPowerSource> psList = new ArrayList<>(powerSourcesCount);
+        List<PowerSource> psList = new ArrayList<>(powerSourcesCount);
         for (int ps = 0; ps < powerSourcesCount; ps++) {
             // Get the dictionary for that Power Source
             Pointer pwrSrcPtr = powerSourcesList.getValueAtIndex(ps);
@@ -240,7 +239,7 @@ public final class MacPowerSource extends AbstractPowerSource {
         powerSourcesList.release();
         powerSourcesInfo.release();
 
-        return Collections.unmodifiableList(psList);
+        return psList;
     }
 
 }

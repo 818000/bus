@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  * Windows hard disk implementation.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -72,8 +72,7 @@ public final class WindowsHWDiskStore extends AbstractHWDiskStore {
     /**
      * Gets the disks on this machine
      *
-     * @return an {@code UnmodifiableList} of {@link HWDiskStore} objects
-     * representing the disks
+     * @return a list of {@link HWDiskStore} objects representing the disks
      */
     public static List<HWDiskStore> getDisks() {
         List<HWDiskStore> result;
@@ -113,7 +112,7 @@ public final class WindowsHWDiskStore extends AbstractHWDiskStore {
             // Add to list
             result.add(ds);
         }
-        return Collections.unmodifiableList(result);
+        return result;
     }
 
     /**

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -32,6 +32,7 @@ import org.aoju.bus.core.map.TableMap;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarFile;
 
@@ -39,7 +40,7 @@ import java.util.jar.JarFile;
  * URL相关工具
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class UriKit {
@@ -365,6 +366,9 @@ public class UriKit {
      */
     public static String encodeAll(String url, java.nio.charset.Charset charset) {
         try {
+            if (null == charset || StringKit.isEmpty(url)) {
+                return url;
+            }
             return java.net.URLEncoder.encode(url, charset.toString());
         } catch (UnsupportedEncodingException e) {
             throw new InstrumentException(e);
@@ -878,7 +882,7 @@ public class UriKit {
             String key = entry.getKey();
             Object value = entry.getValue();
             String stringValue = (value != null ? value.toString() : Normal.EMPTY);
-            result.put(key, encode(stringValue, java.nio.charset.Charset.forName(Charset.DEFAULT_UTF_8)));
+            result.put(key, encode(stringValue, StandardCharsets.UTF_8));
         }
         return result;
     }
@@ -963,7 +967,7 @@ public class UriKit {
             }
         }
         try {
-            return (changed ? new String(bos.toByteArray(), charset.name()) : source);
+            return (changed ? bos.toString(charset.name()) : source);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
@@ -1002,7 +1006,7 @@ public class UriKit {
             }
         }
         try {
-            return (changed ? new String(bos.toByteArray(), charset.name()) : source);
+            return (changed ? bos.toString(charset.name()) : source);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

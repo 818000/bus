@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.beans.copier.provider;
 
-import org.aoju.bus.core.beans.BeanDesc;
+import org.aoju.bus.core.beans.PropertyDescription;
 import org.aoju.bus.core.beans.copier.ValueProvider;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.Normal;
@@ -41,14 +41,14 @@ import java.util.Map;
  * Bean的值提供者
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class BeanValueProvider implements ValueProvider<String> {
 
-    final Map<String, BeanDesc.PropDesc> sourcePdMap;
-    private Object source;
-    private boolean ignoreError;
+    final Map<String, PropertyDescription> sourcePdMap;
+    private final Object source;
+    private final boolean ignoreError;
 
     /**
      * 构造
@@ -65,7 +65,7 @@ public class BeanValueProvider implements ValueProvider<String> {
 
     @Override
     public Object value(String key, Type valueType) {
-        BeanDesc.PropDesc sourcePd = sourcePdMap.get(key);
+        PropertyDescription sourcePd = sourcePdMap.get(key);
         if (null == sourcePd && (Boolean.class == valueType || boolean.class == valueType)) {
             // boolean类型字段字段名支持两种方式
             sourcePd = sourcePdMap.get(StringKit.upperFirstAndAddPre(key, Normal.IS));

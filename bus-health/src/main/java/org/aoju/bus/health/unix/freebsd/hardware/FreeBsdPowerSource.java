@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -35,13 +35,16 @@ import org.aoju.bus.health.builtin.hardware.PowerSource;
 import org.aoju.bus.health.unix.freebsd.BsdSysctlKit;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -62,10 +65,10 @@ public final class FreeBsdPowerSource extends AbstractPowerSource {
     /**
      * Gets Battery Information
      *
-     * @return An array of PowerSource objects representing batteries, etc.
+     * @return A list of PowerSource objects representing batteries, etc.
      */
     public static List<PowerSource> getPowerSources() {
-        return Collections.unmodifiableList(Arrays.asList(getPowerSource("BAT0")));
+        return Arrays.asList(getPowerSource("BAT0"));
     }
 
     private static FreeBsdPowerSource getPowerSource(String name) {

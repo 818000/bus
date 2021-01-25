@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -40,20 +40,19 @@ import java.util.concurrent.ExecutorService;
  * 不能保证同时开始
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class SyncFinisher {
 
-    private Set<Worker> workers;
-    private int threadSize;
-    private ExecutorService executorService;
-
-    private boolean isBeginAtSameTime;
+    private final Set<Worker> workers;
+    private final int threadSize;
+    private final ExecutorService executorService;
     /**
      * 启动同步器，用于保证所有worker线程同时开始
      */
-    private CountDownLatch beginLatch;
+    private final CountDownLatch beginLatch;
+    private boolean isBeginAtSameTime;
     /**
      * 结束同步器，用于等待所有worker线程同时结束
      */

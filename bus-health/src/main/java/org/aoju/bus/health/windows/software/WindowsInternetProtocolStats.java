@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -40,7 +40,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -160,9 +160,9 @@ public class WindowsInternetProtocolStats extends AbstractInternetProtocolStats 
             case 5:
                 return InternetProtocolStats.TcpState.ESTABLISHED;
             case 6:
-                return InternetProtocolStats.TcpState.FIN_WAIT1;
+                return InternetProtocolStats.TcpState.FIN_WAIT_1;
             case 7:
-                return InternetProtocolStats.TcpState.FIN_WAIT2;
+                return InternetProtocolStats.TcpState.FIN_WAIT_2;
             case 8:
                 return InternetProtocolStats.TcpState.CLOSE_WAIT;
             case 9:
@@ -216,7 +216,7 @@ public class WindowsInternetProtocolStats extends AbstractInternetProtocolStats 
             conns.addAll(queryTCPv6Connections());
             conns.addAll(queryUDPv4Connections());
             conns.addAll(queryUDPv6Connections());
-            return Collections.unmodifiableList(conns);
+            return conns;
         }
         return Collections.emptyList();
     }

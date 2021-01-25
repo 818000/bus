@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -36,7 +36,7 @@ import java.nio.CharBuffer;
  * 部分工具来自于Apache
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class CharKit {
@@ -344,10 +344,9 @@ public class CharKit {
     }
 
     public static char[] getChars(byte[] bytes) {
-        java.nio.charset.Charset cs = java.nio.charset.Charset.forName(Charset.DEFAULT_UTF_8);
         ByteBuffer bb = ByteBuffer.allocate(bytes.length);
         bb.put(bytes).flip();
-        CharBuffer cb = cs.decode(bb);
+        CharBuffer cb = Charset.UTF_8.decode(bb);
         return cb.array();
     }
 

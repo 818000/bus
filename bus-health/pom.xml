@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-health</artifactId>
-    <version>6.1.8</version>
+    <version>6.1.9</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -49,11 +49,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bus-setting</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bus-logger</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

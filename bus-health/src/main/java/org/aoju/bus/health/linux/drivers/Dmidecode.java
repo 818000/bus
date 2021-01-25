@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -35,7 +35,7 @@ import org.aoju.bus.health.Executor;
  * Utility to read info from {@code dmidecode}
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -89,6 +89,22 @@ public final class Dmidecode {
     public static String querySerialNumber() {
         // If root privileges this will work
         String marker = "Serial Number:";
+        for (String checkLine : Executor.runNative("dmidecode -t system")) {
+            if (checkLine.contains(marker)) {
+                return checkLine.split(marker)[1].trim();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Query the UUID from dmidecode
+     *
+     * @return The UUID if available, null otherwise
+     */
+    public static String queryUUID() {
+        // If root privileges this will work
+        String marker = "UUID:";
         for (String checkLine : Executor.runNative("dmidecode -t system")) {
             if (checkLine.contains(marker)) {
                 return checkLine.split(marker)[1].trim();

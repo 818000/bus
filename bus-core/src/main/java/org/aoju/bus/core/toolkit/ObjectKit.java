@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  * 一些通用的函数
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class ObjectKit {
@@ -415,7 +415,7 @@ public class ObjectKit {
             return ((Collection<?>) obj).contains(element);
         }
         if (obj instanceof Map) {
-            return ((Map<?, ?>) obj).values().contains(element);
+            return ((Map<?, ?>) obj).containsValue(element);
         }
 
         if (obj instanceof Iterator) {
@@ -695,7 +695,7 @@ public class ObjectKit {
     public static Field[] getAllFields(Object object) {
         List<Field> fieldList = new ArrayList<>();
         Class tempClass = object.getClass();
-        while (tempClass != null && !tempClass.getName().toLowerCase().equals("java.lang.object")) {
+        while (tempClass != null && !tempClass.getName().equalsIgnoreCase("java.lang.object")) {
             // 当父类为null的时候说明到达了最上层的父类(Object类).
             fieldList.addAll(Arrays.asList(tempClass.getDeclaredFields()));
             // 得到父类,然后赋给自己

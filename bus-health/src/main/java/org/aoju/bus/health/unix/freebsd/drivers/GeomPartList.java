@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * Utility to query geom part list
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -55,8 +55,7 @@ public final class GeomPartList {
     /**
      * Queries partition data using geom, mount, and stat commands
      *
-     * @return A map with disk name as the key and an {@code UnmodifiableList} of
-     * partitions as the value
+     * @return A map with disk name as the key and a List of partitions as the value
      */
     public static Map<String, List<HWPartition>> queryPartitions() {
         Map<String, String> mountMap = Mount.queryPartitionToMountMap();
@@ -140,7 +139,7 @@ public final class GeomPartList {
             if (!partList.isEmpty()) {
                 partList = partList.stream().sorted(Comparator.comparing(HWPartition::getName))
                         .collect(Collectors.toList());
-                partitionMap.put(diskName, Collections.unmodifiableList(partList));
+                partitionMap.put(diskName, partList);
             }
         }
         return partitionMap;

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,7 +29,7 @@ import org.aoju.bus.core.io.Buffer;
 import org.aoju.bus.core.io.BufferSource;
 import org.aoju.bus.core.io.DelegateSource;
 import org.aoju.bus.core.io.Source;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.http.Response;
 import org.aoju.bus.http.bodys.ResponseBody;
@@ -41,7 +41,7 @@ import java.io.IOException;
  * 请求参数-文件处理
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public abstract class FileInterceptor implements Interceptor, ProgressListener {
@@ -68,7 +68,7 @@ public abstract class FileInterceptor implements Interceptor, ProgressListener {
         }
 
         @Override
-        public MediaType contentType() {
+        public MimeType contentType() {
             return body.contentType();
         }
 

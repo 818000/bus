@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * Linux hard disk implementation.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -114,9 +114,9 @@ public final class LinuxHWDiskStore extends AbstractHWDiskStore {
         return Collections.unmodifiableList(getDisks(null));
     }
 
-    private static List<LinuxHWDiskStore> getDisks(LinuxHWDiskStore storeToUpdate) {
+    private static List<HWDiskStore> getDisks(LinuxHWDiskStore storeToUpdate) {
         LinuxHWDiskStore store = null;
-        List<LinuxHWDiskStore> result = new ArrayList<>();
+        List<HWDiskStore> result = new ArrayList<>();
 
         Map<String, String> mountsMap = readMountsMap();
 
@@ -194,8 +194,8 @@ public final class LinuxHWDiskStore extends AbstractHWDiskStore {
             udev.unref();
         }
         // Iterate the list and make the partitions unmodifiable
-        for (LinuxHWDiskStore hwds : result) {
-            hwds.partitionList = Collections.unmodifiableList(hwds.partitionList.stream()
+        for (HWDiskStore hwds : result) {
+            ((LinuxHWDiskStore) hwds).partitionList = Collections.unmodifiableList(hwds.getPartitions().stream()
                     .sorted(Comparator.comparing(HWPartition::getName)).collect(Collectors.toList()));
         }
         return result;

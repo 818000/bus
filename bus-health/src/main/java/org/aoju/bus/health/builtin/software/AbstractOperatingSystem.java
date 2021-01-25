@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,24 +26,27 @@
 package org.aoju.bus.health.builtin.software;
 
 import com.sun.jna.Platform;
-import org.aoju.bus.core.lang.Symbol;
+import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Config;
+import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.unix.Who;
+import org.aoju.bus.health.unix.Xwininfo;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public abstract class AbstractOperatingSystem implements OperatingSystem {
 
     public static final String OSHI_OS_UNIX_WHOCOMMAND = "health.os.unix.whoCommand";
     protected static final boolean USE_WHO_COMMAND = Config.get(OSHI_OS_UNIX_WHOCOMMAND, false);
-    /*
+    /**
      * Comparators for use in processSort().
      */
     private static final Comparator<OSProcess> CPU_DESC_SORT = Comparator
@@ -60,8 +63,6 @@ public abstract class AbstractOperatingSystem implements OperatingSystem {
     private final Supplier<String> manufacturer = Memoize.memoize(this::queryManufacturer);
     private final Supplier<FamilyVersionInfo> familyVersionInfo = Memoize.memoize(this::queryFamilyVersionInfo);
     private final Supplier<Integer> bitness = Memoize.memoize(this::queryPlatformBitness);
-    // Test if sudo or admin privileges: 1 = unknown, 0 = no, 1 = yes
-    private final Supplier<Boolean> elevated = Memoize.memoize(this::queryElevated);
 
     @Override
     public String getManufacturer() {
@@ -107,15 +108,13 @@ public abstract class AbstractOperatingSystem implements OperatingSystem {
 
     @Override
     public boolean isElevated() {
-        return elevated.get();
+        return 0 == Builder.parseIntOrDefault(Executor.getFirstAnswer("id -u"), -1);
     }
 
     @Override
     public OSService[] getServices() {
         return new OSService[0];
     }
-
-    protected abstract boolean queryElevated();
 
     /**
      * Sorts an array of processes using the specified sorting, returning an array
@@ -175,7 +174,7 @@ public abstract class AbstractOperatingSystem implements OperatingSystem {
 
     @Override
     public List<OSSession> getSessions() {
-        return Collections.unmodifiableList(Who.queryWho());
+        return Who.queryWho();
     }
 
     @Override
@@ -185,21 +184,29 @@ public abstract class AbstractOperatingSystem implements OperatingSystem {
 
     @Override
     public List<OSProcess> getProcesses(Collection<Integer> pids) {
-        List<OSProcess> returnValue = new ArrayList<>(pids.size());
-        for (Integer pid : pids) {
-            OSProcess process = getProcess(pid);
-            if (process != null) {
-                returnValue.add(process);
-            }
-        }
-        return Collections.unmodifiableList(returnValue);
+        return pids.stream().map(this::getProcess).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OSProcess> getChildProcesses(int parentPid, int limit, ProcessSort sort) {
+        // filter processes whose parent process id matches
+        List<OSProcess> procList = getProcesses(0, null).stream().filter(proc -> parentPid == proc.getParentProcessID())
+                .collect(Collectors.toList());
+        return processSort(procList, limit, sort);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getManufacturer()).append(Symbol.C_SPACE).append(getFamily()).append(Symbol.C_SPACE).append(getVersionInfo());
+        sb.append(getManufacturer()).append(' ').append(getFamily()).append(' ').append(getVersionInfo());
         return sb.toString();
+    }
+
+    @Override
+    public List<OSDesktopWindow> getDesktopWindows(boolean visibleOnly) {
+        // Default X11 implementation for Unix-like operating systems.
+        // Overridden on Windows and macOS
+        return Xwininfo.queryXWindows(visibleOnly);
     }
 
     protected static final class FamilyVersionInfo {

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -44,13 +44,12 @@ import org.aoju.bus.health.mac.ThreadInfo;
 import org.aoju.bus.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
 /**
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -278,7 +277,7 @@ public class MacOSProcess extends AbstractOSProcess {
     @Override
     public List<OSThread> getThreadDetails() {
         long now = System.currentTimeMillis();
-        List<MacOSThread> details = new ArrayList<>();
+        List<OSThread> details = new ArrayList<>();
         List<ThreadInfo.ThreadStats> stats = ThreadInfo.queryTaskThreads(getProcessID());
         for (ThreadInfo.ThreadStats stat : stats) {
             // For long running threads the start time calculation can overestimate
@@ -289,7 +288,7 @@ public class MacOSProcess extends AbstractOSProcess {
             details.add(new MacOSThread(getProcessID(), stat.getThreadId(), stat.getState(), stat.getSystemTime(),
                     stat.getUserTime(), start, now - start, stat.getPriority()));
         }
-        return Collections.unmodifiableList(details);
+        return details;
     }
 
     @Override

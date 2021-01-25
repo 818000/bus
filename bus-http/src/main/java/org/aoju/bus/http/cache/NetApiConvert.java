@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -28,7 +28,7 @@ package org.aoju.bus.http.cache;
 import org.aoju.bus.core.io.BufferSource;
 import org.aoju.bus.core.io.Sink;
 import org.aoju.bus.core.lang.Header;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.http.Builder;
@@ -65,7 +65,7 @@ import java.util.Set;
  * 在Java和Httpd表示之间进行转换的方法
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public final class NetApiConvert {
@@ -431,9 +431,9 @@ public final class NetApiConvert {
         final BufferSource body = IoKit.buffer(IoKit.source(cacheResponse.getBody()));
         return new ResponseBody() {
             @Override
-            public MediaType contentType() {
+            public MimeType contentType() {
                 String contentTypeHeader = headers.get(Header.CONTENT_TYPE);
-                return contentTypeHeader == null ? null : MediaType.valueOf(contentTypeHeader);
+                return contentTypeHeader == null ? null : MimeType.valueOf(contentTypeHeader);
             }
 
             @Override
@@ -456,9 +456,9 @@ public final class NetApiConvert {
         final BufferSource body = IoKit.buffer(IoKit.source(urlConnection.getInputStream()));
         return new ResponseBody() {
             @Override
-            public MediaType contentType() {
+            public MimeType contentType() {
                 String contentTypeHeader = urlConnection.getContentType();
-                return contentTypeHeader == null ? null : MediaType.valueOf(contentTypeHeader);
+                return contentTypeHeader == null ? null : MimeType.valueOf(contentTypeHeader);
             }
 
             @Override

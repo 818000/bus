@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -25,13 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.image.metric.internal.xdsi;
 
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 
 import javax.xml.bind.annotation.*;
 
 /**
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 
@@ -56,7 +56,7 @@ public class ExtrinsicObjectType extends RegistryObjectType {
 
     public String getMimeType() {
         if (this.mimeType == null) {
-            return MediaType.APPLICATION_OCTET_STREAM;
+            return MimeType.APPLICATION_OCTET_STREAM;
         }
         return this.mimeType;
     }

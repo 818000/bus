@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -37,6 +37,7 @@ import org.aoju.bus.health.linux.software.LinuxOSFileStore;
 import org.aoju.bus.health.unix.freebsd.BsdSysctlKit;
 
 import java.io.File;
+import java.nio.file.PathMatcher;
 import java.util.*;
 
 /**
@@ -46,14 +47,26 @@ import java.util.*;
  * the /proc/mount filesystem, excluding temporary and kernel mounts.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
 public final class FreeBsdFileSystem extends AbstractFileSystem {
 
+    public static final String OSHI_FREEBSD_FS_PATH_EXCLUDES = "health.os.freebsd.filesystem.path.excludes";
+    public static final String OSHI_FREEBSD_FS_PATH_INCLUDES = "health.os.freebsd.filesystem.path.includes";
+    public static final String OSHI_FREEBSD_FS_VOLUME_EXCLUDES = "health.os.freebsd.filesystem.volume.excludes";
+    public static final String OSHI_FREEBSD_FS_VOLUME_INCLUDES = "health.os.freebsd.filesystem.volume.includes";
     // System path mounted as tmpfs
     private static final List<String> TMP_FS_PATHS = Arrays.asList("/system", "/tmp", "/dev/fd");
+    private static final List<PathMatcher> FS_PATH_EXCLUDES = Builder
+            .loadAndParseFileSystemConfig(OSHI_FREEBSD_FS_PATH_EXCLUDES);
+    private static final List<PathMatcher> FS_PATH_INCLUDES = Builder
+            .loadAndParseFileSystemConfig(OSHI_FREEBSD_FS_PATH_INCLUDES);
+    private static final List<PathMatcher> FS_VOLUME_EXCLUDES = Builder
+            .loadAndParseFileSystemConfig(OSHI_FREEBSD_FS_VOLUME_EXCLUDES);
+    private static final List<PathMatcher> FS_VOLUME_INCLUDES = Builder
+            .loadAndParseFileSystemConfig(OSHI_FREEBSD_FS_VOLUME_INCLUDES);
 
     @Override
     public List<OSFileStore> getFileStores(boolean localOnly) {

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -34,7 +34,7 @@ import org.aoju.bus.core.annotation.ThreadSafe;
  * {@link java.nio.file.FileStore} class, with additional information.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -57,8 +57,9 @@ public interface OSFileStore {
     /**
      * Label of the File System
      *
-     * @return The volume label of the file system, on Windows. Other operating
-     * systems is redundant with the name.
+     * @return The volume label of the file system. Only relevant on Windows and on
+     * Linux, if assigned; otherwise defaults to the FileSystem name. On
+     * other operating systems is redundant with the name.
      */
     String getLabel();
 

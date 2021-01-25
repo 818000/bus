@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -34,7 +34,7 @@ import org.aoju.bus.core.lang.Symbol;
  * 使二进制和十进制之间的转换得以快捷的进行
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class BCD {
@@ -55,8 +55,8 @@ public class BCD {
         if (len >= 2) {
             len >>= 1;
         }
-        byte bbt[] = new byte[len];
-        byte abt[] = asc.getBytes();
+        byte[] bbt = new byte[len];
+        byte[] abt = asc.getBytes();
         int j;
         int k;
         for (int p = 0; p < asc.length() / 2; p++) {
@@ -117,7 +117,8 @@ public class BCD {
      */
     public static String bcdToStr(byte[] bytes) {
         Assert.notNull(bytes, "Bcd bytes must be not null!");
-        char temp[] = new char[bytes.length * 2], val;
+        char[] temp = new char[bytes.length * 2];
+        char val;
 
         for (int i = 0; i < bytes.length; i++) {
             val = (char) (((bytes[i] & 0xf0) >> 4) & 0x0f);

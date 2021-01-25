@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -67,7 +67,7 @@ public class MathKit {
      * @param bytes 长度
      */
     private MathKit(long bytes) {
-        this.bytes = bytes;
+        MathKit.bytes = bytes;
     }
 
     /**
@@ -2994,7 +2994,7 @@ public class MathKit {
      * @return 负数返回true，否则false
      */
     public boolean isNegative() {
-        return this.bytes < 0;
+        return bytes < 0;
     }
 
     /**
@@ -3003,7 +3003,7 @@ public class MathKit {
      * @return bytes大小
      */
     public long toBytes() {
-        return this.bytes;
+        return bytes;
     }
 
     /**
@@ -3012,7 +3012,7 @@ public class MathKit {
      * @return KB大小
      */
     public long toKilobytes() {
-        return this.bytes / Normal.BYTES_PER_KB;
+        return bytes / Normal.BYTES_PER_KB;
     }
 
     /**
@@ -3021,7 +3021,7 @@ public class MathKit {
      * @return MB大小
      */
     public long toMegabytes() {
-        return this.bytes / Normal.BYTES_PER_MB;
+        return bytes / Normal.BYTES_PER_MB;
     }
 
     /**
@@ -3030,7 +3030,7 @@ public class MathKit {
      * @return GB大小
      */
     public long toGigabytes() {
-        return this.bytes / Normal.BYTES_PER_GB;
+        return bytes / Normal.BYTES_PER_GB;
     }
 
     /**
@@ -3039,7 +3039,7 @@ public class MathKit {
      * @return TB大小
      */
     public long toTerabytes() {
-        return this.bytes / Normal.BYTES_PER_TB;
+        return bytes / Normal.BYTES_PER_TB;
     }
 
 }

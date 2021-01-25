@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * Hardware data obtained from sysfs.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -50,6 +50,8 @@ final class LinuxComputerSystem extends AbstractComputerSystem {
     private final Supplier<String> model = Memoize.memoize(LinuxComputerSystem::queryModel);
 
     private final Supplier<String> serialNumber = Memoize.memoize(LinuxComputerSystem::querySerialNumber);
+
+    private final Supplier<String> uuid = Memoize.memoize(LinuxComputerSystem::queryUUID);
 
     private static String queryManufacturer() {
         String result;
@@ -72,6 +74,15 @@ final class LinuxComputerSystem extends AbstractComputerSystem {
         String result;
         if ((result = Sysfs.queryProductSerial()) == null && (result = Dmidecode.querySerialNumber()) == null
                 && (result = Lshal.querySerialNumber()) == null && (result = Lshw.querySerialNumber()) == null) {
+            return Normal.UNKNOWN;
+        }
+        return result;
+    }
+
+    private static String queryUUID() {
+        String result = null;
+        if ((result = Sysfs.queryUUID()) == null && (result = Dmidecode.queryUUID()) == null
+                && (result = Lshal.queryUUID()) == null && (result = Lshw.queryUUID()) == null) {
             return Normal.UNKNOWN;
         }
         return result;
@@ -100,6 +111,11 @@ final class LinuxComputerSystem extends AbstractComputerSystem {
     @Override
     public Baseboard createBaseboard() {
         return new LinuxBaseboard();
+    }
+
+    @Override
+    public String getHardwareUUID() {
+        return uuid.get();
     }
 
 }

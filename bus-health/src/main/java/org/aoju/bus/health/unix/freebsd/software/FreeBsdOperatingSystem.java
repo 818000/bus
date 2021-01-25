@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -38,7 +38,10 @@ import org.aoju.bus.health.unix.freebsd.drivers.Who;
 import org.aoju.bus.logger.Logger;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * FreeBSD is a free and open-source Unix-like operating system descended from
@@ -48,7 +51,7 @@ import java.util.*;
  * three-quarters of all installed simply, permissively licensed BSD systems.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -118,11 +121,6 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
     }
 
     @Override
-    protected boolean queryElevated() {
-        return System.getenv("SUDO_COMMAND") != null;
-    }
-
-    @Override
     public FileSystem getFileSystem() {
         return new FreeBsdFileSystem();
     }
@@ -134,14 +132,13 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
 
     @Override
     public List<OSSession> getSessions() {
-        return Collections.unmodifiableList(USE_WHO_COMMAND ? super.getSessions() : Who.queryUtxent());
+        return USE_WHO_COMMAND ? super.getSessions() : Who.queryUtxent();
     }
 
     @Override
     public List<OSProcess> getProcesses(int limit, OperatingSystem.ProcessSort sort) {
         List<OSProcess> procs = getProcessListFromPS(-1);
-        List<OSProcess> sorted = processSort(procs, limit, sort);
-        return Collections.unmodifiableList(sorted);
+        return processSort(procs, limit, sort);
     }
 
     @Override
@@ -151,18 +148,6 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
             return null;
         }
         return procs.get(0);
-    }
-
-    @Override
-    public List<OSProcess> getChildProcesses(int parentPid, int limit, OperatingSystem.ProcessSort sort) {
-        List<OSProcess> procs = new ArrayList<>();
-        for (OSProcess p : getProcesses(0, null)) {
-            if (p.getParentProcessID() == parentPid) {
-                procs.add(p);
-            }
-        }
-        List<OSProcess> sorted = processSort(procs, limit, sort);
-        return Collections.unmodifiableList(sorted);
     }
 
     @Override

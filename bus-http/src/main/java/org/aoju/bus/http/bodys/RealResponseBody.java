@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,13 +26,13 @@
 package org.aoju.bus.http.bodys;
 
 import org.aoju.bus.core.io.BufferSource;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 
 /**
  * 响应体只能使用一次
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public final class RealResponseBody extends ResponseBody {
@@ -52,8 +52,8 @@ public final class RealResponseBody extends ResponseBody {
     }
 
     @Override
-    public MediaType contentType() {
-        return contentTypeString != null ? MediaType.valueOf(contentTypeString) : null;
+    public MimeType contentType() {
+        return contentTypeString != null ? MimeType.valueOf(contentTypeString) : null;
     }
 
     @Override

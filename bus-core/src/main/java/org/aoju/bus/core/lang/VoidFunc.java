@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -33,7 +33,7 @@ package org.aoju.bus.core.lang;
  *
  * @param <P> 参数类型
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @FunctionalInterface
@@ -67,7 +67,7 @@ public interface VoidFunc<P> {
      * 此接口用于将一个函数包装成为一个对象，从而传递对象
      */
     @FunctionalInterface
-    public interface VoidFunc0 {
+    interface VoidFunc0 {
 
         /**
          * 执行函数

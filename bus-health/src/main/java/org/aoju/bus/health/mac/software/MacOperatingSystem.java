@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -37,6 +37,7 @@ import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.builtin.software.*;
 import org.aoju.bus.health.mac.SysctlKit;
 import org.aoju.bus.health.mac.drivers.Who;
+import org.aoju.bus.health.mac.drivers.WindowInfo;
 import org.aoju.bus.logger.Logger;
 
 import java.io.File;
@@ -48,7 +49,7 @@ import java.util.*;
  * It is the primary operating system for Apple's Mac computers.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -172,11 +173,6 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
     }
 
     @Override
-    protected boolean queryElevated() {
-        return System.getenv("SUDO_COMMAND") != null;
-    }
-
-    @Override
     public FileSystem getFileSystem() {
         return new MacFileSystem();
     }
@@ -188,7 +184,7 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
 
     @Override
     public List<OSSession> getSessions() {
-        return Collections.unmodifiableList(USE_WHO_COMMAND ? super.getSessions() : Who.queryUtxent());
+        return USE_WHO_COMMAND ? super.getSessions() : Who.queryUtxent();
     }
 
     @Override
@@ -207,9 +203,9 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
                 }
             }
         }
-        List<OSProcess> sorted = processSort(procs, limit, sort);
-        return Collections.unmodifiableList(sorted);
+        return processSort(procs, limit, sort);
     }
+
 
     @Override
     public OSProcess getProcess(int pid) {
@@ -236,8 +232,7 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
                 }
             }
         }
-        List<OSProcess> sorted = processSort(procs, limit, sort);
-        return Collections.unmodifiableList(sorted);
+        return processSort(procs, limit, sort);
     }
 
     @Override
@@ -318,6 +313,11 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
             }
         }
         return services.toArray(new OSService[0]);
+    }
+
+    @Override
+    public List<OSDesktopWindow> getDesktopWindows(boolean visibleOnly) {
+        return WindowInfo.queryDesktopWindows(visibleOnly);
     }
 
 }

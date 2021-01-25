@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,7 +29,7 @@ package org.aoju.bus.health.builtin.software;
  * Represents a Thread/Task on the operating system.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public interface OSThread {
@@ -52,9 +52,7 @@ public interface OSThread {
     String getName();
 
     /**
-     * <p>
-     * Getter for the field <code>state</code>.
-     * </p>
+     * Gets the execution state of the task/thread.
      *
      * @return Returns the execution state of the task/thread.
      */

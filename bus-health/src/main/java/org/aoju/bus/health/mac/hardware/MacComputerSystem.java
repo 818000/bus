@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,65 +29,73 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKitUtil;
 import org.aoju.bus.core.annotation.Immutable;
-import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.tuple.Triple;
+import org.aoju.bus.core.lang.tuple.Quartet;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.builtin.hardware.AbstractComputerSystem;
 import org.aoju.bus.health.builtin.hardware.Baseboard;
 import org.aoju.bus.health.builtin.hardware.Firmware;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 /**
  * Hardware data obtained from ioreg.
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
 final class MacComputerSystem extends AbstractComputerSystem {
 
-    private final Supplier<Triple<String, String, String>> manufacturerModelSerial = Memoize.memoize(
+    private final Supplier<Quartet<String, String, String, String>> manufacturerModelSerialUUID = Memoize.memoize(
             MacComputerSystem::platformExpert);
 
-    private static Triple<String, String, String> platformExpert() {
+    private static Quartet<String, String, String, String> platformExpert() {
         String manufacturer = null;
         String model = null;
         String serialNumber = null;
+        String uuid = null;
         IORegistryEntry platformExpert = IOKitUtil.getMatchingService("IOPlatformExpertDevice");
         if (platformExpert != null) {
             byte[] data = platformExpert.getByteArrayProperty("manufacturer");
             if (data != null) {
-                manufacturer = Native.toString(data, Charset.UTF_8);
+                manufacturer = Native.toString(data, StandardCharsets.UTF_8);
             }
             data = platformExpert.getByteArrayProperty("model");
             if (data != null) {
-                model = Native.toString(data, Charset.UTF_8);
+                model = Native.toString(data, StandardCharsets.UTF_8);
             }
             serialNumber = platformExpert.getStringProperty("IOPlatformSerialNumber");
+            uuid = platformExpert.getStringProperty("IOPlatformUUID");
             platformExpert.release();
         }
-        return Triple.of(StringKit.isBlank(manufacturer) ? "Apple Inc." : manufacturer,
+        return new Quartet<>(StringKit.isBlank(manufacturer) ? "Apple Inc." : manufacturer,
                 StringKit.isBlank(model) ? Normal.UNKNOWN : model,
-                StringKit.isBlank(serialNumber) ? Normal.UNKNOWN : serialNumber);
+                StringKit.isBlank(serialNumber) ? Normal.UNKNOWN : serialNumber,
+                StringKit.isBlank(uuid) ? Normal.UNKNOWN : uuid);
     }
 
     @Override
     public String getManufacturer() {
-        return manufacturerModelSerial.get().getLeft();
+        return manufacturerModelSerialUUID.get().getA();
     }
 
     @Override
     public String getModel() {
-        return manufacturerModelSerial.get().getMiddle();
+        return manufacturerModelSerialUUID.get().getB();
     }
 
     @Override
     public String getSerialNumber() {
-        return manufacturerModelSerial.get().getRight();
+        return manufacturerModelSerialUUID.get().getC();
+    }
+
+    @Override
+    public String getHardwareUUID() {
+        return manufacturerModelSerialUUID.get().getD();
     }
 
     @Override

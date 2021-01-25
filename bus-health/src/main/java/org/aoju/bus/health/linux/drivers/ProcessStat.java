@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * Utility to read process statistics from {@code /proc/[pid]/stat}
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -170,7 +170,7 @@ public final class ProcessStat {
     }
 
     /**
-     * Gets an List of thread ids for a process from the {@code /proc/[pid]/task/}
+     * Gets a List of thread ids for a process from the {@code /proc/[pid]/task/}
      * directory with only numeric digit filenames, corresponding to the threads.
      *
      * @param pid process id

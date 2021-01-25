@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,27 +26,23 @@
 package org.aoju.bus.health.linux.hardware;
 
 import org.aoju.bus.core.annotation.Immutable;
-import org.aoju.bus.health.Builder;
-import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.builtin.hardware.AbstractDisplay;
 import org.aoju.bus.health.builtin.hardware.Display;
+import org.aoju.bus.health.unix.Xrandr;
 import org.aoju.bus.logger.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A Display
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
 final class LinuxDisplay extends AbstractDisplay {
-
-    private static final String[] XRANDR_VERBOSE = {"xrandr", "--verbose"};
 
     /**
      * Constructor for LinuxDisplay.
@@ -64,32 +60,7 @@ final class LinuxDisplay extends AbstractDisplay {
      * @return An array of Display objects representing monitors, etc.
      */
     public static List<Display> getDisplays() {
-        List<String> xrandr = Executor.runNative(XRANDR_VERBOSE, null);
-        // xrandr reports edid in multiple lines. After seeing a line containing
-        // EDID, read subsequent lines of hex until 256 characters are reached
-        if (xrandr.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<Display> displays = new ArrayList<>();
-        StringBuilder sb = null;
-        for (String s : xrandr) {
-            if (s.contains("EDID")) {
-                sb = new StringBuilder();
-            } else if (sb != null) {
-                sb.append(s.trim());
-                if (sb.length() < 256) {
-                    continue;
-                }
-                String edidStr = sb.toString();
-                Logger.debug("Parsed EDID: {}", edidStr);
-                byte[] edid = Builder.hexStringToByteArray(edidStr);
-                if (edid.length >= 128) {
-                    displays.add(new LinuxDisplay(edid));
-                }
-                sb = null;
-            }
-        }
-        return Collections.unmodifiableList(displays);
+        return Xrandr.getEdidArrays().stream().map(LinuxDisplay::new).collect(Collectors.toList());
     }
 
 }

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,7 +26,7 @@
 package org.aoju.bus.http;
 
 import org.aoju.bus.core.lang.Http;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.http.bodys.ResponseBody;
 import org.aoju.bus.http.metric.*;
@@ -47,7 +47,7 @@ import java.util.concurrent.Executor;
  * Httpv 客户端接口
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class Httpv {
@@ -187,12 +187,12 @@ public class Httpv {
         }
     }
 
-    public MediaType mediaType(String type) {
+    public MimeType mediaType(String type) {
         String mediaType = mediaTypes.get(type);
         if (mediaType != null) {
-            return MediaType.valueOf(mediaType);
+            return MimeType.valueOf(mediaType);
         }
-        return MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM);
+        return MimeType.valueOf(MimeType.APPLICATION_OCTET_STREAM);
     }
 
     public TaskExecutor executor() {
@@ -379,7 +379,7 @@ public class Httpv {
 
         public Builder() {
             mediaTypes = new HashMap<>();
-            mediaTypes.put("*", MediaType.APPLICATION_OCTET_STREAM);
+            mediaTypes.put("*", MimeType.APPLICATION_OCTET_STREAM);
             mediaTypes.put("png", "image/png");
             mediaTypes.put("jpg", "image/jpeg");
             mediaTypes.put("jpeg", "image/jpeg");

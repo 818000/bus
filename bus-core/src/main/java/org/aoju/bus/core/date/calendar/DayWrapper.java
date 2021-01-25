@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -38,7 +38,7 @@ import java.util.Date;
  * 天/日/Day
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Data
@@ -174,11 +174,11 @@ public class DayWrapper implements Serializable {
         this.day = localDateTime.getDayOfMonth();
         // 星期
         this.week = localDateTime.getDayOfWeek().getValue();
-        this.weekCnShort = Sandbox.getDayOfWeekCnShort(localDateTime);
-        this.weekCnLong = Sandbox.getDayOfWeekCn(localDateTime);
-        this.weekEnShort = Sandbox.getDayOfWeekEnShort(localDateTime);
-        this.weekEnShortUpper = Sandbox.getDayOfWeekEnShortUpper(localDateTime);
-        this.weekEnLong = Sandbox.getDayOfWeekEnLong(localDateTime);
+        this.weekCnShort = Almanac.getDayOfWeekCnShort(localDateTime);
+        this.weekCnLong = Almanac.getDayOfWeekCn(localDateTime);
+        this.weekEnShort = Almanac.getDayOfWeekEnShort(localDateTime);
+        this.weekEnShortUpper = Almanac.getDayOfWeekEnShortUpper(localDateTime);
+        this.weekEnLong = Almanac.getDayOfWeekEnLong(localDateTime);
         this.object = object;
 
         // 农历
@@ -205,7 +205,7 @@ public class DayWrapper implements Serializable {
         }
 
         // 工作日
-        this.dateType = Sandbox.isWorkDay(localDateTime) ? 1 : 0;
+        this.dateType = Almanac.isWorkDay(localDateTime) ? 1 : 0;
     }
 
 }

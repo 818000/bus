@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -39,7 +39,7 @@ import java.util.*;
  * Solaris Usb Device
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -66,15 +66,23 @@ public class SolarisUsbDevice extends AbstractUsbDevice {
     }
 
     /**
-     * {@inheritDoc}
+     * Instantiates a list of {@link  UsbDevice} objects, representing
+     * devices connected via a usb port (including internal devices).
+     * <p>
+     * If the value of {@code tree} is true, the top level devices returned from
+     * this method are the USB Controllers; connected hubs and devices in its device
+     * tree share that controller's bandwidth. If the value of {@code tree} is
+     * false, USB devices (not controllers) are listed in a single flat list.
      *
-     * @param tree a boolean.
-     * @return an array of {@link UsbDevice} objects.
+     * @param tree If true, returns a list of controllers, which requires recursive
+     *             iteration of connected devices. If false, returns a flat list of
+     *             devices excluding controllers.
+     * @return a list of {@link  UsbDevice} objects.
      */
     public static List<UsbDevice> getUsbDevices(boolean tree) {
         List<UsbDevice> devices = getUsbDevices();
         if (tree) {
-            return Collections.unmodifiableList(devices);
+            return devices;
         }
         List<UsbDevice> deviceList = new ArrayList<>();
         // Top level is controllers; they won't be added to the list, but all
@@ -85,7 +93,7 @@ public class SolarisUsbDevice extends AbstractUsbDevice {
                     Collections.emptyList()));
             addDevicesToList(deviceList, device.getConnectedDevices());
         }
-        return Collections.unmodifiableList(deviceList);
+        return deviceList;
     }
 
     private static List<UsbDevice> getUsbDevices() {

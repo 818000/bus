@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -33,7 +33,7 @@ import org.aoju.bus.health.Executor;
  * Utility to read info from {@code lshw}
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -67,6 +67,21 @@ public final class Lshw {
         for (String checkLine : Executor.runNative("lshw -C system")) {
             if (checkLine.contains(serialMarker)) {
                 return checkLine.split(serialMarker)[1].trim();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Query the UUID from lshw
+     *
+     * @return The UUID if available, null otherwise
+     */
+    public static String queryUUID() {
+        String uuidMarker = "uuid:";
+        for (String checkLine : Executor.runNative("lshw -C system")) {
+            if (checkLine.contains(uuidMarker)) {
+                return checkLine.split(uuidMarker)[1].trim();
             }
         }
         return null;

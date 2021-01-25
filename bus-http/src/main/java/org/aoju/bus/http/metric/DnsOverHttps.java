@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -27,7 +27,7 @@ package org.aoju.bus.http.metric;
 
 import org.aoju.bus.core.io.Buffer;
 import org.aoju.bus.core.io.ByteString;
-import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.lang.MimeType;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.http.*;
@@ -50,14 +50,14 @@ import java.util.concurrent.CountDownLatch;
  * DNS over HTTPS实施
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class DnsOverHttps implements DnsX {
 
     public static final int TYPE_A = 0x0001;
     public static final int TYPE_AAAA = 0x001c;
-    public static final MediaType DNS_MESSAGE = MediaType.valueOf("application/dns-message");
+    public static final MimeType DNS_MESSAGE = MimeType.valueOf("application/dns-message");
     public static final int MAX_RESPONSE_SIZE = 64 * 1024;
     private static final byte SERVFAIL = 2;
     private static final byte NXDOMAIN = 3;

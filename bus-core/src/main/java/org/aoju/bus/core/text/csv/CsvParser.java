@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -42,7 +42,7 @@ import java.util.*;
  * CSV行解析器,参考：FastCSV
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public final class CsvParser implements Closeable {
@@ -54,6 +54,10 @@ public final class CsvParser implements Closeable {
 
     private final Buffer buf = new Buffer(IoKit.DEFAULT_LARGE_BUFFER_SIZE);
     /**
+     * 当前读取字段
+     */
+    private final Builders currentField = new Builders(512);
+    /**
      * 前一个特殊分界字符
      */
     private int preChar = -1;
@@ -61,11 +65,6 @@ public final class CsvParser implements Closeable {
      * 是否在引号包装内
      */
     private boolean inQuotes;
-    /**
-     * 当前读取字段
-     */
-    private final Builders currentField = new Builders(512);
-
     /**
      * 标题行
      */

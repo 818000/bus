@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -40,7 +40,7 @@ import java.util.Set;
  * 剪贴板监听
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public enum ClipboardMonitor implements ClipboardOwner, Runnable, Closeable {
@@ -54,7 +54,14 @@ public enum ClipboardMonitor implements ClipboardOwner, Runnable, Closeable {
      * 默认重试等待：100
      */
     public static final long DEFAULT_DELAY = 100;
-
+    /**
+     * 系统剪贴板对象
+     */
+    private final Clipboard clipboard;
+    /**
+     * 监听事件处理
+     */
+    private final Set<ClipboardListener> listenerSet = new LinkedHashSet<>();
     /**
      * 重试次数
      */
@@ -63,14 +70,6 @@ public enum ClipboardMonitor implements ClipboardOwner, Runnable, Closeable {
      * 重试等待
      */
     private long delay;
-    /**
-     * 系统剪贴板对象
-     */
-    private Clipboard clipboard;
-    /**
-     * 监听事件处理
-     */
-    private Set<ClipboardListener> listenerSet = new LinkedHashSet<>();
     /**
      * 是否正在监听
      */

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,20 +29,20 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKitUtil;
 import org.aoju.bus.core.annotation.Immutable;
-import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.tuple.Quartet;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.builtin.hardware.AbstractBaseboard;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 /**
  * Baseboard data obtained from ioreg
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -61,17 +61,29 @@ final class MacBaseboard extends AbstractBaseboard {
         if (platformExpert != null) {
             byte[] data = platformExpert.getByteArrayProperty("manufacturer");
             if (data != null) {
-                manufacturer = Native.toString(data, Charset.UTF_8);
+                manufacturer = Native.toString(data, StandardCharsets.UTF_8);
             }
             data = platformExpert.getByteArrayProperty("board-id");
             if (data != null) {
-                model = Native.toString(data, Charset.UTF_8);
+                model = Native.toString(data, StandardCharsets.UTF_8);
+            }
+            if (StringKit.isBlank(model)) {
+                data = platformExpert.getByteArrayProperty("model-number");
+                if (data != null) {
+                    model = Native.toString(data, StandardCharsets.UTF_8);
+                }
             }
             data = platformExpert.getByteArrayProperty("version");
             if (data != null) {
-                version = Native.toString(data, Charset.UTF_8);
+                version = Native.toString(data, StandardCharsets.UTF_8);
             }
-            serialNumber = platformExpert.getStringProperty("IOPlatformSerialNumber");
+            data = platformExpert.getByteArrayProperty("mlb-serial-number");
+            if (data != null) {
+                serialNumber = Native.toString(data, StandardCharsets.UTF_8);
+            }
+            if (StringKit.isBlank(serialNumber)) {
+                serialNumber = platformExpert.getStringProperty("IOPlatformSerialNumber");
+            }
             platformExpert.release();
         }
         return new Quartet<>(StringKit.isBlank(manufacturer) ? "Apple Inc." : manufacturer,

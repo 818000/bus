@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -56,7 +56,7 @@ import java.util.Objects;
  * 参数过滤/校验
  *
  * @author Justubborn
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -75,7 +75,7 @@ public class PrimaryFilter implements WebFilter {
             context.setRequestMap(params.toSingleValueMap());
             doParams(mutate);
             return chain.filter(mutate)
-                .then(Mono.fromRunnable(() -> Logger.info("traceId:{},exec time :{} ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime())));
+                    .then(Mono.fromRunnable(() -> Logger.info("traceId:{},exec time :{} ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime())));
         } else {
             //文件
             if (MediaType.MULTIPART_FORM_DATA.isCompatibleWith(mutate.getRequest().getHeaders().getContentType())) {
@@ -96,7 +96,7 @@ public class PrimaryFilter implements WebFilter {
                     context.setFilePartMap(fileMap);
                     doParams(mutate);
                     return chain.filter(mutate)
-                        .doOnTerminate(() -> Logger.info("traceId:{},exec time :{}ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime()));
+                            .doOnTerminate(() -> Logger.info("traceId:{},exec time :{}ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime()));
                 });
 
             } else {
@@ -104,7 +104,7 @@ public class PrimaryFilter implements WebFilter {
                     context.setRequestMap(params.toSingleValueMap());
                     doParams(mutate);
                     return chain.filter(mutate)
-                        .doOnTerminate(() -> Logger.info("traceId:{},exec time :{}ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime()));
+                            .doOnTerminate(() -> Logger.info("traceId:{},exec time :{}ms", mutate.getLogPrefix(), System.currentTimeMillis() - context.getStartTime()));
                 });
             }
 

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -37,12 +37,13 @@ import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 数组工具类
  *
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class ArrayKit {
@@ -8855,6 +8856,19 @@ public class ArrayKit {
     }
 
     /**
+     * 按照指定规则，将一种类型的数组元素提取后转换为List
+     *
+     * @param array 被转换的数组
+     * @param func  转换规则函数
+     * @param <T>   原数组类型
+     * @param <R>   目标数组类型
+     * @return 转换后的数组
+     */
+    public static <T, R> List<R> map(T[] array, Function<? super T, ? extends R> func) {
+        return Arrays.stream(array).map(func).collect(Collectors.toList());
+    }
+
+    /**
      * 按照指定规则，将一种类型的数组转换为另一种类型
      *
      * @param array         被转换的数组
@@ -8868,6 +8882,25 @@ public class ArrayKit {
         final R[] result = newArray(componentType, array.length);
         for (int i = 0; i < array.length; i++) {
             result[i] = func.apply(array[i]);
+        }
+        return result;
+    }
+
+    /**
+     * 按照指定规则，将一种类型的数组转换为另一种类型
+     *
+     * @param array               被转换的数组
+     * @param targetComponentType 目标的元素类型
+     * @param func                转换规则函数
+     * @param <T>                 原数组类型
+     * @param <R>                 目标数组类型
+     * @return 转换后的数组
+     */
+    public static <T, R> R[] map(Object array, Class<R> targetComponentType, Function<? super T, ? extends R> func) {
+        final int length = length(array);
+        final R[] result = newArray(targetComponentType, length);
+        for (int i = 0; i < length; i++) {
+            result[i] = func.apply(get(array, i));
         }
         return result;
     }
@@ -8981,12 +9014,12 @@ public class ArrayKit {
      * 如果参数为{@code null}，返回0
      *
      * <pre>
-     * ArrayUtil.length(null)            = 0
-     * ArrayUtil.length([])              = 0
-     * ArrayUtil.length([null])          = 1
-     * ArrayUtil.length([true, false])   = 2
-     * ArrayUtil.length([1, 2, 3])       = 3
-     * ArrayUtil.length(["a", "b", "c"]) = 3
+     * ArrayKit.length(null)            = 0
+     * ArrayKit.length([])              = 0
+     * ArrayKit.length([null])          = 1
+     * ArrayKit.length([true, false])   = 2
+     * ArrayKit.length([1, 2, 3])       = 3
+     * ArrayKit.length(["a", "b", "c"]) = 3
      * </pre>
      *
      * @param array 数组对象

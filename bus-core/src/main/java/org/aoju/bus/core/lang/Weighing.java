@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2020 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -47,14 +47,14 @@ import java.util.TreeMap;
  *
  * @param <T> 权重随机获取的对象类型
  * @author Kimi Liu
- * @version 6.1.8
+ * @version 6.1.9
  * @since JDK 1.8+
  */
 public class Weighing<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private TreeMap<Double, T> weightMap;
+    private final TreeMap<Double, T> weightMap;
 
     /**
      * 构造
@@ -168,13 +168,13 @@ public class Weighing<T> implements Serializable {
      */
     public static class WeightObj<T> {
         /**
+         * 权重
+         */
+        private final double weight;
+        /**
          * 对象
          */
         private T obj;
-        /**
-         * 权重
-         */
-        private double weight;
 
         /**
          * 构造
