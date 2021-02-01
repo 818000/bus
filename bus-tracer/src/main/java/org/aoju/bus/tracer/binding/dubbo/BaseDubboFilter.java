@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,55 +23,40 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix.aix.software;
+package org.aoju.bus.tracer.binding.dubbo;
 
-import com.sun.jna.Native;
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.Memoize;
-import org.aoju.bus.health.builtin.software.AbstractInternetProtocolStats;
-import org.aoju.bus.health.unix.aix.Perfstat;
-import org.aoju.bus.health.unix.aix.drivers.perfstat.PerfstatProtocol;
-
-import java.util.function.Supplier;
+import org.aoju.bus.core.toolkit.StringKit;
+import org.apache.dubbo.rpc.Filter;
 
 /**
- * Internet Protocol Stats implementation
+ * 基础dubbo过滤器
  *
  * @author Kimi Liu
  * @version 6.1.9
  * @since JDK 1.8+
  */
-@ThreadSafe
-public class AixInternetProtocolStats extends AbstractInternetProtocolStats {
+public abstract class BaseDubboFilter implements Filter, Filter.Listener {
 
-    private Supplier<Perfstat.perfstat_protocol_t[]> ipstats = Memoize.memoize(PerfstatProtocol::queryProtocols, Memoize.defaultExpiration());
+    private static final String[] DUBBO_INNER_SERVICE_NAMES = new String[]{
+            "com.alibaba.cloud.dubbo.service.DubboMetadataService",
+            "org.apache.dubbo.rpc.service.GenericService"
+    };
 
-    @Override
-    public TcpStats getTCPv4Stats() {
-        for (Perfstat.perfstat_protocol_t stat : ipstats.get()) {
-            if ("tcp".equals(Native.toString(stat.name))) {
-                return new TcpStats(stat.u.tcp.established, stat.u.tcp.initiated, stat.u.tcp.accepted,
-                        stat.u.tcp.dropped, stat.u.tcp.dropped, stat.u.tcp.opackets, stat.u.tcp.ipackets, 0L,
-                        stat.u.tcp.ierrors, 0L);
+    boolean isDubboInnerService(String serviceName) {
+        for (String dubboInnerServiceName : DUBBO_INNER_SERVICE_NAMES) {
+            if (dubboInnerServiceName.equals(serviceName)) {
+                return true;
             }
         }
-        return new TcpStats(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+        return false;
     }
 
-    @Override
-    public UdpStats getUDPv4Stats() {
-        for (Perfstat.perfstat_protocol_t stat : ipstats.get()) {
-            if ("udp".equals(Native.toString(stat.name))) {
-                return new UdpStats(stat.u.udp.opackets, stat.u.udp.ipackets, stat.u.udp.no_socket, stat.u.udp.ierrors);
-            }
-        }
-        return new UdpStats(0L, 0L, 0L, 0L);
+    String withUnknown(String str) {
+        return StringKit.isBlank(str) ? "unknown" : str;
     }
 
-    @Override
-    public UdpStats getUDPv6Stats() {
-        // Stats are no different for inet6
-        return new UdpStats(0L, 0L, 0L, 0L);
+    String getAsyncIdTrace(String asyncId) {
+        return asyncId != null ? "-[异步ID: " + asyncId + "]" : "";
     }
 
 }
