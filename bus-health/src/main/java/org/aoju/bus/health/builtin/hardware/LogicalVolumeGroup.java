@@ -23,52 +23,51 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.windows.drivers;
+package org.aoju.bus.health.builtin.hardware;
 
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.windows.WmiKit;
-import org.aoju.bus.health.windows.WmiQueryHandler;
+import org.aoju.bus.core.annotation.Immutable;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Utility to query Open Hardware Monitor WMI data for Sensors
+ * A logical volume group implemented as part of logical volume management,
+ * combining the space on one or more storage devices such as disks or
+ * partitions (physical volumes) into a storage pool, and subsequently
+ * allocating that space to virtual partitions (logical volumes) as block
+ * devices accessible to the file system.
  *
  * @author Kimi Liu
  * @version 6.2.2
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class OhmSensor {
-
-    private static final String SENSOR = "Sensor";
+@Immutable
+public interface LogicalVolumeGroup {
 
     /**
-     * Queries the sensor value of an hardware identifier and sensor type.
+     * Gets the logical volume group name.
      *
-     * @param h          An instantiated {@link WmiQueryHandler}. User should have already
-     *                   initialized COM.
-     * @param identifier The identifier whose value to query.
-     * @param sensorType The type of sensor to query.
-     * @return The sensor value.
+     * @return The name of the logical volume group.
      */
-    public static WmiResult<ValueProperty> querySensorValue(WmiQueryHandler h, String identifier, String sensorType) {
-        StringBuilder sb = new StringBuilder(SENSOR);
-        sb.append(" WHERE Parent = \"").append(identifier);
-        sb.append("\" AND SensorType=\"").append(sensorType).append('\"');
-        WmiQuery<ValueProperty> ohmSensorQuery = new WmiQuery<>(WmiKit.OHM_NAMESPACE, sb.toString(),
-                ValueProperty.class);
-        return h.queryWMI(ohmSensorQuery, false);
-    }
-
-    private OhmSensor() {
-    }
+    String getName();
 
     /**
-     * Sensor value property
+     * Gets a set of all physical volumes in this volume group.
+     *
+     * @return A set with the names of the physical volumes.
      */
-    public enum ValueProperty {
-        VALUE
-    }
+    Set<String> getPhysicalVolumes();
+
+    /**
+     * Gets a map containing information about the logical volumes in the logical
+     * volume group, represented to the file system as block devices. The keyset for
+     * the map represents a collection of the logical volumes, while the values
+     * associated with these keys represent the physical volumes mapped to each
+     * logical volume (if known).
+     *
+     * @return A map with the logical volume names as the key, and a set of
+     * associated physical volume names as the value.
+     */
+    Map<String, Set<String>> getLogicalVolumes();
 
 }
