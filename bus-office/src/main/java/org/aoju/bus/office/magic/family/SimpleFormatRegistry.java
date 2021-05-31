@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
  * SimpleDocumentFormatRegistry包含office支持的文档格式集合.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class SimpleFormatRegistry implements FormatRegistry {
 
     private final Map<String, DocumentFormat> fmtsByExtension = new HashMap<>();
-    private final Map<String, DocumentFormat> fmtsByMediaType = new HashMap<>();
+    private final Map<String, DocumentFormat> fmtsByMimeType = new HashMap<>();
 
     /**
      * 向注册表添加新格式.
@@ -53,7 +53,7 @@ public class SimpleFormatRegistry implements FormatRegistry {
                 .stream()
                 .map(StringKit::lowerCase)
                 .forEach(ext -> fmtsByExtension.put(ext, documentFormat));
-        fmtsByMediaType.put(StringKit.lowerCase(documentFormat.getMediaType()), documentFormat);
+        fmtsByMimeType.put(StringKit.lowerCase(documentFormat.getMimeType()), documentFormat);
     }
 
     @Override
@@ -62,13 +62,13 @@ public class SimpleFormatRegistry implements FormatRegistry {
     }
 
     @Override
-    public DocumentFormat getFormatByMediaType(final String mediaType) {
-        return null == mediaType ? null : fmtsByMediaType.get(StringKit.lowerCase(mediaType));
+    public DocumentFormat getFormatByMimeType(final String mimeType) {
+        return null == mimeType ? null : fmtsByMimeType.get(StringKit.lowerCase(mimeType));
     }
 
     @Override
     public Set<DocumentFormat> getOutputFormats(final FamilyType family) {
-        return Optional.ofNullable(family).map(docFam -> fmtsByMediaType
+        return Optional.ofNullable(family).map(docFam -> fmtsByMimeType
                 .values()
                 .stream()
                 .filter(format -> null != format.getStoreProperties(docFam))

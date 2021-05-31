@@ -30,6 +30,7 @@ import org.aoju.bus.tracer.Builder;
 import org.aoju.bus.tracer.Tracer;
 import org.aoju.bus.tracer.config.TraceFilterConfig;
 import org.aoju.bus.tracer.transport.HttpHeaderTransport;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,10 +44,11 @@ import java.util.Map;
 
 /**
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @Component
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public final class TraceInterceptor implements HandlerInterceptor {
 
     private final Backend backend;

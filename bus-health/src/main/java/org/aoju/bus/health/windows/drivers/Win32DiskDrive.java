@@ -34,7 +34,7 @@ import org.aoju.bus.health.windows.WmiQueryHandler;
  * Utility to query WMI class {@code Win32_DiskDrive}
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -48,23 +48,13 @@ public final class Win32DiskDrive {
     /**
      * Queries the disk drive name info
      *
+     * @param h An instantiated {@link WmiQueryHandler}. User should have already
+     *          initialized COM.
      * @return Information regarding each disk drive.
      */
-    public static WmiResult<DiskDriveProperty> queryDiskDrive() {
+    public static WmiResult<DiskDriveProperty> queryDiskDrive(WmiQueryHandler h) {
         WmiQuery<DiskDriveProperty> diskDriveQuery = new WmiQuery<>(WIN32_DISK_DRIVE, DiskDriveProperty.class);
-        return WmiQueryHandler.createInstance().queryWMI(diskDriveQuery);
-    }
-
-    /**
-     * Queries the disk drive id info
-     *
-     * @param whereClause WQL "WHERE" clause limiting the search
-     * @return Information regarding each disk drive's device id and serial number
-     */
-    public static WmiResult<DeviceIdProperty> queryDiskDriveId(String whereClause) {
-        WmiQuery<DeviceIdProperty> deviceIdQuery = new WmiQuery<>(WIN32_DISK_DRIVE + whereClause,
-                DeviceIdProperty.class);
-        return WmiQueryHandler.createInstance().queryWMI(deviceIdQuery);
+        return h.queryWMI(diskDriveQuery, false);
     }
 
     /**
@@ -72,13 +62,6 @@ public final class Win32DiskDrive {
      */
     public enum DiskDriveProperty {
         INDEX, MANUFACTURER, MODEL, NAME, SERIALNUMBER, SIZE;
-    }
-
-    /**
-     * DeviceID and serial properties
-     */
-    public enum DeviceIdProperty {
-        PNPDEVICEID, SERIALNUMBER
     }
 
 }

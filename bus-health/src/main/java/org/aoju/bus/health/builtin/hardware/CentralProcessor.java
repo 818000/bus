@@ -32,6 +32,8 @@ import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Memoize;
+import org.aoju.bus.health.builtin.software.OSProcess;
+import org.aoju.bus.health.builtin.software.OSThread;
 
 import java.util.List;
 import java.util.Properties;
@@ -45,7 +47,7 @@ import java.util.regex.Pattern;
  * 多个逻辑处理器(操作系统看到的内容，可能包括超线程内核)
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -188,16 +190,24 @@ public interface CentralProcessor {
     int getPhysicalPackageCount();
 
     /**
-     * Get the number of context switches which have occurred
+     * Get the number of system-wide context switches which have occurred.
+     * <p>
+     * Not available system-wide on macOS. Process- and Thread-level context
+     * switches are available from {@link OSProcess#getContextSwitches()} and
+     * {@link OSThread#getContextSwitches()}.
      *
-     * @return The number of context switches
+     * @return The number of context switches, if this information is available; 0
+     * otherwise.
      */
     long getContextSwitches();
 
     /**
-     * Get the number of interrupts which have occurred
+     * Get the number of system-wide interrupts which have occurred.
+     * <p>
+     * Not available system-wide on macOS.
      *
-     * @return The number of interrupts
+     * @return The number of interrupts, if this information is available; -1
+     * otherwise.
      */
     long getInterrupts();
 

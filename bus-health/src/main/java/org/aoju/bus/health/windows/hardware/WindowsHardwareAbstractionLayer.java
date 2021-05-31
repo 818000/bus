@@ -34,7 +34,7 @@ import java.util.List;
  * WindowsHardwareAbstractionLayer class.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -73,6 +73,11 @@ public final class WindowsHardwareAbstractionLayer extends AbstractHardwareAbstr
     @Override
     public List<Display> getDisplays() {
         return WindowsDisplay.getDisplays();
+    }
+
+    @Override
+    public List<LogicalVolumeGroup> getLogicalVolumeGroups() {
+        return WindowsLogicalVolumeGroup.getLogicalVolumeGroups();
     }
 
     @Override

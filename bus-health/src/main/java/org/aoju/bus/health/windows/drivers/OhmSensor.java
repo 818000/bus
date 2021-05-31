@@ -35,7 +35,7 @@ import org.aoju.bus.health.windows.WmiQueryHandler;
  * Utility to query Open Hardware Monitor WMI data for Sensors
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -49,17 +49,19 @@ public final class OhmSensor {
     /**
      * Queries the sensor value of an hardware identifier and sensor type.
      *
+     * @param h          An instantiated {@link WmiQueryHandler}. User should have already
+     *                   initialized COM.
      * @param identifier The identifier whose value to query.
      * @param sensorType The type of sensor to query.
      * @return The sensor value.
      */
-    public static WmiResult<ValueProperty> querySensorValue(String identifier, String sensorType) {
+    public static WmiResult<ValueProperty> querySensorValue(WmiQueryHandler h, String identifier, String sensorType) {
         StringBuilder sb = new StringBuilder(SENSOR);
         sb.append(" WHERE Parent = \"").append(identifier);
         sb.append("\" AND SensorType=\"").append(sensorType).append('\"');
         WmiQuery<ValueProperty> ohmSensorQuery = new WmiQuery<>(WmiKit.OHM_NAMESPACE, sb.toString(),
                 ValueProperty.class);
-        return WmiQueryHandler.createInstance().queryWMI(ohmSensorQuery);
+        return h.queryWMI(ohmSensorQuery, false);
     }
 
     /**

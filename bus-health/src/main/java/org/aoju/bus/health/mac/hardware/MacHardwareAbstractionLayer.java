@@ -34,7 +34,7 @@ import java.util.List;
  * MacHardwareAbstractionLayer class.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -73,6 +73,11 @@ public final class MacHardwareAbstractionLayer extends AbstractHardwareAbstracti
     @Override
     public List<Display> getDisplays() {
         return MacDisplay.getDisplays();
+    }
+
+    @Override
+    public List<LogicalVolumeGroup> getLogicalVolumeGroups() {
+        return MacLogicalVolumeGroup.getLogicalVolumeGroups();
     }
 
     @Override

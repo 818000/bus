@@ -35,7 +35,7 @@ import java.util.Map;
  * Utility to query Thread Information performance counter
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -70,6 +70,7 @@ public final class ThreadInformation {
         PRIORITYCURRENT("Priority Current"),
         STARTADDRESS("Start Address"),
         THREADSTATE("Thread State"),
+        THREADWAITREASON("Thread Wait Reason"), // 5 is SUSPENDED
         IDPROCESS("ID Process"),
         IDTHREAD("ID Thread"),
         CONTEXTSWITCHESPERSEC("Context Switches/sec");

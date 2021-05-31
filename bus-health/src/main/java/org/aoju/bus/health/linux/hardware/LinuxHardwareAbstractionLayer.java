@@ -34,7 +34,7 @@ import java.util.List;
  * LinuxHardwareAbstractionLayer class.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -68,6 +68,11 @@ public final class LinuxHardwareAbstractionLayer extends AbstractHardwareAbstrac
     @Override
     public List<HWDiskStore> getDiskStores() {
         return LinuxHWDiskStore.getDisks();
+    }
+
+    @Override
+    public List<LogicalVolumeGroup> getLogicalVolumeGroups() {
+        return LinuxLogicalVolumeGroup.getLogicalVolumeGroups();
     }
 
     @Override

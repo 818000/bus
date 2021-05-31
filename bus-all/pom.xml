@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>6.2.2</version>
+    <version>6.2.3</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -273,6 +273,14 @@
                                             <include>${project.groupId}:*:*</include>
                                         </includes>
                                     </artifactSet>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/maven/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
                                 </configuration>
                             </execution>
                         </executions>

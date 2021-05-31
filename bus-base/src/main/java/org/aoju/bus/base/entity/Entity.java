@@ -28,13 +28,14 @@ package org.aoju.bus.base.entity;
 import lombok.Data;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
  * Entity 实体
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @Data
@@ -47,5 +48,23 @@ public abstract class Entity implements Serializable {
      */
     @Id
     protected String id;
+
+    /**
+     * 分页页码,默认值:1
+     */
+    @Transient
+    protected Integer pageNo = 1;
+
+    /**
+     * 分页大小,默认值:20
+     */
+    @Transient
+    protected Integer pageSize = 20;
+
+    /**
+     * 排序方式,asc desc
+     */
+    @Transient
+    protected String orderBy;
 
 }

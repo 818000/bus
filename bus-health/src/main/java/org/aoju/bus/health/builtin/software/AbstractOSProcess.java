@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  * execution that execute instructions concurrently.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -73,16 +73,6 @@ public abstract class AbstractOSProcess implements OSProcess {
                     / (double) (getUpTime() - priorSnapshot.getUpTime());
         }
         return getProcessCpuLoadCumulative();
-    }
-
-    @Override
-    public long getMinorFaults() {
-        return 0L;
-    }
-
-    @Override
-    public long getMajorFaults() {
-        return 0L;
     }
 
     @Override

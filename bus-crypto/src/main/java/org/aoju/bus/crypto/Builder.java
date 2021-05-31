@@ -96,7 +96,7 @@ import java.util.Map;
  * 3、摘要加密(digest)，例如：MD5、SHA-1、SHA-256、HMAC等
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public final class Builder {
@@ -2021,7 +2021,6 @@ public final class Builder {
      * @param publicKey    {@link PublicKey}，必须为org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
      * @param isCompressed 是否压缩
      * @return 得到的Q
-     * @since 5.5.9
      */
     public static byte[] encodeECPublicKey(PublicKey publicKey, boolean isCompressed) {
         return ((BCECPublicKey) publicKey).getQ().getEncoded(isCompressed);

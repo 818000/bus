@@ -31,6 +31,7 @@ import org.aoju.bus.core.lang.exception.InstrumentException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.text.DateFormatSymbols;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  * {@link java.text.SimpleDateFormat} 的线程安全版本,用于将 {@link Date} 格式化输出
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class FastDatePrinter extends AbstractMotd implements DatePrinter {
@@ -497,6 +498,23 @@ public class FastDatePrinter extends AbstractMotd implements DatePrinter {
      */
     public int getMaxLengthEstimate() {
         return mMaxLengthEstimate;
+    }
+
+    /**
+     * 便捷获取 DateTimeFormatter
+     * 由于 {@link FormatBuilder} 很大一部分的格式没有提供 {@link DateTimeFormatter},因此这里提供快捷获取方式
+     *
+     * @return DateTimeFormatter
+     */
+    public DateTimeFormatter getDateTimeFormatter() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(this.getPattern());
+        if (this.getLocale() != null) {
+            formatter = formatter.withLocale(this.getLocale());
+        }
+        if (this.getTimeZone() != null) {
+            formatter = formatter.withZone(this.getTimeZone().toZoneId());
+        }
+        return formatter;
     }
 
     /**

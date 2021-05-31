@@ -44,7 +44,7 @@ import java.util.*;
  * A CPU
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -244,7 +244,7 @@ final class SolarisCentralProcessor extends AbstractCentralProcessor {
         for (String s : kstat) {
             swtch += Builder.parseLastLong(s, 0L);
         }
-        return swtch > 0 ? swtch : -1L;
+        return swtch;
     }
 
     @Override
@@ -254,7 +254,7 @@ final class SolarisCentralProcessor extends AbstractCentralProcessor {
         for (String s : kstat) {
             intr += Builder.parseLastLong(s, 0L);
         }
-        return intr > 0 ? intr : -1L;
+        return intr;
     }
 
 }

@@ -40,13 +40,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class SimpleCache<K, V> implements Iterable<Map.Entry<K, V>>, Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * 写的时候每个key一把锁，降低锁的粒度
+     */
+    protected final Map<K, Lock> keyLockMap = new ConcurrentHashMap<>();
     /**
      * 缓存池
      */
@@ -55,11 +58,6 @@ public class SimpleCache<K, V> implements Iterable<Map.Entry<K, V>>, Serializabl
      * 乐观读写锁
      */
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    /**
-     * 写的时候每个key一把锁，降低锁的粒度
-     */
-    protected final Map<K, Lock> keyLockMap = new ConcurrentHashMap<>();
 
     /**
      * 构造，默认使用{@link WeakHashMap}实现缓存自动清理

@@ -31,15 +31,13 @@ import lombok.Data;
  * 表列领域对象
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @Data
 public class ColumnSchema {
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = -5417752216907437665L;
+
+    private static final long serialVersionUID = 1L;
     /**
      * 表中的列的索引（从 1 开始）
      */
@@ -84,4 +82,5 @@ public class ColumnSchema {
      * 说明
      */
     private String remarks;
+
 }

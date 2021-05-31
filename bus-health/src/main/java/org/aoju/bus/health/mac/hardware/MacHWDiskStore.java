@@ -40,8 +40,8 @@ import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.health.builtin.hardware.AbstractHWDiskStore;
 import org.aoju.bus.health.builtin.hardware.HWDiskStore;
 import org.aoju.bus.health.builtin.hardware.HWPartition;
-import org.aoju.bus.health.mac.drivers.DiskKit;
 import org.aoju.bus.health.mac.drivers.Fsstat;
+import org.aoju.bus.health.mac.drivers.WindowInfo;
 import org.aoju.bus.logger.Logger;
 
 import java.util.*;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  * Mac hard disk implementation.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -70,9 +70,9 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
     private List<HWPartition> partitionList;
 
     private MacHWDiskStore(String name, String model, String serial, long size, DASessionRef session,
-                           Map<String, String> mountPointMap, Map<String, String> logicalVolumeMap, Map<CFKey, CFStringRef> cfKeyMap) {
+                           Map<String, String> mountPointMap, Map<CFKey, CFStringRef> cfKeyMap) {
         super(name, model, serial, size);
-        updateDiskStats(session, mountPointMap, logicalVolumeMap, cfKeyMap);
+        updateDiskStats(session, mountPointMap, cfKeyMap);
     }
 
     /**
@@ -82,7 +82,6 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
      */
     public static List<HWDiskStore> getDisks() {
         Map<String, String> mountPointMap = Fsstat.queryPartitionToMountMap();
-        Map<String, String> logicalVolumeMap = DiskKit.queryLogicalVolumeMap();
         Map<CFKey, CFStringRef> cfKeyMap = mapCFKeys();
 
         List<HWDiskStore> diskList = new ArrayList<>();
@@ -129,11 +128,7 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
                 if (null != diskInfo) {
                     // Parse out model and size from their respective keys
                     Pointer result = diskInfo.getValue(cfKeyMap.get(CFKey.DA_DEVICE_MODEL));
-                    CFStringRef modelPtr = new CFStringRef(result);
-                    model = modelPtr.stringValue();
-                    if (null == model) {
-                        model = Normal.UNKNOWN;
-                    }
+                    model = WindowInfo.cfPointerToString(result);
                     result = diskInfo.getValue(cfKeyMap.get(CFKey.DA_MEDIA_SIZE));
                     CFNumberRef sizePtr = new CFNumberRef(result);
                     size = sizePtr.longValue();
@@ -182,7 +177,7 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
                     continue;
                 }
                 HWDiskStore diskStore = new MacHWDiskStore(bsdName, model.trim(), serial.trim(), size, session,
-                        mountPointMap, logicalVolumeMap, cfKeyMap);
+                        mountPointMap, cfKeyMap);
                 diskList.add(diskStore);
             }
         }
@@ -253,14 +248,13 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
     public boolean updateAttributes() {
         // Open a session and create CFStrings
         DASessionRef session = DA.DASessionCreate(CF.CFAllocatorGetDefault());
-        if (null == session) {
+        if (session == null) {
             Logger.error("Unable to open session to DiskArbitration framework.");
             return false;
         }
         Map<CFKey, CFStringRef> cfKeyMap = mapCFKeys();
         // Execute the update
-        boolean diskFound = updateDiskStats(session, Fsstat.queryPartitionToMountMap(),
-                DiskKit.queryLogicalVolumeMap(), cfKeyMap);
+        boolean diskFound = updateDiskStats(session, Fsstat.queryPartitionToMountMap(), cfKeyMap);
         // Release the session and CFStrings
         session.release();
         for (CFTypeRef value : cfKeyMap.values()) {
@@ -271,7 +265,7 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
     }
 
     private boolean updateDiskStats(DASessionRef session, Map<String, String> mountPointMap,
-                                    Map<String, String> logicalVolumeMap, Map<CFKey, CFStringRef> cfKeyMap) {
+                                    Map<CFKey, CFStringRef> cfKeyMap) {
         // Now look up the device using the BSD Name to get its
         // statistics
         String bsdName = getName();
@@ -374,28 +368,18 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
                                     if (null != diskInfo) {
                                         // get volume name from its key
                                         result = diskInfo.getValue(cfKeyMap.get(CFKey.DA_MEDIA_NAME));
-                                        CFStringRef volumePtr = new CFStringRef(result);
-                                        type = volumePtr.stringValue();
-                                        if (null == type) {
-                                            type = Normal.UNKNOWN;
-                                        }
+                                        type = WindowInfo.cfPointerToString(result);
                                         result = diskInfo.getValue(cfKeyMap.get(CFKey.DA_VOLUME_NAME));
-                                        if (null == result) {
+                                        if (result == null) {
                                             name = type;
                                         } else {
-                                            volumePtr.setPointer(result);
-                                            name = volumePtr.stringValue();
+                                            name = WindowInfo.cfPointerToString(result);
                                         }
                                         diskInfo.release();
                                     }
                                     disk.release();
                                 }
-                                String mountPoint;
-                                if (logicalVolumeMap.containsKey(partBsdName)) {
-                                    mountPoint = "Logical Volume: " + logicalVolumeMap.get(partBsdName);
-                                } else {
-                                    mountPoint = mountPointMap.getOrDefault(partBsdName, Normal.EMPTY);
-                                }
+                                String mountPoint = mountPointMap.getOrDefault(partBsdName, "");
                                 Long size = sdService.getLongProperty("Size");
                                 Integer bsdMajor = sdService.getIntegerProperty("BSD Major");
                                 Integer bsdMinor = sdService.getIntegerProperty("BSD Minor");

@@ -35,7 +35,7 @@ import java.util.*;
  * 八字
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class EightChar {
@@ -1134,20 +1134,14 @@ public class EightChar {
             // 阳男阴女顺推，阴男阳女逆推
             Solar start = forward ? current : prev.getSolar();
             Solar end = forward ? next.getSolar() : current;
+            int endTimeZhiIndex = (end.getHour() == 23) ? 11 : Lunar.getTimeZhiIndex(end.build(false).substring(11, 16));
+            int startTimeZhiIndex = (start.getHour() == 23) ? 11 : Lunar.getTimeZhiIndex(start.build(false).substring(11, 16));
             // 时辰差
-            int hourDiff = Lunar.getTimeZhiIndex(end.build(false).substring(11, 16))
-                    - Lunar.getTimeZhiIndex(start.build(false).substring(11, 16));
-            Calendar endCalendar = Calendar.getInstance();
-            endCalendar.set(end.getYear(), end.getMonth() - 1, end.getDay(),
-                    0, 0, 0);
-            endCalendar.set(Calendar.MILLISECOND, 0);
-            Calendar startCalendar = Calendar.getInstance();
-            startCalendar.set(start.getYear(), start.getMonth() - 1, start.getDay(),
-                    0, 0, 0);
-            startCalendar.set(Calendar.MILLISECOND, 0);
+            int hourDiff = endTimeZhiIndex - startTimeZhiIndex;
+            Calendar endCalendar = Kalendar.calendar(end.getYear(), end.getMonth(), end.getDay());
+            Calendar startCalendar = Kalendar.calendar(start.getYear(), start.getMonth(), start.getDay());
             // 天数差
-            int dayDiff = (int) ((endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis())
-                    / (1000 * 3600 * 24));
+            int dayDiff = (int) ((endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (1000 * 3600 * 24));
             if (hourDiff < 0) {
                 hourDiff += 12;
                 dayDiff--;
@@ -1218,9 +1212,10 @@ public class EightChar {
          */
         public Solar getStartSolar() {
             Solar birth = lunar.getSolar();
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(birth.getYear() + startYear, birth.getMonth() - 1 + startMonth,
-                    birth.getDay() + startDay, 0, 0, 0);
+            Calendar calendar = Kalendar.calendar(birth.getYear(), birth.getMonth(), birth.getDay());
+            calendar.add(Calendar.YEAR, startYear);
+            calendar.add(Calendar.MONTH, startMonth);
+            calendar.add(Calendar.DATE, startDay);
             return Solar.from(calendar);
         }
 

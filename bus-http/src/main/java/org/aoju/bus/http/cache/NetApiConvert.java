@@ -28,7 +28,7 @@ package org.aoju.bus.http.cache;
 import org.aoju.bus.core.io.BufferSource;
 import org.aoju.bus.core.io.Sink;
 import org.aoju.bus.core.lang.Header;
-import org.aoju.bus.core.lang.MimeType;
+import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.http.Builder;
@@ -65,7 +65,7 @@ import java.util.Set;
  * 在Java和Httpd表示之间进行转换的方法
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public final class NetApiConvert {
@@ -443,9 +443,9 @@ public final class NetApiConvert {
         final BufferSource body = IoKit.buffer(IoKit.source(cacheResponse.getBody()));
         return new ResponseBody() {
             @Override
-            public MimeType contentType() {
+            public MediaType contentType() {
                 String contentTypeHeader = headers.get(Header.CONTENT_TYPE);
-                return null == contentTypeHeader ? null : MimeType.valueOf(contentTypeHeader);
+                return null == contentTypeHeader ? null : MediaType.valueOf(contentTypeHeader);
             }
 
             @Override
@@ -468,9 +468,9 @@ public final class NetApiConvert {
         final BufferSource body = IoKit.buffer(IoKit.source(urlConnection.getInputStream()));
         return new ResponseBody() {
             @Override
-            public MimeType contentType() {
+            public MediaType contentType() {
                 String contentTypeHeader = urlConnection.getContentType();
-                return null == contentTypeHeader ? null : MimeType.valueOf(contentTypeHeader);
+                return null == contentTypeHeader ? null : MediaType.valueOf(contentTypeHeader);
             }
 
             @Override

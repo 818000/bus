@@ -31,7 +31,7 @@ import java.util.Set;
  * 实现此接口的类应该保留office支持的文档格式集合.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public interface FormatRegistry {
@@ -47,10 +47,10 @@ public interface FormatRegistry {
     /**
      * 获取指定媒体类型的文档格式.
      *
-     * @param mediaType 将返回其文档格式的媒体类型.
+     * @param mimeType 将返回其文档格式的媒体类型.
      * @return 如果指定的媒体类型不存在文档格式，则使用找到的文档格式，或者使用{@code null}.
      */
-    DocumentFormat getFormatByMediaType(String mediaType);
+    DocumentFormat getFormatByMimeType(String mimeType);
 
     /**
      * @param family 将返回其文档格式的集合.

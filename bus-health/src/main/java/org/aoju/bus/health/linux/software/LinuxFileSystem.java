@@ -54,7 +54,7 @@ import java.util.*;
  * the /proc/mount filesystem, excluding temporary and kernel mounts.
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -105,7 +105,7 @@ public class LinuxFileSystem extends AbstractFileSystem {
             String name = volume;
             String path = split[1].replace(UNICODE_SPACE, Symbol.SPACE);
             if (path.equals("/")) {
-                volume = "/";
+                name = "/";
             }
             String type = split[2];
 

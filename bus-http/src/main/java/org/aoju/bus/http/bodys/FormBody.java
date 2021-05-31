@@ -27,7 +27,7 @@ package org.aoju.bus.http.bodys;
 
 import org.aoju.bus.core.io.Buffer;
 import org.aoju.bus.core.io.BufferSink;
-import org.aoju.bus.core.lang.MimeType;
+import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.http.UnoUrl;
 
@@ -39,7 +39,7 @@ import java.util.List;
  * Form请求体内容
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public final class FormBody extends RequestBody {
@@ -73,8 +73,8 @@ public final class FormBody extends RequestBody {
     }
 
     @Override
-    public MimeType contentType() {
-        return MimeType.APPLICATION_FORM_URLENCODED_TYPE;
+    public MediaType contentType() {
+        return MediaType.APPLICATION_FORM_URLENCODED_TYPE;
     }
 
     @Override

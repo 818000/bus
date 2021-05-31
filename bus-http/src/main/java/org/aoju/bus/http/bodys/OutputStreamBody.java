@@ -27,7 +27,7 @@ package org.aoju.bus.http.bodys;
 
 import org.aoju.bus.core.io.BufferSink;
 import org.aoju.bus.core.io.Timeout;
-import org.aoju.bus.core.lang.MimeType;
+import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.http.Request;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ import java.net.SocketTimeoutException;
  * 正文的字节才会被知道
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public abstract class OutputStreamBody extends RequestBody {
@@ -120,7 +120,7 @@ public abstract class OutputStreamBody extends RequestBody {
     }
 
     @Override
-    public final MimeType contentType() {
+    public final MediaType contentType() {
         return null;
     }
 

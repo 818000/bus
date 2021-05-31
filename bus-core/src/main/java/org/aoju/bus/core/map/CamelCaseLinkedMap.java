@@ -25,6 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
+import org.aoju.bus.core.toolkit.StringKit;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,10 +37,10 @@ import java.util.Map;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
-public class CamelCaseLinkedMap<K, V> extends CamelCaseMap<K, V> {
+public class CamelCaseLinkedMap<K, V> extends CustomKeyMap<K, V> {
 
     /**
      * 构造
@@ -84,6 +86,20 @@ public class CamelCaseLinkedMap<K, V> extends CamelCaseMap<K, V> {
      */
     public CamelCaseLinkedMap(int initialCapacity, float loadFactor) {
         super(new LinkedHashMap<>(initialCapacity, loadFactor));
+    }
+
+    /**
+     * 将Key转为驼峰风格，如果key为字符串的话
+     *
+     * @param key KEY
+     * @return 驼峰Key
+     */
+    @Override
+    protected Object customKey(Object key) {
+        if (key instanceof CharSequence) {
+            key = StringKit.toCamelCase(key.toString());
+        }
+        return key;
     }
 
 }

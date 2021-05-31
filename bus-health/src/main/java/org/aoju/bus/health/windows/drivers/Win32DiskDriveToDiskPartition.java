@@ -34,7 +34,7 @@ import org.aoju.bus.health.windows.WmiQueryHandler;
  * Utility to query WMI class {@code Win32_DiskDriveToDiskPartition}
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -48,12 +48,14 @@ public final class Win32DiskDriveToDiskPartition {
     /**
      * Queries the association between disk drive and partition.
      *
+     * @param h An instantiated {@link WmiQueryHandler}. User should have already
+     *          initialized COM.
      * @return Antecedent-dependent pairs of disk and partition.
      */
-    public static WmiResult<DriveToPartitionProperty> queryDriveToPartition() {
+    public static WmiResult<DriveToPartitionProperty> queryDriveToPartition(WmiQueryHandler h) {
         WmiQuery<DriveToPartitionProperty> driveToPartitionQuery = new WmiQuery<>(WIN32_DISK_DRIVE_TO_DISK_PARTITION,
                 DriveToPartitionProperty.class);
-        return WmiQueryHandler.createInstance().queryWMI(driveToPartitionQuery);
+        return h.queryWMI(driveToPartitionQuery, false);
     }
 
     /**

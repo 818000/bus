@@ -31,7 +31,7 @@ import org.aoju.bus.core.toolkit.StringKit;
  * HTTP 相关常量
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class Http {
@@ -136,6 +136,38 @@ public class Http {
      * HTTP Method NONE
      */
     public static final String NONE = "NONE";
+    /**
+     * HTTP/1.0
+     */
+    public static final String HTTP_1_0 = "HTTP/1.0";
+    /**
+     * HTTP/1.1
+     */
+    public static final String HTTP_1_1 = "HTTP/1.1";
+    /**
+     * HTTP/2.0
+     */
+    public static final String HTTP_2_0 = "HTTP/2.0";
+    /**
+     * SPDY/3.1
+     */
+    public static final String SPDY_3_1 = "SPDY/3.1";
+    /**
+     * SOAP 1.1
+     */
+    public static final String SOAP_1_1 = "SOAP 1.1 Protocol";
+    /**
+     * SOAP 1.2
+     */
+    public static final String SOAP_1_2 = "SOAP 1.2 Protocol";
+    /**
+     * QUIC
+     */
+    public static final String QUIC = "QUIC";
+    /**
+     * 明文HTTP/2，没有"upgrade"往返。此选项要求客户端事先知道服务器支持明文HTTP/2
+     */
+    public static final String H2_PRIOR_KNOWLEDGE = "H2_PRIOR_KNOWLEDGE";
     /**
      * Supports some version of SSL; may support other versions
      */
@@ -388,7 +420,7 @@ public class Http {
         if (StringKit.isEmpty(url)) {
             return false;
         }
-        return url.startsWith(Http.HTTP_PREFIX);
+        return url.startsWith(Http.HTTP_PREFIX) || url.startsWith("http%3A%2F%2F");
     }
 
     /**
@@ -401,7 +433,17 @@ public class Http {
         if (StringKit.isEmpty(url)) {
             return false;
         }
-        return url.startsWith(Http.HTTPS_PREFIX);
+        return url.startsWith(Http.HTTPS_PREFIX) || url.startsWith("https%3A%2F%2F");
+    }
+
+    /**
+     * 是否为本地主机（域名）
+     *
+     * @param url 待验证的url
+     * @return true: 本地主机（域名）, false: 非本地主机（域名）
+     */
+    public static boolean isLocalHost(String url) {
+        return StringKit.isEmpty(url) || url.contains(Http.HTTP_HOST_IPV4) || url.contains(Http.HTTP_HOST_LOCAL);
     }
 
 }

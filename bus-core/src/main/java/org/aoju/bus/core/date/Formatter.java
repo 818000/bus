@@ -35,10 +35,7 @@ import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
-import org.aoju.bus.core.toolkit.MathKit;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.core.toolkit.PatternKit;
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.toolkit.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -64,7 +61,7 @@ import java.util.*;
  * yyyy-MM-dd'T'HH:mm:ss.SSSZ等等，支持毫秒、微秒和纳秒等精确时间
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class Formatter {
@@ -507,7 +504,7 @@ public class Formatter {
         // 含有单个位数数字的日期时间格式
         dateStr = normalize(dateStr);
         if (PatternKit.isMatch(Fields.REGEX_NORM, dateStr)) {
-            final int colonCount = StringKit.count(dateStr, Symbol.COLON);
+            final int colonCount = CharKit.count(dateStr, Symbol.COLON);
             switch (colonCount) {
                 case 0:
                     // yyyy-MM-dd
@@ -749,10 +746,14 @@ public class Formatter {
         int length = utcString.length();
         if (StringKit.contains(utcString, 'Z')) {
             if (length == Fields.UTC_PATTERN.length() - 4) {
-                // 格式类似：2020-01-15T05:32:30Z
+                // 格式类似：2020-09-11T06:34:32Z，-4表示减去4个单引号的长度
                 return parse(utcString, Fields.UTC_FORMAT);
-            } else if (length == Fields.OUTPUT_MSEC_PATTERN.length() - 4) {
-                // 格式类似：2020-01-15T05:32:30.999Z
+            }
+
+            final int patternLength = Fields.OUTPUT_MSEC_PATTERN.length();
+            // 格式类似：2020-09-11T06:34:32.999Z，-4表示减去4个单引号的长度
+            // -4 ~ -6范围表示匹配毫秒1~3位的情况
+            if (length <= patternLength - 4 && length >= patternLength - 6) {
                 return parse(utcString, Fields.OUTPUT_MSEC_FORMAT);
             }
         } else {
@@ -763,7 +764,7 @@ public class Formatter {
                 // 格式类似：2020-01-15T05:32:30.999+0800 或 2020-01-15T05:32:30.999+08:00
                 return parse(utcString, Fields.MSEC_FORMAT);
             } else if (length == Fields.SIMPLE_PATTERN.length() - 2) {
-                // 格式类似：2018-09-13T05:34:31
+                // 格式类似：2020-09-13T05:34:31
                 return parse(utcString, Fields.SIMPLE_FORMAT);
             } else if (StringKit.contains(utcString, Symbol.DOT)) {
                 // 可能为：  2021-03-17T06:31:33.99

@@ -25,13 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.image.metric.internal.xdsi;
 
-import org.aoju.bus.core.lang.MimeType;
+import org.aoju.bus.core.lang.MediaType;
 
 import javax.xml.bind.annotation.*;
 
 /**
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 
@@ -56,7 +56,7 @@ public class ExtrinsicObjectType extends RegistryObjectType {
 
     public String getMimeType() {
         if (null == this.mimeType) {
-            return MimeType.APPLICATION_OCTET_STREAM;
+            return MediaType.APPLICATION_OCTET_STREAM;
         }
         return this.mimeType;
     }

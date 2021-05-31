@@ -53,10 +53,12 @@ import java.util.stream.Stream;
  * 这些标记的作用是提供公共标记(DICOM和non DICOM)的高级可访问性
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class TagCamel implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String NO_VALUE = "UNKNOWN";
     public static final TagCamel UnknownTag = new TagCamel(0, "UnknownTag", "Unknown Tag", TagType.STRING);
@@ -128,7 +130,6 @@ public class TagCamel implements Serializable {
     public static final TagCamel PRLUTsData = new TagCamel("PRLUTsData", TagType.OBJECT);
     public static final TagCamel MonoChrome = new TagCamel("MonoChrome", TagType.BOOLEAN);
     protected static final Map<String, TagCamel> tags = Collections.synchronizedMap(new HashMap<>());
-    private static final long serialVersionUID = -7914330824854199622L;
     private static final AtomicInteger idCounter = new AtomicInteger(Integer.MAX_VALUE);
 
     static {

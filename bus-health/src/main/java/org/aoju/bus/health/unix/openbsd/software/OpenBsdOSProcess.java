@@ -27,7 +27,7 @@ package org.aoju.bus.health.unix.openbsd.software;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.platform.unix.LibCAPI;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.RegEx;
@@ -37,6 +37,7 @@ import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.builtin.software.AbstractOSProcess;
 import org.aoju.bus.health.builtin.software.OSProcess;
 import org.aoju.bus.health.builtin.software.OSThread;
+import org.aoju.bus.health.unix.NativeSizeTByReference;
 import org.aoju.bus.health.unix.openbsd.FstatKit;
 import org.aoju.bus.health.unix.openbsd.OpenBsdLibc;
 
@@ -48,7 +49,7 @@ import java.util.function.Supplier;
  * OSProcess implemenation
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -77,6 +78,7 @@ public class OpenBsdOSProcess extends AbstractOSProcess {
     private long bytesWritten;
     private long minorFaults;
     private long majorFaults;
+    private long contextSwitches;
 
     public OpenBsdOSProcess(int pid, String[] split) {
         super(pid);
@@ -225,9 +227,9 @@ public class OpenBsdOSProcess extends AbstractOSProcess {
         mib[3] = getProcessID();
         // Allocate memory for arguments
         Pointer abi = new Memory(32);
-        IntByReference size = new IntByReference(32);
+        NativeSizeTByReference size = new NativeSizeTByReference(new LibCAPI.size_t(32));
         // Fetch abi vector
-        if (0 == OpenBsdLibc.INSTANCE.sysctl(mib, mib.length, abi, size, null, 0)) {
+        if (0 == OpenBsdLibc.INSTANCE.sysctl(mib, mib.length, abi, size, null, LibCAPI.size_t.ZERO)) {
             String elf = abi.getString(0);
             if (elf.contains("ELF32")) {
                 return 32;
@@ -273,6 +275,11 @@ public class OpenBsdOSProcess extends AbstractOSProcess {
     @Override
     public long getMajorFaults() {
         return this.majorFaults;
+    }
+
+    @Override
+    public long getContextSwitches() {
+        return this.contextSwitches;
     }
 
     @Override
@@ -332,14 +339,16 @@ public class OpenBsdOSProcess extends AbstractOSProcess {
         this.upTime = elapsedTime < 1L ? 1L : elapsedTime;
         this.startTime = now - this.upTime;
         this.userTime = Builder.parseDHMSOrDefault(split[11], 0L);
+        // kernel time is included in user time
+        this.kernelTime = 0L;
         this.path = split[12];
         this.name = this.path.substring(this.path.lastIndexOf('/') + 1);
         this.minorFaults = Builder.parseLongOrDefault(split[13], 0L);
         this.majorFaults = Builder.parseLongOrDefault(split[14], 0L);
-        this.commandLine = split[15];
-        // kernel time is included in user time
-        // this.kernelTime = Builder.parseDHMSOrDefault(split[16], 0L);
-        this.kernelTime = 0L;
+        long nonVoluntaryContextSwitches = Builder.parseLongOrDefault(split[15], 0L);
+        long voluntaryContextSwitches = Builder.parseLongOrDefault(split[16], 0L);
+        this.contextSwitches = voluntaryContextSwitches + nonVoluntaryContextSwitches;
+        this.commandLine = split[17];
         return true;
     }
 

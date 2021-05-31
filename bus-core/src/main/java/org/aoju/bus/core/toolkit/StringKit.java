@@ -34,6 +34,7 @@ import org.aoju.bus.core.text.Similarity;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.System;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.*;
@@ -45,7 +46,7 @@ import java.util.regex.Pattern;
  * 用于MD5,加解密和字符串编码转换
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class StringKit {
@@ -969,6 +970,28 @@ public class StringKit {
     }
 
     /**
+     * 字符编码为Unicode形式
+     *
+     * @param c 被编码的字符
+     * @return Unicode字符串
+     * @see HexKit#toUnicodeHex(char)
+     */
+    public static String toUnicode(char c) {
+        return HexKit.toUnicodeHex(c);
+    }
+
+    /**
+     * 字符编码为Unicode形式
+     *
+     * @param c 被编码的字符
+     * @return Unicode字符串
+     * @see HexKit#toUnicodeHex(int)
+     */
+    public static String toUnicode(int c) {
+        return HexKit.toUnicodeHex(c);
+    }
+
+    /**
      * 将字符串转换为unicode编码
      *
      * @param input 要转换的字符串(主要是包含中文的字符串)
@@ -1078,6 +1101,36 @@ public class StringKit {
             return sb.toString();
         }
         return toUnicodeString(unicode);
+    }
+
+    /**
+     * 获取带圈字母 /封闭式字母 ，从a-z or A-Z
+     * 根据字符 获取
+     * Ⓐ Ⓑ Ⓒ Ⓓ Ⓔ Ⓕ Ⓖ Ⓗ Ⓘ Ⓙ Ⓚ Ⓛ Ⓜ Ⓝ Ⓞ Ⓟ Ⓠ Ⓡ
+     * Ⓢ Ⓣ Ⓤ Ⓥ Ⓦ Ⓧ Ⓨ Ⓩ ⓐ ⓑ ⓒ ⓓ ⓔ ⓕ ⓖ ⓗ ⓘ ⓙ
+     * ⓚ ⓛ ⓜ ⓝ ⓞ ⓟ ⓠ ⓡ ⓢ ⓣ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ
+     * <code>
+     * System.out.println(encloseAlphabetByChar( 'A'));
+     * System.out.println(encloseAlphabetByChar( 'a'));
+     * System.out.println(encloseAlphabetByChar( 'z'));
+     * System.out.println(encloseAlphabetByChar( 'Z'))
+     * </code>
+     *
+     * @param letter 字母，不区分大小写，'a'、'b'、'c'、'd'...'x'、'y'、'z'; 'A'、'B'...'Z'
+     * @return the string
+     */
+    public static String encloseAlphabetByChar(char letter) {
+        if (!(letter >= 'a' && letter <= 'z' || letter >= 'A' && letter <= 'Z')) {
+            throw new IllegalArgumentException("number取值范围是[a-z]、[A-Z]的字符");
+        }
+        // \u24b6
+        String start = "Ⓐ";
+        String hexStr = toUnicode(start).substring(Symbol.UNICODE_START_CHAR.length());
+        int difference = letter >= 'a' && letter <= 'z' ? (letter - (int) 'a') : (letter - (int) 'A');
+        String hex = new BigInteger(hexStr, 16).add(new BigInteger(String.valueOf(difference), 10)).toString(16);
+
+        String unicodeStr = Symbol.UNICODE_START_CHAR + hex;
+        return toString(unicodeStr);
     }
 
     /**
@@ -5400,6 +5453,59 @@ public class StringKit {
             }
         }
         return count;
+    }
+
+    /**
+     * 统计 字符串 中单词出现次数(不排序)
+     *
+     * @param str       字符串
+     * @param separator 分隔符
+     * @return 统计次数 如: {"hello":10}
+     */
+    public static Map<String, Long> count(String str, String separator) {
+        return count(Collections.singletonList(str), separator);
+    }
+
+    /**
+     * 统计 字符串 中单词出现次数(根据value排序)
+     *
+     * @param str         字符串
+     * @param separator   分隔符
+     * @param isValueDesc 是否倒叙排列
+     * @return 统计次数 如: {"hello":10}
+     */
+    public static Map<String, Long> count(String str, String separator, boolean isValueDesc) {
+        return count(Collections.singletonList(str), separator, isValueDesc);
+    }
+
+    /**
+     * 统计list中单词出现次数(不排序)
+     *
+     * @param list      list容器
+     * @param separator 分隔符
+     * @return 统计次数
+     */
+    public static Map<String, Long> count(List<String> list, String separator) {
+        Map<String, Long> countMap = MapKit.newHashMap();
+        for (String str : list) {
+            String[] words = str.split(separator);
+            for (String word : words) {
+                countMap.put(word, countMap.getOrDefault(word, 0L) + 1);
+            }
+        }
+        return countMap;
+    }
+
+    /**
+     * 统计 字符串list 中单词出现次数(根据value排序)
+     *
+     * @param list        list容器
+     * @param separator   分隔符
+     * @param isValueDesc 是否根据value倒叙排列
+     * @return 统计次数
+     */
+    public static Map<String, Long> count(List<String> list, String separator, boolean isValueDesc) {
+        return MapKit.sort(count(list, separator), isValueDesc);
     }
 
     /**

@@ -54,7 +54,7 @@ import java.util.*;
  * Class工具类
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class ClassKit {
@@ -737,6 +737,36 @@ public class ClassKit {
             method.setAccessible(true);
         }
         return method;
+    }
+
+    /**
+     * 是否是合成字段（由java编译器生成的）
+     *
+     * @param field 字段
+     * @return 是否是合成字段
+     */
+    public static boolean isSynthetic(Field field) {
+        return field.isSynthetic();
+    }
+
+    /**
+     * 是否是合成方法（由java编译器生成的）
+     *
+     * @param method 方法
+     * @return 是否是合成方法
+     */
+    public static boolean isSynthetic(Method method) {
+        return method.isSynthetic();
+    }
+
+    /**
+     * 是否是合成类（由java编译器生成的）
+     *
+     * @param clazz 类
+     * @return 是否是合成
+     */
+    public static boolean isSynthetic(Class<?> clazz) {
+        return clazz.isSynthetic();
     }
 
     /**

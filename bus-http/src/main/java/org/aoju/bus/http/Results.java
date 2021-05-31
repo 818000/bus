@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.http;
 
-import org.aoju.bus.core.lang.MimeType;
+import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.http.magic.RealResult;
 import org.aoju.bus.http.metric.Download;
 import org.aoju.bus.http.metric.TaskExecutor;
@@ -38,7 +38,7 @@ import java.util.List;
  * 执行结果
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public interface Results {
@@ -164,7 +164,7 @@ public interface Results {
         /**
          * @return 媒体类型
          */
-        MimeType getType();
+        MediaType getType();
 
         /**
          * @return 报文体字节长度

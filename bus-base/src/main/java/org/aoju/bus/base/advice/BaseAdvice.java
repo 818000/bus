@@ -34,6 +34,7 @@ import org.aoju.bus.core.lang.exception.ValidateException;
 import org.aoju.bus.core.toolkit.RuntimeKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.logger.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
@@ -48,11 +49,12 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * 异常信息拦截处理
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ControllerAdvice
 @RestControllerAdvice
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class BaseAdvice extends Controller {
 
     /**

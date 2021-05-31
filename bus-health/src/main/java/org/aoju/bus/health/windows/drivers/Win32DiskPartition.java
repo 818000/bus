@@ -34,7 +34,7 @@ import org.aoju.bus.health.windows.WmiQueryHandler;
  * Utility to query WMI class {@code Win32_DiskPartition}
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -48,12 +48,14 @@ public final class Win32DiskPartition {
     /**
      * Queries the partition.
      *
+     * @param h An instantiated {@link WmiQueryHandler}. User should have already
+     *          initialized COM.
      * @return Information regarding each disk partition.
      */
-    public static WmiResult<DiskPartitionProperty> queryPartition() {
+    public static WmiResult<DiskPartitionProperty> queryPartition(WmiQueryHandler h) {
         WmiQuery<DiskPartitionProperty> partitionQuery = new WmiQuery<>(WIN32_DISK_PARTITION,
                 DiskPartitionProperty.class);
-        return WmiQueryHandler.createInstance().queryWMI(partitionQuery);
+        return h.queryWMI(partitionQuery, false);
     }
 
     /**

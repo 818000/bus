@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public interface UploadSingleFile extends AutoCloseable {
@@ -43,7 +43,7 @@ public interface UploadSingleFile extends AutoCloseable {
 
     void uploadDicom(Attributes metadata, String tsuid) throws IOException;
 
-    void uploadEncapsulatedDocument(Attributes metadata, File bulkDataFile, String mimeType, String sopClassUID)
+    void uploadEncapsulatedDocument(Attributes metadata, File bulkDataFile, String mdiaType, String sopClassUID)
             throws Exception;
 
     String getRequestURL();

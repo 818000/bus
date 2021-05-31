@@ -29,7 +29,7 @@ package org.aoju.bus.core.lang;
  * 标点符号常量
  *
  * @author Kimi Liu
- * @version 6.2.2
+ * @version 6.2.3
  * @since JDK 1.8+
  */
 public class Symbol {
@@ -381,5 +381,7 @@ public class Symbol {
      * HTML: 大于号
      */
     public static final String HTML_GT = "&gt;";
+
+    public static final String UNICODE_START_CHAR = "\\u";
 
 }
