@@ -23,60 +23,51 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix.freebsd.hardware;
+package org.aoju.bus.health.unix;
 
-import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.unix.LibCAPI;
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.builtin.hardware.AbstractSensors;
-import org.aoju.bus.health.unix.NativeSizeTByReference;
-import org.aoju.bus.health.unix.freebsd.FreeBsdLibc;
+import com.sun.jna.platform.unix.LibCAPI.size_t;
+import com.sun.jna.ptr.ByReference;
 
 /**
- * Sensors from coretemp
- *
  * @author Kimi Liu
  * @version 6.2.2
  * @since JDK 1.8+
  */
-@ThreadSafe
-final class FreeBsdSensors extends AbstractSensors {
+public class NativeSizeTByReference extends ByReference {
 
-    /*
-     * If user has loaded coretemp module via kldload coretemp, sysctl call will
-     * return temperature
-     *
-     * @return Tempurature if successful, otherwise NaN
-     */
-    private static double queryKldloadCoretemp() {
-        String name = "dev.cpu.%d.temperature";
-        NativeSizeTByReference size = new NativeSizeTByReference(new LibCAPI.size_t(FreeBsdLibc.INT_SIZE));
-        Pointer p = new Memory(size.getValue().longValue());
-        int cpu = 0;
-        double sumTemp = 0d;
-        while (0 == FreeBsdLibc.INSTANCE.sysctlbyname(String.format(name, cpu), p, size, null, LibCAPI.size_t.ZERO)) {
-            sumTemp += p.getInt(0) / 10d - 273.15;
-            cpu++;
+    public NativeSizeTByReference() {
+        this(new size_t());
+    }
+
+    public NativeSizeTByReference(size_t value) {
+        super(Native.SIZE_T_SIZE);
+        setValue(value);
+    }
+
+    public size_t getValue() {
+        return new size_t(Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0));
+    }
+
+    public void setValue(size_t value) {
+        if (Native.SIZE_T_SIZE > 4) {
+            getPointer().setLong(0, value.longValue());
+        } else {
+            getPointer().setInt(0, value.intValue());
         }
-        return cpu > 0 ? sumTemp / cpu : Double.NaN;
     }
 
     @Override
-    public double queryCpuTemperature() {
-        return queryKldloadCoretemp();
-    }
-
-    @Override
-    public int[] queryFanSpeeds() {
-        // Nothing known on FreeBSD for this.
-        return new int[0];
-    }
-
-    @Override
-    public double queryCpuVoltage() {
-        // Nothing known on FreeBSD for this.
-        return 0d;
+    public String toString() {
+        // Can't mix types with ternary operator
+        if (Native.SIZE_T_SIZE > 4) {
+            return String.format("size_t@0x1$%x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()),
+                    getValue().longValue());
+        } else {
+            return String.format("size_t@0x1$%x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()),
+                    getValue().intValue());
+        }
     }
 
 }
