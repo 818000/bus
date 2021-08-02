@@ -23,77 +23,72 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.text.csv;
+package org.aoju.bus.core.io.file.visitor;
 
-import java.util.Collections;
-import java.util.List;
+import org.aoju.bus.core.toolkit.FileKit;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * CSV数据,包括头部信息和行数据
+ * 文件拷贝的FileVisitor实现，用于递归遍历拷贝目录
  *
  * @author Kimi Liu
  * @version 6.2.5
  * @since JDK 1.8+
  */
-public final class CsvData {
+public class CopyVisitor extends SimpleFileVisitor<Path> {
 
-    private final List<String> header;
-    private final List<CsvRow> rows;
+    private final Path source;
+    private final Path target;
+    private boolean isTargetCreated;
 
     /**
      * 构造
      *
-     * @param header 头信息, 可以为null
-     * @param rows   行
+     * @param source 源Path
+     * @param target 目标Path
      */
-    public CsvData(final List<String> header, final List<CsvRow> rows) {
-        this.header = header;
-        this.rows = rows;
-    }
-
-    /**
-     * 总行数
-     *
-     * @return 总行数
-     */
-    public int getRowCount() {
-        return rows.size();
-    }
-
-    /**
-     * 获取头信息列表，如果无头信息为{@code Null}，返回列表为只读列表
-     *
-     * @return 标题行-如果不存在标题，可能是{@code null}
-     */
-    public List<String> getHeader() {
-        return header;
-    }
-
-    /**
-     * 获取指定行，从0开始
-     *
-     * @param index 行号
-     * @return 行数据
-     */
-    public CsvRow getRow(final int index) {
-        return rows.get(index);
-    }
-
-    /**
-     * 获取所有行
-     *
-     * @return 所有行
-     */
-    public List<CsvRow> getRows() {
-        return Collections.unmodifiableList(rows);
+    public CopyVisitor(Path source, Path target) {
+        if (FileKit.exists(target, false) && false == FileKit.isDirectory(target)) {
+            throw new IllegalArgumentException("Target must be a directory");
+        }
+        this.source = source;
+        this.target = target;
     }
 
     @Override
-    public String toString() {
-        return "CsvData{" +
-                "header=" + header +
-                ", rows=" + rows +
-                '}';
+    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+            throws IOException {
+        initTarget();
+        // 将当前目录相对于源路径转换为相对于目标路径
+        final Path targetDir = target.resolve(source.relativize(dir));
+        try {
+            Files.copy(dir, targetDir);
+        } catch (FileAlreadyExistsException e) {
+            if (false == Files.isDirectory(targetDir))
+                throw e;
+        }
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+            throws IOException {
+        initTarget();
+        Files.copy(file, target.resolve(source.relativize(file)));
+        return FileVisitResult.CONTINUE;
+    }
+
+    /**
+     * 初始化目标文件或目录
+     */
+    private void initTarget() {
+        if (false == this.isTargetCreated) {
+            FileKit.mkdir(this.target);
+            this.isTargetCreated = true;
+        }
     }
 
 }

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,77 +23,22 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.text.csv;
+package org.aoju.bus.health.windows;
 
-import java.util.Collections;
-import java.util.List;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.W32APIOptions;
 
 /**
- * CSV数据,包括头部信息和行数据
- *
  * @author Kimi Liu
  * @version 6.2.5
  * @since JDK 1.8+
  */
-public final class CsvData {
+public interface Shell32 extends com.sun.jna.platform.win32.Shell32 {
 
-    private final List<String> header;
-    private final List<CsvRow> rows;
+    Shell32 INSTANCE = Native.load("shell32", Shell32.class, W32APIOptions.DEFAULT_OPTIONS);
 
-    /**
-     * 构造
-     *
-     * @param header 头信息, 可以为null
-     * @param rows   行
-     */
-    public CsvData(final List<String> header, final List<CsvRow> rows) {
-        this.header = header;
-        this.rows = rows;
-    }
-
-    /**
-     * 总行数
-     *
-     * @return 总行数
-     */
-    public int getRowCount() {
-        return rows.size();
-    }
-
-    /**
-     * 获取头信息列表，如果无头信息为{@code Null}，返回列表为只读列表
-     *
-     * @return 标题行-如果不存在标题，可能是{@code null}
-     */
-    public List<String> getHeader() {
-        return header;
-    }
-
-    /**
-     * 获取指定行，从0开始
-     *
-     * @param index 行号
-     * @return 行数据
-     */
-    public CsvRow getRow(final int index) {
-        return rows.get(index);
-    }
-
-    /**
-     * 获取所有行
-     *
-     * @return 所有行
-     */
-    public List<CsvRow> getRows() {
-        return Collections.unmodifiableList(rows);
-    }
-
-    @Override
-    public String toString() {
-        return "CsvData{" +
-                "header=" + header +
-                ", rows=" + rows +
-                '}';
-    }
+    Pointer CommandLineToArgvW(String lpCmdLine, IntByReference pNumArgs);
 
 }

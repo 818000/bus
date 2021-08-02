@@ -23,77 +23,40 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.text.csv;
+package org.aoju.bus.core.io.file.visitor;
 
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * CSV数据,包括头部信息和行数据
+ * 删除操作的FileVisitor实现，用于递归遍历删除文件夹
  *
  * @author Kimi Liu
  * @version 6.2.5
  * @since JDK 1.8+
  */
-public final class CsvData {
+public class DeleteVisitor extends SimpleFileVisitor<Path> {
 
-    private final List<String> header;
-    private final List<CsvRow> rows;
+    public static DeleteVisitor INSTANCE = new DeleteVisitor();
 
-    /**
-     * 构造
-     *
-     * @param header 头信息, 可以为null
-     * @param rows   行
-     */
-    public CsvData(final List<String> header, final List<CsvRow> rows) {
-        this.header = header;
-        this.rows = rows;
-    }
-
-    /**
-     * 总行数
-     *
-     * @return 总行数
-     */
-    public int getRowCount() {
-        return rows.size();
-    }
-
-    /**
-     * 获取头信息列表，如果无头信息为{@code Null}，返回列表为只读列表
-     *
-     * @return 标题行-如果不存在标题，可能是{@code null}
-     */
-    public List<String> getHeader() {
-        return header;
-    }
-
-    /**
-     * 获取指定行，从0开始
-     *
-     * @param index 行号
-     * @return 行数据
-     */
-    public CsvRow getRow(final int index) {
-        return rows.get(index);
-    }
-
-    /**
-     * 获取所有行
-     *
-     * @return 所有行
-     */
-    public List<CsvRow> getRows() {
-        return Collections.unmodifiableList(rows);
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public String toString() {
-        return "CsvData{" +
-                "header=" + header +
-                ", rows=" + rows +
-                '}';
+    public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+        if (e == null) {
+            Files.delete(dir);
+            return FileVisitResult.CONTINUE;
+        } else {
+            throw e;
+        }
     }
 
 }
