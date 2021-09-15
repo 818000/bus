@@ -23,30 +23,39 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.convert;
+package org.aoju.bus.core.lang.exception;
 
-import org.aoju.bus.core.lang.exception.ConvertException;
+import org.aoju.bus.core.toolkit.StringKit;
 
 /**
- * 强转转换器
+ * 转换异常
  *
- * @param <T> 强制转换到的类型
  * @author Kimi Liu
  * @version 6.2.8
  * @since JDK 1.8+
  */
-public class CastConverter<T> extends AbstractConverter<T> {
+public class ConvertException extends UncheckedException {
 
-    private Class<T> targetType;
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    protected T convertInternal(Object value) {
-        throw new ConvertException("Can not cast value to [{}]", this.targetType);
+    public ConvertException(Throwable throwable) {
+        super(throwable);
     }
 
-    @Override
-    public Class<T> getTargetType() {
-        return this.targetType;
+    public ConvertException(String message) {
+        super(message);
+    }
+
+    public ConvertException(String format, Object... params) {
+        super(StringKit.format(format, params));
+    }
+
+    public ConvertException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
+    public ConvertException(Throwable throwable, String format, Object... args) {
+        super(StringKit.format(format, args), throwable);
     }
 
 }
