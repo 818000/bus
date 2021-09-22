@@ -23,38 +23,36 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.wrapper;
+package org.aoju.bus.office.support.excel.cell.setters;
 
-import lombok.Data;
-import org.aoju.bus.starter.BusXExtend;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import org.aoju.bus.office.support.excel.cell.CellSetter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Hyperlink;
 
 /**
- * 配置信息
+ * {@link Hyperlink} 值单元格设置器
  *
  * @author Kimi Liu
  * @version 6.2.8
  * @since JDK 1.8+
  */
-@Data
-@ConfigurationProperties(prefix = BusXExtend.WRAPPER)
-public class WrapperProperties {
+public class HyperlinkCellSetter implements CellSetter {
 
-    private int order;
-    private String name = "extend-wrapper";
+    private final Hyperlink value;
+
     /**
-     * 指示已启用注册
+     * 构造
+     *
+     * @param value 值
      */
-    private Boolean enabled = true;
-    private Map<String, String> initParameters = new LinkedHashMap<>();
-    private Set<String> servletNames = new LinkedHashSet<>();
-    private Set<ServletRegistrationBean<?>> servletRegistrationBeans = new LinkedHashSet<>();
-    private Set<String> urlPatterns = new LinkedHashSet<>();
+    HyperlinkCellSetter(Hyperlink value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setValue(Cell cell) {
+        cell.setHyperlink(this.value);
+        cell.setCellValue(this.value.getLabel());
+    }
 
 }
