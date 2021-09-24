@@ -39,7 +39,7 @@ import org.aoju.bus.crypto.digest.HMac;
  * <p>参考：https://github.com/jchambers/java-otp</p>
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class HOTP {
@@ -48,10 +48,6 @@ public class HOTP {
      * 默认密码长度.
      */
     public static final int DEFAULT_PASSWORD_LENGTH = 6;
-    /**
-     * 默认HMAC算法.
-     */
-    public static final String HOTP_HMAC_ALGORITHM = Algorithm.HmacSHA1;
     /**
      * 数子量级
      */
@@ -78,7 +74,7 @@ public class HOTP {
      * @param key            共享密码，RFC 4226要求最少128位
      */
     public HOTP(int passwordLength, byte[] key) {
-        this(passwordLength, HOTP_HMAC_ALGORITHM, key);
+        this(passwordLength, Algorithm.HmacSHA1, key);
     }
 
     /**
@@ -88,7 +84,7 @@ public class HOTP {
      * @param algorithm      HMAC算法枚举
      * @param key            共享密码，RFC 4226要求最少128位
      */
-    public HOTP(int passwordLength, String algorithm, byte[] key) {
+    public HOTP(int passwordLength, Algorithm algorithm, byte[] key) {
         if (passwordLength >= MOD_DIVISORS.length) {
             throw new IllegalArgumentException("Password length must be < " + MOD_DIVISORS.length);
         }

@@ -49,7 +49,7 @@ import java.util.jar.Manifest;
  * Spring-Boot 启动器
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class Launcher {
@@ -61,7 +61,7 @@ public class Launcher {
 
     public Launcher(String... args) throws Exception {
         this.args = args;
-        String algorithm = Algorithm.AES;
+        String algorithm = Algorithm.AES.getValue();
         int keysize = Builder.DEFAULT_KEYSIZE;
         int ivsize = Builder.DEFAULT_IVSIZE;
         String password = null;

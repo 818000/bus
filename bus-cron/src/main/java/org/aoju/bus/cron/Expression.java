@@ -37,7 +37,7 @@ import java.util.*;
  * Crontab表达式提供了指定复杂时间组合的能力
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public final class Expression implements Serializable, Cloneable {
@@ -1434,12 +1434,6 @@ public final class Expression implements Serializable, Cloneable {
             buildExpression(cronExpression);
         } catch (Exception ignore) {
         }
-    }
-
-    @Override
-    @Deprecated
-    public Object clone() {
-        return new Expression(this);
     }
 
     class ValueSet {

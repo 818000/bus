@@ -48,7 +48,7 @@ import java.util.zip.ZipOutputStream;
  * 压缩工具类
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class ZipKit {
@@ -103,7 +103,7 @@ public class ZipKit {
      * @throws InstrumentException IO异常
      */
     public static File zip(File srcFile, java.nio.charset.Charset charset) throws InstrumentException {
-        final File zipFile = FileKit.file(srcFile.getParentFile(), FileKit.mainName(srcFile) + ".zip");
+        final File zipFile = FileKit.file(srcFile.getParentFile(), FileKit.getPrefix(srcFile) + ".zip");
         zip(zipFile, charset, false, srcFile);
         return zipFile;
     }
@@ -423,7 +423,7 @@ public class ZipKit {
      * @throws InstrumentException IO异常
      */
     public static File unzip(File zipFile, java.nio.charset.Charset charset) throws InstrumentException {
-        return unzip(zipFile, FileKit.file(zipFile.getParentFile(), FileKit.mainName(zipFile)), charset);
+        return unzip(zipFile, FileKit.file(zipFile.getParentFile(), FileKit.getPrefix(zipFile)), charset);
     }
 
     /**

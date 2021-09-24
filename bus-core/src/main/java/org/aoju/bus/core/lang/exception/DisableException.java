@@ -29,10 +29,12 @@ package org.aoju.bus.core.lang.exception;
  * 自定义异常: 数据被禁用异常
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class DisableException extends UncheckedException {
+
+    private static final long serialVersionUID = 1L;
 
     public DisableException() {
         super();

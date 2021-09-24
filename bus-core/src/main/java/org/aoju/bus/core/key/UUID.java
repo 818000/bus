@@ -62,7 +62,7 @@ import java.util.Random;
  * 这些类型的 version 值分别为 1、2、3 和 4
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class UUID implements java.io.Serializable, Comparable<UUID> {
@@ -236,7 +236,7 @@ public class UUID implements java.io.Serializable, Comparable<UUID> {
     public static UUID nameUUIDFromBytes(byte[] name) {
         MessageDigest md;
         try {
-            md = MessageDigest.getInstance(Algorithm.MD5);
+            md = MessageDigest.getInstance(Algorithm.MD5.getValue());
         } catch (NoSuchAlgorithmException nsae) {
             throw new InternalError("MD5 not supported");
         }

@@ -33,7 +33,7 @@ import java.net.URL;
  * URI对象转换器
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class URIConverter extends AbstractConverter<URI> {
@@ -50,7 +50,7 @@ public class URIConverter extends AbstractConverter<URI> {
             }
             return new URI(convertString(value));
         } catch (Exception e) {
-            // Ignore Exception
+            // ignore
         }
         return null;
     }

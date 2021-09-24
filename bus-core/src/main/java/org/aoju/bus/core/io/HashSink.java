@@ -41,7 +41,7 @@ import java.security.NoSuchAlgorithmException;
  * {@link #hash()}来计算最终的哈希值
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public final class HashSink extends DelegateSink {
@@ -73,31 +73,31 @@ public final class HashSink extends DelegateSink {
     }
 
     public static HashSink md5(Sink sink) {
-        return new HashSink(sink, Algorithm.MD5);
+        return new HashSink(sink, Algorithm.MD5.getValue());
     }
 
     public static HashSink sha1(Sink sink) {
-        return new HashSink(sink, Algorithm.SHA1);
+        return new HashSink(sink, Algorithm.SHA1.getValue());
     }
 
     public static HashSink sha256(Sink sink) {
-        return new HashSink(sink, Algorithm.SHA256);
+        return new HashSink(sink, Algorithm.SHA256.getValue());
     }
 
     public static HashSink sha512(Sink sink) {
-        return new HashSink(sink, Algorithm.SHA512);
+        return new HashSink(sink, Algorithm.SHA512.getValue());
     }
 
     public static HashSink hmacSha1(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA1);
+        return new HashSink(sink, key, Algorithm.HmacSHA1.getValue());
     }
 
     public static HashSink hmacSha256(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA256);
+        return new HashSink(sink, key, Algorithm.HmacSHA256.getValue());
     }
 
     public static HashSink hmacSha512(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA512);
+        return new HashSink(sink, key, Algorithm.HmacSHA512.getValue());
     }
 
     @Override

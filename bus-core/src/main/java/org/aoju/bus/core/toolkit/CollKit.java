@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class CollKit {
@@ -195,6 +195,30 @@ public class CollKit {
      */
     public static boolean hasNull(Iterable<?> iterable) {
         return IterKit.hasNull(iterable);
+    }
+
+    /**
+     * 如果提供的集合为{@code null}，返回一个不可变的默认空集合，否则返回原集合
+     * 空集合使用{@link Collections#emptySet()}
+     *
+     * @param <T> 集合元素类型
+     * @param set 提供的集合，可能为null
+     * @return 原集合，若为null返回空集合
+     */
+    public static <T> Set<T> emptyIfNull(Set<T> set) {
+        return (null == set) ? Collections.emptySet() : set;
+    }
+
+    /**
+     * 如果提供的集合为{@code null}，返回一个不可变的默认空集合，否则返回原集合
+     * 空集合使用{@link Collections#emptyList()}
+     *
+     * @param <T>  集合元素类型
+     * @param list 提供的集合，可能为null
+     * @return 原集合，若为null返回空集合
+     */
+    public static <T> List<T> emptyIfNull(List<T> list) {
+        return (null == list) ? Collections.emptyList() : list;
     }
 
     /**
@@ -1024,7 +1048,7 @@ public class CollKit {
     }
 
     /**
-     * 新建一个ArrayList
+     * 新建一个List
      * 提供的参数为null时返回空{@link ArrayList}
      *
      * @param <T>      集合元素类型
@@ -1317,9 +1341,9 @@ public class CollKit {
      *
      * @param <T>        集合元素类型
      * @param collection 集合
-     * @return {@link ArrayList}
+     * @return {@link List}
      */
-    public static <T> ArrayList<T> distinct(Collection<T> collection) {
+    public static <T> List<T> distinct(Collection<T> collection) {
         if (isEmpty(collection)) {
             return new ArrayList<>();
         } else if (collection instanceof Set) {
@@ -1327,6 +1351,38 @@ public class CollKit {
         } else {
             return new ArrayList<>(new LinkedHashSet<>(collection));
         }
+    }
+
+    /**
+     * 根据指定对象属性去除重复对象
+     *
+     * @param <T>        集合元素类型
+     * @param collection 集合
+     * @param field      指定的去重属性名称
+     * @return {@link List}
+     */
+    public static <T> List<T> distinct(Collection<T> collection, String field) {
+        if (isEmpty(collection)) {
+            return null;
+        }
+        // 根据属性值进行去重
+        Set<T> sets = new TreeSet<>((o1, o2) -> {
+            try {
+                Field field1 = o1.getClass().getDeclaredField(field);
+                Field field2 = o2.getClass().getDeclaredField(field);
+                field1.setAccessible(true);
+                field2.setAccessible(true);
+                Object obj1 = field1.get(o1);
+                Object obj2 = field2.get(o2);
+                // 根据指定属性进行去重
+                return obj1.toString().compareTo(obj2.toString());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        });
+        sets.addAll(collection);
+        return new ArrayList(sets);
     }
 
     /**
@@ -3353,7 +3409,6 @@ public class CollKit {
                 .collect(Collectors.toSet());
     }
 
-
     /**
      * 合并两个相同key类型的map
      *
@@ -3387,6 +3442,38 @@ public class CollKit {
             }
         }
         return map;
+    }
+
+    /**
+     * 将指定元素交换到指定索引位置,其他元素的索引值不变
+     * 交换会修改原List
+     *
+     * @param <T>         处理参数类型
+     * @param list        列表
+     * @param element     需交换元素
+     * @param targetIndex 目标索引
+     */
+    public static <T> void swapIndex(List<T> list, T element, Integer targetIndex) {
+        if (isEmpty(list) || !list.contains(element)) {
+            return;
+        }
+        Collections.swap(list, list.indexOf(element), targetIndex);
+    }
+
+    /**
+     * 将指定元素交换到指定元素位置,其他元素的索引值不变
+     * 交换会修改原List
+     *
+     * @param <T>           处理参数类型
+     * @param list          列表
+     * @param element       需交换元素
+     * @param targetElement 目标元素
+     */
+    public static <T> void swapElement(List<T> list, T element, T targetElement) {
+        if (isEmpty(list) || !list.contains(targetElement)) {
+            return;
+        }
+        swapIndex(list, element, list.indexOf(targetElement));
     }
 
     /**

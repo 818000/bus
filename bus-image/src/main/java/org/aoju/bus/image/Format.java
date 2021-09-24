@@ -46,7 +46,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * 日期格式化等工具
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class Format extends java.text.Format {
@@ -637,7 +637,7 @@ public class Format extends java.text.Format {
 
         String getMD5String(String s) {
             try {
-                MessageDigest digest = MessageDigest.getInstance(Algorithm.MD5);
+                MessageDigest digest = MessageDigest.getInstance(Algorithm.MD5.getValue());
                 digest.update(null == s ? new byte[0] : s.getBytes(Charset.UTF_8));
                 return toString32(digest.digest());
             } catch (NoSuchAlgorithmException e) {

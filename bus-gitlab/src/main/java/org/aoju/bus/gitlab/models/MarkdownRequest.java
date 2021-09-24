@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,51 +23,30 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix;
+package org.aoju.bus.gitlab.models;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.unix.LibCAPI.size_t;
-import com.sun.jna.ptr.ByReference;
+public class MarkdownRequest {
+    private String text;
+    private boolean gfm;
 
-/**
- * @author Kimi Liu
- * @version 6.2.8
- * @since JDK 1.8+
- */
-public class NativeSizeTByReference extends ByReference {
-
-    public NativeSizeTByReference() {
-        this(new size_t());
+    public MarkdownRequest(String text, boolean gfm) {
+        this.text = text;
+        this.gfm = gfm;
     }
 
-    public NativeSizeTByReference(size_t value) {
-        super(Native.SIZE_T_SIZE);
-        setValue(value);
+    public String getText() {
+        return text;
     }
 
-    public size_t getValue() {
-        return new size_t(Native.SIZE_T_SIZE > 4 ? getPointer().getLong(0) : getPointer().getInt(0));
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public void setValue(size_t value) {
-        if (Native.SIZE_T_SIZE > 4) {
-            getPointer().setLong(0, value.longValue());
-        } else {
-            getPointer().setInt(0, value.intValue());
-        }
+    public boolean isGfm() {
+        return gfm;
     }
 
-    @Override
-    public String toString() {
-        // Can't mix types with ternary operator
-        if (Native.SIZE_T_SIZE > 4) {
-            return String.format("size_t@0x1$%x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()),
-                    getValue().longValue());
-        } else {
-            return String.format("size_t@0x1$%x=0x%2$x (%2$d)", Pointer.nativeValue(getPointer()),
-                    getValue().intValue());
-        }
+    public void setGfm(boolean gfm) {
+        this.gfm = gfm;
     }
-
 }

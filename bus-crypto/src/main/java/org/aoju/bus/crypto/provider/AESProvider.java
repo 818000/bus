@@ -27,7 +27,6 @@ package org.aoju.bus.crypto.provider;
 
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.crypto.Builder;
 import org.aoju.bus.crypto.Provider;
 import org.aoju.bus.crypto.symmetric.AES;
 
@@ -39,7 +38,7 @@ import org.aoju.bus.crypto.symmetric.AES;
  * 达到十亿量级
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class AESProvider implements Provider {
@@ -55,7 +54,7 @@ public class AESProvider implements Provider {
         if (StringKit.isEmpty(key)) {
             throw new InstrumentException("key is null!");
         }
-        AES aes = Builder.aes(key.getBytes());
+        AES aes = new AES(key.getBytes());
         return aes.encrypt(content);
     }
 
@@ -71,7 +70,7 @@ public class AESProvider implements Provider {
         if (StringKit.isEmpty(key)) {
             throw new InstrumentException("key is null!");
         }
-        AES aes = Builder.aes(key.getBytes());
+        AES aes = new AES(key.getBytes());
         return aes.decrypt(content);
     }
 

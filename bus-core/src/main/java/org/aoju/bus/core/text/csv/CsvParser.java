@@ -42,7 +42,7 @@ import java.util.*;
  * CSV行解析器,参考：FastCSV
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public final class CsvParser implements Closeable {
@@ -349,6 +349,9 @@ public final class CsvParser implements Closeable {
 
         field = StringKit.unWrap(field, textDelimiter);
         field = StringKit.replace(field, "" + textDelimiter + textDelimiter, textDelimiter + "");
+        if (this.config.trimField) {
+            field = StringKit.trim(field);
+        }
         currentFields.add(field);
     }
 

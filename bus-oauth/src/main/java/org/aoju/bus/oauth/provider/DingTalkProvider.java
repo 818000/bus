@@ -48,7 +48,7 @@ import org.aoju.bus.oauth.magic.Property;
  * 钉钉登录
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class DingTalkProvider extends AbstractProvider {
@@ -120,7 +120,7 @@ public class DingTalkProvider extends AbstractProvider {
         // 根据timestamp, appSecret计算签名值
         String timestamp = System.currentTimeMillis() + Normal.EMPTY;
 
-        byte[] signData = sign(context.getAppSecret().getBytes(Charset.UTF_8), timestamp.getBytes(Charset.UTF_8), Algorithm.HmacSHA256);
+        byte[] signData = sign(context.getAppSecret().getBytes(Charset.UTF_8), timestamp.getBytes(Charset.UTF_8), Algorithm.HmacSHA256.getValue());
         String urlEncodeSignature = UriKit.encode(new String(Base64.encode(signData, false)));
 
         return Builder.fromUrl(source.userInfo())

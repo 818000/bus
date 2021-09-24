@@ -29,10 +29,12 @@ package org.aoju.bus.core.lang.exception;
  * 自定义异常: Socket异常
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class SocketException extends UncheckedException {
+
+    private static final long serialVersionUID = 1L;
 
     public SocketException() {
         super();

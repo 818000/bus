@@ -34,6 +34,7 @@ import com.alipay.api.request.AlipayUserInfoShareRequest;
 import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import org.aoju.bus.cache.metric.ExtendCache;
+import org.aoju.bus.core.lang.Algorithm;
 import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.exception.AuthorizedException;
@@ -50,7 +51,7 @@ import org.aoju.bus.oauth.magic.Property;
  * 支付宝登录
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class AlipayProvider extends AbstractProvider {
@@ -60,19 +61,19 @@ public class AlipayProvider extends AbstractProvider {
     public AlipayProvider(Context context) {
         super(context, Registry.ALIPAY);
         this.alipayClient = new DefaultAlipayClient(Registry.ALIPAY.accessToken(), context.getAppKey(), context.getAppSecret(), "json", Charset.DEFAULT_UTF_8, context
-                .getPublicKey(), "RSA2");
+                .getPublicKey(), Algorithm.RSA2.getValue());
     }
 
     public AlipayProvider(Context context, ExtendCache extendCache) {
         super(context, Registry.ALIPAY, extendCache);
         this.alipayClient = new DefaultAlipayClient(Registry.ALIPAY.accessToken(), context.getAppKey(), context.getAppSecret(),
-                "json", "UTF-8", context.getPublicKey(), "RSA2");
+                "json", Charset.DEFAULT_UTF_8, context.getPublicKey(), Algorithm.RSA2.getValue());
     }
 
     public AlipayProvider(Context context, ExtendCache extendCache, String proxyHost, Integer proxyPort) {
         super(context, Registry.ALIPAY, extendCache);
         this.alipayClient = new DefaultAlipayClient(Registry.ALIPAY.accessToken(), context.getAppKey(), context.getAppSecret(),
-                "json", Charset.DEFAULT_UTF_8, context.getPublicKey(), "RSA2", proxyHost, proxyPort);
+                "json", Charset.DEFAULT_UTF_8, context.getPublicKey(), Algorithm.RSA2.getValue(), proxyHost, proxyPort);
     }
 
     @Override

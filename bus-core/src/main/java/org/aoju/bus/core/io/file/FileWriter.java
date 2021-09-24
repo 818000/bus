@@ -41,7 +41,7 @@ import java.util.Map.Entry;
  * 文件写入器
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class FileWriter extends FileWrapper {
@@ -223,7 +223,7 @@ public class FileWriter extends FileWrapper {
         try (PrintWriter writer = getPrintWriter(isAppend)) {
             for (T t : list) {
                 if (null != t) {
-                    writer.print(t.toString());
+                    writer.print(t);
                     printNewLine(writer, lineSeparator);
                     writer.flush();
                 }

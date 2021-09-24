@@ -35,13 +35,15 @@ import java.lang.reflect.InvocationTargetException;
  * 自定义异常: 未受检异常
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = false)
 public class UncheckedException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 错误码

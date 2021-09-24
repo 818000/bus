@@ -44,7 +44,7 @@ import java.io.*;
  * Word生成器
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class Word07Writer implements Closeable {
@@ -162,10 +162,10 @@ public class Word07Writer implements Closeable {
      */
     public Word07Writer addPicture(File picFile, int width, int height) {
         final String fileName = picFile.getName();
-        final String extName = FileKit.extName(fileName).toUpperCase();
+        final String suffix = FileKit.getSuffix(fileName).toUpperCase();
         PicType picType;
         try {
-            picType = PicType.valueOf(extName);
+            picType = PicType.valueOf(suffix);
         } catch (IllegalArgumentException e) {
             // 默认值
             picType = PicType.JPEG;

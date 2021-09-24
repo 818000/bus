@@ -55,7 +55,7 @@ import java.util.TreeMap;
  * 京东账号登录
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class JdProvider extends AbstractProvider {
@@ -77,7 +77,7 @@ public class JdProvider extends AbstractProvider {
      */
     private static String md5(String source) {
         try {
-            MessageDigest md = MessageDigest.getInstance(Algorithm.MD5);
+            MessageDigest md = MessageDigest.getInstance(Algorithm.MD5.getValue());
             byte[] bytes = md.digest(source.getBytes(Charset.UTF_8));
             StringBuilder sign = new StringBuilder();
             for (int i = 0; i < bytes.length; i++) {

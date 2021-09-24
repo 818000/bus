@@ -32,6 +32,7 @@ import org.aoju.bus.core.key.ObjectID;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.toolkit.*;
 
+import javax.persistence.Transient;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ import java.util.Objects;
  * Entity 基本信息.
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 @Data
@@ -72,6 +73,24 @@ public class BaseEntity extends Tracer {
      * 修改时间
      */
     protected String modified;
+
+    /**
+     * 当前页码
+     */
+    @Transient
+    protected transient Integer pageNo;
+
+    /**
+     * 分页大小
+     */
+    @Transient
+    protected transient Integer pageSize;
+
+    /**
+     * 排序方式,asc desc
+     */
+    @Transient
+    protected transient String orderBy;
 
     /**
      * 设置访问信息

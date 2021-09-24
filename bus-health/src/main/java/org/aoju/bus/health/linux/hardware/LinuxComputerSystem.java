@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * Hardware data obtained from sysfs.
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 @Immutable
@@ -63,7 +63,7 @@ final class LinuxComputerSystem extends AbstractComputerSystem {
 
     private static String queryModel() {
         String result;
-        if (null == (result = Sysfs.queryProductModel()) && null == (result = Devicetree.queryModel())
+        if (null == (result = Sysfs.queryProductModel()) && null == (result = DeviceTree.queryModel())
                 && null == (result = Lshw.queryModel())) {
             return Normal.UNKNOWN;
         }

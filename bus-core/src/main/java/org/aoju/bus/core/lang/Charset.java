@@ -37,7 +37,7 @@ import java.nio.charset.UnsupportedCharsetException;
  * 编码常量
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class Charset {
@@ -62,6 +62,16 @@ public class Charset {
      */
     public static final String DEFAULT_GBK = "GBK";
     public static final java.nio.charset.Charset GBK = java.nio.charset.Charset.forName(DEFAULT_GBK);
+    /**
+     * GB2312 转换格式
+     */
+    public static final String DEFAULT_GB_2312 = "GB2312";
+    public static final java.nio.charset.Charset GB_2312 = java.nio.charset.Charset.forName(DEFAULT_GB_2312);
+    /**
+     * GB18030 编码
+     */
+    public static final String DEFAULT_GB_18030 = "GB18030";
+    public static final java.nio.charset.Charset GB_18030 = java.nio.charset.Charset.forName(DEFAULT_GB_18030);
     /**
      * 8位UCS转换格式
      */

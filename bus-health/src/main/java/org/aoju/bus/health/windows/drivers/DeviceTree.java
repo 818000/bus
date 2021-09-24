@@ -26,10 +26,7 @@
 package org.aoju.bus.health.windows.drivers;
 
 import com.sun.jna.Memory;
-import com.sun.jna.platform.win32.Cfgmgr32Util;
-import com.sun.jna.platform.win32.Guid;
-import com.sun.jna.platform.win32.SetupApi;
-import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.IntByReference;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.tuple.Quintet;
@@ -46,7 +43,7 @@ import static com.sun.jna.platform.win32.WinError.ERROR_SUCCESS;
  * Utility to query device interfaces via Config Manager Device Tree functions
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 @ThreadSafe

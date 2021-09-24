@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,72 +23,39 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab;
+package org.aoju.bus.core.lang.exception;
 
-import java.util.Arrays;
+import org.aoju.bus.core.toolkit.StringKit;
 
 /**
- * This class implements a CharSequence that can be cleared of it's contained characters.
- * This class is utilized to pass around secrets (passwords) instead of a String instance.
+ * 转换异常
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
-public class SecretString implements CharSequence, AutoCloseable {
+public class ConvertException extends UncheckedException {
 
-    private final char[] chars;
+    private static final long serialVersionUID = 1L;
 
-    public SecretString(CharSequence charSequence) {
-
-        int length = charSequence.length();
-        chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            chars[i] = charSequence.charAt(i);
-        }
+    public ConvertException(Throwable throwable) {
+        super(throwable);
     }
 
-    public SecretString(char[] chars) {
-        this(chars, 0, chars.length);
+    public ConvertException(String message) {
+        super(message);
     }
 
-    public SecretString(char[] chars, int start, int end) {
-        this.chars = new char[end - start];
-        System.arraycopy(chars, start, this.chars, 0, this.chars.length);
+    public ConvertException(String format, Object... params) {
+        super(StringKit.format(format, params));
     }
 
-    @Override
-    public char charAt(int index) {
-        return chars[index];
+    public ConvertException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 
-    @Override
-    public void close() {
-        clear();
-    }
-
-    @Override
-    public int length() {
-        return chars.length;
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return new SecretString(this.chars, start, end);
-    }
-
-    /**
-     * Clear the contents of this SecretString instance by setting each character to 0.
-     * This is automatically done in the finalize() method.
-     */
-    public void clear() {
-        Arrays.fill(chars, '\0');
-    }
-
-    @Override
-    public void finalize() throws Throwable {
-        clear();
-        super.finalize();
+    public ConvertException(Throwable throwable, String format, Object... args) {
+        super(StringKit.format(format, args), throwable);
     }
 
 }

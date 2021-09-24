@@ -32,33 +32,33 @@ import org.aoju.bus.core.lang.SimpleCache;
  * 缓存用于防止多次反射造成的性能问题
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public enum BeanCache {
 
     INSTANCE;
 
-    private final SimpleCache<Class<?>, BeanDescription> bdCache = new SimpleCache<>();
+    private final SimpleCache<Class<?>, BeanDesc> bdCache = new SimpleCache<>();
 
     /**
-     * 获得属性名和{@link BeanDescription}Map映射
+     * 获得属性名和{@link BeanDesc}Map映射
      *
      * @param beanClass Bean的类
-     * @return 属性名和 {@link BeanDescription} 映射
+     * @return 属性名和 {@link BeanDesc} 映射
      */
-    public BeanDescription getBeanDesc(Class<?> beanClass) {
+    public BeanDesc getBeanDesc(Class<?> beanClass) {
         return bdCache.get(beanClass);
     }
 
     /**
      * 加入缓存
      *
-     * @param beanClass       Bean的类
-     * @param BeanDescription 属性名和{@link BeanDescription}映射
+     * @param beanClass Bean的类
+     * @param BeanDesc  属性名和{@link BeanDesc}映射
      */
-    public void putBeanDesc(Class<?> beanClass, BeanDescription BeanDescription) {
-        bdCache.put(beanClass, BeanDescription);
+    public void putBeanDesc(Class<?> beanClass, BeanDesc BeanDesc) {
+        bdCache.put(beanClass, BeanDesc);
     }
 
 }

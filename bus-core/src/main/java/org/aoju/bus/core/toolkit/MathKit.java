@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -1995,12 +1995,23 @@ public class MathKit {
      * @return {@link BigDecimal}
      */
     public static BigDecimal toBigDecimal(String number) {
+        if (StringKit.isBlank(number)) {
+            return BigDecimal.ZERO;
+        }
+
         try {
-            number = parseNumber(number).toString();
+            // 支持类似于 1,234.55 格式的数字
+            final Number parseNumber = parseNumber(number);
+            if (parseNumber instanceof BigDecimal) {
+                return (BigDecimal) parseNumber;
+            } else {
+                return new BigDecimal(parseNumber.toString());
+            }
         } catch (Exception ignore) {
             // 忽略解析错误
         }
-        return StringKit.isBlank(number) ? BigDecimal.ZERO : new BigDecimal(number);
+
+        return new BigDecimal(number);
     }
 
     /**
@@ -2295,6 +2306,7 @@ public class MathKit {
 
     /**
      * 将指定字符串转换为{@link Number} 对象
+     * 此方法不支持科学计数法
      *
      * @param numberStr Number字符串
      * @return Number对象

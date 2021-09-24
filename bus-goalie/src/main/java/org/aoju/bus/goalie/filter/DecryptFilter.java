@@ -25,12 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.goalie.filter;
 
+import org.aoju.bus.core.lang.Algorithm;
 import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.crypto.Mode;
 import org.aoju.bus.crypto.Padding;
 import org.aoju.bus.crypto.symmetric.AES;
-import org.aoju.bus.crypto.symmetric.Symmetric;
+import org.aoju.bus.crypto.symmetric.Crypto;
 import org.aoju.bus.goalie.Config;
 import org.aoju.bus.goalie.Context;
 import org.springframework.core.Ordered;
@@ -47,14 +48,14 @@ import java.util.Map;
  * 数据解密
  *
  * @author Justubborn
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
 public class DecryptFilter implements WebFilter {
 
-    private final Config.Decrypt decrypt;
-    private Symmetric symmetric;
+    private Config.Decrypt decrypt;
+    private Crypto crypto;
 
     public DecryptFilter(Config.Decrypt decrypt) {
         this.decrypt = decrypt;
@@ -62,8 +63,8 @@ public class DecryptFilter implements WebFilter {
 
     @PostConstruct
     public void init() {
-        if ("AES".equals(decrypt.getType())) {
-            symmetric = new AES(Mode.CBC, Padding.PKCS7Padding, decrypt.getKey().getBytes(), decrypt.getOffset().getBytes());
+        if (Algorithm.AES.getValue().equals(decrypt.getType())) {
+            crypto = new AES(Mode.CBC, Padding.PKCS7Padding, decrypt.getKey().getBytes(), decrypt.getOffset().getBytes());
         }
     }
 
@@ -73,7 +74,6 @@ public class DecryptFilter implements WebFilter {
         if (decrypt.isEnabled() && Context.get(exchange).isNeedDecrypt()) {
             doDecrypt(Context.get(exchange).getRequestMap());
         }
-
         return chain.filter(builder.build());
     }
 
@@ -83,14 +83,13 @@ public class DecryptFilter implements WebFilter {
      * @param map 参数
      */
     private void doDecrypt(Map<String, String> map) {
-        if (null == symmetric) {
+        if (null == crypto) {
             return;
         }
         map.forEach((k, v) -> {
             if (StringKit.isNotBlank(v)) {
-                map.put(k, symmetric.decryptStr(v, Charset.UTF_8));
+                map.put(k, crypto.decryptStr(v, Charset.UTF_8));
             }
-
         });
     }
 

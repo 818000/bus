@@ -28,10 +28,7 @@ package org.aoju.bus.oauth.provider;
 import com.alibaba.fastjson.JSONObject;
 import org.aoju.bus.cache.metric.ExtendCache;
 import org.aoju.bus.core.codec.Base64;
-import org.aoju.bus.core.lang.Algorithm;
-import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.Symbol;
+import org.aoju.bus.core.lang.*;
 import org.aoju.bus.core.toolkit.DateKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.core.toolkit.UriKit;
@@ -52,7 +49,7 @@ import java.util.TreeMap;
  * 今日头条登录
  *
  * @author Kimi Liu
- * @version 6.2.8
+ * @version 6.2.9
  * @since JDK 1.8+
  */
 public class TwitterProvider extends AbstractProvider {
@@ -103,7 +100,7 @@ public class TwitterProvider extends AbstractProvider {
         String str = Builder.parseMapToString(map, true);
         String baseStr = method.toUpperCase() + Symbol.AND + UriKit.encode(baseUrl) + Symbol.AND + UriKit.encode(str);
         String signKey = apiSecret + Symbol.AND + (StringKit.isEmpty(tokenSecret) ? Normal.EMPTY : tokenSecret);
-        byte[] signature = sign(signKey.getBytes(Charset.DEFAULT), baseStr.getBytes(Charset.DEFAULT), Algorithm.HmacSHA1);
+        byte[] signature = sign(signKey.getBytes(Charset.DEFAULT), baseStr.getBytes(Charset.DEFAULT), Algorithm.HmacSHA1.getValue());
 
         return new String(Base64.encode(signature, false));
     }
@@ -123,8 +120,8 @@ public class TwitterProvider extends AbstractProvider {
                 .getOauthToken()));
 
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", buildHeader(oauthParams));
-        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put(Header.AUTHORIZATION, buildHeader(oauthParams));
+        header.put(Header.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
 
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("oauth_verifier", callback.getOauthVerifier());
@@ -178,7 +175,7 @@ public class TwitterProvider extends AbstractProvider {
         String header = buildHeader(oauthParams);
 
         Map<String, String> map = new HashMap<>();
-        map.put("Authorization", header);
+        map.put(Header.AUTHORIZATION, header);
         String response = Httpx.get(userInfoUrl(accToken), null, map);
         JSONObject object = JSONObject.parseObject(response);
 
@@ -231,7 +228,7 @@ public class TwitterProvider extends AbstractProvider {
         oauthParams.put("oauth_signature", sign(oauthParams, "POST", baseUrl, context.getAppSecret(), null));
 
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", buildHeader(oauthParams));
+        header.put(Header.AUTHORIZATION, buildHeader(oauthParams));
 
         String requestToken = Httpx.post(baseUrl, null, header);
 
