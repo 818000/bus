@@ -25,69 +25,36 @@
  ********************************************************************************/
 package org.aoju.bus.pager.dialect.rowbounds;
 
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.pager.dialect.AbstractRowBounds;
-import org.aoju.bus.pager.dialect.ReplaceSql;
-import org.aoju.bus.pager.dialect.replace.RegexWithNolock;
-import org.aoju.bus.pager.dialect.replace.SimpleWithNolock;
-import org.aoju.bus.pager.parser.SqlServerParser;
 import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.Properties;
-
 /**
- * sqlserver 基于 RowBounds 的分页
+ * HerdDB 基于 RowBounds 的分页
  *
  * @author Kimi Liu
  * @version 6.2.9
  * @since JDK 1.8+
  */
-public class SqlServerRowBounds extends AbstractRowBounds {
-
-    protected SqlServerParser pageSql = new SqlServerParser();
-    protected ReplaceSql replaceSql;
-
-    @Override
-    public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey countKey) {
-        String sql = boundSql.getSql();
-        sql = replaceSql.replace(sql);
-        sql = countSqlParser.getSmartCountSql(sql);
-        sql = replaceSql.restore(sql);
-        return sql;
-    }
+public class HerdDBRowBounds extends AbstractRowBounds {
 
     @Override
     public String getPageSql(String sql, RowBounds rowBounds, CacheKey pageKey) {
-        // 处理pageKey
-        pageKey.update(rowBounds.getOffset());
-        pageKey.update(rowBounds.getLimit());
-        sql = replaceSql.replace(sql);
-        sql = pageSql.convertToPageSql(sql, null, null);
-        sql = replaceSql.restore(sql);
-        sql = sql.replace(String.valueOf(Long.MIN_VALUE), String.valueOf(rowBounds.getOffset()));
-        sql = sql.replace(String.valueOf(Long.MAX_VALUE), String.valueOf(rowBounds.getLimit()));
-        return sql;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        super.setProperties(properties);
-        String replaceSql = properties.getProperty("replaceSql");
-        if (StringKit.isEmpty(replaceSql) || "simple".equalsIgnoreCase(replaceSql)) {
-            this.replaceSql = new SimpleWithNolock();
-        } else if ("regex".equalsIgnoreCase(replaceSql)) {
-            this.replaceSql = new RegexWithNolock();
+        StringBuilder sqlBuilder = new StringBuilder(sql.length() + 14);
+        sqlBuilder.append(sql);
+        if (rowBounds.getOffset() == 0) {
+            sqlBuilder.append("\n LIMIT ");
+            sqlBuilder.append(rowBounds.getLimit());
         } else {
-            try {
-                this.replaceSql = (ReplaceSql) Class.forName(replaceSql).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("replaceSql 参数配置的值不符合要求，可选值为 simple 和 regex，或者是实现了 "
-                        + ReplaceSql.class.getCanonicalName() + " 接口的全限定类名", e);
-            }
+            sqlBuilder.append("\n LIMIT ");
+            sqlBuilder.append(rowBounds.getOffset());
+            sqlBuilder.append(Symbol.COMMA);
+            sqlBuilder.append(rowBounds.getLimit());
+            pageKey.update(rowBounds.getOffset());
         }
+        pageKey.update(rowBounds.getLimit());
+        return sqlBuilder.toString();
     }
 
 }
