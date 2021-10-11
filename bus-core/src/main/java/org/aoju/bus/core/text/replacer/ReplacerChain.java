@@ -23,110 +23,60 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.validate.validators;
+package org.aoju.bus.core.text.replacer;
 
-import lombok.Data;
-import org.aoju.bus.core.lang.exception.ValidateException;
-import org.aoju.bus.core.text.replacer.PrivacyReplacer;
-import org.aoju.bus.core.toolkit.CollKit;
-import org.aoju.bus.core.toolkit.MapKit;
+import org.aoju.bus.core.lang.Chain;
+import org.aoju.bus.core.text.TextBuilder;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 校验注解所包含的通用属性
+ * 字符串替换链，用于组合多个字符串替换逻辑
  *
  * @author Kimi Liu
  * @version 6.2.9
  * @since JDK 1.8+
  */
-@Data
-public class Property {
+public class ReplacerChain extends TextReplacer implements Chain<TextReplacer, ReplacerChain> {
 
-    private boolean array = false;
-    /**
-     * 错误码
-     */
-    private String errcode;
-    /**
-     * 错误提示信息
-     */
-    private String errmsg;
-    /**
-     * 错误属性名称
-     */
-    private String field;
+    private static final long serialVersionUID = 1L;
 
-    private String name;
-    /**
-     * 校验组信息
-     */
-    private String[] group;
-    /**
-     * 当前注解
-     */
-    private Annotation annotation;
-    /**
-     * 校验类
-     */
-    private Class<?> clazz;
-    /**
-     * 异常信息
-     */
-    private Class<? extends ValidateException> exception;
-    /**
-     * 校验参数
-     */
-    private Map<String, Object> param;
-    /**
-     * 校验属性信息
-     */
-    private List<Property> list;
+    private final List<TextReplacer> replacers = new LinkedList<>();
 
-    public Property() {
-        this.list = new ArrayList<>();
-        this.param = new HashMap<>();
+    /**
+     * 构造
+     *
+     * @param replacers 字符串替换器
+     */
+    public ReplacerChain(TextReplacer... replacers) {
+        for (TextReplacer replacer : replacers) {
+            addChain(replacer);
+        }
     }
 
-    /**
-     * 添加父级校验注解属性
-     *
-     * @param property 属性
-     */
-    public void addParentProperty(Property property) {
-        if (CollKit.isEmpty(this.list)) {
-            this.list = new ArrayList<>();
-        }
-        this.list.add(property);
+    @Override
+    public Iterator<TextReplacer> iterator() {
+        return replacers.iterator();
     }
 
-    /**
-     * 添加错误信息的字符串插值参数
-     *
-     * @param name  插值名称
-     * @param value 插值
-     */
-    public void addParam(String name, Object value) {
-        if (MapKit.isEmpty(this.param)) {
-            this.param = new HashMap<>();
-        }
-        if (this.param.containsKey(name)) {
-            throw new IllegalArgumentException("当前异常信息格式化参数已经存在:" + name);
-        }
-        this.param.put(name, value);
+    @Override
+    public ReplacerChain addChain(TextReplacer element) {
+        replacers.add(element);
+        return this;
     }
 
-    /**
-     * 获取字符串插值后的验证信息
-     *
-     * @return the string
-     */
-    public String getFormatted() {
-        return new PrivacyReplacer(this.param).replace(this.errmsg);
+    @Override
+    protected int replace(CharSequence text, int indexes, TextBuilder builder) {
+        int consumed = 0;
+        for (TextReplacer replacer : replacers) {
+            consumed = replacer.replace(text, indexes, builder);
+            if (0 != consumed) {
+                return consumed;
+            }
+        }
+        return consumed;
     }
 
 }
