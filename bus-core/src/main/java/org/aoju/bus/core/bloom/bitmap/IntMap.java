@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,58 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.core.bloom.bitmap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * 过滤器BitMap在32位机器上.这个类能发生更好的效果.一般情况下建议使用此类
  *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public class IntMap implements BitMap, Serializable {
 
-    private User user;
-    private Group group;
+    private static final long serialVersionUID = 1L;
 
-    public User getUser() {
-        return user;
-    }
+    private final int[] ints;
 
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
-
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
+    /**
+     * 构造
+     */
+    public IntMap() {
+        ints = new int[93750000];
     }
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 构造
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * @param size 容量
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
+    public IntMap(int size) {
+        ints = new int[size];
     }
+
+    @Override
+    public void add(long i) {
+        int r = (int) (i / BitMap.MACHINE32);
+        int c = (int) (i % BitMap.MACHINE32);
+        ints[r] = ints[r] | (1 << c);
+    }
+
+    @Override
+    public boolean contains(long i) {
+        int r = (int) (i / BitMap.MACHINE32);
+        int c = (int) (i % BitMap.MACHINE32);
+        return ((ints[r] >>> c) & 1) == 1;
+    }
+
+    @Override
+    public void remove(long i) {
+        int r = (int) (i / BitMap.MACHINE32);
+        int c = (int) (i % BitMap.MACHINE32);
+        ints[r] &= ~(1 << c);
+    }
+
 }

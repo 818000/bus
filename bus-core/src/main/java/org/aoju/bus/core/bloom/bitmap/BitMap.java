@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,40 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package org.aoju.bus.core.bloom.bitmap;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * BitMap接口，用于将某个int或long值映射到一个数组中，从而判定某个值是否存在
  *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public interface BitMap {
 
-    private User user;
-    private Group group;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
-
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
-    }
+    int MACHINE32 = 32;
+    int MACHINE64 = 64;
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 加入值
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * @param i 值
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
-    }
+    void add(long i);
+
+    /**
+     * 检查是否包含值
+     *
+     * @param i 值
+     * @return 是否包含
+     */
+    boolean contains(long i);
+
+    /**
+     * 移除值
+     *
+     * @param i 值
+     */
+    void remove(long i);
+
 }
