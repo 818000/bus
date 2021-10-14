@@ -49,7 +49,7 @@ import java.util.TreeMap;
  * 今日头条登录
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class TwitterProvider extends AbstractProvider {
@@ -97,10 +97,10 @@ public class TwitterProvider extends AbstractProvider {
         for (Map.Entry<String, String> e : params.entrySet()) {
             map.put(UriKit.encode(e.getKey()), e.getValue());
         }
-        String str = Builder.parseMapToString(map, true);
-        String baseStr = method.toUpperCase() + Symbol.AND + UriKit.encode(baseUrl) + Symbol.AND + UriKit.encode(str);
+        String text = Builder.parseMapToString(map, true);
+        String baseStr = method.toUpperCase() + Symbol.AND + UriKit.encode(baseUrl) + Symbol.AND + UriKit.encode(text);
         String signKey = apiSecret + Symbol.AND + (StringKit.isEmpty(tokenSecret) ? Normal.EMPTY : tokenSecret);
-        byte[] signature = sign(signKey.getBytes(Charset.DEFAULT), baseStr.getBytes(Charset.DEFAULT), Algorithm.HmacSHA1.getValue());
+        byte[] signature = sign(signKey.getBytes(Charset.DEFAULT), baseStr.getBytes(Charset.DEFAULT), Algorithm.HMACSHA1.getValue());
 
         return new String(Base64.encode(signature, false));
     }

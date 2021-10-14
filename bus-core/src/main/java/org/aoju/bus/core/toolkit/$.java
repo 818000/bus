@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * 工具包集合,工具类快捷方式
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class $ {
@@ -120,21 +120,21 @@ public class $ {
     /**
      * 首字母变小写
      *
-     * @param str 字符串
+     * @param text 字符串
      * @return {String}
      */
-    public static String firstCharToLower(String str) {
-        return StringKit.firstCharToLower(str);
+    public static String firstCharToLower(String text) {
+        return StringKit.firstCharToLower(text);
     }
 
     /**
      * 首字母变大写
      *
-     * @param str 字符串
+     * @param text 字符串
      * @return {String}
      */
-    public static String firstCharToUpper(String str) {
-        return StringKit.firstCharToUpper(str);
+    public static String firstCharToUpper(String text) {
+        return StringKit.firstCharToUpper(text);
     }
 
     /**

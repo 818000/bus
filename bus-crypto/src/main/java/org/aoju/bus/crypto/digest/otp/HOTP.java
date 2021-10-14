@@ -39,7 +39,7 @@ import org.aoju.bus.crypto.digest.HMac;
  * <p>参考：https://github.com/jchambers/java-otp</p>
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class HOTP {
@@ -74,7 +74,7 @@ public class HOTP {
      * @param key            共享密码，RFC 4226要求最少128位
      */
     public HOTP(int passwordLength, byte[] key) {
-        this(passwordLength, Algorithm.HmacSHA1, key);
+        this(passwordLength, Algorithm.HMACSHA1, key);
     }
 
     /**

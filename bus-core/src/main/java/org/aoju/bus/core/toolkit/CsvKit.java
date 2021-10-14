@@ -31,6 +31,7 @@ import org.aoju.bus.core.text.csv.CsvWriteConfig;
 import org.aoju.bus.core.text.csv.CsvWriter;
 
 import java.io.File;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
@@ -38,10 +39,19 @@ import java.nio.charset.Charset;
  * CSV工具
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class CsvKit {
+
+    /**
+     * 获取CSV读取器
+     *
+     * @return {@link CsvReader}
+     */
+    public static CsvReader getReader() {
+        return new CsvReader();
+    }
 
     /**
      * 获取CSV读取器
@@ -56,10 +66,12 @@ public class CsvKit {
     /**
      * 获取CSV读取器
      *
+     * @param reader {@link Reader}
+     * @param config 配置, {@code null}表示默认配置
      * @return {@link CsvReader}
      */
-    public static CsvReader getReader() {
-        return new CsvReader();
+    public static CsvReader getReader(Reader reader, CsvReadConfig config) {
+        return new CsvReader(reader, config);
     }
 
     /**

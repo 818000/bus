@@ -25,13 +25,14 @@
  ********************************************************************************/
 package org.aoju.bus.shade.screw;
 
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.shade.screw.execute.ProduceExecute;
 
 /**
  * 默认常量
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class Builder {
@@ -39,7 +40,7 @@ public class Builder {
     /**
      * 百分号
      */
-    public static final String PERCENT_SIGN = "%";
+    public static final String PERCENT_SIGN = Symbol.PERCENT;
     /**
      * 暂未支持
      */

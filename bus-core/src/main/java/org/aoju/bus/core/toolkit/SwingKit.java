@@ -44,7 +44,7 @@ import java.net.URI;
  * 显示器等相关工具
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class SwingKit {
@@ -155,10 +155,10 @@ public class SwingKit {
     /**
      * 打印输出指定字符串(借助剪贴板)
      *
-     * @param str 字符串
+     * @param text 字符串
      */
-    public static void keyPressString(String str) {
-        setStr(str);
+    public static void keyPressString(String text) {
+        setStr(text);
         keyPressWithCtrl(KeyEvent.VK_V);// 粘贴
         delay();
     }

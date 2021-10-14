@@ -30,7 +30,7 @@ import org.aoju.bus.core.toolkit.StringKit;
 
 /**
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class TagView {
@@ -67,9 +67,9 @@ public class TagView {
     public String getFormattedText(boolean anonymize, Readable... tagable) {
         for (TagCamel t : this.tag) {
             if (!anonymize || t.getAnonymizationType() != 1) {
-                String str = t.getFormattedTagValue(TagValue.getTagValue(t, tagable), format);
-                if (StringKit.hasText(str)) {
-                    return str;
+                String text = t.getFormattedTagValue(TagValue.getTagValue(t, tagable), format);
+                if (StringKit.hasText(text)) {
+                    return text;
                 }
             }
         }

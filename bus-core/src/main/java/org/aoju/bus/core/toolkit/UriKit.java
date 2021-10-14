@@ -40,7 +40,7 @@ import java.util.jar.JarFile;
  * URL相关工具
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class UriKit {
@@ -1651,7 +1651,7 @@ public class UriKit {
         if (StringKit.isEmpty(fragment)) {
             this.fragment = null;
         }
-        this.fragment = StringKit.removePrefix(fragment, "#");
+        this.fragment = StringKit.removePrefix(fragment, Symbol.SHAPE);
         return this;
     }
 

@@ -48,14 +48,14 @@ import java.util.stream.Collectors;
  * three-quarters of all installed simply, permissively licensed BSD systems.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
 public class OpenBsdOperatingSystem extends AbstractOperatingSystem {
 
     static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name).map(String::toLowerCase)
-            .collect(Collectors.joining(","));
+            .collect(Collectors.joining(Symbol.COMMA));
     private static final long BOOTTIME = querySystemBootTime();
 
     private static List<OSProcess> getProcessListFromPS(int pid) {
@@ -87,7 +87,7 @@ public class OpenBsdOperatingSystem extends AbstractOperatingSystem {
     private static long querySystemBootTime() {
         // Boot time will be the first consecutive string of digits.
         return Builder.parseLongOrDefault(
-                Executor.getFirstAnswer("sysctl -n kern.boottime").split(",")[0].replaceAll("\\D", Normal.EMPTY),
+                Executor.getFirstAnswer("sysctl -n kern.boottime").split(Symbol.COMMA)[0].replaceAll("\\D", Normal.EMPTY),
                 System.currentTimeMillis() / 1000);
     }
 
@@ -106,7 +106,7 @@ public class OpenBsdOperatingSystem extends AbstractOperatingSystem {
         String version = OpenBsdSysctlKit.sysctl(mib, Normal.EMPTY);
         mib[1] = OpenBsdLibc.KERN_VERSION;
         String versionInfo = OpenBsdSysctlKit.sysctl(mib, Normal.EMPTY);
-        String buildNumber = versionInfo.split(":")[0].replace(family, "").replace(version, Normal.EMPTY).trim();
+        String buildNumber = versionInfo.split(Symbol.COLON)[0].replace(family, "").replace(version, Normal.EMPTY).trim();
 
         return Pair.of(family, new OSVersionInfo(version, null, buildNumber));
     }
@@ -187,7 +187,7 @@ public class OpenBsdOperatingSystem extends AbstractOperatingSystem {
     }
 
     @Override
-    public OSService[] getServices() {
+    public List<OSService> getServices() {
         // Get running services
         List<OSService> services = new ArrayList<>();
         Set<String> running = new HashSet<>();
@@ -210,7 +210,7 @@ public class OpenBsdOperatingSystem extends AbstractOperatingSystem {
         } else {
             Logger.error("Directory: /etc/rc.d does not exist");
         }
-        return services.toArray(new OSService[0]);
+        return services;
     }
 
     @Override

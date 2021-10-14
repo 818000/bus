@@ -53,7 +53,7 @@ import java.util.TreeMap;
  * 注：集成的是正式环境,非沙箱环境
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class ElemeProvider extends AbstractProvider {
@@ -100,13 +100,13 @@ public class ElemeProvider extends AbstractProvider {
      * <p>
      * 代码copy并修改自：https://coding.net/u/napos_openapi/p/eleme-openapi-java-sdk/git/blob/master/src/main/java/eleme/openapi/sdk/utils/SignatureUtil.java
      *
-     * @param str 饿了么请求的Signature
-     * @return md5 str
+     * @param text 饿了么请求的Signature
+     * @return the string
      */
-    private static String md5(String str) {
+    private static String md5(String text) {
         try {
             MessageDigest md = MessageDigest.getInstance(Algorithm.MD5.getValue());
-            md.update(str.getBytes(Charset.UTF_8));
+            md.update(text.getBytes(Charset.UTF_8));
             byte[] byteData = md.digest();
             StringBuilder buffer = new StringBuilder();
             for (byte byteDatum : byteData) {

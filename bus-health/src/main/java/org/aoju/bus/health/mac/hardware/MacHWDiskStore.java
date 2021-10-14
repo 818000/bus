@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  * Mac hard disk implementation.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -379,7 +379,7 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
                                     }
                                     disk.release();
                                 }
-                                String mountPoint = mountPointMap.getOrDefault(partBsdName, "");
+                                String mountPoint = mountPointMap.getOrDefault(partBsdName, Normal.EMPTY);
                                 Long size = sdService.getLongProperty("Size");
                                 Integer bsdMajor = sdService.getIntegerProperty("BSD Major");
                                 Integer bsdMinor = sdService.getIntegerProperty("BSD Minor");

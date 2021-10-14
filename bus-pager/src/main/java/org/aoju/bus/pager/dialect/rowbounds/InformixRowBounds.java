@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -33,7 +33,7 @@ import org.apache.ibatis.session.RowBounds;
  * informix 基于 RowBounds 的分页
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class InformixRowBounds extends AbstractRowBounds {
@@ -52,9 +52,9 @@ public class InformixRowBounds extends AbstractRowBounds {
             sqlBuilder.append(rowBounds.getLimit());
             pageKey.update(rowBounds.getLimit());
         }
-        sqlBuilder.append(" * FROM ( ");
+        sqlBuilder.append(" * FROM ( \n");
         sqlBuilder.append(sql);
-        sqlBuilder.append(" ) TEMP_T");
+        sqlBuilder.append("\n ) TEMP_T");
         return sqlBuilder.toString();
     }
 

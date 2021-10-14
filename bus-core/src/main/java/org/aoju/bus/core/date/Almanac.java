@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * 日期计算类
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class Almanac extends Converter {
@@ -113,15 +113,15 @@ public class Almanac extends Converter {
     /**
      * 获取年份时间段内的所有年
      *
-     * @param StartDate 开始时间
+     * @param startDate 开始时间
      * @param endDate   截止时间
      * @return the list
      */
-    public static List<String> getYear(String StartDate, String endDate) {
+    public static List<String> getYear(String startDate, String endDate) {
         List<String> list = new ArrayList<>();
         try {
             DateFormat df = new SimpleDateFormat(Fields.NORM_YEAR_PATTERN);
-            Date date1 = df.parse(StartDate);
+            Date date1 = df.parse(startDate);
             Date date2 = df.parse(endDate);
             Calendar c1 = Calendar.getInstance();
             Calendar c2 = Calendar.getInstance();
@@ -132,8 +132,8 @@ public class Almanac extends Converter {
             while (c1.compareTo(c2) < 0) {
                 c1.add(Calendar.YEAR, 1);
                 Date ss = c1.getTime();
-                String str = df.format(ss);
-                list.add(str);
+                String text = df.format(ss);
+                list.add(text);
             }
         } catch (ParseException e) {
             throw new InstrumentException(e);
@@ -375,8 +375,8 @@ public class Almanac extends Converter {
             while (c1.compareTo(c2) < 0) {
                 c1.add(Calendar.MONTH, 1);
                 Date ss = c1.getTime();
-                String str = df.format(ss);
-                list.add(str);
+                String text = df.format(ss);
+                list.add(text);
             }
         } catch (ParseException e) {
             throw new InstrumentException(e);
@@ -1349,7 +1349,7 @@ public class Almanac extends Converter {
         if (null == dateToCompare || dateToCompare.trim().length() == 0) {
             dateToCompare = Fields.NORM_DATE_FORMAT.format(new Date());
         }
-        String[] data = StringKit.split(birthDay, Symbol.MINUS);
+        String[] data = StringKit.splitToArray(birthDay, Symbol.MINUS);
         if (data.length < 3) {
             throw new IllegalArgumentException("Please confirm the date format !");
         }
@@ -1497,9 +1497,7 @@ public class Almanac extends Converter {
             lDate.add(Fields.PURE_DATETIME_FORMAT.format(calBegin.getTime()));
             while (calBegin.compareTo(calEnd) < 0) {
                 calBegin.add(Calendar.DAY_OF_MONTH, 1);
-                Date ss = calBegin.getTime();
-                String str = Fields.PURE_DATETIME_FORMAT.format(ss);
-                lDate.add(str);
+                lDate.add(Fields.PURE_DATETIME_FORMAT.format(calBegin.getTime()));
             }
         } catch (ParseException e) {
             throw new InstrumentException(e);

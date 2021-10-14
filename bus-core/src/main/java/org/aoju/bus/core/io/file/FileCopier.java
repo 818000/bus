@@ -49,7 +49,7 @@ import java.util.List;
  * 4、目录下的文件和目录复制到另一个目录
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class FileCopier extends Duplicate<File, FileCopier> {
@@ -209,7 +209,7 @@ public class FileCopier extends Duplicate<File, FileCopier> {
         if (false == src.exists()) {
             throw new InstrumentException("File not exist: " + src);
         }
-        Assert.notNull(dest, "Destination File or directiory is null !");
+        Assert.notNull(dest, "Destination File or directory is null !");
         if (FileKit.equals(src, dest)) {
             throw new InstrumentException("Files '{" + src + "}' and '{" + dest + "}' are equal");
         }

@@ -45,14 +45,13 @@ import javax.crypto.spec.IvParameterSpec;
  * </ol>
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class SM4 extends Crypto {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String ALGORITHM_NAME = Algorithm.SM4.name();
+    private static final long serialVersionUID = 1L;
 
     /**
      * 构造，使用随机密钥

@@ -50,14 +50,14 @@ import java.util.stream.Collectors;
  * OSProcess implemenation
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
 public class OpenBsdOSProcess extends AbstractOSProcess {
 
     static final String PS_THREAD_COLUMNS = Arrays.stream(PsThreadColumns.values()).map(Enum::name)
-            .map(String::toLowerCase).collect(Collectors.joining(","));
+            .map(String::toLowerCase).collect(Collectors.joining(Symbol.COMMA));
     private static final int ARGMAX;
 
     static {
@@ -338,9 +338,9 @@ public class OpenBsdOSProcess extends AbstractOSProcess {
         // Sample output:
         // pid 8 mask: 0, 1
         // cpuset: getaffinity: No such process
-        String[] split = cpuset.split(":");
+        String[] split = cpuset.split(Symbol.COLON);
         if (split.length > 1) {
-            String[] bits = split[1].split(",");
+            String[] bits = split[1].split(Symbol.COMMA);
             for (String bit : bits) {
                 int bitToSet = Builder.parseIntOrDefault(bit.trim(), -1);
                 if (bitToSet >= 0) {

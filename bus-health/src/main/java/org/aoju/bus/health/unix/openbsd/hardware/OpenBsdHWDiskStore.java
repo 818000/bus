@@ -28,6 +28,7 @@ package org.aoju.bus.health.unix.openbsd.hardware;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.RegEx;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.tuple.Quartet;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
@@ -48,7 +49,7 @@ import java.util.regex.Pattern;
  * OpenBSD hard disk implementation.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -80,11 +81,11 @@ public final class OpenBsdHWDiskStore extends AbstractHWDiskStore {
 
         // Get list of disks from sysctl
         // hw.disknames=sd0:2cf69345d371cd82,cd0:,sd1:
-        String[] devices = OpenBsdSysctlKit.sysctl("hw.disknames", Normal.EMPTY).split(",");
+        String[] devices = OpenBsdSysctlKit.sysctl("hw.disknames", Normal.EMPTY).split(Symbol.COMMA);
         OpenBsdHWDiskStore store;
         String diskName;
         for (String device : devices) {
-            diskName = device.split(":")[0];
+            diskName = device.split(Symbol.COLON)[0];
             // get partitions using disklabel command (requires root)
             Quartet<String, String, Long, List<HWPartition>> diskdata = Disklabel.getDiskParams(diskName);
             String model = diskdata.getA();

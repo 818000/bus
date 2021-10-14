@@ -35,15 +35,15 @@ import org.springframework.context.annotation.Bean;
  * Dubbo配置项
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
 @ConfigurationProperties(prefix = BusXExtend.DUBBO)
 public class DubboProperties {
 
-    protected String basePackage;
-    protected String basePackageClass;
+    protected String basePackages;
+    protected String basePackageClasses;
     protected boolean multiple;
 
     @Bean

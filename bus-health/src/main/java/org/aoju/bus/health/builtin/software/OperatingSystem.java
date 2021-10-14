@@ -28,16 +28,14 @@ package org.aoju.bus.health.builtin.software;
 import org.aoju.bus.core.annotation.Immutable;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.unix.Who;
 import org.aoju.bus.health.unix.Xwininfo;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ import java.util.stream.Collectors;
  * controls the computer.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -303,8 +301,8 @@ public interface OperatingSystem {
      *
      * @return An array of {@link OSService} objects
      */
-    default OSService[] getServices() {
-        return new OSService[0];
+    default List<OSService> getServices() {
+        return new ArrayList<>();
     }
 
     /**
@@ -407,7 +405,7 @@ public interface OperatingSystem {
 
             StringBuilder sb = new StringBuilder(null != getVersion() ? getVersion() : Normal.UNKNOWN);
             if (!StringKit.isBlank(getCodeName())) {
-                sb.append(" (").append(getCodeName()).append(')');
+                sb.append(" (").append(getCodeName()).append(Symbol.C_PARENTHESE_RIGHT);
             }
             if (!StringKit.isBlank(getBuildNumber())) {
                 sb.append(" build ").append(getBuildNumber());

@@ -35,7 +35,7 @@ import java.security.spec.AlgorithmParameterSpec;
  * {@link MacEngine} 实现工厂类
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class MacEngineFactory {
@@ -60,7 +60,7 @@ public class MacEngineFactory {
      * @return {@link MacEngine}
      */
     public static MacEngine createEngine(String algorithm, Key key, AlgorithmParameterSpec spec) {
-        if (algorithm.equalsIgnoreCase(Algorithm.HmacSM3.getValue())) {
+        if (algorithm.equalsIgnoreCase(Algorithm.HMACSM3.getValue())) {
             // HmacSM3算法是BC库实现的，忽略加盐
             return Builder.createHmacSm3Engine(key.getEncoded());
         }

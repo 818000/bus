@@ -37,7 +37,7 @@ import java.lang.annotation.*;
  * 启用Dubbo支持
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Inherited
@@ -56,7 +56,7 @@ public @interface EnableDubbo {
      * @see DubboComponentScan#basePackages()
      */
     @AliasFor(annotation = DubboComponentScan.class, attribute = "basePackages")
-    String[] basePackage() default {};
+    String[] basePackages() default {};
 
     /**
      * packages to scan for annotated @Service classes.
@@ -66,7 +66,7 @@ public @interface EnableDubbo {
      * @see DubboComponentScan#basePackageClasses
      */
     @AliasFor(annotation = DubboComponentScan.class, attribute = "basePackageClasses")
-    Class<?>[] basePackageClass() default {};
+    Class<?>[] basePackageClasses() default {};
 
     /**
      * binding to multiple Spring Beans.

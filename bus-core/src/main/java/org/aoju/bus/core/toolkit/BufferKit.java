@@ -42,7 +42,7 @@ import java.nio.charset.CodingErrorAction;
  * ByteBuffer的相关介绍见：https://www.cnblogs.com/ruber/p/6857159.html
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class BufferKit {
@@ -231,9 +231,9 @@ public class BufferKit {
             decode.onMalformedInput(CodingErrorAction.REPORT);
             decode.onUnmappableCharacter(CodingErrorAction.REPORT);
             buffer.mark();
-            String str = decode.decode(buffer).toString();
+            String text = decode.decode(buffer).toString();
             buffer.reset();
-            return str;
+            return text;
         } catch (CharacterCodingException e) {
             throw new InstrumentException(e);
         }

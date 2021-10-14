@@ -41,7 +41,7 @@ import java.security.NoSuchAlgorithmException;
  * {@link #hash()}来计算最终的哈希值
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public final class HashSink extends DelegateSink {
@@ -89,15 +89,15 @@ public final class HashSink extends DelegateSink {
     }
 
     public static HashSink hmacSha1(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA1.getValue());
+        return new HashSink(sink, key, Algorithm.HMACSHA1.getValue());
     }
 
     public static HashSink hmacSha256(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA256.getValue());
+        return new HashSink(sink, key, Algorithm.HMACSHA256.getValue());
     }
 
     public static HashSink hmacSha512(Sink sink, ByteString key) {
-        return new HashSink(sink, key, Algorithm.HmacSHA512.getValue());
+        return new HashSink(sink, key, Algorithm.HMACSHA512.getValue());
     }
 
     @Override

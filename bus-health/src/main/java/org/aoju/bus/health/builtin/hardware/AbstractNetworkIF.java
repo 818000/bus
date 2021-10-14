@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  * 网络接口信息
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -57,7 +57,7 @@ public abstract class AbstractNetworkIF implements NetworkIF {
     private String name;
     private String displayName;
     private int index;
-    private int mtu;
+    private long mtu;
     private String mac;
     private String[] ipv4;
     private Short[] subnetMasks;
@@ -89,7 +89,7 @@ public abstract class AbstractNetworkIF implements NetworkIF {
             this.displayName = displayName;
             this.index = networkInterface.getIndex();
             // Set MTU
-            this.mtu = networkInterface.getMTU();
+            this.mtu = Builder.unsignedIntToLong(networkInterface.getMTU());
             // Set MAC
             byte[] hwmac = networkInterface.getHardwareAddress();
             if (null != hwmac) {
@@ -97,7 +97,7 @@ public abstract class AbstractNetworkIF implements NetworkIF {
                 for (byte b : hwmac) {
                     octets.add(String.format("%02x", b));
                 }
-                this.mac = String.join(":", octets);
+                this.mac = String.join(Symbol.COLON, octets);
             } else {
                 this.mac = Normal.UNKNOWN;
             }
@@ -110,8 +110,8 @@ public abstract class AbstractNetworkIF implements NetworkIF {
             for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
                 InetAddress address = interfaceAddress.getAddress();
                 if (address.getHostAddress().length() > 0) {
-                    if (address.getHostAddress().contains(":")) {
-                        ipv6list.add(address.getHostAddress().split("%")[0]);
+                    if (address.getHostAddress().contains(Symbol.COLON)) {
+                        ipv6list.add(address.getHostAddress().split(Symbol.PERCENT)[0]);
                         prefixLengthList.add(interfaceAddress.getNetworkPrefixLength());
                     } else {
                         ipv4list.add(address.getHostAddress());
@@ -194,7 +194,7 @@ public abstract class AbstractNetworkIF implements NetworkIF {
     }
 
     @Override
-    public int getMTU() {
+    public long getMTU() {
         return this.mtu;
     }
 
@@ -241,8 +241,7 @@ public abstract class AbstractNetworkIF implements NetworkIF {
         }
         sb.append("\n");
         sb.append("  MAC Address: ").append(getMacaddr()).append(Symbol.LF);
-        sb.append("  MTU: ").append(Builder.unsignedIntToLong(getMTU())).append(", ").append("Speed: ")
-                .append(getSpeed()).append("\n");
+        sb.append("  MTU: ").append(getMTU()).append(", ").append("Speed: ").append(getSpeed()).append("\n");
         String[] ipv4withmask = getIPv4addr();
         if (this.ipv4.length == this.subnetMasks.length) {
             for (int i = 0; i < this.subnetMasks.length; i++) {

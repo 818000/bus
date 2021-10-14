@@ -55,15 +55,15 @@ import java.util.function.Supplier;
  * 操作系统信息支持
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class Platform {
 
     private static final OS OS_CURRENT_PLATFORM = OS.getValue(getOSType());
+    private static final String NOT_SUPPORTED = "Operating system not supported: ";
     private final Supplier<OperatingSystem> os = Memoize.memoize(Platform::createOperatingSystem);
     private final Supplier<HardwareAbstractionLayer> hardware = Memoize.memoize(Platform::createHardware);
-    private static final String NOT_SUPPORTED = "Operating system not supported: ";
 
     /**
      * Getter for the field <code>currentPlatformEnum</code>.

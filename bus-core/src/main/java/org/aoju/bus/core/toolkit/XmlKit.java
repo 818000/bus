@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
  * 工具类封装了XML文档的创建、读取、写出和部分XML操作
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class XmlKit {
@@ -1029,9 +1029,9 @@ public class XmlKit {
         int lastIdx = 0;
         Matcher matchr = pattern.matcher(xml);
         while (matchr.find()) {
-            String str = matchr.group();
+            String text = matchr.group();
             res.append(xml, lastIdx, matchr.start());
-            res.append(str.toLowerCase());
+            res.append(text.toLowerCase());
             lastIdx = matchr.end();
         }
         res.append(xml.substring(lastIdx));

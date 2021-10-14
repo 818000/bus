@@ -41,7 +41,7 @@ import java.util.Map;
  * 2. 通过set形式设置(动态/DB等)
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -52,7 +52,6 @@ public class StorageProperties {
      * 基础配置
      */
     private Map<Registry, Context> type;
-
     /**
      * 缓存配置
      */

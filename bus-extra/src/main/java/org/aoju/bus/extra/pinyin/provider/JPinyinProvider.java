@@ -35,7 +35,7 @@ import org.aoju.bus.core.toolkit.ArrayKit;
  * Jpinyin引擎
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class JPinyinProvider extends AbstractPinyinProvider {
@@ -68,9 +68,9 @@ public class JPinyinProvider extends AbstractPinyinProvider {
     }
 
     @Override
-    public String getPinyin(String str, String separator) {
+    public String getPinyin(String text, String separator) {
         try {
-            return PinyinHelper.convertToPinyinString(str, separator, format);
+            return PinyinHelper.convertToPinyinString(text, separator, format);
         } catch (PinyinException e) {
             throw new InstrumentException(e);
         }

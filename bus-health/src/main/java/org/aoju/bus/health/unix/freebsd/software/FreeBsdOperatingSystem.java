@@ -49,14 +49,14 @@ import java.util.stream.Collectors;
  * three-quarters of all installed simply, permissively licensed BSD systems.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
 public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
 
     static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name).map(String::toLowerCase)
-            .collect(Collectors.joining(","));
+            .collect(Collectors.joining(Symbol.COMMA));
     /**
      * Package-private for use by FreeBsdOSProcess
      */
@@ -66,7 +66,7 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
                             "state", "pid", "ppid", "user", "uid", "group", "gid", "nlwp", "pri",
                             "vsz", "rss", "etimes", "systime", "time", "comm", "majflt", "minflt",
                             "nvcsw", "nivcsw", "args"));
-    static final String PS_KEYWORD_ARGS = String.join(",", PS_KEYWORDS);
+    static final String PS_KEYWORD_ARGS = String.join(Symbol.COMMA, PS_KEYWORDS);
     private static final long BOOTTIME = querySystemBootTime();
 
     private static List<OSProcess> getProcessListFromPS(int pid) {
@@ -200,7 +200,7 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
     }
 
     @Override
-    public OSService[] getServices() {
+    public List<OSService> getServices() {
         // Get running services
         List<OSService> services = new ArrayList<>();
         Set<String> running = new HashSet<>();
@@ -223,7 +223,7 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
         } else {
             Logger.error("Directory: /etc/init does not exist");
         }
-        return services.toArray(new OSService[0]);
+        return services;
     }
 
     @Override

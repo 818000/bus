@@ -34,7 +34,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Core 跨域相关配置
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -49,7 +49,6 @@ public class CorsProperties {
      * 允许的域名
      */
     private String[] allowedOrigins = new String[]{Symbol.STAR};
-
     /**
      * 允许的请求头
      */
@@ -58,7 +57,6 @@ public class CorsProperties {
      * 允许的方法
      */
     private String[] allowedMethods = new String[]{"GET", "DELETE", "POST", "PUT", "OPTIONS"};
-
     /**
      * 响应头信息公开
      */

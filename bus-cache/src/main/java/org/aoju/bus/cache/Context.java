@@ -29,21 +29,26 @@ import java.util.Map;
 
 /**
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class Context {
 
-    // cache接口实现
+    /**
+     * cache接口实现
+     */
     private Map<String, CacheX> caches;
-
-    // 缓存分组命中率统计
+    /**
+     * 缓存分组命中率统计
+     */
     private Hitting hitting;
-
-    // 是否开启Cache(全局开关)
+    /**
+     * 是否开启Cache(全局开关)
+     */
     private Switch cache;
-
-    // 是否开启缓存防击穿
+    /**
+     * 是否开启缓存防击穿
+     */
     private Switch prevent;
 
     public static Context newConfig(Map<String, CacheX> caches) {
@@ -91,6 +96,9 @@ public class Context {
         this.prevent = prevent;
     }
 
+    /**
+     * 开关
+     */
     public enum Switch {
         ON,
         OFF

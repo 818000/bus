@@ -34,7 +34,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 路由配置
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -43,6 +43,5 @@ public class GoalieProperties {
 
     private final Config server = new Config();
     private boolean condition;
-
 
 }

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -39,14 +39,21 @@ import java.lang.annotation.Target;
  * 针对列的复杂属性配置
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ColumnType {
 
     String column() default Normal.EMPTY;
+
+    /**
+     * 是否为 BLOB 字段
+     *
+     * @return the boolean
+     */
+    boolean isBlob() default false;
 
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 

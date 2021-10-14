@@ -50,14 +50,14 @@ import java.util.stream.Collectors;
  * 把一个拥有对属性进行set和get方法的类
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class BeanKit {
 
     /**
      * 判断是否为Bean对象
-     * 判定方法是是否存在只有一个参数的setXXX方法
+     * 判定方法是否存在只有一个参数的setXXX方法
      *
      * @param clazz 待测试类
      * @return 是否为Bean对象
@@ -151,7 +151,7 @@ public class BeanKit {
 
     /**
      * 判断是否有Setter方法
-     * 判定方法是是否存在只有一个参数的setXXX方法
+     * 判定方法是否存在只有一个参数的setXXX方法
      *
      * @param clazz 待测试类
      * @return 是否为Bean对象
@@ -171,7 +171,7 @@ public class BeanKit {
 
     /**
      * 判断是否为Bean对象
-     * 判定方法是是否存在只有一个参数的setXXX方法
+     * 判定方法是否存在只有一个参数的getXXX方法
      *
      * @param clazz 待测试类
      * @return 是否为Bean对象

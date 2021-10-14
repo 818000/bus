@@ -37,7 +37,7 @@ import java.util.Map;
  * 缓存相关配置
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -53,7 +53,7 @@ public class CacheProperties {
      */
     private Map<String, CacheX> map;
     /**
-     * 缓存前缀,目前只对redis缓存生效,默认 OAUTH::STATE::
+     * 缓存前缀
      */
     private String prefix;
     /**
@@ -64,4 +64,5 @@ public class CacheProperties {
      * 存储信息
      */
     private DruidProperties provider;
+
 }

@@ -38,7 +38,7 @@ import java.util.*;
  * 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class ReflectKit {
@@ -68,7 +68,7 @@ public class ReflectKit {
      */
     public static Object invokeGetter(Object obj, String name) {
         Object object = obj;
-        for (String method : StringKit.split(name, Symbol.DOT)) {
+        for (String method : StringKit.splitToArray(name, Symbol.DOT)) {
             String getterMethodName = Normal.GET + StringKit.capitalize(method);
             object = invokeMethod(object, getterMethodName, new Class[]{}, new Object[]{});
         }
@@ -85,7 +85,7 @@ public class ReflectKit {
      */
     public static void invokeSetter(Object obj, String name, Object value) {
         Object object = obj;
-        String[] names = StringKit.split(name, Symbol.DOT);
+        String[] names = StringKit.splitToArray(name, Symbol.DOT);
         for (int i = 0; i < names.length; i++) {
             if (i < names.length - 1) {
                 String getterMethodName = Normal.GET + StringKit.capitalize(names[i]);
@@ -229,7 +229,7 @@ public class ReflectKit {
                 return method;
             } catch (NoSuchMethodException e) {
                 // Method不在当前类定义,继续向上转型
-                continue;// new add
+                continue;
             }
         }
         return null;
@@ -450,6 +450,19 @@ public class ReflectKit {
 
         allFields = getFields(beanClass, true);
         return FIELDS_CACHE.put(beanClass, allFields);
+    }
+
+    /**
+     * 获得一个类中所有满足条件的字段列表，包括其父类中的字段
+     * 如果子类与父类中存在同名字段，则这两个字段同时存在，子类字段在前，父类字段在后
+     *
+     * @param beanClass   类
+     * @param fieldFilter field过滤器，过滤掉不需要的field
+     * @return 字段列表
+     * @throws SecurityException 安全检查异常
+     */
+    public static Field[] getFields(Class<?> beanClass, Filter<Field> fieldFilter) throws SecurityException {
+        return ArrayKit.filter(getFields(beanClass), fieldFilter);
     }
 
     /**

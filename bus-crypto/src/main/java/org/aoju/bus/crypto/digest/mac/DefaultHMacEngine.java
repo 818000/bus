@@ -39,7 +39,7 @@ import java.security.spec.AlgorithmParameterSpec;
  * 当引入BouncyCastle库时自动使用其作为Provider
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class DefaultHMacEngine implements MacEngine {
@@ -51,7 +51,6 @@ public class DefaultHMacEngine implements MacEngine {
      *
      * @param algorithm 算法
      * @param key       密钥
-
      */
     public DefaultHMacEngine(String algorithm, byte[] key) {
         this(algorithm, (null == key) ? null : new SecretKeySpec(key, algorithm));

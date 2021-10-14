@@ -49,14 +49,14 @@ import java.util.stream.Collectors;
  * after the Sun acquisition by Oracle, it was renamed Oracle Solaris.
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
 public class SolarisOperatingSystem extends AbstractOperatingSystem {
 
     static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name).map(String::toLowerCase)
-            .collect(Collectors.joining(","));
+            .collect(Collectors.joining(Symbol.COMMA));
     private static final String PS_FIELDS = "s,pid,ppid,user,uid,group,gid,nlwp,pri,vsz,rss,etime,time,comm,args";
     private static final String PROCESS_LIST_FOR_PID_COMMAND = "ps -o " + PS_FIELDS + " -p ";
     private static final String PROCESS_LIST_COMMAND = "ps -eo " + PS_FIELDS;
@@ -222,7 +222,7 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
     }
 
     @Override
-    public OSService[] getServices() {
+    public List<OSService> getServices() {
         List<OSService> services = new ArrayList<>();
         // Get legacy RC service name possibilities
         List<String> legacySvcs = new ArrayList<>();
@@ -270,7 +270,7 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
                 }
             }
         }
-        return services.toArray(new OSService[0]);
+        return services;
     }
 
     @Override

@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  * 实用方法工具
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public abstract class Builder {
@@ -461,7 +461,7 @@ public abstract class Builder {
         for (int i = pos; i < limit; ) {
             if (b == address.length) return null;
 
-            if (i + 2 <= limit && input.regionMatches(i, "::", 0, 2)) {
+            if (i + 2 <= limit && input.regionMatches(i, Symbol.COLON + Symbol.COLON, 0, 2)) {
                 if (compress != -1) return null;
                 i += 2;
                 b += 2;

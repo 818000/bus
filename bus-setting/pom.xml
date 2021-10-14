@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-setting</artifactId>
-    <version>6.2.9</version>
+    <version>6.3.0</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -42,6 +42,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.compiler.version>1.8</project.compiler.version>
+        <yaml.version>1.29</yaml.version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>bus-logger</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

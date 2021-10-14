@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -31,14 +31,14 @@ import org.aoju.bus.pager.dialect.ReplaceSql;
  * 正则处理 with(nolock),转换为一个 table_PAGEWITHNOLOCK
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class RegexWithNolock implements ReplaceSql {
 
     @Override
     public String replace(String sql) {
-        return sql.replaceAll("((?i)\\s*(\\w+)\\s*with\\s*\\(nolock\\))", " $2_PAGEWITHNOLOCK");
+        return sql.replaceAll("((?i)\\s*(\\w+)\\s*with\\s*\\(\\s*nolock\\s*\\))", " $2_PAGEWITHNOLOCK");
     }
 
     @Override

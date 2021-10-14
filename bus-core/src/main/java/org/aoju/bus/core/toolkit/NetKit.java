@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.collection.EnumerationIter;
+import org.aoju.bus.core.collection.EnumerationIterator;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.*;
 import org.aoju.bus.core.lang.exception.InstrumentException;
@@ -46,7 +46,7 @@ import java.util.*;
  * 网络相关工具
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class NetKit {
@@ -784,7 +784,7 @@ public class NetKit {
         final Attributes attributes = getAttributes(uri, attrNames);
 
         final List<String> infos = new ArrayList<>();
-        for (Attribute attribute : new EnumerationIter<>(attributes.getAll())) {
+        for (Attribute attribute : new EnumerationIterator<>(attributes.getAll())) {
             try {
                 infos.add((String) attribute.get());
             } catch (NamingException ignore) {

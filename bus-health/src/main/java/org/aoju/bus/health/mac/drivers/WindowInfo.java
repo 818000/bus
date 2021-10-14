@@ -29,6 +29,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation.*;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.builtin.software.OSDesktopWindow;
 import org.aoju.bus.health.mac.CoreGraphics;
@@ -41,7 +42,7 @@ import java.util.List;
  * Utility to query desktop windows
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -110,7 +111,7 @@ public final class WindowInfo {
                     if (windowName.isEmpty()) {
                         windowName = windowOwnerName;
                     } else {
-                        windowName = windowName + "(" + windowOwnerName + ")";
+                        windowName = windowName + Symbol.PARENTHESE_LEFT + windowOwnerName + Symbol.PARENTHESE_RIGHT;
                     }
 
                     windowList.add(new OSDesktopWindow(windowNumber, windowName, windowOwnerName, windowBounds,

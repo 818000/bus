@@ -50,6 +50,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ import java.util.stream.Collectors;
  * OSProcess implemenation
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -120,8 +121,8 @@ public class LinuxOSProcess extends AbstractOSProcess {
             return;
         }
 
-        int nameStart = stat.indexOf('(');
-        int nameEnd = stat.indexOf(')');
+        int nameStart = stat.indexOf(Symbol.C_PARENTHESE_LEFT);
+        int nameEnd = stat.indexOf(Symbol.C_PARENTHESE_RIGHT);
         if (StringKit.isBlank(status.get("Name")) && nameStart > 0 && nameStart < nameEnd) {
             // remove leading and trailing parentheses
             String statName = stat.substring(nameStart + 1, nameEnd);
@@ -151,7 +152,9 @@ public class LinuxOSProcess extends AbstractOSProcess {
     }
 
     private String queryCommandLine() {
-        return Builder.getStringFromFile(String.format(ProcPath.PID_CMDLINE, getProcessID()));
+        return Arrays
+                .stream(Builder.getStringFromFile(String.format(ProcPath.PID_CMDLINE, getProcessID())).split("\0"))
+                .collect(Collectors.joining(Symbol.SPACE));
     }
 
     @Override

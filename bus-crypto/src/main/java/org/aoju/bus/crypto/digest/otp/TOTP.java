@@ -41,7 +41,7 @@ import java.time.Instant;
  * <p>参考：https://github.com/jchambers/java-otp</p>
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class TOTP extends HOTP {
@@ -80,7 +80,7 @@ public class TOTP extends HOTP {
      * @param key            共享密码，RFC 4226要求最少128位
      */
     public TOTP(Duration timeStep, int passwordLength, byte[] key) {
-        this(timeStep, passwordLength, Algorithm.HmacSHA1, key);
+        this(timeStep, passwordLength, Algorithm.HMACSHA1, key);
     }
 
     /**

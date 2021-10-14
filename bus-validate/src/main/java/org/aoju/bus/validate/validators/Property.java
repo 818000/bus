@@ -27,7 +27,7 @@ package org.aoju.bus.validate.validators;
 
 import lombok.Data;
 import org.aoju.bus.core.lang.exception.ValidateException;
-import org.aoju.bus.core.text.Replacers;
+import org.aoju.bus.core.text.replacer.PrivacyReplacer;
 import org.aoju.bus.core.toolkit.CollKit;
 import org.aoju.bus.core.toolkit.MapKit;
 
@@ -41,7 +41,7 @@ import java.util.Map;
  * 校验注解所包含的通用属性
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -126,7 +126,7 @@ public class Property {
      * @return the string
      */
     public String getFormatted() {
-        return new Replacers(this.param).replace(this.errmsg);
+        return new PrivacyReplacer(this.param).replace(this.errmsg);
     }
 
 }

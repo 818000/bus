@@ -35,7 +35,7 @@ import java.util.Locale;
  * 只提供String转换支持
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class LocaleConverter extends AbstractConverter<Locale> {
@@ -43,12 +43,12 @@ public class LocaleConverter extends AbstractConverter<Locale> {
     @Override
     protected Locale convertInternal(Object value) {
         try {
-            String str = convertString(value);
-            if (StringKit.isEmpty(str)) {
+            String text = convertString(value);
+            if (StringKit.isEmpty(text)) {
                 return null;
             }
 
-            final String[] items = str.split(Symbol.UNDERLINE);
+            final String[] items = text.split(Symbol.UNDERLINE);
             if (items.length == 1) {
                 return new Locale(items[0]);
             }

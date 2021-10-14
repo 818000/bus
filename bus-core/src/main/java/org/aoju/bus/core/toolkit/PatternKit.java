@@ -26,8 +26,12 @@
 package org.aoju.bus.core.toolkit;
 
 import org.aoju.bus.core.convert.Convert;
-import org.aoju.bus.core.lang.*;
+import org.aoju.bus.core.lang.Holder;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.RegEx;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.function.Func1;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,7 +43,7 @@ import java.util.regex.Pattern;
  * 常用正则表达式集合
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class PatternKit {
@@ -333,37 +337,37 @@ public class PatternKit {
      * 删除匹配的最后一个内容
      *
      * @param regex 正则
-     * @param str   被匹配的内容
+     * @param text  被匹配的内容
      * @return 删除后剩余的内容
      */
-    public static String delLast(String regex, CharSequence str) {
-        if (StringKit.hasBlank(regex, str)) {
-            return StringKit.toString(str);
+    public static String delLast(String regex, CharSequence text) {
+        if (StringKit.hasBlank(regex, text)) {
+            return StringKit.toString(text);
         }
 
-        return delLast(get(regex, Pattern.DOTALL), str);
+        return delLast(get(regex, Pattern.DOTALL), text);
     }
 
     /**
      * 删除匹配的最后一个内容
      *
      * @param pattern 正则
-     * @param str     被匹配的内容
+     * @param text    被匹配的内容
      * @return 删除后剩余的内容
      */
-    public static String delLast(Pattern pattern, CharSequence str) {
-        if (null != pattern && StringKit.isNotBlank(str)) {
+    public static String delLast(Pattern pattern, CharSequence text) {
+        if (null != pattern && StringKit.isNotBlank(text)) {
             String last = "";
-            for (Matcher matcher = pattern.matcher(str); matcher.find(); ) {
+            for (Matcher matcher = pattern.matcher(text); matcher.find(); ) {
                 last = matcher.group();
             }
 
             if (StringKit.isNotBlank(last)) {
-                return StringKit.subBefore(str, last, Boolean.TRUE) + StringKit.subAfter(str, last, Boolean.TRUE);
+                return StringKit.subBefore(text, last, Boolean.TRUE) + StringKit.subAfter(text, last, Boolean.TRUE);
             }
         }
 
-        return StringKit.toString(str);
+        return StringKit.toString(text);
     }
 
     /**
@@ -672,13 +676,13 @@ public class PatternKit {
      *     结果："ZZZaaabbbccc中文-1234-"
      * </pre>
      *
-     * @param str        要替换的字符串
+     * @param text       要替换的字符串
      * @param regex      用于匹配的正则式
      * @param replaceFun 决定如何替换的函数
      * @return 替换后的文本
      */
-    public static String replaceAll(CharSequence str, String regex, Func.Func1<Matcher, String> replaceFun) {
-        return replaceAll(str, Pattern.compile(regex), replaceFun);
+    public static String replaceAll(CharSequence text, String regex, Func1<Matcher, String> replaceFun) {
+        return replaceAll(text, Pattern.compile(regex), replaceFun);
     }
 
     /**
@@ -690,17 +694,17 @@ public class PatternKit {
      *     结果："ZZZaaabbbccc中文-1234-"
      * </pre>
      *
-     * @param str        要替换的字符串
+     * @param text       要替换的字符串
      * @param pattern    用于匹配的正则式
      * @param replaceFun 决定如何替换的函数,可能被多次调用（当有多个匹配时）
      * @return 替换后的字符串
      */
-    public static String replaceAll(CharSequence str, Pattern pattern, Func.Func1<Matcher, String> replaceFun) {
-        if (StringKit.isEmpty(str)) {
-            return StringKit.toString(str);
+    public static String replaceAll(CharSequence text, Pattern pattern, Func1<Matcher, String> replaceFun) {
+        if (StringKit.isEmpty(text)) {
+            return StringKit.toString(text);
         }
 
-        final Matcher matcher = pattern.matcher(str);
+        final Matcher matcher = pattern.matcher(text);
         final StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
             try {

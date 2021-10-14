@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.collection;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -38,10 +39,12 @@ import java.util.NoSuchElementException;
  *
  * @param <E> 元素类型
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
-public class ArrayIterator<E> implements Iterator<E>, Iterable<E> {
+public class ArrayIterator<E> implements IterableIterator<E>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 数组

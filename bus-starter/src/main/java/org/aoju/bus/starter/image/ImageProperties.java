@@ -33,7 +33,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 影像解析配置
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @Data
@@ -52,17 +52,14 @@ public class ImageProperties {
      * 服务名称
      */
     String aeTitle;
-
     /**
      * 原始文件保存路径
      */
     String dcmPath;
-
     /**
      * 转换后图片保存路径
      */
     String imgPath;
-
     /**
      * 是否启用opencv
      */

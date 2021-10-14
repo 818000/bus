@@ -44,7 +44,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * 随机工具类
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class RandomKit {
@@ -431,12 +431,12 @@ public class RandomKit {
     /**
      * 获得一个随机的字符串
      *
-     * @param str    随机字符选取的样本
+     * @param text   随机字符选取的样本
      * @param length 字符串的长度
      * @return 随机字符串
      */
-    public static String randomString(String str, int length) {
-        if (StringKit.isEmpty(str)) {
+    public static String randomString(String text, int length) {
+        if (StringKit.isEmpty(text)) {
             return Normal.EMPTY;
         }
         final StringBuilder sb = new StringBuilder(length);
@@ -444,10 +444,10 @@ public class RandomKit {
         if (length < 1) {
             length = 1;
         }
-        int baseLength = str.length();
+        int baseLength = text.length();
         for (int i = 0; i < length; i++) {
             int number = randomInt(baseLength);
-            sb.append(str.charAt(number));
+            sb.append(text.charAt(number));
         }
         return sb.toString();
     }
@@ -524,6 +524,15 @@ public class RandomKit {
      */
     public static boolean randomBoolean() {
         return 0 == randomInt(2);
+    }
+
+    /**
+     * 随机汉字（'\u4E00'-'\u9FFF'）
+     *
+     * @return 随机的汉字字符
+     */
+    public static char randomChinese() {
+        return (char) randomInt('\u4E00', '\u9FFF');
     }
 
 }

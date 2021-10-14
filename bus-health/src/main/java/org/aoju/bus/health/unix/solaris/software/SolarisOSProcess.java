@@ -46,14 +46,14 @@ import java.util.stream.Collectors;
  * OSProcess implemenation
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
 public class SolarisOSProcess extends AbstractOSProcess {
 
     static final String PS_THREAD_COLUMNS = Arrays.stream(PsThreadColumns.values()).map(Enum::name)
-            .map(String::toLowerCase).collect(Collectors.joining(","));
+            .map(String::toLowerCase).collect(Collectors.joining(Symbol.COMMA));
     private Supplier<Pair<List<String>, Map<String, String>>> cmdEnv = Memoize.memoize(this::queryCommandlineEnvironment);
 
     private Supplier<Integer> bitness = Memoize.memoize(this::queryBitness);

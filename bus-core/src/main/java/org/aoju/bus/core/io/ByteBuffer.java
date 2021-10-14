@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 两个半部分,描述段如何组成这个字节字符串
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class ByteBuffer extends ByteString {
@@ -67,6 +67,7 @@ public class ByteBuffer extends ByteString {
      */
     private PageBuffer[] pageBuffers;
     private boolean enabled = true;
+
     public ByteBuffer(Buffer buffer, int byteCount) {
         super(null);
         IoKit.checkOffsetAndCount(buffer.size, 0, byteCount);
@@ -100,28 +101,6 @@ public class ByteBuffer extends ByteString {
     }
 
     /**
-     * 内存回收任务
-     */
-    private final ScheduledFuture<?> future = BUFFER_POOL_CLEAN.scheduleWithFixedDelay(new Runnable() {
-        @Override
-        public void run() {
-            if (enabled) {
-                for (PageBuffer pageBuffer : pageBuffers) {
-                    pageBuffer.tryClean();
-                }
-            } else {
-                if (null != pageBuffers) {
-                    for (PageBuffer page : pageBuffers) {
-                        page.release();
-                    }
-                    pageBuffers = null;
-                }
-                future.cancel(false);
-            }
-        }
-    }, 500, 1000, TimeUnit.MILLISECONDS);
-
-    /**
      * @param pageSize 内存页大小
      * @param pageNo   内存页个数
      * @param isDirect 是否使用直接缓冲区
@@ -150,6 +129,28 @@ public class ByteBuffer extends ByteString {
     public String base64() {
         return toByteString().base64();
     }
+
+    /**
+     * 内存回收任务
+     */
+    private final ScheduledFuture<?> future = BUFFER_POOL_CLEAN.scheduleWithFixedDelay(new Runnable() {
+        @Override
+        public void run() {
+            if (enabled) {
+                for (PageBuffer pageBuffer : pageBuffers) {
+                    pageBuffer.tryClean();
+                }
+            } else {
+                if (null != pageBuffers) {
+                    for (PageBuffer page : pageBuffers) {
+                        page.release();
+                    }
+                    pageBuffers = null;
+                }
+                future.cancel(false);
+            }
+        }
+    }, 500, 1000, TimeUnit.MILLISECONDS);
 
     @Override
     public String hex() {

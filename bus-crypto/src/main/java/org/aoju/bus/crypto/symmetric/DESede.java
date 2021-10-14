@@ -41,7 +41,7 @@ import javax.crypto.spec.IvParameterSpec;
  * Java中默认实现为：DESede/ECB/PKCS5Padding
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class DESede extends Crypto {
@@ -52,7 +52,7 @@ public class DESede extends Crypto {
      * 构造，默认DESede/ECB/PKCS5Padding，使用随机密钥
      */
     public DESede() {
-        super(Algorithm.DESede);
+        super(Algorithm.DESEDE);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DESede extends Crypto {
      * @param key 密钥
      */
     public DESede(byte[] key) {
-        super(Algorithm.DESede, key);
+        super(Algorithm.DESEDE, key);
     }
 
     /**
@@ -150,7 +150,7 @@ public class DESede extends Crypto {
      * @param iv      加盐
      */
     public DESede(String mode, String padding, byte[] key, byte[] iv) {
-        this(mode, padding, Builder.generateKey(Algorithm.DESede.getValue(), key), null == iv ? null : new IvParameterSpec(iv));
+        this(mode, padding, Builder.generateKey(Algorithm.DESEDE.getValue(), key), null == iv ? null : new IvParameterSpec(iv));
     }
 
     /**
@@ -173,7 +173,7 @@ public class DESede extends Crypto {
      * @param iv      加盐
      */
     public DESede(String mode, String padding, SecretKey key, IvParameterSpec iv) {
-        super(StringKit.format("{}/{}/{}", Algorithm.DESede.getValue(), mode, padding), key, iv);
+        super(StringKit.format("{}/{}/{}", Algorithm.DESEDE.getValue(), mode, padding), key, iv);
     }
 
 }

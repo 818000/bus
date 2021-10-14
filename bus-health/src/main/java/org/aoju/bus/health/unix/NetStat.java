@@ -27,6 +27,7 @@ package org.aoju.bus.health.unix;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.RegEx;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Executor;
@@ -41,7 +42,7 @@ import java.util.List;
  * Utility to query TCP connections
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -111,9 +112,9 @@ public final class NetStat {
             } catch (UnknownHostException e) {
                 try {
                     // Try again with trailing ::
-                    if (ip.endsWith(":") && ip.contains("::")) {
+                    if (ip.endsWith(Symbol.COLON) && ip.contains(Symbol.COLON + Symbol.COLON)) {
                         ip = ip + "0";
-                    } else if (ip.endsWith(":") || ip.contains("::")) {
+                    } else if (ip.endsWith(Symbol.COLON) || ip.contains(Symbol.COLON + Symbol.COLON)) {
                         ip = ip + ":0";
                     } else {
                         ip = ip + "::0";

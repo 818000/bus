@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -25,12 +25,12 @@
  ********************************************************************************/
 package org.aoju.bus.pager.dialect.rowbounds;
 
+import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.pager.dialect.AbstractRowBounds;
 import org.aoju.bus.pager.dialect.ReplaceSql;
 import org.aoju.bus.pager.dialect.replace.RegexWithNolock;
 import org.aoju.bus.pager.dialect.replace.SimpleWithNolock;
 import org.aoju.bus.pager.parser.SqlServerParser;
-import org.aoju.bus.pager.plugin.PageFromObject;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -42,7 +42,7 @@ import java.util.Properties;
  * sqlserver 基于 RowBounds 的分页
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class SqlServerRowBounds extends AbstractRowBounds {
@@ -76,7 +76,7 @@ public class SqlServerRowBounds extends AbstractRowBounds {
     public void setProperties(Properties properties) {
         super.setProperties(properties);
         String replaceSql = properties.getProperty("replaceSql");
-        if (PageFromObject.isEmpty(replaceSql) || "simple".equalsIgnoreCase(replaceSql)) {
+        if (StringKit.isEmpty(replaceSql) || "simple".equalsIgnoreCase(replaceSql)) {
             this.replaceSql = new SimpleWithNolock();
         } else if ("regex".equalsIgnoreCase(replaceSql)) {
             this.replaceSql = new RegexWithNolock();
@@ -84,7 +84,7 @@ public class SqlServerRowBounds extends AbstractRowBounds {
             try {
                 this.replaceSql = (ReplaceSql) Class.forName(replaceSql).newInstance();
             } catch (Exception e) {
-                throw new RuntimeException("replaceSql 参数配置的值不符合要求,可选值为 simple 和 regex,或者是实现了 "
+                throw new RuntimeException("replaceSql 参数配置的值不符合要求，可选值为 simple 和 regex，或者是实现了 "
                         + ReplaceSql.class.getCanonicalName() + " 接口的全限定类名", e);
             }
         }

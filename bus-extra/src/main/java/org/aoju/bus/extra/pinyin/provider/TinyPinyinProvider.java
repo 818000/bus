@@ -31,7 +31,7 @@ import com.github.promeg.pinyinhelper.Pinyin;
  * TinyPinyin引擎
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class TinyPinyinProvider extends AbstractPinyinProvider {
@@ -61,8 +61,8 @@ public class TinyPinyinProvider extends AbstractPinyinProvider {
     }
 
     @Override
-    public String getPinyin(String str, String separator) {
-        return Pinyin.toPinyin(str, separator).toLowerCase();
+    public String getPinyin(String text, String separator) {
+        return Pinyin.toPinyin(text, separator).toLowerCase();
     }
 
 }

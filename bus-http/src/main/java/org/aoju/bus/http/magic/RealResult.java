@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class RealResult implements Results {
@@ -157,12 +157,12 @@ public class RealResult implements Results {
     @Override
     public String toString() {
         Body body = getBody();
-        String str = "RealResult [\n  state: " + state + ",\n  status: " + getStatus()
+        String text = "RealResult [\n  state: " + state + ",\n  status: " + getStatus()
                 + ",\n  headers: " + getHeaders();
         if (null != body) {
-            str += ",\n  contentType: " + body.getType();
+            text += ",\n  contentType: " + body.getType();
         }
-        return str + ",\n  error: " + error + "\n]";
+        return text + ",\n  error: " + error + "\n]";
     }
 
     @Override

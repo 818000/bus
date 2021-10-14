@@ -43,7 +43,7 @@ import java.util.Map;
  * Redis 单机缓存支持
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class RedisCache implements CacheX {
@@ -74,8 +74,8 @@ public class RedisCache implements CacheX {
     static byte[][] toByteArray(Collection<String> keys) {
         byte[][] array = new byte[keys.size()][];
         int index = 0;
-        for (String str : keys) {
-            array[index++] = str.getBytes();
+        for (String text : keys) {
+            array[index++] = text.getBytes();
         }
         return array;
     }

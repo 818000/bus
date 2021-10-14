@@ -25,13 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.collection.CopiedIter;
-import org.aoju.bus.core.collection.EnumerationIter;
+import org.aoju.bus.core.collection.CopiedIterator;
+import org.aoju.bus.core.collection.EnumerationIterator;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Filter;
-import org.aoju.bus.core.lang.Func;
 import org.aoju.bus.core.lang.Matcher;
 import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.function.Func1;
 
 import java.util.*;
 import java.util.function.Function;
@@ -40,7 +40,7 @@ import java.util.function.Function;
  * {@link Iterable} 和 {@link Iterator} 相关工具类
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class IterKit {
@@ -622,7 +622,7 @@ public class IterKit {
      * @return {@link Iterator}
      */
     public static <E> Iterator<E> asIterator(Enumeration<E> e) {
-        return new EnumerationIter<>(e);
+        return new EnumerationIterator<>(e);
     }
 
     /**
@@ -733,7 +733,7 @@ public class IterKit {
      * @return 元素类型, 当列表为空或元素全部为null时, 返回null
      */
     public static Class<?> getElementType(Iterator<?> iterator) {
-        final Iterator<?> iter2 = new CopiedIter<>(iterator);
+        final Iterator<?> iter2 = new CopiedIterator<>(iterator);
         if (iter2.hasNext()) {
             final Object t = iter2.next();
             if (null != t) {
@@ -806,7 +806,7 @@ public class IterKit {
      * @param keyFunc  生成key的函数
      * @return 生成的map
      */
-    public static <K, V> Map<K, V> toMap(Iterator<V> iterator, Map<K, V> map, Func.Func1<V, K> keyFunc) {
+    public static <K, V> Map<K, V> toMap(Iterator<V> iterator, Map<K, V> map, Func1<V, K> keyFunc) {
         return toMap(iterator, map, keyFunc, (value) -> value);
     }
 
@@ -823,7 +823,7 @@ public class IterKit {
      * @param valueFunc 生成值的策略函数
      * @return 生成的map
      */
-    public static <K, V, E> Map<K, V> toMap(Iterator<E> iterator, Map<K, V> map, Func.Func1<E, K> keyFunc, Func.Func1<E, V> valueFunc) {
+    public static <K, V, E> Map<K, V> toMap(Iterator<E> iterator, Map<K, V> map, Func1<E, K> keyFunc, Func1<E, V> valueFunc) {
         if (null == iterator) {
             return map;
         }

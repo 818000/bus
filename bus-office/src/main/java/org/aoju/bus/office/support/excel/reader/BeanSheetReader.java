@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.office.support.excel.reader;
 
+import org.aoju.bus.core.beans.copier.CopyOptions;
 import org.aoju.bus.core.toolkit.BeanKit;
 import org.aoju.bus.office.support.excel.cell.CellEditor;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,7 +38,7 @@ import java.util.Map;
  * 读取{@link Sheet}为bean的List列表形式
  *
  * @author Kimi Liu
- * @version 6.2.9
+ * @version 6.3.0
  * @since JDK 1.8+
  */
 public class BeanSheetReader<T> implements SheetReader<List<T>> {
@@ -66,8 +67,9 @@ public class BeanSheetReader<T> implements SheetReader<List<T>> {
         }
 
         final List<T> beanList = new ArrayList<>(mapList.size());
+        final CopyOptions copyOptions = CopyOptions.create().setIgnoreError(true);
         for (Map<String, Object> map : mapList) {
-            beanList.add(BeanKit.toBeanIgnoreError(map, this.beanClass));
+            beanList.add(BeanKit.toBean(map, this.beanClass, copyOptions));
         }
         return beanList;
     }
