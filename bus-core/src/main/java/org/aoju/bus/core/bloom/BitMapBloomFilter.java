@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,85 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.core.bloom;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.aoju.bus.core.bloom.filter.*;
+import org.aoju.bus.core.toolkit.MathKit;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * BlommFilter 实现
+ * 1.构建hash算法
+ * 2.散列hash映射到数组的bit位置
+ * 3.验证
+ * 此实现方式可以指定Hash算法
  *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public class BitMapBloomFilter implements BloomFilter {
 
-    private User user;
-    private Group group;
+    private static final long serialVersionUID = 1L;
 
-    public User getUser() {
-        return user;
-    }
+    private BloomFilter[] filters;
 
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
+    /**
+     * 构造，使用默认的5个过滤器
+     *
+     * @param m M值决定BitMap的大小
+     */
+    public BitMapBloomFilter(int m) {
+        long mNum = MathKit.div(String.valueOf(m), String.valueOf(5)).longValue();
+        long size = mNum * 1024 * 1024 * 8;
 
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
+        filters = new BloomFilter[]{
+                new DefaultFilter(size),
+                new ELFFilter(size),
+                new JSFilter(size),
+                new PJWFilter(size),
+                new SDBMFilter(size)
+        };
     }
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 使用自定的多个过滤器建立BloomFilter
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * @param m       M值决定BitMap的大小
+     * @param filters Bloom过滤器列表
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
+    public BitMapBloomFilter(int m, BloomFilter... filters) {
+        this(m);
+        this.filters = filters;
     }
+
+    /**
+     * 增加字符串到Filter映射中
+     *
+     * @param text 字符串
+     */
+    @Override
+    public boolean add(String text) {
+        boolean flag = false;
+        for (BloomFilter filter : filters) {
+            flag |= filter.add(text);
+        }
+        return flag;
+    }
+
+    /**
+     * 是否可能包含此字符串，此处存在误判
+     *
+     * @param text 字符串
+     * @return 是否存在
+     */
+    @Override
+    public boolean contains(String text) {
+        for (BloomFilter filter : filters) {
+            if (filter.contains(text) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

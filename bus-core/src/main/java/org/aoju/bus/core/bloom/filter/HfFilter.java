@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,39 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package org.aoju.bus.core.bloom.filter;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
- *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public class HfFilter extends AbstractFilter {
 
-    private User user;
-    private Group group;
+    private static final long serialVersionUID = 1L;
 
-    public User getUser() {
-        return user;
+    public HfFilter(long maxValue, int machineNum) {
+        super(maxValue, machineNum);
     }
 
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
+    public HfFilter(long maxValue) {
+        super(maxValue);
+    }
+
+    @Override
+    public long hash(String text) {
+        int length = text.length();
+        long hash = 0;
+
+        for (int i = 0; i < length; i++) {
+            hash += text.charAt(i) * 3 * i;
         }
 
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
+        if (hash < 0) {
+            hash = -hash;
         }
 
-        this.group = group;
+        return hash % size;
     }
 
-    /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
-     *
-     * @return the user or group that represents this ApprovedBy instance
-     */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
-    }
 }

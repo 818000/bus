@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,58 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.core.compare;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * 针对 {@link java.lang.Comparable}对象的默认比较器
  *
+ * @param <E> 比较对象类型
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public class NormalCompare<E extends Comparable<? super E>> implements Comparator<E>, Serializable {
 
-    private User user;
-    private Group group;
+    /**
+     * 单例
+     */
+    public static final NormalCompare INSTANCE = new NormalCompare<>();
+    private static final long serialVersionUID = 1L;
 
-    public User getUser() {
-        return user;
-    }
+    /**
+     * 构造
+     */
+    public NormalCompare() {
 
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
-
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
     }
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 比较两个{@link java.lang.Comparable}对象
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * <pre>
+     * obj1.compareTo(obj2)
+     * </pre>
+     *
+     * @param obj1 被比较的第一个对象
+     * @param obj2 the second object to compare
+     * @return obj1小返回负数, 大返回正数, 否则返回0
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
+    @Override
+    public int compare(final E obj1, final E obj2) {
+        return obj1.compareTo(obj2);
     }
+
+    @Override
+    public int hashCode() {
+        return "Comparables".hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return this == object || null != object && object.getClass().equals(this.getClass());
+    }
+
 }

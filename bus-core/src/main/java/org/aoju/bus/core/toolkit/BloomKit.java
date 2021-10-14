@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,40 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.core.toolkit;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.aoju.bus.core.bloom.BitMapBloomFilter;
+import org.aoju.bus.core.bloom.BitSetBloomFilter;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * 布隆过滤器工具
  *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public class BloomKit {
 
-    private User user;
-    private Group group;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
-
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
+    /**
+     * 创建一个BitSet实现的布隆过滤器，过滤器的容量为c * n 个bit
+     *
+     * @param c 当前过滤器预先开辟的最大包含记录,通常要比预计存入的记录多一倍
+     * @param n 当前过滤器预计所要包含的记录
+     * @param k 哈希函数的个数，等同每条记录要占用的bit数
+     * @return the object
+     */
+    public static BitSetBloomFilter createBitSet(int c, int n, int k) {
+        return new BitSetBloomFilter(c, n, k);
     }
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 创建BitMap实现的布隆过滤器
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * @param m BitMap的大小
+     * @return the object
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
+    public static BitMapBloomFilter createBitMap(int m) {
+        return new BitMapBloomFilter(m);
     }
+
 }

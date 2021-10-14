@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,52 +23,87 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.models;
+package org.aoju.bus.core.bloom.filter;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.aoju.bus.core.bloom.BloomFilter;
+import org.aoju.bus.core.bloom.bitmap.BitMap;
+import org.aoju.bus.core.bloom.bitmap.IntMap;
+import org.aoju.bus.core.bloom.bitmap.LongMap;
 
 /**
- * This class is used by various models to represent the approved_by property,
- * which can contain a User or Group instance.
+ * 抽象Bloom过滤器
  *
+ * @author Kimi Liu
+ * @version 6.2.9
+ * @since JDK 1.8+
  */
-public class ApprovedBy {
+public abstract class AbstractFilter implements BloomFilter {
 
-    private User user;
-    private Group group;
+    private static final long serialVersionUID = 1L;
+    protected long size = 0;
+    private BitMap bm = null;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        if (group != null) {
-            throw new RuntimeException("ApprovedBy is already set to a group, cannot be set to a user");
-        }
-
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        if (user != null) {
-            throw new RuntimeException("ApprovedBy is already set to a user, cannot be set to a group");
-        }
-
-        this.group = group;
+    /**
+     * 构造
+     *
+     * @param maxValue   最大值
+     * @param machineNum 机器位数
+     */
+    public AbstractFilter(long maxValue, int machineNum) {
+        init(maxValue, machineNum);
     }
 
     /**
-     * Return the user or group that represents this ApprovedBy instance.  Returned
-     * object will either be an instance of a User or Group.
+     * 构造32位
      *
-     * @return the user or group that represents this ApprovedBy instance
+     * @param maxValue 最大值
      */
-    @JsonIgnore
-    public Object getApprovedBy() {
-        return (user != null ? user : group);
+    public AbstractFilter(long maxValue) {
+        this(maxValue, BitMap.MACHINE32);
     }
+
+    /**
+     * 初始化
+     *
+     * @param maxValue   最大值
+     * @param machineNum 机器位数
+     */
+    public void init(long maxValue, int machineNum) {
+        this.size = maxValue;
+        switch (machineNum) {
+            case BitMap.MACHINE32:
+                bm = new IntMap((int) (size / machineNum));
+                break;
+            case BitMap.MACHINE64:
+                bm = new LongMap((int) (size / machineNum));
+                break;
+            default:
+                throw new RuntimeException("Error Machine number!");
+        }
+    }
+
+    @Override
+    public boolean contains(String text) {
+        return bm.contains(Math.abs(hash(text)));
+    }
+
+    @Override
+    public boolean add(String text) {
+        final long hash = Math.abs(hash(text));
+        if (bm.contains(hash)) {
+            return false;
+        }
+
+        bm.add(hash);
+        return true;
+    }
+
+    /**
+     * 自定义Hash方法
+     *
+     * @param text 字符串
+     * @return the long
+     */
+    public abstract long hash(String text);
+
 }
