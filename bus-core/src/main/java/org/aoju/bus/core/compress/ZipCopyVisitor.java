@@ -23,80 +23,68 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io.file.visitor;
+package org.aoju.bus.core.compress;
 
-import org.aoju.bus.core.toolkit.FileKit;
+import org.aoju.bus.core.toolkit.StringKit;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * 文件拷贝的FileVisitor实现，用于递归遍历拷贝目录
+ * Zip文件拷贝的FileVisitor实现，zip中追加文件，此类非线程安全
+ * 此类在遍历源目录并复制过程中会自动创建目标目录中不存在的上级目录
  *
  * @author Kimi Liu
  * @version 6.3.0
  * @since JDK 1.8+
  */
-public class CopyVisitor extends SimpleFileVisitor<Path> {
+public class ZipCopyVisitor extends SimpleFileVisitor<Path> {
 
     /**
      * 源Path，或基准路径，用于计算被拷贝文件的相对路径
      */
     private final Path source;
-    private final Path target;
+    private final FileSystem fileSystem;
     private final CopyOption[] copyOptions;
-
-    /**
-     * 标记目标目录是否创建，省略每次判断目标是否存在
-     */
-    private boolean isTargetCreated;
 
     /**
      * 构造
      *
      * @param source      源Path，或基准路径，用于计算被拷贝文件的相对路径
-     * @param target      目标Path
+     * @param fileSystem  目标Zip文件
      * @param copyOptions 拷贝选项，如跳过已存在等
      */
-    public CopyVisitor(Path source, Path target, CopyOption... copyOptions) {
-        if (FileKit.exists(target, false) && false == FileKit.isDirectory(target)) {
-            throw new IllegalArgumentException("Target must be a directory");
-        }
+    public ZipCopyVisitor(Path source, FileSystem fileSystem, CopyOption... copyOptions) {
         this.source = source;
-        this.target = target;
+        this.fileSystem = fileSystem;
         this.copyOptions = copyOptions;
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        initTargetDir();
-        // 将当前目录相对于源路径转换为相对于目标路径
         final Path targetDir = resolveTarget(dir);
-
-        // 在目录不存在的情况下，copy方法会创建新目录
-        try {
-            Files.copy(dir, targetDir, copyOptions);
-        } catch (FileAlreadyExistsException e) {
-            if (false == Files.isDirectory(targetDir)) {
-                // 目标文件存在抛出异常，目录忽略
-                throw e;
+        if (StringKit.isNotEmpty(targetDir.toString())) {
+            try {
+                Files.copy(dir, targetDir, copyOptions);
+            } catch (FileAlreadyExistsException e) {
+                if (false == Files.isDirectory(targetDir)) {
+                    throw e;
+                }
             }
         }
+
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-            throws IOException {
-        initTargetDir();
-        // 如果目标存在，无论目录还是文件都抛出FileAlreadyExistsException异常，此处不做特别处理
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Files.copy(file, resolveTarget(file), copyOptions);
         return FileVisitResult.CONTINUE;
     }
 
     /**
-     * 根据源文件或目录路径，拼接生成目标的文件或目录路径<br>
+     * 根据源文件或目录路径，拼接生成目标的文件或目录路径
      * 原理是首先截取源路径，得到相对路径，再和目标路径拼接
      *
      * <p>
@@ -108,17 +96,7 @@ public class CopyVisitor extends SimpleFileVisitor<Path> {
      * @return 目标Path
      */
     private Path resolveTarget(Path file) {
-        return target.resolve(source.relativize(file));
-    }
-
-    /**
-     * 初始化目标文件或目录
-     */
-    private void initTargetDir() {
-        if (false == this.isTargetCreated) {
-            FileKit.mkdir(this.target);
-            this.isTargetCreated = true;
-        }
+        return fileSystem.getPath(source.relativize(file).toString());
     }
 
 }
