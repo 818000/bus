@@ -23,54 +23,46 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.convert;
+package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.core.toolkit.TypeKit;
-
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
+import java.time.ZoneId;
+import java.util.TimeZone;
 
 /**
- * {@link Reference}转换器
+ * {@link ZoneId}和{@link TimeZone}相关封装
  *
  * @author Kimi Liu
  * @version 6.3.0
  * @since JDK 1.8+
  */
-public class ReferenceConverter extends AbstractConverter<Reference> {
-
-    private final Class<? extends Reference> targetType;
+public class ZoneKit {
 
     /**
-     * 构造
+     * {@link ZoneId}转换为{@link TimeZone}，{@code null}则返回系统默认值
      *
-     * @param targetType {@link Reference}实现类型
+     * @param zoneId {@link ZoneId}，{@code null}则返回系统默认值
+     * @return {@link TimeZone}
      */
-    public ReferenceConverter(Class<? extends Reference> targetType) {
-        this.targetType = targetType;
+    public static TimeZone toTimeZone(ZoneId zoneId) {
+        if (null == zoneId) {
+            return TimeZone.getDefault();
+        }
+
+        return TimeZone.getTimeZone(zoneId);
     }
 
-    @Override
-    protected Reference<?> convertInternal(Object value) {
-        // 尝试将值转换为Reference泛型的类型
-        Object targetValue = null;
-        final Type paramType = TypeKit.getTypeArgument(targetType);
-        if (false == TypeKit.isUnknown(paramType)) {
-            targetValue = ConverterRegistry.getInstance().convert(paramType, value);
-        }
-        if (null == targetValue) {
-            targetValue = value;
+    /**
+     * {@link TimeZone}转换为{@link ZoneId}，{@code null}则返回系统默认值
+     *
+     * @param timeZone {@link TimeZone}，{@code null}则返回系统默认值
+     * @return {@link ZoneId}
+     */
+    public static ZoneId toZoneId(TimeZone timeZone) {
+        if (null == timeZone) {
+            return ZoneId.systemDefault();
         }
 
-        if (this.targetType == WeakReference.class) {
-            return new WeakReference(targetValue);
-        } else if (this.targetType == SoftReference.class) {
-            return new SoftReference(targetValue);
-        }
-        throw new UnsupportedOperationException(StringKit.format("Unsupport Reference type: {}", this.targetType.getName()));
+        return timeZone.toZoneId();
     }
 
 }
