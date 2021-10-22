@@ -25,55 +25,63 @@
  ********************************************************************************/
 package org.aoju.bus.extra.pinyin.provider;
 
-import com.github.stuxuhai.jpinyin.PinyinException;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
-import org.aoju.bus.core.lang.exception.InstrumentException;
-import org.aoju.bus.core.toolkit.ArrayKit;
+import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
+import com.github.houbb.pinyin.util.PinyinHelper;
 
 /**
- * Jpinyin 引擎
+ * houbb Pinyin 引擎
  *
  * @author Kimi Liu
  * @version 6.3.0
  * @since JDK 1.8+
  */
-public class JPinyinProvider extends AbstractPinyinProvider {
+public class HoubbPinyinProvider extends AbstractPinyinProvider {
 
     /**
-     * 设置汉子拼音输出的格式
+     * 汉字拼音输出的格式
      */
-    PinyinFormat format;
+    PinyinStyleEnum format;
 
-    public JPinyinProvider() {
+    /**
+     * 构造
+     */
+    public HoubbPinyinProvider() {
         this(null);
     }
 
-    public JPinyinProvider(PinyinFormat format) {
+    /**
+     * 构造
+     *
+     * @param format 格式
+     */
+    public HoubbPinyinProvider(PinyinStyleEnum format) {
         init(format);
     }
 
-    public void init(PinyinFormat format) {
+    /**
+     * 初始化
+     *
+     * @param format 格式
+     */
+    public void init(PinyinStyleEnum format) {
         if (null == format) {
-            // 不加声调
-            format = PinyinFormat.WITHOUT_TONE;
+            format = PinyinStyleEnum.NORMAL;
         }
         this.format = format;
     }
 
     @Override
     public String getPinyin(char c) {
-        String[] results = PinyinHelper.convertToPinyinArray(c, format);
-        return ArrayKit.isEmpty(results) ? String.valueOf(c) : results[0];
+        String result;
+        result = PinyinHelper.toPinyin(String.valueOf(c), format);
+        return result;
     }
 
     @Override
-    public String getPinyin(String text, String separator) {
-        try {
-            return PinyinHelper.convertToPinyinString(text, separator, format);
-        } catch (PinyinException e) {
-            throw new InstrumentException(e);
-        }
+    public String getPinyin(String str, String separator) {
+        String result;
+        result = PinyinHelper.toPinyin(str, format, separator);
+        return result;
     }
 
 }
