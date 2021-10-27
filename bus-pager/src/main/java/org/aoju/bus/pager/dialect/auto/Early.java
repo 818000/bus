@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,112 +23,60 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.lang;
+package org.aoju.bus.pager.dialect.auto;
 
-import java.awt.*;
+import org.aoju.bus.core.lang.exception.PageException;
+import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.pager.AutoDialect;
+import org.aoju.bus.pager.dialect.AbstractPaging;
+import org.aoju.bus.pager.proxy.PageAutoDialect;
+import org.apache.ibatis.mapping.MappedStatement;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
- * 缩放常量信息
+ * 早期版本默认实现，获取连接再获取 url，这种方式通用性强，但是性能低，处理不好关闭连接时容易出问题
  *
  * @author Kimi Liu
  * @version 6.3.0
  * @since JDK 1.8+
  */
-public class Scale {
+public class Early implements AutoDialect<String> {
 
-    /**
-     * 图片缩略模式
-     */
-    public enum Mode {
-        /**
-         * 原始比例，不缩放
-         */
-        ORIGIN,
-        /**
-         * 指定宽度，高度按比例
-         */
-        WIDTH,
-        /**
-         * 指定高度，宽度按比例
-         */
-        HEIGHT,
-        /**
-         * 自定义高度和宽度，强制缩放
-         */
-        OPTIONAL
+    public static final AutoDialect<String> DEFAULT = new Early();
+
+    @Override
+    public String extractDialectKey(MappedStatement ms, DataSource dataSource, Properties properties) {
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+            return conn.getMetaData().getURL();
+        } catch (SQLException e) {
+            throw new PageException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                    String closeConn = properties.getProperty("closeConn");
+                    if (StringKit.isEmpty(closeConn) || Boolean.parseBoolean(closeConn)) {
+                        conn.close();
+                    }
+                } catch (SQLException e) {
+                    //ignore
+                }
+            }
+        }
     }
 
-    /**
-     * 图片缩略类型
-     *
-     * @author Kimi Liu
-     * @version 6.3.0
-     * @since JDK 1.8+
-     */
-    public enum Type {
-        /**
-         * 默认
-         */
-        DEFAULT(Image.SCALE_DEFAULT),
-        /**
-         * 快速
-         */
-        FAST(Image.SCALE_FAST),
-        /**
-         * 平滑
-         */
-        SMOOTH(Image.SCALE_SMOOTH),
-        /**
-         * 使用 ReplicateScaleFilter 类中包含的图像缩放算法
-         */
-        REPLICATE(Image.SCALE_REPLICATE),
-        /**
-         * Area Averaging算法
-         */
-        AREA_AVERAGING(Image.SCALE_AREA_AVERAGING);
-
-        private final int value;
-
-        /**
-         * 构造
-         *
-         * @param value 缩放方式
-         * @see Image#SCALE_DEFAULT
-         * @see Image#SCALE_FAST
-         * @see Image#SCALE_SMOOTH
-         * @see Image#SCALE_REPLICATE
-         * @see Image#SCALE_AREA_AVERAGING
-         */
-        Type(int value) {
-            this.value = value;
+    @Override
+    public AbstractPaging extractDialect(String dialectKey, MappedStatement ms, DataSource dataSource, Properties properties) {
+        String dialectStr = PageAutoDialect.fromJdbcUrl(dialectKey);
+        if (dialectStr == null) {
+            throw new PageException("无法自动获取数据库类型，请通过 dialect 参数指定!");
         }
-
-        public int getValue() {
-            return this.value;
-        }
-
-    }
-
-    /**
-     * 渐变方向
-     */
-    public enum Gradient {
-        /**
-         * 上到下
-         */
-        TOP_BOTTOM,
-        /**
-         * 左到右
-         */
-        LEFT_RIGHT,
-        /**
-         * 左上到右下
-         */
-        LEFT_TOP_TO_RIGHT_BOTTOM,
-        /**
-         * 右上到左下
-         */
-        RIGHT_TOP_TO_LEFT_BOTTOM
+        return PageAutoDialect.instanceDialect(dialectStr, properties);
     }
 
 }
