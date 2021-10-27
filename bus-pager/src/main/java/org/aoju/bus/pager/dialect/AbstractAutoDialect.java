@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2021 aoju.org mybatis.io and other contributors.           *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,112 +23,47 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.lang;
+package org.aoju.bus.pager.dialect;
 
-import java.awt.*;
+import org.aoju.bus.pager.AutoDialect;
+import org.aoju.bus.pager.proxy.PageAutoDialect;
+import org.apache.ibatis.mapping.MappedStatement;
+
+import javax.sql.DataSource;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Properties;
 
 /**
- * 缩放常量信息
+ * 默认实现
  *
  * @author Kimi Liu
  * @version 6.3.0
  * @since JDK 1.8+
  */
-public class Scale {
+public abstract class AbstractAutoDialect<Ds extends DataSource> implements AutoDialect<String> {
 
-    /**
-     * 图片缩略模式
-     */
-    public enum Mode {
-        /**
-         * 原始比例，不缩放
-         */
-        ORIGIN,
-        /**
-         * 指定宽度，高度按比例
-         */
-        WIDTH,
-        /**
-         * 指定高度，宽度按比例
-         */
-        HEIGHT,
-        /**
-         * 自定义高度和宽度，强制缩放
-         */
-        OPTIONAL
+    protected Class dataSourceClass;
+
+    public AbstractAutoDialect() {
+        Type genericSuperclass = getClass().getGenericSuperclass();
+        dataSourceClass = (Class) ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
     }
 
-    /**
-     * 图片缩略类型
-     *
-     * @author Kimi Liu
-     * @version 6.3.0
-     * @since JDK 1.8+
-     */
-    public enum Type {
-        /**
-         * 默认
-         */
-        DEFAULT(Image.SCALE_DEFAULT),
-        /**
-         * 快速
-         */
-        FAST(Image.SCALE_FAST),
-        /**
-         * 平滑
-         */
-        SMOOTH(Image.SCALE_SMOOTH),
-        /**
-         * 使用 ReplicateScaleFilter 类中包含的图像缩放算法
-         */
-        REPLICATE(Image.SCALE_REPLICATE),
-        /**
-         * Area Averaging算法
-         */
-        AREA_AVERAGING(Image.SCALE_AREA_AVERAGING);
+    public abstract String getJdbcUrl(Ds ds);
 
-        private final int value;
-
-        /**
-         * 构造
-         *
-         * @param value 缩放方式
-         * @see Image#SCALE_DEFAULT
-         * @see Image#SCALE_FAST
-         * @see Image#SCALE_SMOOTH
-         * @see Image#SCALE_REPLICATE
-         * @see Image#SCALE_AREA_AVERAGING
-         */
-        Type(int value) {
-            this.value = value;
+    @Override
+    public String extractDialectKey(MappedStatement ms, DataSource dataSource, Properties properties) {
+        if (dataSourceClass.isInstance(dataSource)) {
+            return getJdbcUrl((Ds) dataSource);
         }
-
-        public int getValue() {
-            return this.value;
-        }
-
+        return null;
     }
 
-    /**
-     * 渐变方向
-     */
-    public enum Gradient {
-        /**
-         * 上到下
-         */
-        TOP_BOTTOM,
-        /**
-         * 左到右
-         */
-        LEFT_RIGHT,
-        /**
-         * 左上到右下
-         */
-        LEFT_TOP_TO_RIGHT_BOTTOM,
-        /**
-         * 右上到左下
-         */
-        RIGHT_TOP_TO_LEFT_BOTTOM
+    @Override
+    public AbstractPaging extractDialect(String dialectKey, MappedStatement ms, DataSource dataSource, Properties properties) {
+        String dialect = PageAutoDialect.fromJdbcUrl(dialectKey);
+        return PageAutoDialect.instanceDialect(dialect, properties);
     }
 
 }
