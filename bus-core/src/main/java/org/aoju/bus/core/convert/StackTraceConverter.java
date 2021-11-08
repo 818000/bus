@@ -35,10 +35,12 @@ import java.util.Map;
  * 只支持Map方式转换
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class StackTraceConverter extends AbstractConverter<StackTraceElement> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected StackTraceElement convertInternal(Object value) {

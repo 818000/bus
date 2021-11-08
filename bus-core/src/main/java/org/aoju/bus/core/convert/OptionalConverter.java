@@ -25,16 +25,18 @@
  ********************************************************************************/
 package org.aoju.bus.core.convert;
 
-import java.util.Optional;
+import org.aoju.bus.core.lang.Optional;
 
 /**
  * {@link Optional}对象转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class OptionalConverter extends AbstractConverter<Optional<?>> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected Optional<?> convertInternal(Object value) {

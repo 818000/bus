@@ -25,20 +25,18 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.lang.Charset;
-import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.RegEx;
-import org.aoju.bus.core.lang.Symbol;
+import org.aoju.bus.core.lang.*;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.text.Normalizer;
 
 /**
  * 字符工具类
  * 部分工具来自于Apache
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CharsKit {
@@ -78,7 +76,7 @@ public class CharsKit {
      * @return true表示为ASCII可见字符, 可见字符位于32~126之间
      */
     public static boolean isAsciiPrintable(char ch) {
-        return ch >= 32 && ch < 127;
+        return ch >= Normal._32 && ch < 127;
     }
 
     /**
@@ -97,7 +95,7 @@ public class CharsKit {
      * @return true表示为控制符, 控制符位于0~31和127
      */
     public static boolean isAsciiControl(final char ch) {
-        return ch < 32 || ch == 127;
+        return ch < Normal._32 || ch == 127;
     }
 
     /**
@@ -539,7 +537,18 @@ public class CharsKit {
      */
     private static boolean isNullOrUndefinedStr(CharSequence text) {
         String strString = text.toString().trim();
-        return Normal.NULL.equals(strString) || "undefined".equals(strString);
+        return Normal.NULL.equals(strString) || Normal.UNDEFINED.equals(strString);
+    }
+
+    /**
+     * 是否不为“null”、“undefined”，不做空指针检查
+     *
+     * @param str 字符串
+     * @return 是否不为“null”、“undefined”，不为“null”、“undefined”返回true，否则false
+     */
+    private static boolean isNotNullAndNotUndefinedStr(CharSequence str) {
+        String strString = str.toString().trim();
+        return !Normal.NULL.equals(strString) && !Normal.UNDEFINED.equals(strString);
     }
 
     /**
@@ -701,11 +710,11 @@ public class CharsKit {
      * @return 字符串
      */
     public static String toString(char c) {
-        String[] CACHE = new String[128];
-        for (char i = 0; i < 128; i++) {
+        String[] CACHE = new String[Normal._128];
+        for (char i = 0; i < Normal._128; i++) {
             CACHE[i] = String.valueOf(i);
         }
-        return c < 128 ? CACHE[c] : String.valueOf(c);
+        return c < Normal._128 ? CACHE[c] : String.valueOf(c);
     }
 
     /**
@@ -844,6 +853,29 @@ public class CharsKit {
      */
     public static boolean startWithChinese(CharSequence text) {
         return isNotBlank(text) && RegEx.CHINESES.matcher(text.subSequence(0, 1)).find();
+    }
+
+    /**
+     * 检查给定字符串的所有字符是否都一样
+     *
+     * @param str 字符出啊
+     * @return 给定字符串的所有字符是否都一样
+     */
+    public static boolean isCharEquals(CharSequence str) {
+        Assert.notEmpty(str, "Str to check must be not empty!");
+        return count(str, str.charAt(0)) == str.length();
+    }
+
+    /**
+     * 对字符串归一化处理，如 "Á" 可以使用 "u00C1"或 "u0041u0301"表示，实际测试中两个字符串并不equals
+     * 因此使用此方法归一为一种表示形式，默认按照W3C通常建议的，在NFC中交换文本。
+     *
+     * @param str 归一化的字符串
+     * @return 归一化后的字符串
+     * @see Normalizer#normalize(CharSequence, Normalizer.Form)
+     */
+    public static String normalize(CharSequence str) {
+        return Normalizer.normalize(str, Normalizer.Form.NFC);
     }
 
 }

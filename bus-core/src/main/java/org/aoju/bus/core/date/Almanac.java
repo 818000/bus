@@ -25,13 +25,11 @@
  ********************************************************************************/
 package org.aoju.bus.core.date;
 
-import org.aoju.bus.core.date.formatter.DatePeriod;
 import org.aoju.bus.core.lang.Fields;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.ArrayKit;
-import org.aoju.bus.core.toolkit.DateKit;
 import org.aoju.bus.core.toolkit.StringKit;
 
 import java.text.DateFormat;
@@ -48,25 +46,10 @@ import java.util.stream.Collectors;
  * 日期计算类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Almanac extends Converter {
-
-    /**
-     * 获取农历年份
-     *
-     * @param year 　农历年数值表示
-     * @return 农历年传统字符表示
-     */
-    public static String getYear(int year) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Fields.CN_YEAR[year / 1000]);
-        sb.append(Fields.CN_YEAR[year % 1000 / 100]);
-        sb.append(Fields.CN_YEAR[year % 100 / 10]);
-        sb.append(Fields.CN_YEAR[year % 10]);
-        return sb.toString();
-    }
 
     /**
      * 获取年，比如2020
@@ -1357,7 +1340,7 @@ public class Almanac extends Converter {
         Calendar birthday = new GregorianCalendar(Integer.valueOf(data[0]),
                 Integer.valueOf(data[1]), Integer.valueOf(data[2]));
         Calendar now = Calendar.getInstance();
-        now.setTime(DateKit.parse(dateToCompare));
+        now.setTime(Converter.parse(dateToCompare));
 
         // 1.日相减
         int day = now.get(Calendar.DAY_OF_MONTH) - birthday.get(Calendar.DAY_OF_MONTH);
@@ -5120,50 +5103,6 @@ public class Almanac extends Converter {
      */
     public static long betweenYear(Date beginDate, Date endDate, boolean isReset) {
         return new Between(beginDate, endDate).betweenYear(isReset);
-    }
-
-    /**
-     * 格式化日期间隔输出
-     *
-     * @param beginDate 起始日期
-     * @param endDate   结束日期
-     * @param units     级别,按照天、小时、分、秒、毫秒分为5个等级
-     * @return XX天XX小时XX分XX秒
-     */
-    public static String formatBetween(Date beginDate, Date endDate, Fields.Units units) {
-        return formatBetween(between(beginDate, endDate, Fields.Units.MILLISECOND), units);
-    }
-
-    /**
-     * 格式化日期间隔输出,精确到毫秒
-     *
-     * @param beginDate 起始日期
-     * @param endDate   结束日期
-     * @return XX天XX小时XX分XX秒
-     */
-    public static String formatBetween(Date beginDate, Date endDate) {
-        return formatBetween(between(beginDate, endDate, Fields.Units.MILLISECOND));
-    }
-
-    /**
-     * 格式化日期间隔输出
-     *
-     * @param betweenMs 日期间隔
-     * @param units     级别,按照天、小时、分、秒、毫秒分为5个等级
-     * @return XX天XX小时XX分XX秒XX毫秒
-     */
-    public static String formatBetween(long betweenMs, Fields.Units units) {
-        return new DatePeriod(betweenMs, units).format();
-    }
-
-    /**
-     * 格式化日期间隔输出,精确到毫秒
-     *
-     * @param betweenMs 日期间隔
-     * @return XX天XX小时XX分XX秒XX毫秒
-     */
-    public static String formatBetween(long betweenMs) {
-        return new DatePeriod(betweenMs, Fields.Units.MILLISECOND).format();
     }
 
     /**

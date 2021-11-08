@@ -33,10 +33,12 @@ import java.net.URL;
  * URI对象转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class URIConverter extends AbstractConverter<URI> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected URI convertInternal(Object value) {

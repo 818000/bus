@@ -41,16 +41,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.ss.util.SheetUtil;
 
-import java.math.BigDecimal;
-import java.time.temporal.TemporalAccessor;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * Excel表格中单元格工具类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CellKit {
@@ -169,32 +164,7 @@ public class CellKit {
         }
 
         if (null != styleSet) {
-            final CellStyle headCellStyle = styleSet.getHeadCellStyle();
-            final CellStyle cellStyle = styleSet.getCellStyle();
-            if (isHeader && null != headCellStyle) {
-                cell.setCellStyle(headCellStyle);
-            } else if (null != cellStyle) {
-                cell.setCellStyle(cellStyle);
-            }
-        }
-
-        if (value instanceof Date
-                || value instanceof TemporalAccessor
-                || value instanceof Calendar) {
-            // 日期单独定义格式
-            if (null != styleSet && null != styleSet.getCellStyleForDate()) {
-                cell.setCellStyle(styleSet.getCellStyleForDate());
-            }
-        } else if (value instanceof Number) {
-            // 数字单独定义格式
-            if ((value instanceof Double || value instanceof Float || value instanceof BigDecimal) && null != styleSet && null != styleSet.getCellStyleForNumber()) {
-                cell.setCellStyle(styleSet.getCellStyleForNumber());
-            }
-        } else if (value instanceof Hyperlink) {
-            // 自定义超链接样式
-            if (null != styleSet && null != styleSet.getCellStyleForHyperlink()) {
-                cell.setCellStyle(styleSet.getCellStyleForHyperlink());
-            }
+            cell.setCellStyle(styleSet.getStyleByValueType(value, isHeader));
         }
 
         setCellValue(cell, value);

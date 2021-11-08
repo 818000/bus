@@ -26,6 +26,7 @@
 package org.aoju.bus.pager;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ import java.util.List;
  * 新增分页的多项属性
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Paginating<T> extends Serialize<T> {
@@ -166,6 +167,16 @@ public class Paginating<T> extends Serialize<T> {
         return new Paginating<T>(list, navigatePages);
     }
 
+    /**
+     * 返回一个空的 Pageinfo 对象
+     *
+     * @param <T> 分页对象
+     * @return this
+     */
+    public static <T> Paginating<T> emptyPageInfo() {
+        return new Paginating(Collections.emptyList(), 0);
+    }
+
     public void calcByNavigatePages(int navigatePages) {
         setNavigatePages(navigatePages);
         // 计算导航页
@@ -236,6 +247,15 @@ public class Paginating<T> extends Serialize<T> {
         isLastPage = pageNo == pages || pages == 0;
         hasPreviousPage = pageNo > 1;
         hasNextPage = pageNo < pages;
+    }
+
+    /**
+     * 是否包含内容
+     *
+     * @return the boolean
+     */
+    public boolean hasContent() {
+        return this.size > 0;
     }
 
     public int getPageNo() {

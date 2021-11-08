@@ -11,13 +11,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-
 /**
  * 复制jdk16中的Optionalional，进行了一些调整，比jdk8中的Optionalional多了几个实用的函数
  *
  * @param <T> 包裹里元素的类型
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @see java.util.Optional
  * @since JDK 1.8+
  */
@@ -101,6 +100,16 @@ public class Optional<T> {
     }
 
     /**
+     * 以非静态方式获取一个新的 {@code Opt}
+     *
+     * @param value 值
+     * @return 新的 {@code Opt}
+     */
+    public Optional<T> set(T value) {
+        return ofNullable(value);
+    }
+
+    /**
      * 判断包裹里元素的值是否存在，存在为 {@code true}，否则为{@code false}
      *
      * @return 包裹里元素的值存在为 {@code true}，否则为{@code false}
@@ -124,7 +133,7 @@ public class Optional<T> {
      *
      * <p> 例如如果值存在就打印结果
      * <pre>{@code
-     * Optional.ofNullable("Hello Hutool!").ifPresent(Console::log);
+     * Optional.ofNullable("Hello!").ifPresent(Console::log);
      * }</pre>
      *
      * @param action 你想要执行的操作
@@ -143,7 +152,7 @@ public class Optional<T> {
      * <p>
      * 例如值存在就打印对应的值，不存在则用{@code Console.error}打印另一句字符串
      * <pre>{@code
-     * Optional.ofNullable("Hello Hutool!").ifPresentOrElse(Console::log, () -> Console.error("Ops!Something is wrong!"));
+     * Optional.ofNullable("Hello!").ifPresentOrElse(Console::log, () -> Console.error("Ops!Something is wrong!"));
      * }</pre>
      *
      * @param action      包裹里的值存在时的操作
@@ -200,8 +209,8 @@ public class Optional<T> {
      * 如果不存在，返回一个空的{@code Optional}
      * 和 {@link Optional#map}的区别为 传入的操作返回值必须为 Optional
      *
-     * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
+     * @param mapper 值存在时执行的操作
      * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Optional}
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
@@ -211,9 +220,28 @@ public class Optional<T> {
         if (isEmpty()) {
             return empty();
         } else {
-            @SuppressWarnings("unchecked")
-            Optional<U> r = (Optional<U>) mapper.apply(value);
-            return Objects.requireNonNull(r);
+            return ofNullable(mapper.apply(value).orElse(null));
+        }
+    }
+
+    /**
+     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * 如果不存在，返回一个空的{@code Opt}
+     * 和 {@link Optional#map}的区别为 传入的操作返回值必须为 {@link java.util.Optional}
+     *
+     * @param mapper 值存在时执行的操作
+     * @param <U>    操作返回值的类型
+     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * 如果不存在，返回一个空的{@code Opt}
+     * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
+     */
+    public <U> Optional<U> flattedMap(Function<? super T, ? extends java.util.Optional<? extends U>> mapper) {
+        Objects.requireNonNull(mapper);
+        if (isEmpty()) {
+            return empty();
+        } else {
+            java.util.Optional<U> r = (java.util.Optional<U>) mapper.apply(value);
+            return Objects.requireNonNull(ofNullable(r.orElse(null)));
         }
     }
 
@@ -225,7 +253,6 @@ public class Optional<T> {
      * @param action 值存在时执行的操作
      * @return this
      * @throws NullPointerException 如果值存在，并且传入的操作为 {@code null}
-     * @author VampireAchao
      */
     public Optional<T> peek(Consumer<T> action) throws NullPointerException {
         Objects.requireNonNull(action);
@@ -234,6 +261,21 @@ public class Optional<T> {
         }
         action.accept(value);
         return this;
+    }
+
+    /**
+     * 如果包裹里元素的值存在，就执行对应的操作集，并返回本身
+     * 如果不存在，返回一个空的{@code Opt}
+     *
+     * <p>属于 {@link #ifPresent}的链式拓展
+     * <p>属于 {@link #peek(Consumer)}的动态拓展
+     *
+     * @param actions 值存在时执行的操作，动态参数，可传入数组，当数组为一个空数组时并不会抛出 {@code NPE}
+     * @return this
+     * @throws NullPointerException 如果值存在，并且传入的操作集中的元素为 {@code null}
+     */
+    public final Optional<T> peeks(Consumer<T>... actions) throws NullPointerException {
+        return Stream.of(actions).reduce(this, Optional<T>::peek, (opts, opt) -> null);
     }
 
     /**
@@ -248,7 +290,6 @@ public class Optional<T> {
         if (isPresent()) {
             return this;
         } else {
-            @SuppressWarnings("unchecked")
             Optional<T> r = (Optional<T>) supplier.get();
             return Objects.requireNonNull(r);
         }
@@ -347,6 +388,15 @@ public class Optional<T> {
         } else {
             throw exceptionFunction.apply(message);
         }
+    }
+
+    /**
+     * 转换为 {@link java.util.Optional}对象
+     *
+     * @return {@link java.util.Optional}对象
+     */
+    public java.util.Optional<T> toOptional() {
+        return java.util.Optional.ofNullable(this.value);
     }
 
     /**

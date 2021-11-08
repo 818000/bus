@@ -53,10 +53,12 @@ import java.util.function.Function;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class NumberConverter extends AbstractConverter<Number> {
+
+    private static final long serialVersionUID = 1L;
 
     private final Class<? extends Number> targetType;
 

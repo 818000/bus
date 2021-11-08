@@ -56,7 +56,7 @@ import java.util.zip.Checksum;
  * 文件工具类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class FileKit {
@@ -410,6 +410,18 @@ public class FileKit {
 
     /**
      * 递归遍历目录以及子目录中的所有文件
+     * 如果提供path为文件，直接返回过滤结果
+     *
+     * @param path       当前遍历文件或目录
+     * @param fileFilter 文件过滤规则对象，选择要保留的文件，只对文件有效，不过滤目录，null表示接收全部文件
+     * @return 文件列表
+     */
+    public static List<File> loopFiles(Path path, FileFilter fileFilter) {
+        return loopFiles(path, -1, fileFilter);
+    }
+
+    /**
+     * 递归遍历目录以及子目录中的所有文件
      * 如果提供file为文件，直接返回过滤结果
      *
      * @param path       当前遍历文件或目录
@@ -590,15 +602,15 @@ public class FileKit {
      * 创建文件及其父目录,如果这个文件存在,直接返回这个文件
      * 此方法不对File对象类型做判断,如果File不存在,无法判断其类型
      *
-     * @param fullFilePath 文件的全路径,使用POSIX风格
+     * @param path 文件的全路径,使用POSIX风格
      * @return 文件, 若路径为null, 返回null
      * @throws InstrumentException 异常
      */
-    public static File touch(String fullFilePath) throws InstrumentException {
-        if (null == fullFilePath) {
+    public static File touch(String path) throws InstrumentException {
+        if (null == path) {
             return null;
         }
-        return touch(file(fullFilePath));
+        return touch(file(path));
     }
 
     /**
@@ -1889,6 +1901,19 @@ public class FileKit {
     }
 
     /**
+     * 获取{@link Path}文件名
+     *
+     * @param path {@link Path}
+     * @return 文件名
+     */
+    public static String getName(Path path) {
+        if (null == path) {
+            return null;
+        }
+        return path.getFileName().toString();
+    }
+
+    /**
      * 获取文件后缀名，扩展名不带“.”
      *
      * @param file 文件
@@ -1961,12 +1986,12 @@ public class FileKit {
         for (int i = len - 1; i > -1; i--) {
             c = fileName.charAt(i);
             if (len == end && Symbol.C_DOT == c) {
-                //查找最后一个文件名和扩展名的分隔符：.
+                // 查找最后一个文件名和扩展名的分隔符：.
                 end = i;
             }
             if (0 == begin || begin > end) {
                 if (CharsKit.isFileSeparator(c)) {
-                    //查找最后一个路径分隔符(/或者\),如果这个分隔符在.之后,则继续查找,否则结束
+                    // 查找最后一个路径分隔符(/或者\),如果这个分隔符在.之后,则继续查找,否则结束
                     begin = i + 1;
                     break;
                 }
@@ -3292,13 +3317,13 @@ public class FileKit {
     /**
      * 将路径对应文件写入流中，此方法不会关闭输出流
      *
-     * @param in           输入流
-     * @param fullFilePath 文件绝对路径
+     * @param in   输入流
+     * @param path 文件绝对路径
      * @return 目标文件
      * @throws InstrumentException 异常
      */
-    public static File writeFromStream(InputStream in, String fullFilePath) throws InstrumentException {
-        return writeFromStream(in, touch(fullFilePath));
+    public static File writeFromStream(InputStream in, String path) throws InstrumentException {
+        return writeFromStream(in, touch(path));
     }
 
     /**
@@ -3316,13 +3341,13 @@ public class FileKit {
     /**
      * 将流的内容写入文件
      *
-     * @param fullFilePath 文件绝对路径
-     * @param out          输出流
+     * @param path 文件绝对路径
+     * @param out  输出流
      * @return 写出的流byte数
      * @throws InstrumentException 异常
      */
-    public static long writeToStream(String fullFilePath, OutputStream out) throws InstrumentException {
-        return writeToStream(touch(fullFilePath), out);
+    public static long writeToStream(String path, OutputStream out) throws InstrumentException {
+        return writeToStream(touch(path), out);
     }
 
     /**
@@ -3347,8 +3372,8 @@ public class FileKit {
             return Symbol.ZERO;
         }
         final String[] units = new String[]{"B", "kB", "MB", "GB", "TB", "EB"};
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + Symbol.SPACE + units[digitGroups];
+        int digitGroups = (int) (Math.log10(size) / Math.log10(Normal._1024));
+        return new DecimalFormat("#,##0.##").format(size / Math.pow(Normal._1024, digitGroups)) + Symbol.SPACE + units[digitGroups];
     }
 
     /**

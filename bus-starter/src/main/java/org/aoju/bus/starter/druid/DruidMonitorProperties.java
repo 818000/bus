@@ -33,22 +33,47 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Druid 监控配置项
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 @Data
 @ConfigurationProperties(prefix = BusXExtend.DRUID)
 public class DruidMonitorProperties {
 
+    /**
+     * 监控信息显示页面
+     */
     private String DruidStatView;
+    /**
+     * 监控拦截器
+     */
     private String DruidWebStatFilter;
-
+    /**
+     * IP白名单
+     */
     private String allow;
+
+    /**
+     * IP黑名单
+     */
     private String deny;
+    /**
+     * 登录账号
+     */
     private String loginUsername;
+    /**
+     * 登录密码
+     */
     private String loginPassword;
 
-    private String exclusions;
+    /**
+     * 是否能够重置数据
+     */
     private String resetEnable;
+
+    /**
+     * 添加不需要忽略的格式信息
+     */
+    private String exclusions;
 
 }

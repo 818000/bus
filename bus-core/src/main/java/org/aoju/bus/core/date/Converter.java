@@ -40,7 +40,7 @@ import java.util.TimeZone;
  * 日期转换
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Converter extends Formatter {
@@ -478,7 +478,7 @@ public class Converter extends Formatter {
             // 指定本地时间转换 为Instant，取当天日期
             result = ((OffsetTime) temporalAccessor).atDate(LocalDate.now()).toInstant();
         } else {
-            result = Instant.from(temporalAccessor);
+            result = toInstant(DateTime.of(temporalAccessor));
         }
 
         return result;

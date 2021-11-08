@@ -37,10 +37,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Entity 基本信息.
+ * Entity 基本信息
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 @Data
@@ -75,7 +75,7 @@ public class BaseEntity extends Tracer {
     protected String modified;
 
     /**
-     * 当前页码
+     * 分页页码
      */
     @Transient
     protected transient Integer pageNo;

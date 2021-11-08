@@ -25,18 +25,20 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.compress.Deflate;
-import org.aoju.bus.core.compress.Gzip;
-import org.aoju.bus.core.compress.ZipReader;
-import org.aoju.bus.core.compress.ZipWriter;
+import org.aoju.bus.core.compress.*;
 import org.aoju.bus.core.io.resource.Resource;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
@@ -48,12 +50,12 @@ import java.util.zip.ZipOutputStream;
  * 压缩工具类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class ZipKit {
 
-    private static final int DEFAULT_BYTE_ARRAY_LENGTH = 32;
+    private static final int DEFAULT_BYTE_ARRAY_LENGTH = Normal._32;
 
     /**
      * 默认编码,使用平台相关编码
@@ -213,7 +215,7 @@ public class ZipKit {
     /**
      * 对文件或文件目录进行压缩
      *
-     * @param zipOutputStream 生成的Zip到的目标流，不关闭此流
+     * @param zipOutputStream 生成的Zip到的目标流，自动关闭此流
      * @param withSrcDir      是否包含被打包目录，只针对压缩目录有效。若为false，则只压缩目录下的文件或目录，为true则将本目录也压缩
      * @param filter          文件过滤器，通过实现此接口，自定义要过滤的文件(过滤掉哪些文件或文件夹不加入压缩)
      * @param srcFiles        要压缩的源文件或目录。如果压缩一个文件，则为该文件的全路径；如果压缩一个目录，则为该目录的顶层目录路径
@@ -918,6 +920,82 @@ public class ZipKit {
             }
         }
         return fileNames;
+    }
+
+    /**
+     * 在zip文件中添加新文件或目录
+     * 新文件添加在zip根目录，文件夹包括其本身和内容
+     * 如果待添加文件夹是系统根路径（如/或c:/），则只复制文件夹下的内容
+     *
+     * @param zipPath        zip文件的Path
+     * @param appendFilePath 待添加文件Path(可以是文件夹)
+     * @param options        拷贝选项，可选是否覆盖等
+     * @throws IOException IO异常
+     */
+    public static void append(Path zipPath, Path appendFilePath, CopyOption... options) throws IOException {
+        try (FileSystem zipFileSystem = createZip(zipPath.toString())) {
+            if (Files.isDirectory(appendFilePath)) {
+                Path source = appendFilePath.getParent();
+                if (null == source) {
+                    // 如果用户提供的是根路径，则不复制目录，直接复制目录下的内容
+                    source = appendFilePath;
+                }
+                Files.walkFileTree(appendFilePath, new ZipCopyVisitor(source, zipFileSystem, options));
+            } else {
+                Files.copy(appendFilePath, zipFileSystem.getPath(FileKit.getName(appendFilePath)), options);
+            }
+        } catch (FileAlreadyExistsException ignored) {
+            // 不覆盖情况下，文件已存在, 跳过
+        }
+    }
+
+    /**
+     * 创建 {@link FileSystem}
+     *
+     * @param path 文件路径，可以是目录或Zip文件等
+     * @return {@link FileSystem}
+     */
+    public static FileSystem create(String path) {
+        try {
+            return FileSystems.newFileSystem(
+                    Paths.get(path).toUri(),
+                    MapKit.of("create", "true"));
+        } catch (IOException e) {
+            throw new InstrumentException(e);
+        }
+    }
+
+    /**
+     * 创建 Zip的{@link FileSystem}，默认UTF-8编码
+     *
+     * @param path 文件路径，可以是目录或Zip文件等
+     * @return {@link FileSystem}
+     */
+    public static FileSystem createZip(String path) {
+        return createZip(path, null);
+    }
+
+    /**
+     * 创建 Zip的{@link FileSystem}
+     *
+     * @param path    文件路径，可以是目录或Zip文件等
+     * @param charset 编码
+     * @return {@link FileSystem}
+     */
+    public static FileSystem createZip(String path, Charset charset) {
+        if (null == charset) {
+            charset = org.aoju.bus.core.lang.Charset.UTF_8;
+        }
+        final HashMap<String, String> env = new HashMap<>();
+        env.put("create", "true");
+        env.put("encoding", charset.name());
+
+        try {
+            return FileSystems.newFileSystem(
+                    URI.create("jar:" + Paths.get(path).toUri()), env);
+        } catch (IOException e) {
+            throw new InstrumentException(e);
+        }
     }
 
     /**

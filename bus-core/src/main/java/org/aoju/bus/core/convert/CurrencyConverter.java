@@ -31,10 +31,12 @@ import java.util.Currency;
  * 货币{@link Currency} 转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CurrencyConverter extends AbstractConverter<Currency> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected Currency convertInternal(Object value) {

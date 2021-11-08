@@ -47,10 +47,12 @@ import java.util.Map;
  *
  * @param <T> Bean类型
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class BeanConverter<T> extends AbstractConverter<T> {
+
+    private static final long serialVersionUID = 1L;
 
     private final Type beanType;
     private final Class<T> beanClass;

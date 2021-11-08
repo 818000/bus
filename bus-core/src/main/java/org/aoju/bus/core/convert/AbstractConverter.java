@@ -30,6 +30,7 @@ import org.aoju.bus.core.toolkit.CharsKit;
 import org.aoju.bus.core.toolkit.ClassKit;
 import org.aoju.bus.core.toolkit.StringKit;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -37,10 +38,12 @@ import java.util.Map;
  * 转换器不会抛出转换异常,转换失败时会返回{@code null}
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
-public abstract class AbstractConverter<T> implements Converter<T> {
+public abstract class AbstractConverter<T> implements Converter<T>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     public T convert(Object value, T defaultValue) {

@@ -35,15 +35,24 @@ import org.springframework.context.annotation.Bean;
  * Dubbo配置项
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 @Data
 @ConfigurationProperties(prefix = BusXExtend.DUBBO)
 public class DubboProperties {
 
+    /**
+     * 扫描dubbo接口的基本包
+     */
     protected String basePackages;
+    /**
+     * 扫描的包以查找带注解@DubboService的类
+     */
     protected String basePackageClasses;
+    /**
+     * 是否绑定到多个Spring bean
+     */
     protected boolean multiple;
 
     @Bean

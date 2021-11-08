@@ -31,10 +31,12 @@ import java.util.UUID;
  * UUID对象转换器转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class UUIDConverter extends AbstractConverter<UUID> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected UUID convertInternal(Object value) {

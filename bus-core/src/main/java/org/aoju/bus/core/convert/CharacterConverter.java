@@ -32,10 +32,12 @@ import org.aoju.bus.core.toolkit.StringKit;
  * 字符转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CharacterConverter extends AbstractConverter<Character> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected Character convertInternal(Object value) {

@@ -35,10 +35,12 @@ import java.util.Locale;
  * 只提供String转换支持
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class LocaleConverter extends AbstractConverter<Locale> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected Locale convertInternal(Object value) {

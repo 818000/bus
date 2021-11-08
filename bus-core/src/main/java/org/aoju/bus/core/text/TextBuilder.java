@@ -40,17 +40,16 @@ import java.util.Objects;
  * 提供比StringBuffer更灵活和更强大的API
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class TextBuilder implements CharSequence, Appendable, Builder<String> {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * 默认容量
      */
-    private static final int CAPACITY = 16;
+    public static final int CAPACITY = Normal._16;
+    private static final long serialVersionUID = 1L;
     /**
      * 存放的字符数组
      */
@@ -151,10 +150,10 @@ public class TextBuilder implements CharSequence, Appendable, Builder<String> {
      * @param texts 字符串数组
      * @return 总长度
      */
-    private static int totalLength(CharSequence... texts) {
+    public static int totalLength(CharSequence... texts) {
         int totalLength = 0;
         for (CharSequence text : texts) {
-            totalLength += (null == text ? 4 : text.length());
+            totalLength += (null == text ? 0 : text.length());
         }
         return totalLength;
     }

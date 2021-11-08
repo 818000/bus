@@ -25,29 +25,41 @@
  ********************************************************************************/
 package org.aoju.bus.pager;
 
+import org.aoju.bus.pager.dialect.AbstractPaging;
+import org.apache.ibatis.mapping.MappedStatement;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+
 /**
- * 分页插件异常
+ * 自动获取方言
  *
+ * @param <K> 缓存key类型
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
-public class PageException extends RuntimeException {
+public interface AutoDialect<K> {
 
-    public PageException() {
-        super();
-    }
+    /**
+     * 获取用于缓存 {@link #extractDialect } 方法返回值的 key，当返回 null 时不缓存，返回值时先判断是否已存在，不存在时调用 {@link #extractDialect } 再缓存
+     *
+     * @param ms         执行映射的语句
+     * @param dataSource 数据源
+     * @param properties 配置属性
+     * @return the object
+     */
+    K extractDialectKey(MappedStatement ms, DataSource dataSource, Properties properties);
 
-    public PageException(String message) {
-        super(message);
-    }
-
-    public PageException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public PageException(Throwable cause) {
-        super(cause);
-    }
+    /**
+     * 提取 dialect
+     *
+     * @param dialectKey 数据方言对象
+     * @param ms         执行映射的语句
+     * @param dataSource 数据源
+     * @param properties 配置属性
+     * @return the object
+     */
+    AbstractPaging extractDialect(K dialectKey, MappedStatement ms, DataSource dataSource, Properties properties);
 
 }

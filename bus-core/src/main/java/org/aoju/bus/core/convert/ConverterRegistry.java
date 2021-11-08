@@ -54,7 +54,7 @@ import java.util.concurrent.atomic.*;
  * 转换器,默认转换器预定义的一些转换器,自定义转换器存放用户自定的转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class ConverterRegistry {
@@ -169,14 +169,14 @@ public class ConverterRegistry {
      * @throws ConvertException 转换器不存在
      */
     public <T> T convert(Type type, Object value, T defaultValue, boolean isCustomFirst) throws ConvertException {
-        if (TypeKit.isUnknow(type) && null == defaultValue) {
+        if (TypeKit.isUnknown(type) && null == defaultValue) {
             // 对于用户不指定目标类型的情况，返回原值
             return (T) value;
         }
         if (ObjectKit.isNull(value)) {
             return defaultValue;
         }
-        if (TypeKit.isUnknow(type)) {
+        if (TypeKit.isUnknown(type)) {
             type = defaultValue.getClass();
         }
 

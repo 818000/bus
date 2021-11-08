@@ -61,7 +61,7 @@ import java.util.zip.Checksum;
  * 原因是流可能被多次读写,读写关闭后容易造成问题
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class IoKit {
@@ -800,7 +800,7 @@ public class IoKit {
      * @return 内容
      * @throws InstrumentException 异常
      */
-    public static <T extends Collection<String>> T readLines(Reader reader, final T collection) throws InstrumentException {
+    public static <T extends Collection<String>> T readLines(Reader reader, T collection) throws InstrumentException {
         readLines(reader, (LineHandler) line -> collection.add(line));
         return collection;
     }

@@ -34,7 +34,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.*;
-import org.aoju.bus.pager.PageException;
+import org.aoju.bus.core.lang.exception.PageException;
 
 import java.util.*;
 
@@ -52,7 +52,7 @@ import java.util.*;
  * 该类设计为一个独立的工具类，依赖jsqlparser,可以独立使用
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class SqlServerParser {
@@ -330,7 +330,7 @@ public class SqlServerParser {
             processPlainSelect((PlainSelect) selectBody, level + 1);
         } else if (selectBody instanceof WithItem) {
             WithItem withItem = (WithItem) selectBody;
-            if (null != withItem.getSubSelect().getSelectBody()) {
+            if (null != withItem.getSubSelect()) {
                 processSelectBody(withItem.getSubSelect().getSelectBody(), level + 1);
             }
         } else {

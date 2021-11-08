@@ -34,14 +34,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 路由配置
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 @Data
 @ConfigurationProperties(BusXExtend.GOALIE)
 public class GoalieProperties {
 
+    /**
+     * 默认配置
+     */
     private final Config server = new Config();
+    /**
+     * 自定义Spring MVC配置处理
+     */
     private boolean condition;
 
 }

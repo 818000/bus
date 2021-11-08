@@ -55,7 +55,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 在对称加密算法中，使用的密钥只有一个，发收信双方都使用这个密钥对数据进行加密和解密，这就要求解密方事先必须知道加密密钥。
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Crypto implements Encryptor, Decryptor, Serializable {
@@ -347,9 +347,10 @@ public class Crypto implements Encryptor, Decryptor, Serializable {
             throw new CryptoException(e);
         } finally {
             lock.unlock();
+            // CipherOutputStream必须关闭，才能完全写出
+            IoKit.close(cipherOutputStream);
             if (isClose) {
                 IoKit.close(data);
-                IoKit.close(cipherOutputStream);
             }
         }
     }
@@ -396,9 +397,10 @@ public class Crypto implements Encryptor, Decryptor, Serializable {
             throw new CryptoException(e);
         } finally {
             lock.unlock();
+            // CipherOutputStream必须关闭，才能完全写出
+            IoKit.close(cipherInputStream);
             if (isClose) {
                 IoKit.close(data);
-                IoKit.close(cipherInputStream);
             }
         }
     }

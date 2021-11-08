@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * 断言某些对象或值是否符合规定,否则抛出异常 经常用于做变量检查
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Assert {
@@ -898,7 +898,7 @@ public class Assert {
     /**
      * 检查值是否在指定范围内
      *
-     * @param <X>           泛型对象
+     * @param <X>           异常类型
      * @param value         值
      * @param min           最小值（包含）
      * @param max           最大值（包含）

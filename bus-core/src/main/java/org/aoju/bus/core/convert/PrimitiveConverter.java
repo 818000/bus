@@ -46,11 +46,16 @@ import java.util.function.Function;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class PrimitiveConverter extends AbstractConverter<Object> {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 目标类型
+     */
     private final Class<?> targetType;
 
     /**

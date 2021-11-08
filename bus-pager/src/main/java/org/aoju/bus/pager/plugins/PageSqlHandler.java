@@ -25,9 +25,9 @@
  ********************************************************************************/
 package org.aoju.bus.pager.plugins;
 
+import org.aoju.bus.core.lang.exception.PageException;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.pager.Dialect;
-import org.aoju.bus.pager.PageException;
 import org.aoju.bus.pager.cache.Cache;
 import org.aoju.bus.pager.cache.CacheFactory;
 import org.aoju.bus.pager.proxy.CountExecutor;
@@ -49,7 +49,7 @@ import java.util.Properties;
  * 通用分页拦截器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 @Intercepts(

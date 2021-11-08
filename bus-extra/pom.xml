@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-extra</artifactId>
-    <version>6.3.0</version>
+    <version>6.3.1</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -50,9 +50,10 @@
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <tiny.version>2.0.3.RELEASE</tiny.version>
         <bopomofo4j.version>1.0.0</bopomofo4j.version>
+        <houbb.version>0.2.2</houbb.version>
         <jsch.version>0.1.54</jsch.version>
         <zxing.version>3.4.1</zxing.version>
-        <net.version>3.7</net.version>
+        <net.version>3.8.0</net.version>
         <emoji.java.version>5.1.1</emoji.java.version>
         <compress.vetsion>1.21</compress.vetsion>
         <lzo.version>1.0.6</lzo.version>
@@ -113,6 +114,12 @@
             <groupId>com.rnkrsoft.bopomofo4j</groupId>
             <artifactId>bopomofo4j</artifactId>
             <version>${bopomofo4j.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>pinyin</artifactId>
+            <version>${houbb.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>

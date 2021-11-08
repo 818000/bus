@@ -35,10 +35,12 @@ import java.util.Date;
  * 日期转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CalendarConverter extends AbstractConverter<Calendar> {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 日期格式化

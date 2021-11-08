@@ -52,7 +52,7 @@ import java.util.Map;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class QrCodeKit {
@@ -319,7 +319,7 @@ public class QrCodeKit {
         }
         BitMatrix bitMatrix;
         try {
-            bitMatrix = multiFormatWriter.encode(content, format, config.width, config.height, config.toHints());
+            bitMatrix = multiFormatWriter.encode(content, format, config.width, config.height, config.toHints(format));
         } catch (WriterException e) {
             throw new InstrumentException(e);
         }

@@ -51,13 +51,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class CollKit {
@@ -220,6 +221,32 @@ public class CollKit {
      */
     public static <T> List<T> emptyIfNull(List<T> list) {
         return (null == list) ? Collections.emptyList() : list;
+    }
+
+    /**
+     * 如果给定集合为空，返回默认集合
+     *
+     * @param <T>               集合类型
+     * @param <E>               集合元素类型
+     * @param collection        集合
+     * @param defaultCollection 默认数组
+     * @return 非空（empty）的原集合或默认集合
+     */
+    public static <T extends Collection<E>, E> T defaultIfEmpty(T collection, T defaultCollection) {
+        return isEmpty(collection) ? defaultCollection : collection;
+    }
+
+    /**
+     * 如果给定集合为空，返回默认集合
+     *
+     * @param <T>        集合类型
+     * @param <E>        集合元素类型
+     * @param collection 集合
+     * @param supplier   默认值懒加载函数
+     * @return 非空（empty）的原集合或默认集合
+     */
+    public static <T extends Collection<E>, E> T defaultIfEmpty(T collection, Supplier<? extends T> supplier) {
+        return isEmpty(collection) ? supplier.get() : collection;
     }
 
     /**
@@ -541,6 +568,21 @@ public class CollKit {
     }
 
     /**
+     * 判断指定集合是否包含指定值，如果集合为空（null或者空），返回{@code false}，否则找到元素返回{@code true}
+     *
+     * @param collection 集合
+     * @param value      需要查找的值
+     * @return 果集合为空（null或者空），返回{@code false}，否则找到元素返回{@code true}
+     */
+    public static boolean safeContains(Collection<?> collection, Object value) {
+        try {
+            return contains(collection, value);
+        } catch (ClassCastException | NullPointerException e) {
+            return false;
+        }
+    }
+
+    /**
      * 检查给定的迭代器是否包含给定的元素.
      *
      * @param iterator 要检查的迭代器
@@ -823,7 +865,7 @@ public class CollKit {
         if (null == ts) {
             return isSorted ? new LinkedHashSet<>() : new HashSet<>();
         }
-        int initialCapacity = Math.max((int) (ts.length / .75f) + 1, 16);
+        int initialCapacity = Math.max((int) (ts.length / .75f) + 1, Normal._16);
         final HashSet<T> set = isSorted ? new LinkedHashSet<>(initialCapacity) : new HashSet<>(initialCapacity);
         Collections.addAll(set, ts);
         return set;
@@ -2176,7 +2218,7 @@ public class CollKit {
         if (null == collection || null == value) {
             return collection;
         }
-        if (TypeKit.isUnknow(elementType)) {
+        if (TypeKit.isUnknown(elementType)) {
             // 元素类型为空时，使用Object类型来接纳所有类型
             elementType = Object.class;
         }
@@ -3118,7 +3160,7 @@ public class CollKit {
         if (isEmpty(mapCollection)) {
             return new HashSet<>();
         }
-        final HashSet<K> set = new HashSet<>(mapCollection.size() * 16);
+        final HashSet<K> set = new HashSet<>(mapCollection.size() * Normal._16);
         for (Map<K, ?> map : mapCollection) {
             set.addAll(map.keySet());
         }

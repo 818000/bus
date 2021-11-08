@@ -25,8 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.pager.proxy;
 
+import org.aoju.bus.core.lang.exception.PageException;
 import org.aoju.bus.pager.Dialect;
-import org.aoju.bus.pager.PageException;
 import org.aoju.bus.pager.plugins.BoundSqlHandler;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.cache.CacheKey;
@@ -46,7 +46,7 @@ import java.util.Map;
  * count 查询
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public abstract class CountExecutor {

@@ -25,9 +25,9 @@
  ********************************************************************************/
 package org.aoju.bus.pager.proxy;
 
+import org.aoju.bus.core.lang.exception.PageException;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.pager.Page;
-import org.aoju.bus.pager.PageException;
 import org.aoju.bus.pager.Paging;
 import org.apache.ibatis.reflection.MetaObject;
 
@@ -39,7 +39,7 @@ import java.util.Map;
  * 分页参数对象工具类
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public abstract class PageObject {

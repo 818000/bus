@@ -31,10 +31,12 @@ import java.util.concurrent.atomic.AtomicLongArray;
  * {@link AtomicLongArray}转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class AtomicLongArrayConverter extends AbstractConverter<AtomicLongArray> {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected AtomicLongArray convertInternal(Object value) {

@@ -26,13 +26,14 @@
 package org.aoju.bus.core.beans;
 
 import org.aoju.bus.core.lang.SimpleCache;
+import org.aoju.bus.core.lang.function.Func0;
 
 /**
  * Bean属性缓存
  * 缓存用于防止多次反射造成的性能问题
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public enum BeanCache {
@@ -45,20 +46,11 @@ public enum BeanCache {
      * 获得属性名和{@link BeanDesc}Map映射
      *
      * @param beanClass Bean的类
-     * @return 属性名和 {@link BeanDesc} 映射
+     * @param supplier  对象不存在时创建对象的函数
+     * @return 属性名和{@link BeanDesc}映射
      */
-    public BeanDesc getBeanDesc(Class<?> beanClass) {
-        return bdCache.get(beanClass);
-    }
-
-    /**
-     * 加入缓存
-     *
-     * @param beanClass Bean的类
-     * @param BeanDesc  属性名和{@link BeanDesc}映射
-     */
-    public void putBeanDesc(Class<?> beanClass, BeanDesc BeanDesc) {
-        bdCache.put(beanClass, BeanDesc);
+    public BeanDesc getBeanDesc(Class<?> beanClass, Func0<BeanDesc> supplier) {
+        return bdCache.get(beanClass, supplier);
     }
 
 }

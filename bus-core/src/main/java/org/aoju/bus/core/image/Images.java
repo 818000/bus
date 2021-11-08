@@ -33,10 +33,8 @@ import org.aoju.bus.core.image.painter.Painter;
 import org.aoju.bus.core.image.painter.PainterFactory;
 import org.aoju.bus.core.image.painter.TextPainter;
 import org.aoju.bus.core.io.resource.Resource;
-import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.lang.FileType;
 import org.aoju.bus.core.lang.Graphics;
-import org.aoju.bus.core.lang.Scale;
+import org.aoju.bus.core.lang.*;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.*;
 
@@ -61,7 +59,7 @@ import java.util.List;
  * 图像编辑器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class Images implements Serializable {
@@ -99,6 +97,10 @@ public class Images implements Serializable {
      * 计算x,y坐标的时候是否从中心做为原始坐标开始计算
      */
     private boolean positionBaseCentre = true;
+    /**
+     * 画布圆角（针对整图）
+     */
+    private Integer roundCorner;
 
     /**
      * 构造
@@ -137,7 +139,7 @@ public class Images implements Serializable {
     /**
      * @param canvasWidth  画布宽
      * @param canvasHeight 画布高
-     * @param bgColor      背景颜色
+     * @param bgColor      画布颜色（如果需要透明背景，不要设这个参数，比方图片边缘是圆角的场景）
      * @param fileType     输出图片格式
      */
     public Images(int canvasWidth, int canvasHeight, Color bgColor, String fileType) {
@@ -366,6 +368,231 @@ public class Images implements Serializable {
         int des_height = height + len_dalta_height * 2;
 
         return new Rectangle(des_width, des_height);
+    }
+
+    /**
+     * 圆角
+     *
+     * @param srcImage 图片流
+     * @param width    宽度
+     * @param height   高度
+     * @param radius   半径
+     * @return 图片流
+     */
+    public static BufferedImage makeRoundCorner(BufferedImage srcImage, int width, int height, int radius) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.fillRoundRect(0, 0, width, height, radius, radius);
+        g.setComposite(AlphaComposite.SrcIn);
+        g.drawImage(srcImage, 0, 0, width, height, null);
+        g.dispose();
+        return image;
+    }
+
+    /**
+     * 高斯模糊（毛玻璃效果）
+     *
+     * @param srcImage 图片流
+     * @param radius   半径
+     * @return 图片流
+     */
+    public static BufferedImage makeBlur(BufferedImage srcImage, int radius) {
+
+        if (radius < 1) {
+            return srcImage;
+        }
+
+        int w = srcImage.getWidth();
+        int h = srcImage.getHeight();
+
+        int[] pix = new int[w * h];
+        srcImage.getRGB(0, 0, w, h, pix, 0, w);
+
+        int wm = w - 1;
+        int hm = h - 1;
+        int wh = w * h;
+        int div = radius + radius + 1;
+
+        int r[] = new int[wh];
+        int g[] = new int[wh];
+        int b[] = new int[wh];
+        int rsum, gsum, bsum, x, y, i, p, yp, yi, yw;
+        int vmin[] = new int[Math.max(w, h)];
+
+        int divsum = (div + 1) >> 1;
+        divsum *= divsum;
+        int dv[] = new int[Normal._256 * divsum];
+        for (i = 0; i < Normal._256 * divsum; i++) {
+            dv[i] = (i / divsum);
+        }
+
+        yw = yi = 0;
+
+        int[][] stack = new int[div][3];
+        int stackpointer;
+        int stackstart;
+        int[] sir;
+        int rbs;
+        int r1 = radius + 1;
+        int routsum, goutsum, boutsum;
+        int rinsum, ginsum, binsum;
+
+        for (y = 0; y < h; y++) {
+            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
+            for (i = -radius; i <= radius; i++) {
+                p = pix[yi + Math.min(wm, Math.max(i, 0))];
+                sir = stack[i + radius];
+                sir[0] = (p & 0xff0000) >> Normal._16;
+                sir[1] = (p & 0x00ff00) >> 8;
+                sir[2] = (p & 0x0000ff);
+                rbs = r1 - Math.abs(i);
+                rsum += sir[0] * rbs;
+                gsum += sir[1] * rbs;
+                bsum += sir[2] * rbs;
+                if (i > 0) {
+                    rinsum += sir[0];
+                    ginsum += sir[1];
+                    binsum += sir[2];
+                } else {
+                    routsum += sir[0];
+                    goutsum += sir[1];
+                    boutsum += sir[2];
+                }
+            }
+            stackpointer = radius;
+
+            for (x = 0; x < w; x++) {
+
+                r[yi] = dv[rsum];
+                g[yi] = dv[gsum];
+                b[yi] = dv[bsum];
+
+                rsum -= routsum;
+                gsum -= goutsum;
+                bsum -= boutsum;
+
+                stackstart = stackpointer - radius + div;
+                sir = stack[stackstart % div];
+
+                routsum -= sir[0];
+                goutsum -= sir[1];
+                boutsum -= sir[2];
+
+                if (y == 0) {
+                    vmin[x] = Math.min(x + radius + 1, wm);
+                }
+                p = pix[yw + vmin[x]];
+
+                sir[0] = (p & 0xff0000) >> Normal._16;
+                sir[1] = (p & 0x00ff00) >> 8;
+                sir[2] = (p & 0x0000ff);
+
+                rinsum += sir[0];
+                ginsum += sir[1];
+                binsum += sir[2];
+
+                rsum += rinsum;
+                gsum += ginsum;
+                bsum += binsum;
+
+                stackpointer = (stackpointer + 1) % div;
+                sir = stack[(stackpointer) % div];
+
+                routsum += sir[0];
+                goutsum += sir[1];
+                boutsum += sir[2];
+
+                rinsum -= sir[0];
+                ginsum -= sir[1];
+                binsum -= sir[2];
+
+                yi++;
+            }
+            yw += w;
+        }
+        for (x = 0; x < w; x++) {
+            rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
+            yp = -radius * w;
+            for (i = -radius; i <= radius; i++) {
+                yi = Math.max(0, yp) + x;
+
+                sir = stack[i + radius];
+
+                sir[0] = r[yi];
+                sir[1] = g[yi];
+                sir[2] = b[yi];
+
+                rbs = r1 - Math.abs(i);
+
+                rsum += r[yi] * rbs;
+                gsum += g[yi] * rbs;
+                bsum += b[yi] * rbs;
+
+                if (i > 0) {
+                    rinsum += sir[0];
+                    ginsum += sir[1];
+                    binsum += sir[2];
+                } else {
+                    routsum += sir[0];
+                    goutsum += sir[1];
+                    boutsum += sir[2];
+                }
+
+                if (i < hm) {
+                    yp += w;
+                }
+            }
+            yi = x;
+            stackpointer = radius;
+            for (y = 0; y < h; y++) {
+                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << Normal._16) | (dv[gsum] << 8) | dv[bsum];
+
+                rsum -= routsum;
+                gsum -= goutsum;
+                bsum -= boutsum;
+
+                stackstart = stackpointer - radius + div;
+                sir = stack[stackstart % div];
+
+                routsum -= sir[0];
+                goutsum -= sir[1];
+                boutsum -= sir[2];
+
+                if (x == 0) {
+                    vmin[y] = Math.min(y + r1, hm) * w;
+                }
+                p = x + vmin[y];
+
+                sir[0] = r[p];
+                sir[1] = g[p];
+                sir[2] = b[p];
+
+                rinsum += sir[0];
+                ginsum += sir[1];
+                binsum += sir[2];
+
+                rsum += rinsum;
+                gsum += ginsum;
+                bsum += binsum;
+
+                stackpointer = (stackpointer + 1) % div;
+                sir = stack[stackpointer];
+
+                routsum += sir[0];
+                goutsum += sir[1];
+                boutsum += sir[2];
+
+                rinsum -= sir[0];
+                ginsum -= sir[1];
+                binsum -= sir[2];
+
+                yi += w;
+            }
+        }
+
+        srcImage.setRGB(0, 0, w, h, pix, 0, w);
+        return srcImage;
     }
 
     /**
@@ -894,6 +1121,10 @@ public class Images implements Serializable {
         }
         g.dispose();
 
+        // 处理整图圆角
+        if (roundCorner != null) {
+            this.srcImage = makeRoundCorner(this.srcImage, canvasWidth, canvasHeight, roundCorner);
+        }
         return this.srcImage;
     }
 
@@ -1104,6 +1335,14 @@ public class Images implements Serializable {
         bgElement.setBlur(blur);
     }
 
+    /**
+     * 设置画布圆角（针对整图）
+     *
+     * @param roundCorner 模糊值
+     */
+    public void setCanvasRoundCorner(Integer roundCorner) {
+        this.roundCorner = roundCorner;
+    }
 
     /**
      * 获取int类型的图片类型

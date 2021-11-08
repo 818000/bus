@@ -38,11 +38,16 @@ import java.util.List;
  * 数组转换器,包括原始类型数组
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class ArrayConverter extends AbstractConverter<Object> {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 目标类型
+     */
     private final Class<?> targetType;
     /**
      * 目标元素类型

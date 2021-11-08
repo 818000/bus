@@ -38,10 +38,12 @@ import java.util.Date;
  * 日期转换器
  *
  * @author Kimi Liu
- * @version 6.3.0
+ * @version 6.3.1
  * @since JDK 1.8+
  */
 public class DateConverter extends AbstractConverter<Date> {
+
+    private static final long serialVersionUID = 1L;
 
     private final Class<? extends Date> targetType;
     /**
