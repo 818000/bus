@@ -36,7 +36,7 @@ import org.aoju.bus.core.lang.Normal;
  */
 public class NeuQuant {
 
-    protected static final int NETSIZE =  Normal._256; /* number of colours used */
+    protected static final int NETSIZE = Normal._256; /* number of colours used */
 
     /* four primes near 500 - assume no image has a length so large */
     /* that it is divisible by all four primes */
@@ -70,13 +70,12 @@ public class NeuQuant {
     /* defs for freq and bias */
     protected static final int INTBIASSHIFT = Normal._16; /* bias for fractions */
     protected static final int INTBIAS = (1 << INTBIASSHIFT);
-    protected static final int GAMMASHIFT = 10; /* gamma = 1024 */
-    protected static final int GAMMA = (1 << GAMMASHIFT);
-    protected static final int BETASHIFT = 10;
     protected static final int BETA = (INTBIAS >> BETASHIFT); /* beta = 1/1024 */
     protected static final int BETAGAMMA =
             (INTBIAS << (GAMMASHIFT - BETASHIFT));
-
+    protected static final int GAMMASHIFT = 10; /* gamma = 1024 */
+    protected static final int GAMMA = (1 << GAMMASHIFT);
+    protected static final int BETASHIFT = 10;
     /* defs for decreasing radius factor */
     protected static final int INITRAD = (NETSIZE >> 3); /* for 256 cols, radius starts */
     protected static final int RADIUSBIASSHIFT = 6; /* at 32.0 biased by 6 bits */
@@ -104,7 +103,7 @@ public class NeuQuant {
     //   typedef int pixel[4];                /* BGRc */
     protected int[][] network; /* the network itself - [netsize][4] */
 
-    protected int[] netindex = new int[ Normal._256];
+    protected int[] netindex = new int[Normal._256];
     /* for network lookup - really 256 */
 
     protected int[] bias = new int[NETSIZE];
@@ -198,7 +197,7 @@ public class NeuQuant {
             }
         }
         netindex[previouscol] = (startpos + MAXNETPOS) >> 1;
-        for (j = previouscol + 1; j <  Normal._256; j++)
+        for (j = previouscol + 1; j < Normal._256; j++)
             netindex[j] = MAXNETPOS; /* really 256 */
     }
 
