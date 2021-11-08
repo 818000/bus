@@ -29,6 +29,8 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.mac.SystemB;
 import com.sun.jna.platform.mac.SystemB.Statfs;
 import org.aoju.bus.core.annotation.ThreadSafe;
+import org.aoju.bus.core.lang.Charset;
+import org.aoju.bus.core.lang.Normal;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -58,7 +60,6 @@ public final class Fsstat {
         queryFsstat(fs, numfs * new Statfs().size(), SystemB.MNT_NOWAIT);
         return fs;
     }
-
     /**
      * Query fsstat to map partitions to mount points
      *

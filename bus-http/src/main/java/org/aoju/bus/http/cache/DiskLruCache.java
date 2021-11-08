@@ -180,6 +180,32 @@ public final class DiskLruCache implements Closeable, Flushable {
         initialized = true;
     }
 
+    private final Runnable cleanupRunnable = new Runnable() {
+        public void run() {
+            synchronized (DiskLruCache.this) {
+                if (!initialized | closed) {
+                    return;
+                }
+
+                try {
+                    trimToSize();
+                } catch (IOException ignored) {
+                    mostRecentTrimFailed = true;
+                }
+
+                try {
+                    if (journalRebuildRequired()) {
+                        rebuildJournal();
+                        redundantOpCount = 0;
+                    }
+                } catch (IOException e) {
+                    mostRecentRebuildFailed = true;
+                    journalWriter = IoKit.buffer(IoKit.blackhole());
+                }
+            }
+        }
+    };
+
     private void readJournal() throws IOException {
         BufferSource source = IoKit.buffer(fileSystem.source(journalFile));
         try {
@@ -218,32 +244,6 @@ public final class DiskLruCache implements Closeable, Flushable {
             IoKit.close(source);
         }
     }
-
-    private final Runnable cleanupRunnable = new Runnable() {
-        public void run() {
-            synchronized (DiskLruCache.this) {
-                if (!initialized | closed) {
-                    return;
-                }
-
-                try {
-                    trimToSize();
-                } catch (IOException ignored) {
-                    mostRecentTrimFailed = true;
-                }
-
-                try {
-                    if (journalRebuildRequired()) {
-                        rebuildJournal();
-                        redundantOpCount = 0;
-                    }
-                } catch (IOException e) {
-                    mostRecentRebuildFailed = true;
-                    journalWriter = IoKit.buffer(IoKit.blackhole());
-                }
-            }
-        }
-    };
 
     private BufferSink newJournalWriter() throws FileNotFoundException {
         Sink fileSink = fileSystem.appendingSink(journalFile);
@@ -966,6 +966,5 @@ public final class DiskLruCache implements Closeable, Flushable {
             }
         }
     }
-
 
 }

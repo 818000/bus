@@ -167,16 +167,6 @@ public class Paginating<T> extends Serialize<T> {
         return new Paginating<T>(list, navigatePages);
     }
 
-    /**
-     * 返回一个空的 Pageinfo 对象
-     *
-     * @param <T> 分页对象
-     * @return this
-     */
-    public static <T> Paginating<T> emptyPageInfo() {
-        return new Paginating(Collections.emptyList(), 0);
-    }
-
     public void calcByNavigatePages(int navigatePages) {
         setNavigatePages(navigatePages);
         // 计算导航页
@@ -185,6 +175,16 @@ public class Paginating<T> extends Serialize<T> {
         calcPage();
         // 判断页面边界
         judgePageBoudary();
+    }
+
+    /**
+     * 返回一个空的 Pageinfo 对象
+     *
+     * @param <T> 分页对象
+     * @return this
+     */
+    public static <T> Paginating<T> emptyPageInfo() {
+        return new Paginating(Collections.emptyList(), 0);
     }
 
     /**
