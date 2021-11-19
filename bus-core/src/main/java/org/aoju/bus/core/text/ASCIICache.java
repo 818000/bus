@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,58 +23,36 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix;
+package org.aoju.bus.core.text;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.health.Executor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * Utility to query xrandr
+ * ASCII字符对应的字符串缓存
  *
  * @author Kimi Liu
  * @version 6.3.1
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class Xrandr {
+public class ASCIICache {
 
-    private static final String[] XRANDR_VERBOSE = {"xrandr", "--verbose"};
+    private static final String[] CACHE = new String[Normal._128];
 
-    private Xrandr() {
+    static {
+        for (char c = 0; c < Normal._128; c++) {
+            CACHE[c] = String.valueOf(c);
+        }
     }
 
-    public static List<byte[]> getEdidArrays() {
-        // Special handling for X commands, don't use LC_ALL
-        List<String> xrandr = Executor.runNative(XRANDR_VERBOSE, null);
-        // xrandr reports edid in multiple lines. After seeing a line containing
-        // EDID, read subsequent lines of hex until 256 characters are reached
-        if (xrandr.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<byte[]> displays = new ArrayList<>();
-        StringBuilder sb = null;
-        for (String s : xrandr) {
-            if (s.contains("EDID")) {
-                sb = new StringBuilder();
-            } else if (null != sb) {
-                sb.append(s.trim());
-                if (sb.length() < Normal._256) {
-                    continue;
-                }
-                String edidStr = sb.toString();
-                byte[] edid = StringKit.hexStringToByte(edidStr);
-                if (edid.length >= Normal._128) {
-                    displays.add(edid);
-                }
-                sb = null;
-            }
-        }
-        return displays;
+    /**
+     * 字符转为字符串
+     * 如果为ASCII字符，使用缓存
+     *
+     * @param c 字符
+     * @return 字符串
+     */
+    public static String toString(char c) {
+        return c < Normal._128 ? CACHE[c] : String.valueOf(c);
     }
+
 }
