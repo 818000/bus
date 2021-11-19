@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org Greg Messner and other contributors.         *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,58 +23,33 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.unix;
+package org.aoju.bus.gitlab.hooks.web;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.health.Executor;
+import org.aoju.bus.gitlab.support.JacksonJson;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+public class EventReleaseSource {
+    private String format;
+    private String url;
 
-/**
- * Utility to query xrandr
- *
- * @author Kimi Liu
- * @version 6.3.1
- * @since JDK 1.8+
- */
-@ThreadSafe
-public final class Xrandr {
-
-    private static final String[] XRANDR_VERBOSE = {"xrandr", "--verbose"};
-
-    private Xrandr() {
+    public String getFormat() {
+        return format;
     }
 
-    public static List<byte[]> getEdidArrays() {
-        // Special handling for X commands, don't use LC_ALL
-        List<String> xrandr = Executor.runNative(XRANDR_VERBOSE, null);
-        // xrandr reports edid in multiple lines. After seeing a line containing
-        // EDID, read subsequent lines of hex until 256 characters are reached
-        if (xrandr.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<byte[]> displays = new ArrayList<>();
-        StringBuilder sb = null;
-        for (String s : xrandr) {
-            if (s.contains("EDID")) {
-                sb = new StringBuilder();
-            } else if (null != sb) {
-                sb.append(s.trim());
-                if (sb.length() < Normal._256) {
-                    continue;
-                }
-                String edidStr = sb.toString();
-                byte[] edid = StringKit.hexStringToByte(edidStr);
-                if (edid.length >= Normal._128) {
-                    displays.add(edid);
-                }
-                sb = null;
-            }
-        }
-        return displays;
+    public void setFormat(final String format) {
+        this.format = format;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
+    }
+
+    @Override
+    public String toString() {
+        return (JacksonJson.toJsonString(this));
+    }
+
 }
