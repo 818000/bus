@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  * A CPU
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -166,7 +166,7 @@ final class AixCentralProcessor extends AbstractCentralProcessor {
         // This machine runs at 1000 MHz
 
         long[] freqs = new long[getLogicalProcessorCount()];
-        Arrays.fill(freqs, -1);
+        Arrays.fill(freqs, Normal.__1);
         String freqMarker = "runs at";
         int idx = 0;
         for (final String checkLine : Executor.runNative("pmcycles -m")) {

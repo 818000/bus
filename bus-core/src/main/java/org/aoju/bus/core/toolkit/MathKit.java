@@ -40,7 +40,10 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +52,7 @@ import java.util.regex.Pattern;
  * 计量标准
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class MathKit {
@@ -652,6 +655,9 @@ public class MathKit {
      * @return 两个参数的商
      */
     public static BigDecimal div(Number v1, Number v2, int scale, RoundingMode roundingMode) {
+        if (v1 instanceof BigDecimal && v2 instanceof BigDecimal) {
+            return div((BigDecimal) v1, (BigDecimal) v2, scale, roundingMode);
+        }
         return div(v1.toString(), v2.toString(), scale, roundingMode);
     }
 
@@ -1270,13 +1276,12 @@ public class MathKit {
             throw new InstrumentException("Size is larger than range between begin and end!");
         }
 
-        Random ran = new Random();
-        Set<Integer> set = new HashSet<>();
+        Set<Integer> set = new HashSet<>(size, 1);
         while (set.size() < size) {
-            set.add(begin + ran.nextInt(end - begin));
+            set.add(begin + RandomKit.randomInt(end - begin));
         }
 
-        return set.toArray(new Integer[size]);
+        return set.toArray(new Integer[0]);
     }
 
     /**
@@ -3200,6 +3205,26 @@ public class MathKit {
             }
         }
         return suffix;
+    }
+
+    /**
+     * 检查是否为奇数
+     *
+     * @param num 被判断的数值
+     * @return 是否是奇数
+     */
+    public static boolean isOdd(int num) {
+        return (num & 1) == 1;
+    }
+
+    /**
+     * 检查是否为偶数
+     *
+     * @param num 被判断的数值
+     * @return 是否是偶数
+     */
+    public static boolean isEven(int num) {
+        return false == isOdd(num);
     }
 
     /**

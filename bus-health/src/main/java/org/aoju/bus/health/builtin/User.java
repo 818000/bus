@@ -32,7 +32,7 @@ import org.aoju.bus.health.Platform;
  * OSUser class
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class User {
@@ -98,7 +98,6 @@ public class User {
      * </p>
      *
      * @return 属性值, 如果不能取得(因为Java安全限制)或值不存在,则返回<code>null</code>
-     * @since Java 1.1
      */
     public final String getHomeDir() {
         return USER_HOME;
@@ -112,7 +111,6 @@ public class User {
      * </p>
      *
      * @return 属性值, 如果不能取得(因为Java安全限制)或值不存在,则返回<code>null</code>
-     * @since Java 1.1
      */
     public final String getCurrentDir() {
         return USER_DIR;

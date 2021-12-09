@@ -38,7 +38,7 @@ import java.util.*;
  * 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class ReflectKit {
@@ -401,13 +401,7 @@ public class ReflectKit {
      */
     public static <T> Constructor<T>[] getConstructors(Class<T> beanClass) throws SecurityException {
         Assert.notNull(beanClass);
-        Constructor<?>[] constructors = CONSTRUCTORS_CACHE.get(beanClass);
-        if (null != constructors) {
-            return (Constructor<T>[]) constructors;
-        }
-
-        constructors = getConstructorsDirectly(beanClass);
-        return (Constructor<T>[]) CONSTRUCTORS_CACHE.put(beanClass, constructors);
+        return (Constructor<T>[]) CONSTRUCTORS_CACHE.get(beanClass, () -> getConstructorsDirectly(beanClass));
     }
 
     /**
@@ -418,7 +412,6 @@ public class ReflectKit {
      * @throws SecurityException 安全检查异常
      */
     public static Constructor<?>[] getConstructorsDirectly(Class<?> beanClass) throws SecurityException {
-        Assert.notNull(beanClass);
         return beanClass.getDeclaredConstructors();
     }
 
@@ -443,13 +436,8 @@ public class ReflectKit {
      * @throws SecurityException 安全检查异常
      */
     public static Field[] getFields(Class<?> beanClass) throws SecurityException {
-        Field[] allFields = FIELDS_CACHE.get(beanClass);
-        if (null != allFields) {
-            return allFields;
-        }
-
-        allFields = getFields(beanClass, true);
-        return FIELDS_CACHE.put(beanClass, allFields);
+        Assert.notNull(beanClass);
+        return FIELDS_CACHE.get(beanClass, () -> getFields(beanClass, true));
     }
 
     /**
@@ -745,13 +733,8 @@ public class ReflectKit {
      * @throws SecurityException 安全检查异常
      */
     public static Method[] getMethods(Class<?> beanClass) throws SecurityException {
-        Method[] allMethods = METHODS_CACHE.get(beanClass);
-        if (null != allMethods) {
-            return allMethods;
-        }
-
-        allMethods = getMethodsDirectly(beanClass, true);
-        return METHODS_CACHE.put(beanClass, allMethods);
+        Assert.notNull(beanClass);
+        return METHODS_CACHE.get(beanClass, () -> getMethods(beanClass, true));
     }
 
     /**
@@ -762,7 +745,7 @@ public class ReflectKit {
      * @return 方法列表
      * @throws SecurityException 安全检查异常
      */
-    public static Method[] getMethodsDirectly(Class<?> beanClass, boolean withSuperClassMethods) throws SecurityException {
+    public static Method[] getMethods(Class<?> beanClass, boolean withSuperClassMethods) throws SecurityException {
         Assert.notNull(beanClass);
 
         Method[] allMethods = null;

@@ -44,7 +44,7 @@ import java.util.Map;
  * A Power Source
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -76,7 +76,7 @@ public final class FreeBsdPowerSource extends AbstractPowerSource {
         double psRemainingCapacityPercent = 1d;
         double psTimeRemainingEstimated = -1d; // -1 = unknown, -2 = unlimited
         double psPowerUsageRate = 0d;
-        int psVoltage = -1;
+        int psVoltage = Normal.__1;
         double psAmperage = 0d;
         boolean psPowerOnLine = false;
         boolean psCharging = false;
@@ -85,7 +85,7 @@ public final class FreeBsdPowerSource extends AbstractPowerSource {
         int psCurrentCapacity = 0;
         int psMaxCapacity = 1;
         int psDesignCapacity = 1;
-        int psCycleCount = -1;
+        int psCycleCount = Normal.__1;
         LocalDate psManufactureDate = null;
 
         double psTemperature = 0d;

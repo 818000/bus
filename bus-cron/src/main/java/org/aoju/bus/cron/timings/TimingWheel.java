@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * 一个单独的线程推进时间一槽一槽的移动，并执行槽中的任务
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class TimingWheel {
@@ -67,7 +67,6 @@ public class TimingWheel {
      * @param consumer    任务处理器
      */
     public TimingWheel(long tickMs, int wheelSize, long currentTime, Consumer<TimerTaskList> consumer) {
-        this.currentTime = currentTime;
         this.tickMs = tickMs;
         this.wheelSize = wheelSize;
         this.interval = tickMs * wheelSize;

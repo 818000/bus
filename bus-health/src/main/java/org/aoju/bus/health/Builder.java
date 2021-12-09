@@ -65,7 +65,7 @@ import java.util.regex.Pattern;
  * String parsing utility.
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -907,28 +907,6 @@ public final class Builder {
     }
 
     /**
-     * Parse a string of hexadecimal digits into a byte array
-     *
-     * @param digits The string to be parsed
-     * @return a byte array with each pair of characters converted to a byte, or
-     * empty array if the string is not valid hex
-     */
-    public static byte[] hexStringToByteArray(String digits) {
-        int len = digits.length();
-        // Check if string is valid hex
-        if (!RegEx.VALID_HEX.matcher(digits).matches() || (len & 0x1) != 0) {
-            Logger.warn("Invalid hexadecimal string: {}", digits);
-            return new byte[0];
-        }
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) (Character.digit(digits.charAt(i), Normal._16) << 4
-                    | Character.digit(digits.charAt(i + 1), Normal._16));
-        }
-        return data;
-    }
-
-    /**
      * Parse a human readable ASCII string into a byte array, truncating or padding
      * with zeros (if necessary) so the array has the specified length.
      *
@@ -1152,7 +1130,9 @@ public final class Builder {
                 milliseconds += parseLongOrDefault(m.group(3), 0L) * 60_000L;
             }
             milliseconds += parseLongOrDefault(m.group(4), 0L) * 1000L;
-            milliseconds += (long) (1000 * parseDoubleOrDefault("0." + m.group(5), 0d));
+            if (m.group(5) != null) {
+                milliseconds += (long) (1000 * parseDoubleOrDefault("0." + m.group(5), 0d));
+            }
             return milliseconds;
         }
         return defaultLong;
@@ -1973,7 +1953,7 @@ public final class Builder {
 
         double number = parseDoubleOrDefault(mem[0], 0L);
         if (mem.length == 2 && null != mem[1] && mem[1].length() >= 1) {
-            switch ((mem[1].charAt(0))) {
+            switch (mem[1].charAt(0)) {
                 case 'T':
                     number *= 1_000_000_000_000L;
                     break;
@@ -2051,7 +2031,7 @@ public final class Builder {
                 }
                 // Otherwise add string and reset start
                 // Intentionally using platform default charset
-                strList.add(new String(bytes, start, end - start));
+                strList.add(new String(bytes, start, end - start, Charset.UTF_8));
                 start = end + 1;
             }
         } while (end++ < bytes.length);

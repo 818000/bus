@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * 字符串切分器，封装统一的字符串分割静态方法
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class TextSplitter {
@@ -165,7 +165,7 @@ public class TextSplitter {
      * @return 切分后的集合
      */
     public static List<String> split(CharSequence text, char separator, int limit, boolean isTrim, boolean ignoreEmpty, boolean ignoreCase) {
-        return split(text, separator, limit, ignoreEmpty, trimFunc(isTrim));
+        return split(text, separator, limit, ignoreEmpty, ignoreCase, trimFunc(isTrim));
     }
 
     /**

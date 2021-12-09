@@ -27,6 +27,7 @@ package org.aoju.bus.core.toolkit;
 
 import org.aoju.bus.core.builder.EqualsBuilder;
 import org.aoju.bus.core.builder.HashCodeBuilder;
+import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.awt.geom.Point2D;
@@ -40,7 +41,7 @@ import java.util.List;
  * 地理区域坐标距离计算工具类
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class GeoKit {
@@ -590,7 +591,7 @@ public class GeoKit {
             double value = Math.hypot((point.longitude - center.longitude), (point.latitude - center.latitude));
             if (value > r) {
                 // 点在圆外
-                return -1;
+                return Normal.__1;
             } else if (value < r) {
                 // 点在圆内
                 return 1;

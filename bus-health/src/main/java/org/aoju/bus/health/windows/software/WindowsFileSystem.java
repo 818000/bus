@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * represented by a drive letter, e.g., "A:\" and "C:\"
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -154,7 +154,7 @@ public class WindowsFileSystem extends AbstractFileSystem {
         aVolume = new char[BUFSIZE];
 
         hVol = Kernel32.INSTANCE.FindFirstVolume(aVolume, BUFSIZE);
-        if (hVol == WinBase.INVALID_HANDLE_VALUE) {
+        if (WinBase.INVALID_HANDLE_VALUE.equals(hVol)) {
             return fs;
         }
         try {

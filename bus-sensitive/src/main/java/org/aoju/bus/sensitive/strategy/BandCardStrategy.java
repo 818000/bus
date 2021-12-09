@@ -37,7 +37,7 @@ import org.aoju.bus.sensitive.provider.AbstractProvider;
  * 6227 0383 3938 3938 393 脱敏结果: 6227 **** **** ***8 393
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class BandCardStrategy extends AbstractProvider {
@@ -51,7 +51,7 @@ public class BandCardStrategy extends AbstractProvider {
         String bankCard = object.toString();
         return StringKit.left(bankCard, 4).concat(
                 StringKit.removeStart(
-                        StringKit.leftPad(
+                        StringKit.padPre(
                                 StringKit.right(bankCard, 4),
                                 StringKit.length(bankCard), shield.shadow()
                         ),

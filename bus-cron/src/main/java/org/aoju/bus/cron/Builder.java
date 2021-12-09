@@ -44,7 +44,7 @@ import java.util.List;
  * {@link #setMatchSecond(boolean)} 方法用于定义是否使用秒匹配模式,如果为true,则定时任务表达式中的第一位为秒,否则为分,默认是分
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public final class Builder {
@@ -140,13 +140,14 @@ public final class Builder {
      * 移除任务
      *
      * @param schedulerId 任务ID
+     * @return 是否移除成功，{@code false}表示未找到对应ID的任务
      */
-    public static void remove(String schedulerId) {
-        scheduler.deschedule(schedulerId);
+    public static boolean remove(String schedulerId) {
+        return scheduler.descheduleWithStatus(schedulerId);
     }
 
     /**
-     * 移除Task
+     * 更新Task的执行时间规则
      *
      * @param id      Task的ID
      * @param pattern {@link CronPattern}

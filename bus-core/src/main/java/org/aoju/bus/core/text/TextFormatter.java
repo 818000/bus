@@ -35,7 +35,7 @@ import java.util.Map;
  * 字符串格式化工具
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class TextFormatter {
@@ -63,7 +63,7 @@ public class TextFormatter {
      * 如果想输出占位符使用 \\转义即可，如果想输出占位符之前的 \ 使用双转义符 \\\\ 即可
      * 例：
      * 通常使用：format("this is {} for {}", "{}", "a", "b") - this is a for b
-     * 转义{}： format("this is \\{} for {}", "{}", "a", "b") - this is \{} for a
+     * 转义{}： format("this is \\{} for {}", "{}", "a", "b") - this is {} for a
      * 转义\： format("this is \\\\{} for {}", "{}", "a", "b") - this is \a for b
      *
      * @param template    字符串模板

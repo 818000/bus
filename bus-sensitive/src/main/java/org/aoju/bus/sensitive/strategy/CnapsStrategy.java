@@ -36,7 +36,7 @@ import org.aoju.bus.sensitive.provider.AbstractProvider;
  * 前四位明文,后面脱敏
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class CnapsStrategy extends AbstractProvider {
@@ -48,7 +48,7 @@ public class CnapsStrategy extends AbstractProvider {
         }
         final Shield shield = context.getShield();
         String snapCard = object.toString();
-        return StringKit.rightPad(
+        return StringKit.padPre(
                 StringKit.left(snapCard, 4),
                 StringKit.length(snapCard),
                 StringKit.fill(10, shield.shadow()

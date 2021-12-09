@@ -37,7 +37,7 @@ import java.util.Map;
  * 将一行数据转换为Map，key为指定行，value为当前行对应位置的值
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public abstract class MapRowHandler extends AbstractRowHandler<Map<String, Object>> {
@@ -61,16 +61,16 @@ public abstract class MapRowHandler extends AbstractRowHandler<Map<String, Objec
     public MapRowHandler(int headerRowIndex, int startRowIndex, int endRowIndex) {
         super(startRowIndex, endRowIndex);
         this.headerRowIndex = headerRowIndex;
-        this.convertFunc = (rowList) -> IterKit.toMap(headerList, rowList);
+        this.convertFunc = (rowCells) -> IterKit.toMap(headerList, rowCells);
     }
 
     @Override
-    public void handle(int sheetIndex, long rowIndex, List<Object> rowList) {
+    public void handle(int sheetIndex, long rowIndex, List<Object> rowCells) {
         if (rowIndex == this.headerRowIndex) {
-            this.headerList = CollKit.unmodifiable(Convert.toList(String.class, rowList));
+            this.headerList = CollKit.unmodifiable(Convert.toList(String.class, rowCells));
             return;
         }
-        super.handle(sheetIndex, rowIndex, rowList);
+        super.handle(sheetIndex, rowIndex, rowCells);
     }
 
 }

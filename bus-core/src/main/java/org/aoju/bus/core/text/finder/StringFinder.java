@@ -26,13 +26,14 @@
 package org.aoju.bus.core.text.finder;
 
 import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.toolkit.CharsKit;
 
 /**
  * 字符查找器
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class StringFinder extends TextFinder {
@@ -57,7 +58,28 @@ public class StringFinder extends TextFinder {
     @Override
     public int start(int from) {
         Assert.notNull(this.text, "Text to find must be not null!");
-        return StringKit.indexOf(this.text, this.word, from, caseInsensitive);
+        final int subLen = this.word.length();
+
+        if (from < 0) {
+            from = 0;
+        }
+        int endLimit = getValidEndIndex();
+        if (negative) {
+            for (int i = from; i > endLimit; i--) {
+                if (CharsKit.isSubEquals(text, i, this.word, 0, subLen, caseInsensitive)) {
+                    return i;
+                }
+            }
+        } else {
+            endLimit = endLimit - subLen + 1;
+            for (int i = from; i < endLimit; i++) {
+                if (CharsKit.isSubEquals(text, i, this.word, 0, subLen, caseInsensitive)) {
+                    return i;
+                }
+            }
+        }
+
+        return Normal.__1;
     }
 
     @Override

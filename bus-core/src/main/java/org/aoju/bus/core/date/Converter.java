@@ -26,7 +26,7 @@
 package org.aoju.bus.core.date;
 
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.toolkit.CharsKit;
 
 import java.sql.Timestamp;
 import java.time.*;
@@ -40,7 +40,7 @@ import java.util.TimeZone;
  * 日期转换
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class Converter extends Formatter {
@@ -833,11 +833,11 @@ public class Converter extends Formatter {
      * @return 时分秒转换后的秒数
      */
     public static int toSecond(String time) {
-        if (StringKit.isEmpty(time)) {
+        if (CharsKit.isEmpty(time)) {
             return 0;
         }
 
-        final List<String> hms = StringKit.splitTrim(time, Symbol.COLON, 3, true);
+        final List<String> hms = CharsKit.splitTrim(time, Symbol.C_COLON, 3);
         int lastIndex = hms.size() - 1;
 
         int result = 0;

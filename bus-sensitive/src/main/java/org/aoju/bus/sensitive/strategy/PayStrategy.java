@@ -37,7 +37,7 @@ import org.aoju.bus.sensitive.provider.AbstractProvider;
  * 签约协议号脱敏格式为前6位后6位保留明文,中间脱敏
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class PayStrategy extends AbstractProvider {
@@ -51,7 +51,7 @@ public class PayStrategy extends AbstractProvider {
         String agreementNo = object.toString();
         return StringKit.left(agreementNo, 6).concat(
                 StringKit.removeStart(
-                        StringKit.leftPad(
+                        StringKit.padPre(
                                 StringKit.right(agreementNo, 6),
                                 StringKit.length(agreementNo), shield.shadow()
                         ),

@@ -15,7 +15,7 @@ import java.util.function.Function;
  * 字符连接器（拼接器），通过给定的字符串和多个元素，拼接为一个字符串
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class TextJoiner implements Appendable, Serializable {
@@ -211,11 +211,10 @@ public class TextJoiner implements Appendable, Serializable {
     /**
      * 追加对象到拼接器中
      *
-     * @param <T> 元素类型
      * @param obj 对象，支持数组、集合等
      * @return this
      */
-    public <T> TextJoiner append(Object obj) {
+    public TextJoiner append(Object obj) {
         if (null == obj) {
             append((CharSequence) null);
         } else if (ArrayKit.isArray(obj)) {

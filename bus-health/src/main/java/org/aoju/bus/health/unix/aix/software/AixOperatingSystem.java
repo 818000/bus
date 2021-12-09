@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  * platforms.
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -64,7 +64,8 @@ public class AixOperatingSystem extends AbstractOperatingSystem {
             .collect(Collectors.joining(Symbol.COMMA));
     private static final long BOOTTIME = querySystemBootTimeMillis() / 1000L;
     private final Supplier<Perfstat.perfstat_partition_config_t> config = Memoize.memoize(PerfstatConfig::queryConfig);
-    Supplier<Perfstat.perfstat_process_t[]> procCpu = Memoize.memoize(PerfstatProcess::queryProcesses, Memoize.defaultExpiration());
+    private final Supplier<Perfstat.perfstat_process_t[]> procCpu = Memoize.memoize(PerfstatProcess::queryProcesses,
+            Memoize.defaultExpiration());
 
     private static long querySystemBootTimeMillis() {
         long bootTime = Who.queryBootTime();
@@ -76,7 +77,7 @@ public class AixOperatingSystem extends AbstractOperatingSystem {
 
     @Override
     public List<OSProcess> queryAllProcesses() {
-        return getProcessListFromPS("ps -A -o " + PS_COMMAND_ARGS, -1);
+        return getProcessListFromPS("ps -A -o " + PS_COMMAND_ARGS, Normal.__1);
     }
 
     @Override

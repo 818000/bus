@@ -39,7 +39,7 @@ import java.util.Map;
  * Reads from procstat into a map
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -62,7 +62,7 @@ public final class ProcstatKit {
         for (String line : procstat) {
             String[] split = RegEx.SPACES.split(line.trim(), 10);
             if (split.length == 10 && split[2].equals("cwd")) {
-                cwdMap.put(Builder.parseIntOrDefault(split[0], -1), split[9]);
+                cwdMap.put(Builder.parseIntOrDefault(split[0], Normal.__1), split[9]);
             }
         }
         return cwdMap;

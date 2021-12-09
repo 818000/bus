@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * 工具包集合,工具类快捷方式
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class $ {
@@ -115,26 +115,6 @@ public class $ {
      */
     public static boolean isNotNull(Object obj) {
         return Objects.nonNull(obj);
-    }
-
-    /**
-     * 首字母变小写
-     *
-     * @param text 字符串
-     * @return {String}
-     */
-    public static String firstCharToLower(String text) {
-        return StringKit.firstCharToLower(text);
-    }
-
-    /**
-     * 首字母变大写
-     *
-     * @param text 字符串
-     * @return {String}
-     */
-    public static String firstCharToUpper(String text) {
-        return StringKit.firstCharToUpper(text);
     }
 
     /**
@@ -267,16 +247,6 @@ public class $ {
      */
     public static String cleanText(String txt) {
         return StringKit.cleanText(txt);
-    }
-
-    /**
-     * 获取标识符,用于参数清理
-     *
-     * @param param 参数
-     * @return 清理后的标识符
-     */
-    public static String cleanIdentifier(String param) {
-        return StringKit.cleanIdentifier(param);
     }
 
     /**

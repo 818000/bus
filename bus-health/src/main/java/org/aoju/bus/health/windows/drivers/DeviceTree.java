@@ -43,7 +43,7 @@ import static com.sun.jna.platform.win32.WinError.ERROR_SUCCESS;
  * Utility to query device interfaces via Config Manager Device Tree functions
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -80,7 +80,7 @@ public final class DeviceTree {
         Map<Integer, String> mfgMap = new HashMap<>();
         // Get device IDs for the top level devices
         WinNT.HANDLE hDevInfo = SA.SetupDiGetClassDevs(guidDevInterface, null, null, DIGCF_DEVICEINTERFACE | DIGCF_PRESENT);
-        if (hDevInfo != INVALID_HANDLE_VALUE) {
+        if (!INVALID_HANDLE_VALUE.equals(hDevInfo)) {
             try {
                 // Create re-usable native allocations
                 Memory buf = new Memory(MAX_PATH);

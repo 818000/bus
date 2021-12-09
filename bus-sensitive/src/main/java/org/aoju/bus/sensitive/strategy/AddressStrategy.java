@@ -39,7 +39,7 @@ import org.aoju.bus.sensitive.provider.AbstractProvider;
  * 例子：北京市海淀区****
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class AddressStrategy extends AbstractProvider {
@@ -59,7 +59,7 @@ public class AddressStrategy extends AbstractProvider {
         final Shield shield = context.getShield();
         int length = StringKit.length(value);
         if (length > RIGHT + LEFT) {
-            return StringKit.rightPad(StringKit.left(value, length - RIGHT), length, shield.shadow());
+            return StringKit.padPre(StringKit.left(value, length - RIGHT), length, shield.shadow());
         }
         if (length <= LEFT) {
             return value;

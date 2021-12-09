@@ -28,7 +28,6 @@ package org.aoju.bus.sensitive;
 import org.aoju.bus.core.lang.Filter;
 import org.aoju.bus.core.text.TextBuilder;
 import org.aoju.bus.core.toolkit.CollKit;
-import org.aoju.bus.core.toolkit.StringKit;
 
 import java.util.*;
 
@@ -39,7 +38,7 @@ import java.util.*;
  * 单词树使用树状结构表示一组单词
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class WordTree extends HashMap<Character, WordTree> {
@@ -209,7 +208,7 @@ public class WordTree extends HashMap<Character, WordTree> {
         int length = text.length();
         final Filter<Character> charFilter = this.charFilter;
         // 存放查找到的字符缓存。完整出现一个词时加到findedWords中，否则清空
-        final TextBuilder wordBuffer = StringKit.builders();
+        final TextBuilder wordBuffer = new TextBuilder();
         char currentChar;
         for (int i = 0; i < length; i++) {
             wordBuffer.reset();

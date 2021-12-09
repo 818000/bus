@@ -19,7 +19,7 @@ import java.util.Map;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class TextMatcher {
@@ -47,7 +47,7 @@ public class TextMatcher {
         char c = 0;
         char pre;
         boolean inVar = false;
-        TextBuilder part = StringKit.builders();
+        TextBuilder part = new TextBuilder();
         for (int i = 0; i < length; i++) {
             pre = c;
             c = pattern.charAt(i);

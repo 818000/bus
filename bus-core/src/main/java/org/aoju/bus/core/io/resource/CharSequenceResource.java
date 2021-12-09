@@ -27,6 +27,7 @@ package org.aoju.bus.core.io.resource;
 
 import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
+import org.aoju.bus.core.toolkit.StringKit;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -39,7 +40,7 @@ import java.nio.charset.Charset;
  * {@link CharSequence}资源，字符串做为资源
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class CharSequenceResource implements Resource {
@@ -82,7 +83,7 @@ public class CharSequenceResource implements Resource {
 
     @Override
     public String getName() {
-        return this.name.toString();
+        return StringKit.toString(this.name);
     }
 
     @Override

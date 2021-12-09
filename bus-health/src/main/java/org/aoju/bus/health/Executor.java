@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ import java.util.List;
  * execution.
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -56,13 +57,10 @@ public final class Executor {
     }
 
     private static String[] getDefaultEnv() {
-        Platform.OS platform = Platform.getCurrentPlatform();
-        if (platform == Platform.OS.WINDOWS) {
+        if (Platform.isWindows()) {
             return new String[]{"LANGUAGE=C"};
-        } else if (platform != Platform.OS.UNKNOWN) {
-            return new String[]{"LC_ALL=C"};
         } else {
-            return null;
+            return new String[]{"LC_ALL=C"};
         }
     }
 
@@ -114,31 +112,37 @@ public final class Executor {
      * string if the command failed
      */
     public static List<String> runNative(String[] cmdToRunWithArgs, String[] envp) {
-        Process p;
+        Process p = null;
         try {
             p = Runtime.getRuntime().exec(cmdToRunWithArgs, envp);
+            return getProcessOutput(p, cmdToRunWithArgs);
         } catch (SecurityException | IOException e) {
             Logger.trace("Couldn't run command {}: {}", Arrays.toString(cmdToRunWithArgs), e.getMessage());
-            return new ArrayList<>(0);
-        }
-
-        ArrayList<String> sa = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(p.getInputStream(), Charset.defaultCharset()))) {
-            String line;
-            while (null != (line = reader.readLine())) {
-                sa.add(line);
+        } finally {
+            // Ensure all resources are released
+            if (p != null) {
+                // Solaris doesn't close descriptors on destroy so we must handle separately
+                if (Platform.isSolaris()) {
+                    try {
+                        p.getOutputStream().close();
+                    } catch (IOException e) {
+                        // do nothing on failure
+                    }
+                    try {
+                        p.getInputStream().close();
+                    } catch (IOException e) {
+                        // do nothing on failure
+                    }
+                    try {
+                        p.getErrorStream().close();
+                    } catch (IOException e) {
+                        // do nothing on failure
+                    }
+                }
+                p.destroy();
             }
-            p.waitFor();
-        } catch (IOException e) {
-            Logger.trace("Problem reading output from {}: {}", Arrays.toString(cmdToRunWithArgs), e.getMessage());
-            return new ArrayList<>(0);
-        } catch (InterruptedException ie) {
-            Logger.trace("Interrupted while reading output from {}: {}", Arrays.toString(cmdToRunWithArgs),
-                    ie.getMessage());
-            Thread.currentThread().interrupt();
         }
-        return sa;
+        return Collections.emptyList();
     }
 
     /**
@@ -167,6 +171,24 @@ public final class Executor {
             return sa.get(answerIdx);
         }
         return Normal.EMPTY;
+    }
+
+    private static List<String> getProcessOutput(Process p, String[] cmd) {
+        ArrayList<String> sa = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(p.getInputStream(), Charset.defaultCharset()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sa.add(line);
+            }
+            p.waitFor();
+        } catch (IOException e) {
+            Logger.trace("Problem reading output from {}: {}", Arrays.toString(cmd), e.getMessage());
+        } catch (InterruptedException ie) {
+            Logger.trace("Interrupted while reading output from {}: {}", Arrays.toString(cmd), ie.getMessage());
+            Thread.currentThread().interrupt();
+        }
+        return sa;
     }
 
 }

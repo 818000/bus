@@ -52,7 +52,7 @@ import java.util.*;
  * Utility to query /proc/psinfo
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -285,7 +285,7 @@ public final class PsInfo {
         PR_LAST_ONPROC(8), // Timestamp of when thread last ran on a processor
         SIZE(0);
 
-        private int size;
+        private final int size;
 
         LwpsInfoT(int bytes) {
             size = bytes;
@@ -335,7 +335,7 @@ public final class PsInfo {
         PR_CONTRACT(4), // process contract id
         SIZE(0);
 
-        private int size;
+        private final int size;
 
         PsInfoT(int bytes) {
             size = bytes;

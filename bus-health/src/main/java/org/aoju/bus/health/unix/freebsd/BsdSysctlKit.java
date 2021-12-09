@@ -37,7 +37,7 @@ import org.aoju.bus.logger.Logger;
  * 提供对FreeBSD上的sysctl调用的访问
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 @ThreadSafe
@@ -46,6 +46,7 @@ public final class BsdSysctlKit {
     private static final String SYSCTL_FAIL = "Failed sysctl call: {}, Error code: {}";
 
     private BsdSysctlKit() {
+
     }
 
     /**
@@ -59,7 +60,7 @@ public final class BsdSysctlKit {
         LibCAPI.size_t.ByReference size = new LibCAPI.size_t.ByReference(new LibCAPI.size_t(FreeBsdLibc.INT_SIZE));
         Pointer p = new Memory(size.longValue());
         if (0 != FreeBsdLibc.INSTANCE.sysctlbyname(name, p, size, null, LibCAPI.size_t.ZERO)) {
-            Logger.error(SYSCTL_FAIL, name, Native.getLastError());
+            Logger.warn(SYSCTL_FAIL, name, Native.getLastError());
             return def;
         }
         return p.getInt(0);

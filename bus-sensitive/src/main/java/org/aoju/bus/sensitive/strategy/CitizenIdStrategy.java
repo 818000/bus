@@ -40,7 +40,7 @@ import org.aoju.bus.sensitive.provider.AbstractProvider;
  * 只保留前6位和后2位,其他用*代替
  *
  * @author Kimi Liu
- * @version 6.3.1
+ * @version 6.3.2
  * @since JDK 1.8+
  */
 public class CitizenIdStrategy extends AbstractProvider {
@@ -54,7 +54,7 @@ public class CitizenIdStrategy extends AbstractProvider {
     private static String cardId(final String cardId, final String shadow) {
         final int prefixLength = 6;
         final String middle = StringKit.fill(10, shadow);
-        return StringKit.buildString(cardId, middle, prefixLength);
+        return StringKit.build(cardId, middle, prefixLength);
     }
 
     @Override
