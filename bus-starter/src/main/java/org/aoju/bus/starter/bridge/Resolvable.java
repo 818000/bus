@@ -23,26 +23,31 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.annotation;
-
-import org.aoju.bus.starter.druid.DruidConfiguration;
-import org.aoju.bus.starter.druid.DruidMonitorConfiguration;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.*;
+package org.aoju.bus.starter.bridge;
 
 /**
- * 启用Druid监控
+ * 服务端-信息处理
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@Inherited
-@Documented
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Import({DruidConfiguration.class, DruidMonitorConfiguration.class})
-public @interface EnableDruids {
+public interface Resolvable {
+
+    /**
+     * 获取配置信息
+     *
+     * @param entity 请求参数
+     * @return the string
+     */
+    Object find(BridgeProperties entity);
+
+    /**
+     * 批量获取配置信息
+     *
+     * @param entity 请求参数
+     * @return the string
+     */
+    Object findAll(BridgeProperties entity);
 
 }
