@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,42 +23,31 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.linux.drivers;
-
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.Builder;
-import org.aoju.bus.health.linux.ProcPath;
+package org.aoju.bus.starter.bridge;
 
 /**
- * Utility to read system uptime from {@code /proc/uptime}
+ * 服务端-信息处理
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class UpTime {
-
-    private UpTime() {
-    }
+public interface Resolvable {
 
     /**
-     * Parses the first value in {@code /proc/uptime} for seconds since boot
+     * 获取配置信息
      *
-     * @return Seconds since boot
+     * @param entity 请求参数
+     * @return the string
      */
-    public static double getSystemUptimeSeconds() {
-        String uptime = Builder.getStringFromFile(ProcPath.UPTIME);
-        int spaceIndex = uptime.indexOf(' ');
-        try {
-            if (spaceIndex < 0) {
-                // No space, error
-                return 0d;
-            }
-            return Double.parseDouble(uptime.substring(0, spaceIndex));
-        } catch (NumberFormatException nfe) {
-            return 0d;
-        }
-    }
+    Object find(BridgeProperties entity);
+
+    /**
+     * 批量获取配置信息
+     *
+     * @param entity 请求参数
+     * @return the string
+     */
+    Object findAll(BridgeProperties entity);
 
 }

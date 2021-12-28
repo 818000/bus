@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,42 +23,68 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.linux.drivers;
+package org.aoju.bus.starter.bridge;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.Builder;
-import org.aoju.bus.health.linux.ProcPath;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
+import org.aoju.bus.base.entity.Message;
+import org.aoju.bus.core.lang.Header;
+import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.toolkit.ObjectKit;
+import org.aoju.bus.extra.json.JsonKit;
+import org.aoju.bus.logger.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Utility to read system uptime from {@code /proc/uptime}
+ * 服务端-配置中心
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class UpTime {
+public class BridgeVerticleService extends AbstractVerticle {
 
-    private UpTime() {
+    private final BridgeProperties properties;
+    @Autowired
+    private Resolvable resolvable;
+    @Autowired
+    private Vertx vertx;
+
+    public BridgeVerticleService(BridgeProperties properties) {
+        this.properties = properties;
     }
 
-    /**
-     * Parses the first value in {@code /proc/uptime} for seconds since boot
-     *
-     * @return Seconds since boot
-     */
-    public static double getSystemUptimeSeconds() {
-        String uptime = Builder.getStringFromFile(ProcPath.UPTIME);
-        int spaceIndex = uptime.indexOf(' ');
-        try {
-            if (spaceIndex < 0) {
-                // No space, error
-                return 0d;
-            }
-            return Double.parseDouble(uptime.substring(0, spaceIndex));
-        } catch (NumberFormatException nfe) {
-            return 0d;
+    @Override
+    public void start() {
+        if (this.properties.getPort() <= 0 || this.properties.getPort() > 0xFFFF) {
+            return;
         }
+        Router router = Router.router(vertx);
+        router.route("/profile/get").handler(context -> {
+            String result;
+            try {
+                BridgeProperties properties = JsonKit.toPojo(context.getBodyAsString(), BridgeProperties.class);
+                Message message = Message.builder().data(this.resolvable.find(properties)).build();
+                Logger.info("request:{},response:{}", properties, message);
+                result = JsonKit.toJsonString(message);
+            } catch (Exception e) {
+                Logger.error("get error", e);
+                result = JsonKit.toJsonString(Message.builder().errcode("-1").build());
+            }
+            context.response().putHeader(Header.CONTENT_TYPE, MediaType.APPLICATION_JSON).end(result);
+        });
+
+        vertx.createHttpServer().requestHandler(router).listen(this.properties.getPort());
+        Logger.info("Vert.x is listening {}", this.properties.getPort());
+    }
+
+    @Override
+    public void stop() {
+        if (ObjectKit.isNotEmpty(this.vertx)) {
+            this.vertx.close();
+        }
+
     }
 
 }
