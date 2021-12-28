@@ -25,14 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.starter.annotation;
 
-import org.aoju.bus.starter.druid.DruidConfiguration;
-import org.aoju.bus.starter.druid.DruidMonitorConfiguration;
+import org.aoju.bus.starter.bridge.BridgeConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
 /**
- * 启用Druid监控
+ * 启用配置中心
  *
  * @author Kimi Liu
  * @version 6.3.2
@@ -42,7 +41,7 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({DruidConfiguration.class, DruidMonitorConfiguration.class})
-public @interface EnableDruids {
+@Import({BridgeConfiguration.class})
+public @interface EnableBridge {
 
 }

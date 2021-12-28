@@ -23,26 +23,36 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.annotation;
+package org.aoju.bus.starter.bridge;
 
-import org.aoju.bus.starter.druid.DruidConfiguration;
-import org.aoju.bus.starter.druid.DruidMonitorConfiguration;
+import io.vertx.core.Vertx;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import java.lang.annotation.*;
-
 /**
- * 启用Druid监控
+ * 配置中心
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@Inherited
-@Documented
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Import({DruidConfiguration.class, DruidMonitorConfiguration.class})
-public @interface EnableDruids {
+@EnableConfigurationProperties(BridgeProperties.class)
+@Import({BridgePropertyLoader.class})
+public class BridgeConfiguration {
+
+    @Autowired
+    BridgeProperties properties;
+
+    @Bean
+    public Vertx vertx() {
+        return Vertx.vertx();
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    private BridgeVerticleService verticle() {
+        return new BridgeVerticleService(properties);
+    }
 
 }

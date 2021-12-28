@@ -23,26 +23,51 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.starter.annotation;
+package org.aoju.bus.starter.bridge;
 
-import org.aoju.bus.starter.druid.DruidConfiguration;
-import org.aoju.bus.starter.druid.DruidMonitorConfiguration;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.*;
+import lombok.Data;
+import org.aoju.bus.starter.BusXExtend;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 启用Druid监控
+ * 配置中心相关配置
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@Inherited
-@Documented
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Import({DruidConfiguration.class, DruidMonitorConfiguration.class})
-public @interface EnableDruids {
+@Data
+@ConfigurationProperties(prefix = BusXExtend.BRIDGE)
+public class BridgeProperties {
+
+    /**
+     * 服务端-端口
+     */
+    private int port;
+
+    /**
+     * 客户端-应用标识
+     */
+    private String appKey;
+    /**
+     * 客户端-启动环境
+     */
+    private String profile;
+    /**
+     * 客户端-请求地址
+     */
+    private String url;
+    /**
+     * 客户端-请求方法
+     */
+    private String method;
+    /**
+     * 客户端-输出类型
+     */
+    private String format;
+    /**
+     * 客户端-版本信息
+     */
+    private String version;
 
 }
