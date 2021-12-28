@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2021 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2021 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,42 +23,25 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.health.linux.drivers;
+package org.aoju.bus.starter.annotation;
 
-import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.Builder;
-import org.aoju.bus.health.linux.ProcPath;
+import org.aoju.bus.starter.bridge.BridgeConfiguration;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
 
 /**
- * Utility to read system uptime from {@code /proc/uptime}
+ * 启用配置中心
  *
  * @author Kimi Liu
  * @version 6.3.2
  * @since JDK 1.8+
  */
-@ThreadSafe
-public final class UpTime {
-
-    private UpTime() {
-    }
-
-    /**
-     * Parses the first value in {@code /proc/uptime} for seconds since boot
-     *
-     * @return Seconds since boot
-     */
-    public static double getSystemUptimeSeconds() {
-        String uptime = Builder.getStringFromFile(ProcPath.UPTIME);
-        int spaceIndex = uptime.indexOf(' ');
-        try {
-            if (spaceIndex < 0) {
-                // No space, error
-                return 0d;
-            }
-            return Double.parseDouble(uptime.substring(0, spaceIndex));
-        } catch (NumberFormatException nfe) {
-            return 0d;
-        }
-    }
+@Inherited
+@Documented
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Import({BridgeConfiguration.class})
+public @interface EnableBridge {
 
 }
