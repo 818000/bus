@@ -49,14 +49,13 @@ import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * router handler
  *
  * @author Justubborn
- * @version 6.3.2
+ * @version 6.3.3
  * @since JDK 1.8+
  */
 public class ApiRouterHandler {
@@ -110,8 +109,8 @@ public class ApiRouterHandler {
                 .flatMap(responseEntity -> ServerResponse.ok().headers(headers -> {
                     headers.addAll(responseEntity.getHeaders());
                     headers.remove(HttpHeaders.CONTENT_LENGTH);
-                }).body(BodyInserters.fromDataBuffers(Flux.just(Objects.requireNonNull(responseEntity.getBody())))));
-
+                }).body(null == responseEntity.getBody() ? BodyInserters.empty()
+                        : BodyInserters.fromDataBuffers(Flux.just(responseEntity.getBody()))));
     }
 
 }

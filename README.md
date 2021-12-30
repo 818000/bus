@@ -1,5 +1,5 @@
 <p align="center">
-	<a href="https://www.aoju.org"><img src="https://cdn.macaws.cn/BUS_800x300.png" width="45%"></a>
+	<a href="https://www.aoju.org"><img src="logo.png" width="45%"></a>
 </p>
 <p align="center">
 	<a href="http://www.aoju.org">http://www.aoju.org</a>
@@ -97,7 +97,7 @@ Bus (应用/服务总线) 是一个基础框架、服务套件，它基于Java8�
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>6.3.2</version>
+    <version>6.3.3</version>
 </dependency>
 ```
 

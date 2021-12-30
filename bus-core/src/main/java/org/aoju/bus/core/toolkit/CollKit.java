@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.3.2
+ * @version 6.3.3
  * @since JDK 1.8+
  */
 public class CollKit {
@@ -3402,7 +3402,7 @@ public class CollKit {
      * <B>{@code Collection<E> -------> Map<K,List<E>> } </B>
      *
      * @param collection 需要分类的集合
-     * @param key        分类的规则
+     * @param key        键分组的规则
      * @param <E>        collection中的泛型
      * @param <K>        map中的key类型
      * @return 分类后的map
@@ -3416,7 +3416,7 @@ public class CollKit {
      * <B>{@code Collection<E> -------> Map<K,List<E>> } </B>
      *
      * @param collection 需要分类的集合
-     * @param key        分类的规则
+     * @param key        键分组的规则
      * @param isParallel 是否并行流
      * @param <E>        collection中的泛型
      * @param <K>        map中的key类型
@@ -3504,6 +3504,45 @@ public class CollKit {
         }
         return StreamKit.of(collection, isParallel)
                 .collect(Collectors.groupingBy(key1, Collectors.toMap(key2, Function.identity(), (l, r) -> l)));
+    }
+
+    /**
+     * 将collection按照规则(比如有相同的班级id)分类成map，map中的key为班级id，value为班级名
+     * <B>{@code Collection<E> -------> Map<K,List<V>> } </B>
+     *
+     * @param collection 需要分类的集合
+     * @param key        分类的规则
+     * @param value      分类的规则
+     * @param <E>        collection中的泛型
+     * @param <K>        map中的key类型
+     * @param <V>        List中的value类型
+     * @return 分类后的map
+     */
+    public static <E, K, V> Map<K, List<V>> groupKeyValue(Collection<E> collection, Function<E, K> key,
+                                                          Function<E, V> value) {
+        return groupKeyValue(collection, key, value, false);
+    }
+
+    /**
+     * 将collection按照规则(比如有相同的班级id)分类成map，map中的key为班级id，value为班级名
+     * <B>{@code Collection<E> -------> Map<K,List<V>> } </B>
+     *
+     * @param collection 需要分类的集合
+     * @param key        分类的规则
+     * @param value      分类的规则
+     * @param isParallel 是否并行流
+     * @param <E>        collection中的泛型
+     * @param <K>        map中的key类型
+     * @param <V>        List中的value类型
+     * @return 分类后的map
+     */
+    public static <E, K, V> Map<K, List<V>> groupKeyValue(Collection<E> collection, Function<E, K> key,
+                                                          Function<E, V> value, boolean isParallel) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        return StreamKit.of(collection, isParallel)
+                .collect(Collectors.groupingBy(key, Collectors.mapping(value, Collectors.toList())));
     }
 
     /**

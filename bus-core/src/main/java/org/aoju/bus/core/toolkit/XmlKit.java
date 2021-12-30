@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
  * 工具类封装了XML文档的创建、读取、写出和部分XML操作
  *
  * @author Kimi Liu
- * @version 6.3.2
+ * @version 6.3.3
  * @since JDK 1.8+
  */
 public class XmlKit {
@@ -583,10 +583,10 @@ public class XmlKit {
      */
     public static Element getElement(Element element, String tagName) {
         final NodeList nodeList = element.getElementsByTagName(tagName);
-        if (null == nodeList || nodeList.getLength() < 1) {
+        final int length = nodeList.getLength();
+        if (length < 1) {
             return null;
         }
-        int length = nodeList.getLength();
         for (int i = 0; i < length; i++) {
             Element childEle = (Element) nodeList.item(i);
             if (null == childEle || childEle.getParentNode() == element) {
