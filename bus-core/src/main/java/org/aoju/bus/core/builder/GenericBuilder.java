@@ -23,82 +23,88 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.beans;
+package org.aoju.bus.core.builder;
 
-import org.aoju.bus.core.lang.SimpleCache;
-import org.aoju.bus.core.lang.function.Func0;
-
-import java.beans.PropertyDescriptor;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
- * Bean属性缓存
- * 缓存用于防止多次反射造成的性能问题
+ * 通用Builder
  *
  * @author Kimi Liu
  * @version 6.3.3
  * @since JDK 1.8+
  */
-public enum PropertyCache {
-
-    INSTANCE;
-
-    private final SimpleCache<Class<?>, Map<String, PropertyDescriptor>> pdCache = new SimpleCache<>();
-    private final SimpleCache<Class<?>, Map<String, PropertyDescriptor>> ignoreCasePdCache = new SimpleCache<>();
+public class GenericBuilder<T> implements Builder<T> {
 
     /**
-     * 获得属性名和{@link PropertyDescriptor}Map映射
-     *
-     * @param beanClass  Bean的类
-     * @param ignoreCase 是否忽略大小写
-     * @return 属性名和{@link PropertyDescriptor}Map映射
+     * 实例化器
      */
-    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(Class<?> beanClass, boolean ignoreCase) {
-        return getCache(ignoreCase).get(beanClass);
+    private final Supplier<T> instant;
+
+    /**
+     * 修改器列表
+     */
+    private final List<Consumer<T>> modifiers = new ArrayList<>();
+
+    /**
+     * 构造
+     *
+     * @param instant 实例化器
+     */
+    public GenericBuilder(Supplier<T> instant) {
+        this.instant = instant;
     }
 
     /**
-     * 获得属性名和{@link PropertyDescriptor}Map映射
+     * 通过无参数实例化器创建GenericBuilder
      *
-     * @param beanClass  Bean的类
-     * @param ignoreCase 是否忽略大小写
-     * @param supplier   缓存对象产生函数
-     * @return 属性名和{@link PropertyDescriptor}Map映射
+     * @param instant 实例化器
+     * @param <T>     目标类型
+     * @return GenericBuilder对象
      */
-    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(
-            Class<?> beanClass,
-            boolean ignoreCase,
-            Func0<Map<String, PropertyDescriptor>> supplier) {
-        return getCache(ignoreCase).get(beanClass, supplier);
+    public static <T> GenericBuilder<T> of(Supplier<T> instant) {
+        return new GenericBuilder<>(instant);
     }
 
     /**
-     * 加入缓存
+     * 调用无参数方法
      *
-     * @param beanClass                      Bean的类
-     * @param fieldNamePropertyDescriptorMap 属性名和{@link PropertyDescriptor}Map映射
-     * @param ignoreCase                     是否忽略大小写
+     * @param consumer 无参数Consumer
+     * @return GenericBuilder对象
      */
-    public void putPropertyDescriptorMap(Class<?> beanClass, Map<String, PropertyDescriptor> fieldNamePropertyDescriptorMap, boolean ignoreCase) {
-        getCache(ignoreCase).put(beanClass, fieldNamePropertyDescriptorMap);
+    public GenericBuilder<T> with(Consumer<T> consumer) {
+        modifiers.add(consumer);
+        return this;
     }
 
     /**
-     * 根据是否忽略字段名的大小写，返回不用Cache对象
+     * 调用1参数方法
      *
-     * @param ignoreCase 是否忽略大小写
-     * @return SimpleCache
+     * @param <P1>     参数一类型
+     * @param consumer 1参数Consumer，一般为Setter方法引用
+     * @param p1       参数一
+     * @return GenericBuilder对象
      */
-    private SimpleCache<Class<?>, Map<String, PropertyDescriptor>> getCache(boolean ignoreCase) {
-        return ignoreCase ? ignoreCasePdCache : pdCache;
+    public <P1> GenericBuilder<T> with(BiConsumer<T, P1> consumer, P1 p1) {
+        modifiers.add(instant -> consumer.accept(instant, p1));
+        return this;
     }
 
     /**
-     * 清空缓存
+     * 构建
+     *
+     * @return 目标对象
      */
-    public void clear() {
-        this.pdCache.clear();
-        this.ignoreCasePdCache.clear();
+    @Override
+    public T build() {
+        T value = instant.get();
+        modifiers.forEach(modifier -> modifier.accept(value));
+        modifiers.clear();
+        return value;
     }
 
 }
