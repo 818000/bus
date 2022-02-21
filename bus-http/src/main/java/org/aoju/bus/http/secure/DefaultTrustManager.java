@@ -23,46 +23,54 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.lang.function;
+package org.aoju.bus.http.secure;
 
-import java.io.Serializable;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.net.Socket;
+import java.security.cert.X509Certificate;
 
 /**
- * 只有一个参数的函数对象
- * 一个函数接口代表一个一个函数，用于包装一个函数为对象
- * 在JDK8之前，Java的函数并不能作为参数传递，也不能作为返回值存在
- * 此接口用于将一个函数包装成为一个对象，从而传递对象
+ * 默认信任管理器，默认信任所有客户端和服务端证书
  *
- * @param <P> 参数类型
- * @param <R> 返回值类型
  * @author Kimi Liu
  * @version 6.3.5
  * @since JDK 1.8+
  */
-@FunctionalInterface
-public interface Func1<P, R> extends Serializable {
+public class DefaultTrustManager extends X509ExtendedTrustManager {
 
     /**
-     * 执行函数
-     *
-     * @param parameter 参数
-     * @return 函数执行结果
-     * @throws Exception 自定义异常
+     * 默认的全局单例默认信任管理器，默认信任所有客户端和服务端证书
      */
-    R call(P parameter) throws Exception;
+    public static DefaultTrustManager INSTANCE = new DefaultTrustManager();
 
-    /**
-     * 执行函数，异常包装为RuntimeException
-     *
-     * @param parameter 参数
-     * @return 函数执行结果
-     */
-    default R callWithRuntimeException(P parameter) {
-        try {
-            return call(parameter);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return null;
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
     }
 
 }
