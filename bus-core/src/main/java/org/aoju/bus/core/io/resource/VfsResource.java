@@ -26,108 +26,108 @@
 package org.aoju.bus.core.io.resource;
 
 import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.toolkit.FileKit;
-import org.aoju.bus.core.toolkit.ObjectKit;
-import org.aoju.bus.core.toolkit.UriKit;
+import org.aoju.bus.core.toolkit.ClassKit;
+import org.aoju.bus.core.toolkit.ReflectKit;
 
-import java.io.File;
 import java.io.InputStream;
-import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.file.Path;
 
 /**
- * 文件资源访问对象
+ * VFS资源封装
+ * 参考：org.springframework.core.io.VfsUtils
  *
  * @author Kimi Liu
  * @version 6.3.5
  * @since JDK 1.8+
  */
-public class FileResource implements Resource, Serializable {
+public class VfsResource implements Resource {
 
-    private static final long serialVersionUID = 1L;
+    private static final String VFS3_PKG = "org.jboss.vfs.";
 
-    private final File file;
-    private final String name;
+    private static final Method VIRTUAL_FILE_METHOD_EXISTS;
+    private static final Method VIRTUAL_FILE_METHOD_GET_INPUT_STREAM;
+    private static final Method VIRTUAL_FILE_METHOD_GET_SIZE;
+    private static final Method VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED;
+    private static final Method VIRTUAL_FILE_METHOD_TO_URL;
+    private static final Method VIRTUAL_FILE_METHOD_GET_NAME;
+
+    static {
+        Class<?> virtualFile = ClassKit.loadClass(VFS3_PKG + "VirtualFile");
+        try {
+            VIRTUAL_FILE_METHOD_EXISTS = virtualFile.getMethod("exists");
+            VIRTUAL_FILE_METHOD_GET_INPUT_STREAM = virtualFile.getMethod("openStream");
+            VIRTUAL_FILE_METHOD_GET_SIZE = virtualFile.getMethod("getSize");
+            VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED = virtualFile.getMethod("getLastModified");
+            VIRTUAL_FILE_METHOD_TO_URL = virtualFile.getMethod("toURL");
+            VIRTUAL_FILE_METHOD_GET_NAME = virtualFile.getMethod("getName");
+        } catch (NoSuchMethodException ex) {
+            throw new IllegalStateException("Could not detect JBoss VFS infrastructure", ex);
+        }
+    }
+
+    /**
+     * org.jboss.vfs.VirtualFile实例对象
+     */
+    private final Object virtualFile;
     private final long lastModified;
 
     /**
-     * 构造，文件名使用文件本身的名字，带扩展名
-     *
-     * @param path 文件
-     */
-    public FileResource(Path path) {
-        this(path.toFile());
-    }
-
-    /**
-     * 构造，文件名使用文件本身的名字，带扩展名
-     *
-     * @param file 文件
-     */
-    public FileResource(File file) {
-        this(file, file.getName());
-    }
-
-    /**
      * 构造
      *
-     * @param file     文件
-     * @param fileName 文件名，如果为null获取文件本身的文件名
+     * @param resource org.jboss.vfs.VirtualFile实例对象
      */
-    public FileResource(File file, String fileName) {
-        Assert.notNull(file, "File must be not null !");
-        this.file = file;
-        this.name = ObjectKit.defaultIfNull(fileName, file::getName);
-        this.lastModified = file.lastModified();
+    public VfsResource(Object resource) {
+        Assert.notNull(resource, "VirtualFile must not be null");
+        this.virtualFile = resource;
+        this.lastModified = getLastModified();
     }
 
     /**
-     * 构造
+     * VFS文件是否存在
      *
-     * @param path 文件绝对路径或相对ClassPath路径，但是这个路径不能指向一个jar包中的文件
+     * @return 文件是否存在
      */
-    public FileResource(String path) {
-        this(FileKit.file(path));
+    public boolean exists() {
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_EXISTS);
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_GET_NAME);
     }
 
     @Override
     public URL getUrl() {
-        return UriKit.getURL(this.file);
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_TO_URL);
     }
 
     @Override
     public InputStream getStream() {
-        return FileKit.getInputStream(this.file);
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_GET_INPUT_STREAM);
     }
 
     @Override
     public boolean isModified() {
-        return this.lastModified != file.lastModified();
+        return this.lastModified != getLastModified();
     }
 
     /**
-     * 返回路径
+     * 获得VFS文件最后修改时间
      *
-     * @return 返回URL路径
+     * @return 最后修改时间
      */
-    @Override
-    public String toString() {
-        return this.file.toString();
+    public long getLastModified() {
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_GET_LAST_MODIFIED);
     }
 
     /**
-     * 获取文件
+     * 获取VFS文件大小
      *
-     * @return 文件
+     * @return VFS文件大小
      */
-    public File getFile() {
-        return this.file;
+    public long size() {
+        return ReflectKit.invoke(virtualFile, VIRTUAL_FILE_METHOD_GET_SIZE);
     }
 
 }

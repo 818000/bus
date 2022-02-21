@@ -23,46 +23,74 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.lang.function;
+package org.aoju.bus.core.map;
 
-import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
- * 只有一个参数的函数对象
- * 一个函数接口代表一个一个函数，用于包装一个函数为对象
- * 在JDK8之前，Java的函数并不能作为参数传递，也不能作为返回值存在
- * 此接口用于将一个函数包装成为一个对象，从而传递对象
+ * 忽略大小写的{@link TreeMap}
+ * 对KEY忽略大小写，get("Value")和get("value")获得的值相同，put进入的值也会被覆盖
  *
- * @param <P> 参数类型
- * @param <R> 返回值类型
+ * @param <K> 键类型
+ * @param <V> 值类型
  * @author Kimi Liu
  * @version 6.3.5
  * @since JDK 1.8+
  */
-@FunctionalInterface
-public interface Func1<P, R> extends Serializable {
+public class CaseInsensitiveTreeMap<K, V> extends CustomKeyMap<K, V> {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 执行函数
-     *
-     * @param parameter 参数
-     * @return 函数执行结果
-     * @throws Exception 自定义异常
+     * 构造
      */
-    R call(P parameter) throws Exception;
+    public CaseInsensitiveTreeMap() {
+        this((Comparator<? super K>) null);
+    }
 
     /**
-     * 执行函数，异常包装为RuntimeException
+     * 构造
      *
-     * @param parameter 参数
-     * @return 函数执行结果
+     * @param m Map
      */
-    default R callWithRuntimeException(P parameter) {
-        try {
-            return call(parameter);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public CaseInsensitiveTreeMap(Map<? extends K, ? extends V> m) {
+        this();
+        this.putAll(m);
+    }
+
+    /**
+     * 构造
+     *
+     * @param m Map
+     */
+    public CaseInsensitiveTreeMap(SortedMap<? extends K, ? extends V> m) {
+        super(new TreeMap<K, V>(m));
+    }
+
+    /**
+     * 构造
+     *
+     * @param comparator 比较器，{@code null}表示使用默认比较器
+     */
+    public CaseInsensitiveTreeMap(Comparator<? super K> comparator) {
+        super(new TreeMap<>(comparator));
+    }
+
+    /**
+     * 将Key转为小写
+     *
+     * @param key KEY
+     * @return 小写KEY
+     */
+    @Override
+    protected Object customKey(Object key) {
+        if (key instanceof CharSequence) {
+            key = key.toString().toLowerCase();
         }
+        return key;
     }
 
 }
