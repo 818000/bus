@@ -25,12 +25,14 @@
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
-import java.util.HashMap;
+import org.aoju.bus.core.toolkit.ObjectKit;
+
 import java.util.Map;
 
 /**
- * 忽略大小写的Map
- * 对KEY忽略大小写,get("Value")和get("value")获得的值相同,put进入的值也会被覆盖
+ * 抽象的{@link Map.Entry}实现，来自Guava
+ * 实现了默认的{@link #equals(Object)}、{@link #hashCode()}、{@link #toString()}方法
+ * 默认{@link #setValue(Object)}抛出异常
  *
  * @param <K> 键类型
  * @param <V> 值类型
@@ -38,68 +40,33 @@ import java.util.Map;
  * @version 6.3.5
  * @since JDK 1.8+
  */
-public class CaseInsensitiveMap<K, V> extends FuncKeyMap<K, V> {
+public abstract class AbstractEntry<K, V> implements Map.Entry<K, V> {
 
-    /**
-     * 构造
-     */
-    public CaseInsensitiveMap() {
-        this(DEFAULT_INITIAL_CAPACITY);
+    @Override
+    public V setValue(V value) {
+        throw new UnsupportedOperationException("Entry is read only.");
     }
 
-    /**
-     * 构造
-     *
-     * @param initialCapacity 初始大小
-     */
-    public CaseInsensitiveMap(int initialCapacity) {
-        this(initialCapacity, DEFAULT_LOAD_FACTOR);
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Map.Entry) {
+            final Map.Entry<?, ?> that = (Map.Entry<?, ?>) object;
+            return ObjectKit.equals(this.getKey(), that.getKey())
+                    && ObjectKit.equals(this.getValue(), that.getValue());
+        }
+        return false;
     }
 
-    /**
-     * 构造
-     * 注意此构造将传入的Map作为被包装的Map，针对任何修改，传入的Map都会被同样修改
-     *
-     * @param map 被包装的自定义Map创建器
-     */
-    public CaseInsensitiveMap(Map<? extends K, ? extends V> map) {
-        this(DEFAULT_LOAD_FACTOR, map);
+    @Override
+    public int hashCode() {
+        K k = getKey();
+        V v = getValue();
+        return ((k == null) ? 0 : k.hashCode()) ^ ((v == null) ? 0 : v.hashCode());
     }
 
-    /**
-     * 构造
-     *
-     * @param loadFactor 加载因子
-     * @param map        Map
-     */
-    public CaseInsensitiveMap(float loadFactor, Map<? extends K, ? extends V> map) {
-        this(map.size(), loadFactor);
-        this.putAll(map);
-    }
-
-    /**
-     * 构造
-     *
-     * @param initialCapacity 初始大小
-     * @param loadFactor      加载因子
-     */
-    public CaseInsensitiveMap(int initialCapacity, float loadFactor) {
-        this(MapBuilder.create(new HashMap<>(initialCapacity, loadFactor)));
-    }
-
-    /**
-     * 构造
-     * 注意此构造将传入的Map作为被包装的Map，针对任何修改，传入的Map都会被同样修改
-     *
-     * @param emptyMapBuilder 被包装的自定义Map创建器
-     */
-    CaseInsensitiveMap(MapBuilder<K, V> emptyMapBuilder) {
-        super(emptyMapBuilder.build(), (key) -> {
-            if (key instanceof CharSequence) {
-                key = key.toString().toLowerCase();
-            }
-            return (K) key;
-        });
+    @Override
+    public String toString() {
+        return getKey() + "=" + getValue();
     }
 
 }

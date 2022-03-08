@@ -23,83 +23,25 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.map;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.aoju.bus.core.codec;
 
 /**
- * 忽略大小写的Map
- * 对KEY忽略大小写,get("Value")和get("value")获得的值相同,put进入的值也会被覆盖
+ * 解码接口
  *
- * @param <K> 键类型
- * @param <V> 值类型
+ * @param <T> 被解码的数据类型
+ * @param <R> 解码后的数据类型
  * @author Kimi Liu
  * @version 6.3.5
  * @since JDK 1.8+
  */
-public class CaseInsensitiveMap<K, V> extends FuncKeyMap<K, V> {
+public interface Decoder<T, R> {
 
     /**
-     * 构造
-     */
-    public CaseInsensitiveMap() {
-        this(DEFAULT_INITIAL_CAPACITY);
-    }
-
-    /**
-     * 构造
+     * 执行解码
      *
-     * @param initialCapacity 初始大小
+     * @param data 被解码的数据
+     * @return 解码后的数据
      */
-    public CaseInsensitiveMap(int initialCapacity) {
-        this(initialCapacity, DEFAULT_LOAD_FACTOR);
-    }
-
-    /**
-     * 构造
-     * 注意此构造将传入的Map作为被包装的Map，针对任何修改，传入的Map都会被同样修改
-     *
-     * @param map 被包装的自定义Map创建器
-     */
-    public CaseInsensitiveMap(Map<? extends K, ? extends V> map) {
-        this(DEFAULT_LOAD_FACTOR, map);
-    }
-
-    /**
-     * 构造
-     *
-     * @param loadFactor 加载因子
-     * @param map        Map
-     */
-    public CaseInsensitiveMap(float loadFactor, Map<? extends K, ? extends V> map) {
-        this(map.size(), loadFactor);
-        this.putAll(map);
-    }
-
-    /**
-     * 构造
-     *
-     * @param initialCapacity 初始大小
-     * @param loadFactor      加载因子
-     */
-    public CaseInsensitiveMap(int initialCapacity, float loadFactor) {
-        this(MapBuilder.create(new HashMap<>(initialCapacity, loadFactor)));
-    }
-
-    /**
-     * 构造
-     * 注意此构造将传入的Map作为被包装的Map，针对任何修改，传入的Map都会被同样修改
-     *
-     * @param emptyMapBuilder 被包装的自定义Map创建器
-     */
-    CaseInsensitiveMap(MapBuilder<K, V> emptyMapBuilder) {
-        super(emptyMapBuilder.build(), (key) -> {
-            if (key instanceof CharSequence) {
-                key = key.toString().toLowerCase();
-            }
-            return (K) key;
-        });
-    }
+    R decode(T data);
 
 }
