@@ -32,11 +32,11 @@ import org.aoju.bus.health.Builder;
  * Utility to read info from the devicetree
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 @ThreadSafe
-public final class Devicetree {
+public final class DeviceTree {
 
     /**
      * Query the model from the devicetree

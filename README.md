@@ -6,19 +6,19 @@
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/search?q=org.aoju">
-		<img src="https://img.shields.io/badge/maven--central-v6.3.1-blue.svg?label=Maven%20Central" />
+		<img src="https://img.shields.io/badge/maven--central-v6.5.0-blue.svg?label=Maven%20Central" />
 	</a>
 	<a target="_blank" href="https://travis-ci.org/aoju/bus">
-		<img src="https://travis-ci.org/aoju/bus.svg?branch=master">
+		<img src="https://travis-ci.org/aoju/bus.svg?branch=main">
 	</a>
-	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
-		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg">
+	<a target="_blank" href="https://jdk.java.net/">
+		<img src="https://img.shields.io/badge/Java-17+-green.svg">
 	</a>
 	<a target="_blank" href="https://spring.io/projects/spring-boot">
-		<img src="https://img.shields.io/badge/Spring Boot-2.5.6-brightgreen.svg">
+		<img src="https://img.shields.io/badge/Spring Boot-2.6.3-brightgreen.svg">
 	</a>
 	<a target="_blank" href="https://www.mysql.com">
-		<img src="https://img.shields.io/badge/Mysql-8.0-blue.svg">
+		<img src="https://img.shields.io/badge/Mysql-8.x-blue.svg">
 	</a>
 	<a target="_blank" href="http://dubbo.apache.org">
 		<img src="https://img.shields.io/badge/dubbo-3.0.5-yellow.svg">
@@ -97,7 +97,7 @@ Bus (应用/服务总线) 是一个基础框架、服务套件，它基于Java8�
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>6.3.5</version>
+    <version>6.5.0</version>
 </dependency>
 ```
 
@@ -130,16 +130,16 @@ implementation 'org.aoju:bus-all:x.x.x'
 - 地址: [https://github.com/aoju/abarth](https://github.com/aoju/abarth)
 
 > 注意
-> Bus项目支持JDK8+，对Android平台部分模块没有测试，不能保证所有工具类或工具方法可用。
+> Bus项目支持Java 17+，对Android平台部分模块没有测试，不能保证所有工具类或工具方法可用。
 
 ## 分支说明
 
 源码分为两个分支，功能如下：
 
-| 分支       | 作用                                                          |
-|-----------|---------------------------------------------------------------|
-| master    | 主分支，即稳定版本使用的分支，与中央库提交的jar一致，不接收任何PR或修改 |
-| develop   | 开发分支，默认为下个版本的更新或者修复等，接受修改或PR             |
+| 分支   | 作用                                                          |
+|------|---------------------------------------------------------------|
+| main | 主分支，即稳定版本使用的分支，与中央库提交的jar一致，不接收任何PR或修改 |
+| dev  | 开发分支，默认为下个版本的更新或者修复等，接受修改或PR             |
 
 ## 意见建议
 

@@ -35,10 +35,10 @@ import java.util.Map;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
-public class CaseInsensitiveLinkedMap<K, V> extends CustomKeyMap<K, V> {
+public class CaseInsensitiveLinkedMap<K, V> extends CaseInsensitiveMap<K, V> {
 
     /**
      * 构造
@@ -84,20 +84,6 @@ public class CaseInsensitiveLinkedMap<K, V> extends CustomKeyMap<K, V> {
      */
     public CaseInsensitiveLinkedMap(int initialCapacity, float loadFactor) {
         super(new LinkedHashMap<>(initialCapacity, loadFactor));
-    }
-
-    /**
-     * 将Key转为小写
-     *
-     * @param key KEY
-     * @return 小写KEY
-     */
-    @Override
-    protected Object customKey(Object key) {
-        if (key instanceof CharSequence) {
-            key = key.toString().toLowerCase();
-        }
-        return key;
     }
 
 }

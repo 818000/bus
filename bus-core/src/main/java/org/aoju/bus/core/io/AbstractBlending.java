@@ -31,8 +31,8 @@ import java.util.*;
  * 可以读取的一组索引值 {@link BufferSource#select}.
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class AbstractBlending extends AbstractList<ByteString> implements RandomAccess {
 
@@ -44,6 +44,12 @@ public class AbstractBlending extends AbstractList<ByteString> implements Random
         this.trie = trie;
     }
 
+    /**
+     * 构造
+     *
+     * @param byteStrings 字符串
+     * @return the object
+     */
     public static AbstractBlending of(ByteString... byteStrings) {
         if (byteStrings.length == 0) {
             // 没有选择，我们必须总是返回-1，创建一个空集合

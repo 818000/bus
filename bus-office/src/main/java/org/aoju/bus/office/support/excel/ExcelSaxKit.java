@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.ExcelNumberFormat;
 import org.apache.poi.util.XMLHelper;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -56,8 +56,8 @@ import java.io.InputStream;
  * Sax方式读取Excel相关工具类
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class ExcelSaxKit {
 
@@ -82,13 +82,13 @@ public class ExcelSaxKit {
     /**
      * 根据数据类型获取数据
      *
-     * @param cellDataType       数据类型枚举
-     * @param value              数据值
-     * @param sharedStringsTable {@link SharedStringsTable}
-     * @param numFmtString       数字格式名
+     * @param cellDataType  数据类型枚举
+     * @param value         数据值
+     * @param sharedStrings {@link SharedStrings}
+     * @param numFmtString  数字格式名
      * @return 数据值
      */
-    public static Object getDataValue(CellDataType cellDataType, String value, SharedStringsTable sharedStringsTable, String numFmtString) {
+    public static Object getDataValue(CellDataType cellDataType, String value, SharedStrings sharedStrings, String numFmtString) {
         if (null == value) {
             return null;
         }
@@ -114,7 +114,7 @@ public class ExcelSaxKit {
             case SSTINDEX:
                 try {
                     final int index = Integer.parseInt(value);
-                    result = sharedStringsTable.getItemAt(index).getString();
+                    result = sharedStrings.getItemAt(index).getString();
                 } catch (NumberFormatException e) {
                     result = value;
                 }

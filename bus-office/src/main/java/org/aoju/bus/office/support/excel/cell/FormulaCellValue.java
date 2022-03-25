@@ -36,19 +36,19 @@ import org.apache.poi.ss.usermodel.Cell;
  * </ul>
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class FormulaCellValue implements CellValue<String>, CellSetter {
 
     /**
      * 公式
      */
-    String formula;
+    private final String formula;
     /**
      * 结果，使用ExcelWriter时可以不用
      */
-    Object result;
+    private final Object result;
 
     /**
      * 构造

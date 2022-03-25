@@ -36,8 +36,8 @@ import org.aoju.bus.core.toolkit.*;
  * 传入的path所指向的资源必须存在,否则报错
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class ClassPathResource extends UriResource {
 
@@ -82,7 +82,7 @@ public class ClassPathResource extends UriResource {
      * @param clazz               {@link Class} 用于定位路径
      */
     public ClassPathResource(String pathBaseClassLoader, ClassLoader classLoader, Class<?> clazz) {
-        super(null);
+        super();
         Assert.notNull(pathBaseClassLoader, "Path must not be null");
 
         final String path = normalizePath(pathBaseClassLoader);

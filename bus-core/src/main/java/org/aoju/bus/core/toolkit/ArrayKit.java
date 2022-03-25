@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
  * 数组工具类
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class ArrayKit {
 
@@ -589,7 +589,7 @@ public class ArrayKit {
                 }
             }
         }
-        return false;
+        return array == null;
     }
 
     /**
@@ -1370,291 +1370,260 @@ public class ArrayKit {
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array 数组,会变更
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final Object[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
+    public static long[] reverse(long[] array) {
+        return reverse(array, 0, array.length);
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array 数组,会变更
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
      */
-    public static void reverse(final long[] array) {
-        if (null == array) {
-            return;
+    public static long[] reverse(long[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final int[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final short[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final char[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final byte[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final double[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final float[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array 数组,会变更
-     */
-    public static void reverse(final boolean[] array) {
-        if (null == array) {
-            return;
-        }
-        reverse(array, 0, array.length);
-    }
-
-    /**
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
-     */
-    public static void reverse(final boolean[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
-        }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final byte[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static int[] reverse(int[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static int[] reverse(int[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final char[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static short[] reverse(short[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static short[] reverse(short[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final double[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static char[] reverse(char[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static char[] reverse(char[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final float[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static byte[] reverse(byte[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static byte[] reverse(byte[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final int[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static double[] reverse(double[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static double[] reverse(double[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final long[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static float[] reverse(float[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static float[] reverse(float[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
 
     /**
-     * 反转数组,会变更原数组
+     * 反转数组，会变更原数组
      *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
+     * @param array 数组，会变更
+     * @return 变更后的原数组
      */
-    public static void reverse(final Object[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
+    public static boolean[] reverse(boolean[] array) {
+        return reverse(array, 0, array.length);
+    }
+
+    /**
+     * 反转数组，会变更原数组
+     *
+     * @param array      数组，会变更
+     * @param startIndex 其实位置（包含）
+     * @param endIndex   结束位置（不包含）
+     * @return 变更后的原数组
+     */
+    public static boolean[] reverse(boolean[] array, final int startIndex, final int endIndex) {
+        if (isEmpty(array)) {
+            return array;
         }
-        int i = startIndex < 0 ? 0 : startIndex;
+        int i = Math.max(startIndex, 0);
         int j = Math.min(array.length, endIndex) - 1;
         while (j > i) {
             swap(array, i, j);
             j--;
             i++;
         }
+        return array;
     }
-
-    /**
-     * 反转数组,会变更原数组
-     *
-     * @param array      数组,会变更
-     * @param startIndex 其实位置(包含)
-     * @param endIndex   结束位置(不包含)
-     */
-    public static void reverse(final short[] array, final int startIndex, final int endIndex) {
-        if (null == array) {
-            return;
-        }
-        int i = startIndex < 0 ? 0 : startIndex;
-        int j = Math.min(array.length, endIndex) - 1;
-        while (j > i) {
-            swap(array, i, j);
-            j--;
-            i++;
-        }
-    }
-
 
     /**
      * 交换数组中连个位置的值
@@ -7083,18 +7052,6 @@ public class ArrayKit {
     }
 
     /**
-     * 将新元素插入到到已有数组中的某个位置
-     * 添加新元素会生成一个新的数组,不影响原数组
-     * 如果插入位置为为负数,从原数组从后向前计数,若大于原数组长度,则空白处用null填充
-     *
-     * @param <T>         数组元素类型
-     * @param array       已有数组
-     * @param index       插入位置,此位置为对应此位置元素之前的空档
-     * @param newElements 新元素
-     * @return 新数组
-     *
-     */
-    /**
      * 将元素值设置为数组的某个位置,当给定的index大于数组长度,则追加
      *
      * @param array 已有数组
@@ -7109,6 +7066,46 @@ public class ArrayKit {
         } else {
             return append(array, value);
         }
+    }
+
+    /**
+     * 将新元素插入到到已有数组中的某个位置
+     * 添加新元素会生成一个新数组或原有数组
+     * 如果插入位置为为负数，那么生成一个由插入元素顺序加已有数组顺序的新数组
+     *
+     * @param <T>    数组元素类型
+     * @param buffer 已有数组
+     * @param index  位置，大于长度追加，否则替换，&lt;0表示从头部追加
+     * @param values 新值
+     * @return 新数组或原有数组
+     */
+    public static <T> T[] replace(T[] buffer, int index, T... values) {
+        if (isEmpty(values)) {
+            return buffer;
+        }
+        if (isEmpty(buffer)) {
+            return values;
+        }
+        if (index < 0) {
+            // 从头部追加
+            return insert(buffer, 0, values);
+        }
+        if (index >= buffer.length) {
+            // 超出长度，尾部追加
+            return append(buffer, values);
+        }
+
+        if (buffer.length >= values.length + index) {
+            System.arraycopy(values, 0, buffer, index, values.length);
+            return buffer;
+        }
+
+        // 替换长度大于原数组长度，新建数组
+        int newArrayLength = index + values.length;
+        final T[] result = newArray(buffer.getClass().getComponentType(), newArrayLength);
+        System.arraycopy(buffer, 0, result, 0, index);
+        System.arraycopy(values, 0, result, index, values.length);
+        return result;
     }
 
     /**

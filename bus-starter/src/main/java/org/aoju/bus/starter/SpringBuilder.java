@@ -38,6 +38,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
@@ -47,11 +48,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * 设置相关系统参数信息.
+ * 设置相关系统参数信息
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 @Component
 public class SpringBuilder implements ApplicationContextAware {
@@ -70,6 +71,17 @@ public class SpringBuilder implements ApplicationContextAware {
         Assert.notNull(context, "Could not found context for spring.");
         SpringBuilder.context = context;
         SpringHolder.alive = true;
+    }
+
+    /**
+     * 发布事件
+     *
+     * @param event 待发布的事件，事件必须是{@link ApplicationEvent}的子类
+     */
+    public static void publishEvent(ApplicationEvent event) {
+        if (null != context) {
+            context.publishEvent(event);
+        }
     }
 
     /**
@@ -258,6 +270,18 @@ public class SpringBuilder implements ApplicationContextAware {
             SpringBuilder.context.close();
             SpringBuilder.context = null;
             SpringHolder.alive = false;
+        }
+    }
+
+    /**
+     * 发布事件
+     * Spring 4.2+ 版本事件可以不再是{@link ApplicationEvent}的子类
+     *
+     * @param event 待发布的事件
+     */
+    public static void publishEvent(Object event) {
+        if (null != context) {
+            context.publishEvent(event);
         }
     }
 

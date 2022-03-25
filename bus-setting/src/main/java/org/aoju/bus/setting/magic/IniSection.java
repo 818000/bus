@@ -34,8 +34,8 @@ import java.util.function.Supplier;
  * Ini file's Section
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public interface IniSection extends ProxyList<IniProperty>, IniElement {
 
@@ -60,5 +60,10 @@ public interface IniSection extends ProxyList<IniProperty>, IniElement {
      * @return list.
      */
     List<IniProperty> getList(Supplier<List<IniProperty>> listSupplier);
+
+    @Override
+    default boolean isEmpty() {
+        return ProxyList.super.isEmpty();
+    }
 
 }

@@ -33,8 +33,8 @@ import org.aoju.bus.core.toolkit.StringKit;
  * 命名规则封装，主要是针对驼峰风格命名、连接符命名等的封装
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class NamingCase {
 
@@ -88,7 +88,7 @@ public class NamingCase {
      * 将驼峰式命名的字符串转换为使用符号连接方式。如果转换前的驼峰式命名的字符串为空，则返回空字符串
      *
      * @param text   转换前的驼峰式命名的字符串，也可以为符号连接形式
-     * @param symbol 连接符
+     * @param symbol 原字符串中的连接符连接符
      * @return 转换后符号连接方式命名的字符串
      */
     public static String toSymbolCase(CharSequence text, char symbol) {
@@ -112,20 +112,20 @@ public class NamingCase {
                             //普通首字母大写，如_Abb -> _abb
                             c = Character.toLowerCase(c);
                         }
-                        //后一个为大写，按照专有名词对待，如_AB -> _AB
+                        // 后一个为大写，按照专有名词对待，如_AB -> _AB
                     } else if (Character.isLowerCase(preChar)) {
                         // 前一个为小写
                         sb.append(symbol);
                         if (null == nextChar
                                 || Character.isLowerCase(nextChar)
                                 || CharsKit.isNumber(nextChar)) {
-                            //普通首字母大写，如aBcc -> a_bcc
+                            // 普通首字母大写，如aBcc -> a_bcc
                             c = Character.toLowerCase(c);
                         }
                         // 后一个为大写，按照专有名词对待，如aBC -> a_BC
                     } else {
-                        //前一个为大写
-                        if (null == nextChar || Character.isLowerCase(nextChar)) {
+                        // 前一个为大写
+                        if (null != nextChar && Character.isLowerCase(nextChar)) {
                             // 普通首字母大写，如ABcc -> A_bcc
                             sb.append(symbol);
                             c = Character.toLowerCase(c);

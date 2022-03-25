@@ -32,15 +32,25 @@ import java.util.Collection;
  * ANY逻辑复合过滤器,即任意一个过滤器满足时就满足,当没有过滤器的时候则认为没有过滤器满足,也就是不满足
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class AnyFilter extends MixFilter implements Filter {
 
+    /**
+     * 构造
+     *
+     * @param filters 过滤器
+     */
     public AnyFilter(Filter... filters) {
         super(filters);
     }
 
+    /**
+     * 构造
+     *
+     * @param filters 过滤器
+     */
     public AnyFilter(Collection<? extends Filter> filters) {
         super(filters);
     }

@@ -37,8 +37,8 @@ import java.util.function.Supplier;
  * Ini file's Section
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class IniSectionImpl extends AbstractElement implements IniSection {
 
@@ -134,6 +134,11 @@ public class IniSectionImpl extends AbstractElement implements IniSection {
     @Override
     public List<IniProperty> getProxyList() {
         return properties;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty();
     }
 
 }

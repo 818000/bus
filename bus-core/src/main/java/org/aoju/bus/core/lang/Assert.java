@@ -28,6 +28,7 @@ package org.aoju.bus.core.lang;
 import org.aoju.bus.core.lang.function.Func0;
 import org.aoju.bus.core.toolkit.ArrayKit;
 import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.ObjectKit;
 import org.aoju.bus.core.toolkit.StringKit;
 
 import java.util.Collection;
@@ -39,8 +40,8 @@ import java.util.function.Supplier;
  * 断言某些对象或值是否符合规定,否则抛出异常 经常用于做变量检查
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class Assert {
 
@@ -234,7 +235,7 @@ public class Assert {
      * @throws X if the object is {@code null}
      */
     public static <T, X extends Throwable> T notNull(T object, Supplier<X> errorSupplier) throws X {
-        if (null == object) {
+        if (ObjectKit.isNull(object)) {
             throw errorSupplier.get();
         }
         return object;

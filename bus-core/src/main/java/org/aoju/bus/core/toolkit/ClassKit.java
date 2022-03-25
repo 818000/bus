@@ -64,8 +64,8 @@ import java.util.jar.Manifest;
  * Class工具类
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class ClassKit {
 
@@ -781,6 +781,16 @@ public class ClassKit {
      */
     public static boolean isSynthetic(Class<?> clazz) {
         return clazz.isSynthetic();
+    }
+
+    /**
+     * 是否抽象方法
+     *
+     * @param method 方法
+     * @return 是否抽象方法
+     */
+    public static boolean isAbstract(Method method) {
+        return BeanKit.hasModifier(method, BeanKit.ModifierType.ABSTRACT);
     }
 
     /**

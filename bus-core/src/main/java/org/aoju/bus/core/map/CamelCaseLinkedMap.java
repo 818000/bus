@@ -25,8 +25,6 @@
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
-import org.aoju.bus.core.toolkit.StringKit;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,10 +35,10 @@ import java.util.Map;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
-public class CamelCaseLinkedMap<K, V> extends CustomKeyMap<K, V> {
+public class CamelCaseLinkedMap<K, V> extends CamelCaseMap<K, V> {
 
     /**
      * 构造
@@ -71,11 +69,11 @@ public class CamelCaseLinkedMap<K, V> extends CustomKeyMap<K, V> {
      * 构造
      *
      * @param loadFactor 加载因子
-     * @param m          Map
+     * @param map        数据会被默认拷贝到一个新的LinkedHashMap中
      */
-    public CamelCaseLinkedMap(float loadFactor, Map<? extends K, ? extends V> m) {
-        this(m.size(), loadFactor);
-        this.putAll(m);
+    public CamelCaseLinkedMap(float loadFactor, Map<? extends K, ? extends V> map) {
+        this(map.size(), loadFactor);
+        this.putAll(map);
     }
 
     /**
@@ -86,20 +84,6 @@ public class CamelCaseLinkedMap<K, V> extends CustomKeyMap<K, V> {
      */
     public CamelCaseLinkedMap(int initialCapacity, float loadFactor) {
         super(new LinkedHashMap<>(initialCapacity, loadFactor));
-    }
-
-    /**
-     * 将Key转为驼峰风格，如果key为字符串的话
-     *
-     * @param key KEY
-     * @return 驼峰Key
-     */
-    @Override
-    protected Object customKey(Object key) {
-        if (key instanceof CharSequence) {
-            key = StringKit.toCamelCase(key.toString());
-        }
-        return key;
     }
 
 }

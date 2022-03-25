@@ -40,8 +40,8 @@ import java.util.jar.JarFile;
  * URL相关工具
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class UriKit {
 
@@ -199,6 +199,25 @@ public class UriKit {
     }
 
     /**
+     * 将{@link URI}转换为{@link URL}
+     *
+     * @param uri {@link URI}
+     * @return URL对象
+     * @throws InstrumentException {@link MalformedURLException}包装，URI格式有问题时抛出
+     * @see URI#toURL()
+     */
+    public static URL url(URI uri) throws InstrumentException {
+        if (null == uri) {
+            return null;
+        }
+        try {
+            return uri.toURL();
+        } catch (MalformedURLException e) {
+            throw new InstrumentException(e);
+        }
+    }
+
+    /**
      * 通过一个字符串形式的URL地址创建URL对象
      *
      * @param url     URL
@@ -206,7 +225,9 @@ public class UriKit {
      * @return URL对象
      */
     public static URL url(String url, URLStreamHandler handler) {
-        Assert.notNull(url, "URL must not be null");
+        if (null == url) {
+            return null;
+        }
 
         // 兼容Spring的ClassPath路径
         if (url.startsWith(Normal.CLASSPATH)) {
@@ -460,9 +481,10 @@ public class UriKit {
      * @return 是否为文件
      */
     public static boolean isFileURL(URL url) {
+        Assert.notNull(url, "URL must be not null");
         String protocol = url.getProtocol();
-        return (Normal.URL_PROTOCOL_FILE.equals(protocol) || //
-                Normal.URL_PROTOCOL_VFSFILE.equals(protocol) || //
+        return (Normal.URL_PROTOCOL_FILE.equals(protocol) ||
+                Normal.URL_PROTOCOL_VFSFILE.equals(protocol) ||
                 Normal.URL_PROTOCOL_VFS.equals(protocol));
     }
 
@@ -474,9 +496,9 @@ public class UriKit {
      */
     public static boolean isJarURL(URL url) {
         final String protocol = url.getProtocol();
-        return (Normal.URL_PROTOCOL_JAR.equals(protocol) || //
-                Normal.URL_PROTOCOL_ZIP.equals(protocol) || //
-                Normal.URL_PROTOCOL_VFSZIP.equals(protocol) || //
+        return (Normal.URL_PROTOCOL_JAR.equals(protocol) ||
+                Normal.URL_PROTOCOL_ZIP.equals(protocol) ||
+                Normal.URL_PROTOCOL_VFSZIP.equals(protocol) ||
                 Normal.URL_PROTOCOL_WSJAR.equals(protocol));
     }
 

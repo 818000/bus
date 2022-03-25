@@ -25,9 +25,9 @@
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
+import org.aoju.bus.core.builder.Builder;
 import org.aoju.bus.core.toolkit.MapKit;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -37,10 +37,12 @@ import java.util.function.Supplier;
  * @param <K> Key类型
  * @param <V> Value类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
-public class MapBuilder<K, V> implements Serializable {
+public class MapBuilder<K, V> implements Builder<Map<K, V>> {
+
+    private static final long serialVersionUID = 1L;
 
     private final Map<K, V> map;
 
@@ -149,6 +151,16 @@ public class MapBuilder<K, V> implements Serializable {
      */
     public MapBuilder<K, V> putAll(Map<K, V> map) {
         this.map.putAll(map);
+        return this;
+    }
+
+    /**
+     * 清空Map
+     *
+     * @return this
+     */
+    public MapBuilder<K, V> clear() {
+        this.map.clear();
         return this;
     }
 

@@ -25,6 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
+import org.aoju.bus.core.compare.NormalCompare;
 import org.aoju.bus.core.compare.PinyinCompare;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.io.streams.ByteArrayOutputStream;
@@ -45,8 +46,8 @@ import java.util.function.Supplier;
  * 一些通用的函数
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class ObjectKit {
 
@@ -604,6 +605,16 @@ public class ObjectKit {
             return isNullGreater ? -1 : 1;
         }
         return c1.compareTo(c2);
+    }
+
+    /**
+     * 获取自然排序器，即默认排序器
+     *
+     * @param <E> 排序节点类型
+     * @return 默认排序器
+     */
+    public static <E extends Comparable<? super E>> Comparator<E> naturalComparator() {
+        return NormalCompare.INSTANCE;
     }
 
     /**

@@ -38,10 +38,10 @@ import java.util.Map;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
-public class CollectionValueMap<K, V> extends AbsCollValueMap<K, V, Collection<V>> {
+public class CollectionValueMap<K, V> extends AbstractCollValueMap<K, V, Collection<V>> {
 
     private final Func0<Collection<V>> collectionCreateFunc;
 

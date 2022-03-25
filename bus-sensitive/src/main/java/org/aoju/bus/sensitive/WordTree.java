@@ -38,8 +38,8 @@ import java.util.*;
  * 单词树使用树状结构表示一组单词
  *
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class WordTree extends HashMap<Character, WordTree> {
 
@@ -96,8 +96,7 @@ public class WordTree extends HashMap<Character, WordTree> {
      * @return this
      */
     public WordTree addWords(String... words) {
-        HashSet<String> wordsSet = CollKit.newHashSet(words);
-        for (String word : wordsSet) {
+        for (String word : CollKit.newHashSet(words)) {
             addWord(word);
         }
         return this;

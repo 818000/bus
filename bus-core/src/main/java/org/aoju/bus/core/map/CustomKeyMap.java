@@ -34,8 +34,8 @@ import java.util.function.BiFunction;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
 
@@ -45,10 +45,10 @@ public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
      * 构造
      * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
      *
-     * @param m Map 被包装的Map
+     * @param map 被包装的Map,必须为空Map，否则自定义key会无效
      */
-    public CustomKeyMap(Map<K, V> m) {
-        super(m);
+    public CustomKeyMap(Map<K, V> map) {
+        super(map);
     }
 
     @Override
@@ -62,8 +62,8 @@ public abstract class CustomKeyMap<K, V> extends MapWrapper<K, V> {
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        m.forEach(this::put);
+    public void putAll(Map<? extends K, ? extends V> map) {
+        map.forEach(this::put);
     }
 
     @Override

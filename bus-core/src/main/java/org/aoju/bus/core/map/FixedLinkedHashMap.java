@@ -29,12 +29,13 @@ import java.util.LinkedHashMap;
 
 /**
  * 固定大小的{@link LinkedHashMap} 实现
+ * 注意此类非线程安全，由于{@link #get(Object)}操作会修改链表的顺序结构，因此也不可以使用读写锁
  *
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.3.5
- * @since JDK 1.8+
+ * @version 6.5.0
+ * @since Java 17+
  */
 public class FixedLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
