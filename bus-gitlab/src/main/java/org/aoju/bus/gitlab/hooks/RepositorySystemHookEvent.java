@@ -23,68 +23,104 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.gitlab.support;
+package org.aoju.bus.gitlab.hooks;
 
-import java.util.Arrays;
+import org.aoju.bus.gitlab.hooks.web.EventProject;
+import org.aoju.bus.gitlab.support.JacksonJson;
 
-/**
- * This class implements a CharSequence that can be cleared of it's contained characters.
- * This class is utilized to pass around secrets (passwords) instead of a String instance.
- */
-public class SecretString implements CharSequence, AutoCloseable {
+import java.util.List;
 
-    private final char[] chars;
+public class RepositorySystemHookEvent extends AbstractSystemHookEvent {
 
-    public SecretString(CharSequence charSequence) {
+    public static final String REPOSITORY_UPDATE_EVENT = "repository_update";
 
-        int length = charSequence.length();
-        chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            chars[i] = charSequence.charAt(i);
-        }
+    private String eventName;
+    private Long userId;
+    private String userName;
+    private String userEmail;
+    private String userAvatar;
+
+    private Long projectId;
+    private EventProject project;
+
+    private List<RepositoryChange> changes;
+    private List<String> refs;
+
+    @Override
+    public String getEventName() {
+        return (eventName);
     }
 
-    public SecretString(char[] chars) {
-        this(chars, 0, chars.length);
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
-    public SecretString(char[] chars, int start, int end) {
-        this.chars = new char[end - start];
-        System.arraycopy(chars, start, this.chars, 0, this.chars.length);
+    public Long getUserId() {
+        return this.userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(String userAvatar) {
+        this.userAvatar = userAvatar;
+    }
+
+    public Long getProjectId() {
+        return this.projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public EventProject getProject() {
+        return project;
+    }
+
+    public void setProject(EventProject project) {
+        this.project = project;
+    }
+
+    public List<RepositoryChange> getChanges() {
+        return changes;
+    }
+
+    public void setChanges(List<RepositoryChange> changes) {
+        this.changes = changes;
+    }
+
+    public List<String> getRefs() {
+        return refs;
+    }
+
+    public void setRefs(List<String> refs) {
+        this.refs = refs;
     }
 
     @Override
-    public char charAt(int index) {
-        return chars[index];
+    public String toString() {
+        return (JacksonJson.toJsonString(this));
     }
-
-    @Override
-    public void close() {
-        clear();
-    }
-
-    @Override
-    public int length() {
-        return chars.length;
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return new SecretString(this.chars, start, end);
-    }
-
-    /**
-     * Clear the contents of this SecretString instance by setting each character to 0.
-     * This is automatically done in the finalize() method.
-     */
-    public void clear() {
-        Arrays.fill(chars, '\0');
-    }
-
-    @Override
-    public void finalize() throws Throwable {
-        clear();
-        super.finalize();
-    }
-
 }
