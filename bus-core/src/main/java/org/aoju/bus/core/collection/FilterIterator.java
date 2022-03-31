@@ -25,70 +25,99 @@
  ********************************************************************************/
 package org.aoju.bus.core.collection;
 
-import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Filter;
 
-import java.io.Serializable;
 import java.util.Iterator;
-import java.util.List;
+import java.util.NoSuchElementException;
+
 
 /**
- * 复制 {@link Iterator}为了解决并发情况下{@link Iterator}遍历导致的问题,当Iterator
- * 被修改会抛出ConcurrentModificationException),故使用复制原Iterator的方式解决此问题
+ * 包装 {@link Iterator}并根据{@link Filter}定义，过滤元素输出
+ * 类实现来自Apache Commons Collection
  *
- * <p>
- * 解决方法为：在构造方法中遍历Iterator中的元素,装入新的List中然后遍历之
- * 当然,修改这个复制后的Iterator是没有意义的,因此remove方法将会抛出异常
- *
- * @param <E> 元素类型
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public class CopiedIterator<E> implements IterableIterator<E>, Serializable {
+public class FilterIterator<E> implements Iterator<E> {
 
-    private static final long serialVersionUID = 1L;
+    private final Iterator<? extends E> iterator;
+    private final Filter<? super E> filter;
 
-    private final Iterator<E> listIterator;
+    /**
+     * 下一个元素
+     */
+    private E nextObject;
+    /**
+     * 标记下一个元素是否被计算
+     */
+    private boolean nextObjectSet = false;
 
     /**
      * 构造
      *
-     * @param iterator 被复制的Iterator
+     * @param iterator 被包装的{@link Iterator}
+     * @param filter   过滤函数，{@code null}表示不过滤
      */
-    public CopiedIterator(Iterator<E> iterator) {
-        final List<E> eleList = CollKit.toList(iterator);
-        this.listIterator = eleList.iterator();
-    }
-
-    /**
-     * 根据已有{@link Iterator}，返回新的{@code CopiedIter}
-     *
-     * @param iterator {@link Iterator}
-     * @param <E>      元素类型
-     * @return {@code CopiedIter}
-     */
-    public static <E> CopiedIterator<E> copyOf(Iterator<E> iterator) {
-        return new CopiedIterator<>(iterator);
+    public FilterIterator(final Iterator<? extends E> iterator, final Filter<? super E> filter) {
+        this.iterator = Assert.notNull(iterator);
+        this.filter = filter;
     }
 
     @Override
     public boolean hasNext() {
-        return this.listIterator.hasNext();
+        return nextObjectSet || setNextObject();
     }
 
     @Override
     public E next() {
-        return this.listIterator.next();
+        if (false == nextObjectSet && false == setNextObject()) {
+            throw new NoSuchElementException();
+        }
+        nextObjectSet = false;
+        return nextObject;
+    }
+
+    @Override
+    public void remove() {
+        if (nextObjectSet) {
+            throw new IllegalStateException("remove() cannot be called");
+        }
+        iterator.remove();
     }
 
     /**
-     * 此对象不支持移除元素
+     * 获取被包装的{@link Iterator}
      *
-     * @throws UnsupportedOperationException 当调用此方法时始终抛出此异常
+     * @return {@link Iterator}
      */
-    @Override
-    public void remove() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This is a read-only iterator.");
+    public Iterator<? extends E> getIterator() {
+        return iterator;
+    }
+
+    /**
+     * 获取过滤函数
+     *
+     * @return 过滤函数，可能为{@code null}
+     */
+    public Filter<? super E> getFilter() {
+        return filter;
+    }
+
+    /**
+     * 设置下一个元素，如果存在返回{@code true}，否则{@code false}
+     */
+    private boolean setNextObject() {
+        while (iterator.hasNext()) {
+            final E object = iterator.next();
+            if (null != filter && filter.accept(object)) {
+                nextObject = object;
+                nextObjectSet = true;
+                return true;
+            }
+        }
+        return false;
     }
 
 }
