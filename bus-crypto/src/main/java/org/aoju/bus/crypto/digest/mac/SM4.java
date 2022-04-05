@@ -26,73 +26,26 @@
 package org.aoju.bus.crypto.digest.mac;
 
 import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.engines.SM4Engine;
 
 /**
- * BouncyCastle的HMAC算法实现引擎，使用{@link Mac} 实现摘要
- * 当引入BouncyCastle库时自动使用其作为Provider
+ * SM4算法的MAC引擎实现
  *
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public class BCHMacEngine extends BCMacEngine {
+public class SM4 extends CBCBlockCipher {
+
+    private static final int MAC_SIZE = 128;
 
     /**
      * 构造
      *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
-     * @param iv     加盐
+     * @param params {@link CipherParameters}
      */
-    public BCHMacEngine(Digest digest, byte[] key, byte[] iv) {
-        this(digest, new ParametersWithIV(new KeyParameter(key), iv));
-    }
-
-    /**
-     * 构造
-     *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
-     */
-    public BCHMacEngine(Digest digest, byte[] key) {
-        this(digest, new KeyParameter(key));
-    }
-
-    /**
-     * 构造
-     *
-     * @param digest 摘要算法
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     */
-    public BCHMacEngine(Digest digest, CipherParameters params) {
-        this(new HMac(digest), params);
-    }
-
-    /**
-     * 构造
-     *
-     * @param mac    {@link HMac}
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     */
-    public BCHMacEngine(HMac mac, CipherParameters params) {
-        super(mac, params);
-    }
-
-    /**
-     * 初始化
-     *
-     * @param digest 摘要算法
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     * @return this
-     * @see #init(Mac, CipherParameters)
-     */
-    public BCHMacEngine init(Digest digest, CipherParameters params) {
-        return (BCHMacEngine) init(new HMac(digest), params);
+    public SM4(CipherParameters params) {
+        super(new SM4Engine(), MAC_SIZE, params);
     }
 
 }

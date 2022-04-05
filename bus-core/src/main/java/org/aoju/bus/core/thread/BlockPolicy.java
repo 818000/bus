@@ -23,76 +23,29 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.crypto.digest.mac;
+package org.aoju.bus.core.thread;
 
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * BouncyCastle的HMAC算法实现引擎，使用{@link Mac} 实现摘要
- * 当引入BouncyCastle库时自动使用其作为Provider
+ * 当任务队列过长时处于阻塞状态，直到添加到队列中，如果阻塞过程中被中断，就会抛出{@link InterruptedException}异常
+ * 有时候在线程池内访问第三方接口，只希望固定并发数去访问，并且不希望丢弃任务时使用此策略，队列满的时候会处于阻塞状态(例如刷库的场景)
  *
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public class BCHMacEngine extends BCMacEngine {
+public class BlockPolicy implements RejectedExecutionHandler {
 
-    /**
-     * 构造
-     *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
-     * @param iv     加盐
-     */
-    public BCHMacEngine(Digest digest, byte[] key, byte[] iv) {
-        this(digest, new ParametersWithIV(new KeyParameter(key), iv));
-    }
-
-    /**
-     * 构造
-     *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
-     */
-    public BCHMacEngine(Digest digest, byte[] key) {
-        this(digest, new KeyParameter(key));
-    }
-
-    /**
-     * 构造
-     *
-     * @param digest 摘要算法
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     */
-    public BCHMacEngine(Digest digest, CipherParameters params) {
-        this(new HMac(digest), params);
-    }
-
-    /**
-     * 构造
-     *
-     * @param mac    {@link HMac}
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     */
-    public BCHMacEngine(HMac mac, CipherParameters params) {
-        super(mac, params);
-    }
-
-    /**
-     * 初始化
-     *
-     * @param digest 摘要算法
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     * @return this
-     * @see #init(Mac, CipherParameters)
-     */
-    public BCHMacEngine init(Digest digest, CipherParameters params) {
-        return (BCHMacEngine) init(new HMac(digest), params);
+    @Override
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+        try {
+            e.getQueue().put(r);
+        } catch (InterruptedException ex) {
+            throw new RejectedExecutionException("Task " + r + " rejected from " + e);
+        }
     }
 
 }
