@@ -25,74 +25,102 @@
  ********************************************************************************/
 package org.aoju.bus.crypto.digest.mac;
 
+import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import java.security.Key;
+
 /**
- * BouncyCastle的HMAC算法实现引擎，使用{@link Mac} 实现摘要
- * 当引入BouncyCastle库时自动使用其作为Provider
+ * {@link CBCBlockCipherMac}实现的MAC算法，使用CBC Block方式
  *
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public class BCHMacEngine extends BCMacEngine {
+public class CBCBlockCipher extends BCMacEngine {
 
     /**
      * 构造
      *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
-     * @param iv     加盐
+     * @param digest        摘要算法，为{@link Digest} 的接口实现
+     * @param macSizeInBits mac结果的bits长度，必须为8的倍数
+     * @param key           密钥
+     * @param iv            加盐
      */
-    public BCHMacEngine(Digest digest, byte[] key, byte[] iv) {
-        this(digest, new ParametersWithIV(new KeyParameter(key), iv));
+    public CBCBlockCipher(BlockCipher digest, int macSizeInBits, Key key, byte[] iv) {
+        this(digest, macSizeInBits, key.getEncoded(), iv);
     }
 
     /**
      * 构造
      *
-     * @param digest 摘要算法，为{@link Digest} 的接口实现
-     * @param key    密钥
+     * @param digest        摘要算法，为{@link Digest} 的接口实现
+     * @param macSizeInBits mac结果的bits长度，必须为8的倍数
+     * @param key           密钥
+     * @param iv            加盐
      */
-    public BCHMacEngine(Digest digest, byte[] key) {
-        this(digest, new KeyParameter(key));
+    public CBCBlockCipher(BlockCipher digest, int macSizeInBits, byte[] key, byte[] iv) {
+        this(digest, macSizeInBits, new ParametersWithIV(new KeyParameter(key), iv));
     }
 
     /**
      * 构造
      *
-     * @param digest 摘要算法
+     * @param cipher        算法，为{@link BlockCipher} 的接口实现
+     * @param macSizeInBits mac结果的bits长度，必须为8的倍数
+     * @param key           密钥
+     */
+    public CBCBlockCipher(BlockCipher cipher, int macSizeInBits, Key key) {
+        this(cipher, macSizeInBits, key.getEncoded());
+    }
+
+    /**
+     * 构造
+     *
+     * @param cipher        算法，为{@link BlockCipher} 的接口实现
+     * @param macSizeInBits mac结果的bits长度，必须为8的倍数
+     * @param key           密钥
+     */
+    public CBCBlockCipher(BlockCipher cipher, int macSizeInBits, byte[] key) {
+        this(cipher, macSizeInBits, new KeyParameter(key));
+    }
+
+    /**
+     * 构造
+     *
+     * @param cipher        算法，为{@link BlockCipher} 的接口实现
+     * @param macSizeInBits mac结果的bits长度，必须为8的倍数
+     * @param params        参数，例如密钥可以用{@link KeyParameter}
+     */
+    public CBCBlockCipher(BlockCipher cipher, int macSizeInBits, CipherParameters params) {
+        this(new CBCBlockCipherMac(cipher, macSizeInBits), params);
+    }
+
+    /**
+     * 构造
+     *
+     * @param mac    {@link CBCBlockCipherMac}
      * @param params 参数，例如密钥可以用{@link KeyParameter}
      */
-    public BCHMacEngine(Digest digest, CipherParameters params) {
-        this(new HMac(digest), params);
-    }
-
-    /**
-     * 构造
-     *
-     * @param mac    {@link HMac}
-     * @param params 参数，例如密钥可以用{@link KeyParameter}
-     */
-    public BCHMacEngine(HMac mac, CipherParameters params) {
+    public CBCBlockCipher(CBCBlockCipherMac mac, CipherParameters params) {
         super(mac, params);
     }
 
     /**
      * 初始化
      *
-     * @param digest 摘要算法
+     * @param cipher {@link BlockCipher}
      * @param params 参数，例如密钥可以用{@link KeyParameter}
      * @return this
      * @see #init(Mac, CipherParameters)
      */
-    public BCHMacEngine init(Digest digest, CipherParameters params) {
-        return (BCHMacEngine) init(new HMac(digest), params);
+    public CBCBlockCipher init(BlockCipher cipher, CipherParameters params) {
+        return (CBCBlockCipher) init(new CBCBlockCipherMac(cipher), params);
     }
 
 }
