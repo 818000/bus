@@ -23,34 +23,28 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.map;
+package org.aoju.bus.core.lock;
 
-import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * 自定义键的Map,默认HashMap实现
+ * 无锁的读写锁实现
  *
- * @param <K> 键类型
- * @param <V> 值类型
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public abstract class CustomKeyMap<K, V> extends TransitionMap<K, V> {
+public class NoReadWriteLock implements ReadWriteLock {
 
-    /**
-     * 构造
-     * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
-     *
-     * @param map 被包装的Map,必须为空Map，否则自定义key会无效
-     */
-    public CustomKeyMap(Map<K, V> map) {
-        super(map);
+    @Override
+    public Lock readLock() {
+        return AtomicNoLock.INSTANCE;
     }
 
     @Override
-    protected V customValue(Object value) {
-        return (V) value;
+    public Lock writeLock() {
+        return AtomicNoLock.INSTANCE;
     }
 
 }

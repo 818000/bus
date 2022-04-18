@@ -25,10 +25,15 @@
  ********************************************************************************/
 package org.aoju.bus.core.map;
 
-import java.util.Map;
+import org.aoju.bus.core.lang.References;
+
+import java.lang.ref.Reference;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * 自定义键的Map,默认HashMap实现
+ * 线程安全的WeakMap实现
+ * 参考：jdk.management.resource.internal.WeakKeyConcurrentHashMap
  *
  * @param <K> 键类型
  * @param <V> 值类型
@@ -36,21 +41,22 @@ import java.util.Map;
  * @version 6.5.0
  * @since Java 17+
  */
-public abstract class CustomKeyMap<K, V> extends TransitionMap<K, V> {
+public class WeakMap<K, V> extends ReferenceMap<K, V> {
 
     /**
      * 构造
-     * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
-     *
-     * @param map 被包装的Map,必须为空Map，否则自定义key会无效
      */
-    public CustomKeyMap(Map<K, V> map) {
-        super(map);
+    public WeakMap() {
+        this(new ConcurrentHashMap<>());
     }
 
-    @Override
-    protected V customValue(Object value) {
-        return (V) value;
+    /**
+     * 构造
+     *
+     * @param raw {@link ConcurrentMap}实现
+     */
+    public WeakMap(ConcurrentMap<Reference<K>, V> raw) {
+        super(raw, References.Type.WEAK);
     }
 
 }
