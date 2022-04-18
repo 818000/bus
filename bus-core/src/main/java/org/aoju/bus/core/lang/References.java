@@ -23,34 +23,77 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.map;
+package org.aoju.bus.core.lang;
 
-import java.util.Map;
+import java.lang.ref.*;
 
 /**
- * 自定义键的Map,默认HashMap实现
+ * 主要针对{@link Reference} 工具化封装
+ * 主要封装包括：
+ * <pre>
+ * 1. {@link SoftReference} 软引用，在GC报告内存不足时会被GC回收
+ * 2. {@link WeakReference} 弱引用，在GC时发现弱引用会回收其对象
+ * 3. {@link PhantomReference} 虚引用，在GC时发现虚引用对象，会将{@link PhantomReference}插入{@link ReferenceQueue}
+ *    此时对象未被真正回收，要等到{@link ReferenceQueue}被真正处理后才会被回收
+ * </pre>
  *
- * @param <K> 键类型
- * @param <V> 值类型
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public abstract class CustomKeyMap<K, V> extends TransitionMap<K, V> {
+public class References {
 
     /**
-     * 构造
-     * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
+     * 获得引用
      *
-     * @param map 被包装的Map,必须为空Map，否则自定义key会无效
+     * @param <T>      被引用对象类型
+     * @param type     引用类型枚举
+     * @param referent 被引用对象
+     * @return {@link Reference}
      */
-    public CustomKeyMap(Map<K, V> map) {
-        super(map);
+    public static <T> Reference<T> create(Type type, T referent) {
+        return create(type, referent, null);
     }
 
-    @Override
-    protected V customValue(Object value) {
-        return (V) value;
+    /**
+     * 获得引用
+     *
+     * @param <T>      被引用对象类型
+     * @param type     引用类型枚举
+     * @param referent 被引用对象
+     * @param queue    引用队列
+     * @return {@link Reference}
+     */
+    public static <T> Reference<T> create(Type type, T referent, ReferenceQueue<T> queue) {
+        switch (type) {
+            case SOFT:
+                return new SoftReference<>(referent, queue);
+            case WEAK:
+                return new WeakReference<>(referent, queue);
+            case PHANTOM:
+                return new PhantomReference<>(referent, queue);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * 引用类型
+     */
+    public enum Type {
+        /**
+         * 软引用，在GC报告内存不足时会被GC回收
+         */
+        SOFT,
+        /**
+         * 弱引用，在GC时发现弱引用会回收其对象
+         */
+        WEAK,
+        /**
+         * 虚引用，在GC时发现虚引用对象，会将{@link PhantomReference}插入{@link ReferenceQueue}。 <br>
+         * 此时对象未被真正回收，要等到{@link ReferenceQueue}被真正处理后才会被回收。
+         */
+        PHANTOM
     }
 
 }

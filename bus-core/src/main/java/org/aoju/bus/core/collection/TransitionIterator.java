@@ -23,34 +23,51 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.map;
+package org.aoju.bus.core.collection;
 
-import java.util.Map;
+import org.aoju.bus.core.lang.Assert;
+
+import java.util.Iterator;
+import java.util.function.Function;
 
 /**
- * 自定义键的Map,默认HashMap实现
+ * 转换迭代器
  *
- * @param <K> 键类型
- * @param <V> 值类型
+ * @param <F> 对象
+ * @param <T> 对象
  * @author Kimi Liu
  * @version 6.5.0
  * @since Java 17+
  */
-public abstract class CustomKeyMap<K, V> extends TransitionMap<K, V> {
+public class TransitionIterator<F, T> implements Iterator<T> {
+
+    private final Iterator<? extends F> backingIterator;
+    private final Function<? super F, ? extends T> func;
 
     /**
      * 构造
-     * 通过传入一个Map从而确定Map的类型,子类需创建一个空的Map,而非传入一个已有Map,否则值可能会被修改
      *
-     * @param map 被包装的Map,必须为空Map，否则自定义key会无效
+     * @param backingIterator 源{@link Iterator}
+     * @param func            转换函数
      */
-    public CustomKeyMap(Map<K, V> map) {
-        super(map);
+    public TransitionIterator(final Iterator<? extends F> backingIterator, final Function<? super F, ? extends T> func) {
+        this.backingIterator = Assert.notNull(backingIterator);
+        this.func = Assert.notNull(func);
     }
 
     @Override
-    protected V customValue(Object value) {
-        return (V) value;
+    public final boolean hasNext() {
+        return backingIterator.hasNext();
+    }
+
+    @Override
+    public final T next() {
+        return func.apply(backingIterator.next());
+    }
+
+    @Override
+    public final void remove() {
+        backingIterator.remove();
     }
 
 }
