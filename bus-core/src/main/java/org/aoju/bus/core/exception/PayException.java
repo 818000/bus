@@ -23,54 +23,40 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.cache.metric;
+package org.aoju.bus.core.exception;
 
 /**
- * 缓存接口,方便用户扩展
+ * 自定义异常: 支付异常
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public interface ExtendCache {
+public class PayException extends UncheckedException {
 
-    /**
-     * 存入缓存
-     *
-     * @param key   缓存key
-     * @param value 缓存内容
-     */
-    default void cache(String key, String value) {
+    private static final long serialVersionUID = 1L;
 
+    public PayException() {
+        super();
     }
 
-    /**
-     * 存入缓存
-     *
-     * @param key     缓存key
-     * @param value   缓存内容
-     * @param timeout 指定缓存过期时间(毫秒)
-     */
-    default void cache(String key, String value, long timeout) {
-
+    public PayException(String errcode) {
+        this(errcode, (String) null);
     }
 
-    /**
-     * 获取缓存内容
-     *
-     * @param key 缓存key
-     * @return 缓存内容
-     */
-    default Object get(String key) {
-        return null;
+    public PayException(String format, Object... args) {
+        super(format, args);
     }
 
-    /**
-     * 清理缓存内容
-     *
-     * @param key 缓存key
-     */
-    default void remove(String key) {
+    public PayException(String msg, Throwable e) {
+        super(msg, e);
+    }
 
+    public PayException(Throwable e) {
+        super(e);
+    }
+
+    public PayException(String errcode, String errmsg) {
+        super(errcode, errmsg);
     }
 
 }
