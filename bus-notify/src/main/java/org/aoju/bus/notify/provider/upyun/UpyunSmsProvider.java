@@ -23,59 +23,73 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.notify.provider.aliyun;
+package org.aoju.bus.notify.provider.upyun;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.ZoneId;
-import org.aoju.bus.core.toolkit.DateKit;
+import org.aoju.bus.core.lang.Header;
+import org.aoju.bus.core.lang.MediaType;
+import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.extra.json.JsonKit;
 import org.aoju.bus.http.Httpx;
+import org.aoju.bus.notify.Builder;
 import org.aoju.bus.notify.Context;
 import org.aoju.bus.notify.magic.Message;
+import org.aoju.bus.notify.provider.AbstractProvider;
 
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
- * 阿里云语音通知
+ * 腾讯云短信
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 17+
  */
-public class AliyunVmsProvider extends AliyunProvider<AliyunProperty, Context> {
+public class UpyunSmsProvider extends AbstractProvider<UpyunProperty, Context> {
 
-    public AliyunVmsProvider(Context context) {
-        super(context);
+    public UpyunSmsProvider(Context properties) {
+        super(properties);
     }
 
     @Override
-    public Message send(AliyunProperty entity) {
-        Map<String, String> bodys = new HashMap<>();
-        // 1. 系统参数
-        bodys.put("SignatureMethod", "HMAC-SHA1");
-        bodys.put("SignatureNonce", UUID.randomUUID().toString());
-        bodys.put("AccessKeyId", context.getAppKey());
-        bodys.put("SignatureVersion", "1.0");
-        bodys.put("Timestamp", DateKit.format(new Date(), Fields.UTC_PATTERN, ZoneId.UTC.name()));
-        bodys.put("Format", "JSON");
+    public Message send(UpyunProperty entity) {
+        Map<String, Object> bodys = new HashMap<>();
+        bodys.put("template_id", entity.getTemplate());
+        bodys.put("mobile", entity.getReceive());
+        bodys.put("vars", StringKit.split(entity.getParams(), "|").toString());
 
-        // 2. 业务API参数
-        bodys.put("Action", "SingleCallByTts");
-        bodys.put("Version", "2017-05-25");
-        bodys.put("RegionId", "cn-hangzhou");
-        bodys.put("CalledNumber", entity.getReceive());
-        bodys.put("CalledShowNumber", entity.getSender());
-        bodys.put("PlayTimes", entity.getPlayTimes());
-        bodys.put("TtsParam", entity.getParams());
-        bodys.put("TtsCode", entity.getTemplate());
-        bodys.put("Signature", getSign(bodys));
+        Map<String, String> headers = new HashMap<>();
+        headers.put(Header.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.put(Header.AUTHORIZATION, entity.getToken());
+        String response = Httpx.post(entity.getUrl(), bodys, headers);
 
-        Map<String, Object> map = new HashMap<>();
-        for (String text : bodys.keySet()) {
-            map.put(specialUrlEncode(text), specialUrlEncode(bodys.get(text)));
+        Collection<UpyunProperty.MessageId> list = JsonKit.toList(response, UpyunProperty.MessageId.class);
+        if (CollKit.isEmpty(list)) {
+            return Message.builder()
+                    .errcode(Builder.ErrorCode.FAILURE.getCode())
+                    .errmsg(Builder.ErrorCode.FAILURE.getMsg())
+                    .build();
         }
-        return checkResponse(Httpx.get(entity.getUrl(), map));
+        boolean succeed = list.stream().filter(Objects::nonNull).anyMatch(UpyunProperty.MessageId::succeed);
+        String errcode = succeed ? Builder.ErrorCode.SUCCESS.getCode() : Builder.ErrorCode.FAILURE.getCode();
+        String errmsg = succeed ? Builder.ErrorCode.SUCCESS.getMsg() : Builder.ErrorCode.FAILURE.getMsg();
+
+        return Message.builder()
+                .errcode(errcode)
+                .errmsg(errmsg)
+                .build();
+    }
+
+    /**
+     * 判断是否成功.
+     * s
+     *
+     * @return 是否成功
+     */
+    public boolean succeed(String errorCode, String msgId) {
+        return StringKit.isBlank(errorCode) && StringKit.isNotBlank(msgId);
     }
 
 }
