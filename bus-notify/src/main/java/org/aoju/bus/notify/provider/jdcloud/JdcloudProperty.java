@@ -23,59 +23,25 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.notify.provider.aliyun;
+package org.aoju.bus.notify.provider.jdcloud;
 
-import org.aoju.bus.core.lang.Fields;
-import org.aoju.bus.core.lang.ZoneId;
-import org.aoju.bus.core.toolkit.DateKit;
-import org.aoju.bus.http.Httpx;
-import org.aoju.bus.notify.Context;
-import org.aoju.bus.notify.magic.Message;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
+import org.aoju.bus.notify.magic.Property;
 
 /**
- * 阿里云语音通知
+ * 京东云短信
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 17+
  */
-public class AliyunVmsProvider extends AliyunProvider<AliyunProperty, Context> {
+@Data
+@SuperBuilder
+public class JdcloudProperty extends Property {
 
-    public AliyunVmsProvider(Context context) {
-        super(context);
-    }
-
-    @Override
-    public Message send(AliyunProperty entity) {
-        Map<String, String> bodys = new HashMap<>();
-        // 1. 系统参数
-        bodys.put("SignatureMethod", "HMAC-SHA1");
-        bodys.put("SignatureNonce", UUID.randomUUID().toString());
-        bodys.put("AccessKeyId", context.getAppKey());
-        bodys.put("SignatureVersion", "1.0");
-        bodys.put("Timestamp", DateKit.format(new Date(), Fields.UTC_PATTERN, ZoneId.UTC.name()));
-        bodys.put("Format", "JSON");
-
-        // 2. 业务API参数
-        bodys.put("Action", "SingleCallByTts");
-        bodys.put("Version", "2017-05-25");
-        bodys.put("RegionId", "cn-hangzhou");
-        bodys.put("CalledNumber", entity.getReceive());
-        bodys.put("CalledShowNumber", entity.getSender());
-        bodys.put("PlayTimes", entity.getPlayTimes());
-        bodys.put("TtsParam", entity.getParams());
-        bodys.put("TtsCode", entity.getTemplate());
-        bodys.put("Signature", getSign(bodys));
-
-        Map<String, Object> map = new HashMap<>();
-        for (String text : bodys.keySet()) {
-            map.put(specialUrlEncode(text), specialUrlEncode(bodys.get(text)));
-        }
-        return checkResponse(Httpx.get(entity.getUrl(), map));
-    }
+    /**
+     * 服务端点
+     */
+    private String endpoint;
 
 }
