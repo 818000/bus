@@ -37,7 +37,6 @@ import java.io.OutputStream;
  * 大数据量Excel写出
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class BigExcelWriter extends ExcelWriter {
@@ -143,8 +142,8 @@ public class BigExcelWriter extends ExcelWriter {
     }
 
     /**
-     * 构造<br>
-     * 此构造不传入写出的Excel文件路径，只能调用{@link #flush(java.io.OutputStream)}方法写出到流<br>
+     * 构造
+     * 此构造不传入写出的Excel文件路径，只能调用{@link #flush(java.io.OutputStream)}方法写出到流
      * 若写出到文件，需要调用{@link #flush(File)} 写出到文件
      *
      * @param rowAccessWindowSize   在内存中的行数，-1表示不限制，此时需要手动刷出

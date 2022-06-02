@@ -30,10 +30,10 @@ import org.aoju.bus.core.beans.copier.BeanCopier;
 import org.aoju.bus.core.beans.copier.CopyOptions;
 import org.aoju.bus.core.beans.copier.ValueProvider;
 import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.Editor;
 import org.aoju.bus.core.lang.Filter;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.map.CaseInsensitiveMap;
 
 import java.beans.*;
@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +51,6 @@ import java.util.stream.Collectors;
  * 把一个拥有对属性进行set和get方法的类
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class BeanKit {
@@ -504,10 +504,23 @@ public class BeanKit {
      * @return Bean对象
      */
     public static <T> T toBean(Object source, Class<T> clazz, CopyOptions options) {
-        if (null == source) {
+        return toBean(source, () -> ReflectKit.newInstanceIfPossible(clazz), options);
+    }
+
+    /**
+     * 对象或Map转Bean
+     *
+     * @param <T>            转换的Bean类型
+     * @param source         Bean对象或Map
+     * @param targetSupplier 目标的Bean创建器
+     * @param options        属性拷贝选项
+     * @return Bean对象
+     */
+    public static <T> T toBean(Object source, Supplier<T> targetSupplier, CopyOptions options) {
+        if (null == source || null == targetSupplier) {
             return null;
         }
-        final T target = ReflectKit.newInstanceIfPossible(clazz);
+        final T target = targetSupplier.get();
         copyProperties(source, target, options);
         return target;
     }
@@ -554,46 +567,6 @@ public class BeanKit {
                 CopyOptions.create()
                         .setIgnoreCase(true)
                         .setIgnoreError(ignoreError));
-    }
-
-    /**
-     * Map转换为Bean对象
-     *
-     * @param <T>           Bean类型
-     * @param map           {@link Map}
-     * @param beanClass     Bean Class
-     * @param isIgnoreError 是否忽略注入错误
-     * @return Bean
-     */
-    public static <T> T mapToBean(Map<?, ?> map, Class<T> beanClass, boolean isIgnoreError) {
-        return fillBeanWithMap(map, ReflectKit.newInstance(beanClass), isIgnoreError);
-    }
-
-    /**
-     * Map转换为Bean对象
-     *
-     * @param <T>         Bean类型
-     * @param map         {@link Map}
-     * @param beanClass   Bean Class
-     * @param copyOptions 转Bean选项
-     * @return Bean
-     */
-    public static <T> T mapToBean(Map<?, ?> map, Class<T> beanClass, CopyOptions copyOptions) {
-        return fillBeanWithMap(map, ReflectKit.newInstance(beanClass), copyOptions);
-    }
-
-    /**
-     * Map转换为Bean对象
-     * 忽略大小写
-     *
-     * @param <T>           Bean类型
-     * @param map           Map
-     * @param beanClass     Bean Class
-     * @param isIgnoreError 是否忽略注入错误
-     * @return Bean
-     */
-    public static <T> T mapToBeanIgnoreCase(Map<?, ?> map, Class<T> beanClass, boolean isIgnoreError) {
-        return fillBeanWithMapIgnoreCase(map, ReflectKit.newInstance(beanClass), isIgnoreError);
     }
 
     /**
@@ -697,6 +670,27 @@ public class BeanKit {
     }
 
     /**
+     * 将bean的部分属性转换成map
+     * 可选拷贝哪些属性值，默认是不忽略值为{@code null}的值的。
+     *
+     * @param bean       bean
+     * @param properties 需要拷贝的属性值，{@code null}或空表示拷贝所有值
+     * @return Map
+     */
+    public static Map<String, Object> beanToMap(Object bean, String... properties) {
+        int mapSize = 16;
+        Editor<String> keyEditor = null;
+        if (ArrayKit.isNotEmpty(properties)) {
+            mapSize = properties.length;
+            final Set<String> propertiesSet = CollKit.newHashSet(false, properties);
+            keyEditor = property -> propertiesSet.contains(property) ? property : null;
+        }
+
+        // 指明了要复制的属性 所以不忽略null值
+        return beanToMap(bean, new LinkedHashMap<>(mapSize, 1), false, keyEditor);
+    }
+
+    /**
      * 对象转Map
      *
      * @param bean              bean对象
@@ -748,7 +742,7 @@ public class BeanKit {
             return null;
         }
 
-        final Collection<PropertyDesc> props = BeanKit.getBeanDesc(bean.getClass()).getProps();
+        final Collection<PropertyDesc> props = getBeanDesc(bean.getClass()).getProps();
 
         String key;
         Method getter;
@@ -777,7 +771,7 @@ public class BeanKit {
     }
 
     /**
-     * 对象转Map<br>
+     * 对象转Map
      * 通过自定义{@link CopyOptions} 完成抓换选项，以便实现：
      *
      * <pre>
@@ -811,6 +805,9 @@ public class BeanKit {
      * @return 目标对象
      */
     public static <T> T copyProperties(Object source, Class<T> clazz, String... ignoreProperties) {
+        if (null == source) {
+            return null;
+        }
         T target = ReflectKit.newInstanceIfPossible(clazz);
         copyProperties(source, target, CopyOptions.create().setIgnoreProperties(ignoreProperties));
         return target;

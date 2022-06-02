@@ -19,7 +19,6 @@ import java.util.stream.Stream;
  *
  * @param <T> 包裹里元素的类型
  * @author Kimi Liu
- * @version 6.5.0
  * @see java.util.Optional
  * @since Java 17+
  */
@@ -144,7 +143,7 @@ public class Optional<T> {
     }
 
     /**
-     * 获取异常<br>
+     * 获取异常
      * 当调用 {@link #ofTry(Func0)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
@@ -154,7 +153,7 @@ public class Optional<T> {
     }
 
     /**
-     * 是否失败<br>
+     * 是否失败
      * 当调用 {@link #ofTry(Func0)}时，抛出异常则表示失败
      *
      * @return 是否失败

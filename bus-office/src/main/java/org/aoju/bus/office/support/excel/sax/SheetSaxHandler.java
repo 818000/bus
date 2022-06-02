@@ -45,7 +45,6 @@ import java.util.List;
  * sheetData标签内容读取处理器
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class SheetSaxHandler extends DefaultHandler {
@@ -310,7 +309,7 @@ public class SheetSaxHandler extends DefaultHandler {
     }
 
     /**
-     * 填充空白单元格，如果前一个单元格大于后一个，不需要填充<br>
+     * 填充空白单元格，如果前一个单元格大于后一个，不需要填充
      *
      * @param preCoordinate 前一个单元格坐标
      * @param curCoordinate 当前单元格坐标

@@ -25,16 +25,13 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.collection.ArrayIterator;
-import org.aoju.bus.core.collection.EnumerationIterator;
-import org.aoju.bus.core.collection.IteratorEnumeration;
-import org.aoju.bus.core.collection.SimpleCollector;
+import org.aoju.bus.core.collection.*;
 import org.aoju.bus.core.compare.PinyinCompare;
 import org.aoju.bus.core.compare.PropertyCompare;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.convert.ConverterRegistry;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.*;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.lang.System;
 import java.lang.reflect.Array;
@@ -54,7 +51,6 @@ import java.util.stream.Collectors;
  * 集合相关工具类
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class CollKit {
@@ -735,6 +731,9 @@ public class CollKit {
      * @see IterKit#join(Iterable, CharSequence)
      */
     public static <T> String join(Iterable<T> iterable, CharSequence conjunction) {
+        if (null == iterable) {
+            return null;
+        }
         return IterKit.join(iterable, conjunction);
     }
 
@@ -749,6 +748,9 @@ public class CollKit {
      * @see IterKit#join(Iterator, CharSequence)
      */
     public static <T> String join(Iterator<T> iterator, CharSequence conjunction) {
+        if (null == iterator) {
+            return null;
+        }
         return IterKit.join(iterator, conjunction);
     }
 
@@ -1402,6 +1404,30 @@ public class CollKit {
     public static <T> Predicate<T> distinct(Function<? super T, ?> key) {
         Map<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(key.apply(t), Boolean.TRUE) == null;
+    }
+
+    /**
+     * 根据函数生成的KEY去重集合，如根据Bean的某个或者某些字段完成去重
+     * 去重可选是保留最先加入的值还是后加入的值
+     *
+     * @param <T>        集合元素类型
+     * @param <K>        唯一键类型
+     * @param collection 集合
+     * @param override   是否覆盖模式，如果为{@code true}，加入的新值会覆盖相同key的旧值，否则会忽略新加值
+     * @return {@link ArrayList}
+     */
+    public static <T, K> List<T> distinct(Collection<T> collection, Function<T, K> uniqueGenerator, boolean override) {
+        if (isEmpty(collection)) {
+            return new ArrayList<>();
+        }
+
+        final UniqueKeySet<K, T> set = new UniqueKeySet<>(true, uniqueGenerator);
+        if (override) {
+            set.addAll(collection);
+        } else {
+            set.addAllIfAbsent(collection);
+        }
+        return new ArrayList<>(set);
     }
 
     /**
@@ -2476,28 +2502,6 @@ public class CollKit {
     }
 
     /**
-     * 获得{@link Iterable}对象的元素类型(通过第一个非空元素判断)
-     *
-     * @param iterable {@link Iterable}
-     * @return 元素类型, 当列表为空或元素全部为null时, 返回null
-     * @see IterKit#getElementType(Iterable)
-     */
-    public static Class<?> getElementType(Iterable<?> iterable) {
-        return IterKit.getElementType(iterable);
-    }
-
-    /**
-     * 获得{@link Iterator}对象的元素类型(通过第一个非空元素判断)
-     *
-     * @param iterator {@link Iterator}
-     * @return 元素类型, 当列表为空或元素全部为null时, 返回null
-     * @see IterKit#getElementType(Iterator)
-     */
-    public static Class<?> getElementType(Iterator<?> iterator) {
-        return IterKit.getElementType(iterator);
-    }
-
-    /**
      * 从Map中获取指定键列表对应的值列表
      * 如果key在map中不存在或key对应值为null,则返回值列表对应位置的值也为null
      *
@@ -3270,6 +3274,19 @@ public class CollKit {
         for (int i = list.size(); i < minLen; i++) {
             list.add(padObj);
         }
+    }
+
+    /**
+     * 使用给定的转换函数，转换源集合为新类型的集合
+     *
+     * @param <F>        源元素类型
+     * @param <T>        目标元素类型
+     * @param collection 集合
+     * @param function   转换函数
+     * @return 新类型的集合
+     */
+    public static <F, T> Collection<T> trans(Collection<F> collection, Function<? super F, ? extends T> function) {
+        return new TransitionCollection<>(collection, function);
     }
 
     /**

@@ -26,7 +26,6 @@
 package org.aoju.bus.core.beans.copier;
 
 import org.aoju.bus.core.beans.PropertyDesc;
-import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.map.CaseInsensitiveMap;
 import org.aoju.bus.core.map.MapWrapper;
@@ -42,7 +41,6 @@ import java.util.Map;
  *
  * @param <T> 目标Bean类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class MapToBeanCopier<T> extends AbstractCopier<Map<?, ?>, T> {
@@ -110,7 +108,7 @@ public class MapToBeanCopier<T> extends AbstractCopier<Map<?, ?>, T> {
 
             // 获取目标字段真实类型并转换源值
             final Type fieldType = TypeKit.getActualType(this.targetType, tDesc.getFieldType());
-            Object newValue = Convert.convertWithCheck(fieldType, sValue, null, this.copyOptions.ignoreError);
+            Object newValue = this.copyOptions.convertField(fieldType, sValue);
             newValue = copyOptions.editFieldValue(sKeyStr, newValue);
 
             // 目标赋值
@@ -120,7 +118,7 @@ public class MapToBeanCopier<T> extends AbstractCopier<Map<?, ?>, T> {
     }
 
     /**
-     * 查找Map对应Bean的名称<br>
+     * 查找Map对应Bean的名称
      * 尝试原名称、转驼峰名称、isXxx去掉is的名称
      *
      * @param targetPropertyDescMap 目标bean的属性描述Map

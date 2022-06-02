@@ -29,7 +29,6 @@ package org.aoju.bus.core.io;
  * Stream进度条
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public interface StreamProgress {
@@ -42,9 +41,10 @@ public interface StreamProgress {
     /**
      * 进行中
      *
-     * @param progressSize 已经进行的大小
+     * @param total 总大小，如果未知为 -1或者{@link Long#MAX_VALUE}
+     * @param size  已经进行的大小
      */
-    void progress(long progressSize);
+    void progress(long total, long size);
 
     /**
      * 结束

@@ -28,8 +28,12 @@ package org.aoju.bus.core.toolkit;
 import org.aoju.bus.core.annotation.Alias;
 import org.aoju.bus.core.collection.UniqueKeySet;
 import org.aoju.bus.core.convert.Convert;
-import org.aoju.bus.core.lang.*;
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.exception.InstrumentException;
+import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Filter;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
+import org.aoju.bus.core.map.WeakMap;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -39,25 +43,22 @@ import java.util.*;
  * 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ReflectKit {
 
-    private static final String CGLIB_CLASS_SEPARATOR = Symbol.DOLLAR + Symbol.DOLLAR;
-
     /**
      * 构造对象缓存
      */
-    private static final SimpleCache<Class<?>, Constructor<?>[]> CONSTRUCTORS_CACHE = new SimpleCache<>();
+    private static final WeakMap<Class<?>, Constructor<?>[]> CONSTRUCTORS_CACHE = new WeakMap<>();
     /**
      * 字段缓存
      */
-    private static final SimpleCache<Class<?>, Field[]> FIELDS_CACHE = new SimpleCache<>();
+    private static final WeakMap<Class<?>, Field[]> FIELDS_CACHE = new WeakMap<>();
     /**
      * 方法缓存
      */
-    private static final SimpleCache<Class<?>, Method[]> METHODS_CACHE = new SimpleCache<>();
+    private static final WeakMap<Class<?>, Method[]> METHODS_CACHE = new WeakMap<>();
 
     /**
      * 调用Getter方法.
@@ -326,7 +327,7 @@ public class ReflectKit {
 
     public static Class<?> getUserClass(Object instance) {
         Class clazz = instance.getClass();
-        if (null != clazz && clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {
+        if (null != clazz && clazz.getName().contains(Symbol.DOLLAR + Symbol.DOLLAR)) {
             Class<?> superClass = clazz.getSuperclass();
             if (null != superClass && !Object.class.equals(superClass)) {
                 return superClass;
@@ -412,7 +413,7 @@ public class ReflectKit {
      */
     public static <T> Constructor<T>[] getConstructors(Class<T> beanClass) throws SecurityException {
         Assert.notNull(beanClass);
-        return (Constructor<T>[]) CONSTRUCTORS_CACHE.get(beanClass, () -> getConstructorsDirectly(beanClass));
+        return (Constructor<T>[]) CONSTRUCTORS_CACHE.computeIfAbsent(beanClass, () -> getConstructorsDirectly(beanClass));
     }
 
     /**
@@ -448,7 +449,7 @@ public class ReflectKit {
      */
     public static Field[] getFields(Class<?> beanClass) throws SecurityException {
         Assert.notNull(beanClass);
-        return FIELDS_CACHE.get(beanClass, () -> getFields(beanClass, true));
+        return FIELDS_CACHE.computeIfAbsent(beanClass, () -> getFields(beanClass, true));
     }
 
     /**
@@ -745,7 +746,7 @@ public class ReflectKit {
      */
     public static Method[] getMethods(Class<?> beanClass) throws SecurityException {
         Assert.notNull(beanClass);
-        return METHODS_CACHE.get(beanClass,
+        return METHODS_CACHE.computeIfAbsent(beanClass,
                 () -> getMethods(beanClass, true, true));
     }
 
@@ -939,28 +940,44 @@ public class ReflectKit {
     /**
      * 尝试遍历并调用此类的所有构造方法,直到构造成功并返回
      *
-     * @param <T>       对象类型
-     * @param beanClass 被构造的类
+     * @param <T>  对象类型
+     * @param type 被构造的类
      * @return 构造后的对象, 构造失败返回{@code null}
      */
-    public static <T> T newInstanceIfPossible(Class<T> beanClass) {
-        Assert.notNull(beanClass);
+    public static <T> T newInstanceIfPossible(Class<T> type) {
+        Assert.notNull(type);
 
-        if (beanClass.isAssignableFrom(AbstractMap.class)) {
-            beanClass = (Class<T>) HashMap.class;
-        } else if (beanClass.isAssignableFrom(List.class)) {
-            beanClass = (Class<T>) ArrayList.class;
-        } else if (beanClass.isAssignableFrom(Set.class)) {
-            beanClass = (Class<T>) HashSet.class;
+        // 原始类型
+        if (type.isPrimitive()) {
+            return (T) ClassKit.getPrimitiveDefaultValue(type);
+        }
+
+        // 某些特殊接口的实例化按照默认实现进行
+        if (type.isAssignableFrom(AbstractMap.class)) {
+            type = (Class<T>) HashMap.class;
+        } else if (type.isAssignableFrom(List.class)) {
+            type = (Class<T>) ArrayList.class;
+        } else if (type.isAssignableFrom(Set.class)) {
+            type = (Class<T>) HashSet.class;
         }
 
         try {
-            return newInstance(beanClass);
-        } catch (InstrumentException e) {
+            return newInstance(type);
+        } catch (Exception e) {
             // 默认构造不存在的情况下查找其它构造
         }
 
-        final Constructor<T>[] constructors = getConstructors(beanClass);
+        // 枚举
+        if (type.isEnum()) {
+            return type.getEnumConstants()[0];
+        }
+
+        // 数组
+        if (type.isArray()) {
+            return (T) Array.newInstance(type.getComponentType(), 0);
+        }
+
+        final Constructor<T>[] constructors = getConstructors(type);
         Class<?>[] parameterTypes;
         for (Constructor<T> constructor : constructors) {
             parameterTypes = constructor.getParameterTypes();

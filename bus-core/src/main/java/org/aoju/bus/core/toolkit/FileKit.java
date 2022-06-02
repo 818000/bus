@@ -26,6 +26,7 @@
 package org.aoju.bus.core.toolkit;
 
 import org.aoju.bus.core.collection.EnumerationIterator;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.io.LineHandler;
 import org.aoju.bus.core.io.file.FileReader;
 import org.aoju.bus.core.io.file.FileWriter;
@@ -37,16 +38,18 @@ import org.aoju.bus.core.io.resource.FileResource;
 import org.aoju.bus.core.io.resource.Resource;
 import org.aoju.bus.core.io.streams.BOMInputStream;
 import org.aoju.bus.core.lang.*;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.io.*;
 import java.lang.System;
-import java.net.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -56,7 +59,6 @@ import java.util.zip.Checksum;
  * 文件工具类
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class FileKit {
@@ -1071,7 +1073,7 @@ public class FileKit {
      * 情况如下：
      *
      * <pre>
-     * 1、src和dest都为目录,则讲src下所有文件(包括子目录)拷贝到dest下
+     * 1、src和dest都为目录,则将src下所有文件(包括子目录)拷贝到dest下
      * 2、src和dest都为文件,直接复制,名字为dest
      * 3、src为文件,dest为目录,将src拷贝到dest目录下
      * </pre>
@@ -1125,7 +1127,7 @@ public class FileKit {
      * 情况如下：
      *
      * <pre>
-     * 1、src和dest都为目录,则讲src下所有文件目录拷贝到dest下
+     * 1、src和dest都为目录,则将src下所有文件目录拷贝到dest下
      * 2、src和dest都为文件,直接复制,名字为dest
      * 3、src为文件,dest为目录,将src拷贝到dest目录下
      * </pre>
@@ -1331,7 +1333,13 @@ public class FileKit {
 
     /**
      * 给定路径已经是绝对路径
-     * 此方法并没有针对路径做标准化,建议先执行{@link #normalize(String)}方法标准化路径后判断
+     * 此方法并没有针对路径做标准化，建议先执行{@link #normalize(String)}方法标准化路径后判断
+     * 绝对路径判断条件是：
+     * <ul>
+     *     <li>以/开头的路径</li>
+     *     <li>满足类似于 c:/xxxxx，其中祖母随意，不区分大小写</li>
+     *     <li>满足类似于 d:\xxxxx，其中祖母随意，不区分大小写</li>
+     * </ul>
      *
      * @param path 需要检查的Path
      * @return 是否已经是绝对路径
@@ -1340,7 +1348,7 @@ public class FileKit {
         if (StringKit.isEmpty(path)) {
             return false;
         }
-        return Symbol.C_SLASH == path.charAt(0) || path.matches("^[a-zA-Z]:[/\\\\].*");
+        return Symbol.C_SLASH == path.charAt(0) || PatternKit.isMatch("^[a-zA-Z]:[/\\\\].*", path);
     }
 
 
@@ -3694,21 +3702,26 @@ public class FileKit {
      * @return the string {@link MediaType}
      */
     public static String getMediaType(String path) {
-        try {
-            FileNameMap fileNameMap = URLConnection.getFileNameMap();
-            String contentType = fileNameMap.getContentTypeFor(URLEncoder.encode(path, Charset.DEFAULT_UTF_8));
-            if (ObjectKit.isNull(contentType)) {
-                if (path.endsWith(".css")) {
-                    contentType = "text/css";
-                } else if (path.endsWith(".js")) {
-                    contentType = "application/x-javascript";
-                }
+        String contentType = URLConnection.getFileNameMap().getContentTypeFor(path);
+        if (null == contentType) {
+            // 补充一些常用的mimeType
+            if (StringKit.endWithIgnoreCase(path, ".css")) {
+                contentType = "text/css";
+            } else if (StringKit.endWithIgnoreCase(path, ".js")) {
+                contentType = "application/x-javascript";
+            } else if (StringKit.endWithIgnoreCase(path, ".rar")) {
+                contentType = "application/x-rar-compressed";
+            } else if (StringKit.endWithIgnoreCase(path, ".7z")) {
+                contentType = "application/x-7z-compressed";
             }
-            return contentType;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
-        return null;
+
+        // 补充
+        if (null == contentType) {
+            contentType = getMediaType(Paths.get(path));
+        }
+
+        return contentType;
     }
 
     /**
@@ -4011,7 +4024,7 @@ public class FileKit {
      * @param filter   过滤器，用于过滤不需要的资源，{@code null}表示不过滤，保留所有元素
      * @return 资源列表
      */
-    public static List<URL> getResources(String resource, Filter<URL> filter) {
+    public static List<URL> getResources(String resource, Predicate<URL> filter) {
         return IterKit.filterToList(getResourceIter(resource), filter);
     }
 

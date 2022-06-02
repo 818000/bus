@@ -26,6 +26,7 @@
 package org.aoju.bus.core.map;
 
 import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.MapKit;
 import org.aoju.bus.core.toolkit.ObjectKit;
 
 import java.io.Serializable;
@@ -37,13 +38,19 @@ import java.util.*;
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class TableMap<K, V> implements Map<K, V>, Iterable<Map.Entry<K, V>>, Serializable {
 
     private final List<K> keys;
     private final List<V> values;
+
+    /**
+     * 构造
+     */
+    public TableMap() {
+        this(10);
+    }
 
     /**
      * 构造
@@ -169,7 +176,16 @@ public class TableMap<K, V> implements Map<K, V>, Iterable<Map.Entry<K, V>>, Ser
 
     @Override
     public Set<K> keySet() {
-        return new HashSet<>(keys);
+        return new HashSet<>(this.keys);
+    }
+
+    /**
+     * 获取所有键，可重复，不可修改
+     *
+     * @return 键列表
+     */
+    public List<K> keys() {
+        return Collections.unmodifiableList(this.keys);
     }
 
     @Override
@@ -181,14 +197,14 @@ public class TableMap<K, V> implements Map<K, V>, Iterable<Map.Entry<K, V>>, Ser
     public Set<Map.Entry<K, V>> entrySet() {
         final Set<Map.Entry<K, V>> hashSet = new LinkedHashSet<>();
         for (int i = 0; i < size(); i++) {
-            hashSet.add(new SimpleEntry<>(keys.get(i), values.get(i)));
+            hashSet.add(MapKit.entry(keys.get(i), values.get(i)));
         }
         return hashSet;
     }
 
     @Override
     public Iterator<Map.Entry<K, V>> iterator() {
-        return new Iterator<Map.Entry<K, V>>() {
+        return new Iterator<>() {
             private final Iterator<K> keysIter = keys.iterator();
             private final Iterator<V> valuesIter = values.iterator();
 
@@ -199,7 +215,7 @@ public class TableMap<K, V> implements Map<K, V>, Iterable<Map.Entry<K, V>>, Ser
 
             @Override
             public Map.Entry<K, V> next() {
-                return new SimpleEntry<>(keysIter.next(), valuesIter.next());
+                return MapKit.entry(keysIter.next(), valuesIter.next());
             }
 
             @Override

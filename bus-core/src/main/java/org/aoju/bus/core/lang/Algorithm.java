@@ -29,7 +29,6 @@ package org.aoju.bus.core.lang;
  * 加解密算法类型
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public enum Algorithm {
@@ -192,6 +191,10 @@ public enum Algorithm {
      * HmacSM3算法实现，需要BouncyCastle库支持
      */
     HMACSM3("HmacSM3"),
+    /**
+     * SM4 CMAC模式实现，需要BouncyCastle库支持
+     */
+    SM4CMAC("SM4CMAC"),
 
     /***************************** 对称-算法类型 *****************************/
 

@@ -31,7 +31,6 @@ import java.util.function.Supplier;
 
 /**
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public abstract class AtomicLoader<T> implements Supplier<T>, Serializable {
@@ -62,7 +61,7 @@ public abstract class AtomicLoader<T> implements Supplier<T>, Serializable {
     }
 
     /**
-     * 初始化被加载的对象<br>
+     * 初始化被加载的对象
      * 如果对象从未被加载过，调用此方法初始化加载对象，此方法只被调用一次
      *
      * @return 被加载的对象

@@ -27,18 +27,19 @@ package org.aoju.bus.health.unix.solaris;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.unix.solaris.Kstat2;
+import com.sun.jna.platform.unix.solaris.Kstat2.Kstat2Handle;
+import com.sun.jna.platform.unix.solaris.Kstat2.Kstat2Map;
+import com.sun.jna.platform.unix.solaris.Kstat2.Kstat2MatcherList;
+import com.sun.jna.platform.unix.solaris.Kstat2StatusException;
 import com.sun.jna.platform.unix.solaris.LibKstat;
 import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
 import com.sun.jna.platform.unix.solaris.LibKstat.KstatCtl;
 import com.sun.jna.platform.unix.solaris.LibKstat.KstatNamed;
 import org.aoju.bus.core.annotation.GuardeBy;
 import org.aoju.bus.core.annotation.ThreadSafe;
-import org.aoju.bus.health.Builder;
+import org.aoju.bus.core.toolkit.ThreadKit;
 import org.aoju.bus.health.Formats;
-import org.aoju.bus.health.unix.Kstat2;
-import org.aoju.bus.health.unix.Kstat2.Kstat2Handle;
-import org.aoju.bus.health.unix.Kstat2.Kstat2Map;
-import org.aoju.bus.health.unix.Kstat2.Kstat2MatcherList;
 import org.aoju.bus.health.unix.solaris.software.SolarisOperatingSystem;
 import org.aoju.bus.logger.Logger;
 
@@ -53,7 +54,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * Provides access to kstat information on Solaris
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 @ThreadSafe
@@ -192,7 +192,7 @@ public final class KstatKit {
             } finally {
                 handle.close();
             }
-        } catch (Kstat2.Kstat2StatusException e) {
+        } catch (Kstat2StatusException e) {
             Logger.debug("Failed to get stats on {} for names {}: {}", mapStr, Arrays.toString(names), e.getMessage());
         } finally {
             KstatKit.CHAIN.unlock();
@@ -234,7 +234,7 @@ public final class KstatKit {
             } finally {
                 handle.close();
             }
-        } catch (Kstat2.Kstat2StatusException e) {
+        } catch (Kstat2StatusException e) {
             // Expected to end iteration
             Logger.debug("Failed to get stats on {}{}{} for names {}: {}", beforeStr, s, afterStr, Arrays.toString(names),
                     e.getMessage());
@@ -289,7 +289,7 @@ public final class KstatKit {
                     }
                     return false;
                 }
-                Builder.sleep(8 << retry);
+                ThreadKit.sleep(8 << retry);
             }
             return true;
         }

@@ -25,11 +25,11 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.io.streams.ByteArrayOutputStream;
+import org.aoju.bus.core.exception.InstrumentException;
+import org.aoju.bus.core.io.streams.FastByteOutputStream;
 import org.aoju.bus.core.lang.Charset;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,6 @@ import java.util.Map;
  * 用于执行系统命令的工具
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class RuntimeKit {
@@ -519,7 +518,7 @@ public class RuntimeKit {
      * @return 堆栈转为的字符串
      */
     public static String getStackTrace(Throwable throwable, int limit, Map<Character, String> replaceCharToStrMap) {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final FastByteOutputStream baos = new FastByteOutputStream();
         throwable.printStackTrace(new PrintStream(baos));
 
         final String exceptionStr = baos.toString();

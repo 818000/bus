@@ -35,7 +35,6 @@ import java.awt.image.BufferedImage;
  * {@link java.awt.Graphics}相关工具类
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class Graphics {
@@ -60,7 +59,7 @@ public class Graphics {
     }
 
     /**
-     * 获取文字居中高度的Y坐标（距离上边距距离）<br>
+     * 获取文字居中高度的Y坐标（距离上边距距离）
      * 此方法依赖FontMetrics，如果获取失败，默认为背景高度的1/3
      *
      * @param g                {@link Graphics2D}画笔
@@ -136,7 +135,7 @@ public class Graphics {
     }
 
     /**
-     * 绘制字符串，默认抗锯齿。<br>
+     * 绘制字符串，默认抗锯齿。
      * 此方法定义一个矩形区域和坐标，文字基于这个区域中间偏移x,y绘制。
      *
      * @param g         {@link java.awt.Graphics}画笔

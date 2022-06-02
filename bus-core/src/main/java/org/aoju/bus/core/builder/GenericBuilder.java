@@ -37,10 +37,11 @@ import java.util.function.Supplier;
  * 通用Builder
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class GenericBuilder<T> implements Builder<T> {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 实例化器

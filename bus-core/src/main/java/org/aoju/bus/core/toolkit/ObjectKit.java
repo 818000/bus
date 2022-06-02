@@ -28,11 +28,11 @@ package org.aoju.bus.core.toolkit;
 import org.aoju.bus.core.compare.NormalCompare;
 import org.aoju.bus.core.compare.PinyinCompare;
 import org.aoju.bus.core.convert.Convert;
-import org.aoju.bus.core.io.streams.ByteArrayOutputStream;
+import org.aoju.bus.core.exception.InstrumentException;
+import org.aoju.bus.core.io.streams.FastByteOutputStream;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.text.TextBuilder;
 
 import java.io.*;
@@ -46,7 +46,6 @@ import java.util.function.Supplier;
  * 一些通用的函数
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ObjectKit {
@@ -517,7 +516,7 @@ public class ObjectKit {
         if (null == obj || false == (obj instanceof Serializable)) {
             return null;
         }
-        final ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        final FastByteOutputStream byteOut = new FastByteOutputStream();
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(byteOut);
@@ -1531,7 +1530,7 @@ public class ObjectKit {
         if (false == (obj instanceof Serializable)) {
             return null;
         }
-        final ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        final FastByteOutputStream byteOut = new FastByteOutputStream();
         IoKit.writeObjects(byteOut, false, (Serializable) obj);
         return byteOut.toByteArray();
     }

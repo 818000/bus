@@ -48,7 +48,6 @@ import java.util.function.Supplier;
  * 非线程安全
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class Builder {
@@ -106,7 +105,7 @@ public class Builder {
     }
 
     /**
-     * 获取当前环境下的配置文件<br>
+     * 获取当前环境下的配置文件
      * name可以为不包括扩展名的文件名（默认.properties），也可以是文件名全称
      *
      * @param name 文件名，如果没有扩展名，默认为.properties

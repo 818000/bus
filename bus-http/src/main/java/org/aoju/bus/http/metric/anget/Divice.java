@@ -35,7 +35,6 @@ import java.util.List;
  * 设备信息
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class Divice extends UserAgent {
@@ -85,7 +84,7 @@ public class Divice extends UserAgent {
             new Divice("htcFlyer", "htc_flyer"),
             new Divice("Symbian", "symbian(os)?"),
             new Divice("Blackberry", "blackberry"),
-            new Divice("Android", "XiaoMi|MI")
+            new Divice("Android", "XiaoMi|MI\\s+")
     );
 
     /**

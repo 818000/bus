@@ -25,12 +25,12 @@
  ********************************************************************************/
 package org.aoju.bus.cron;
 
+import org.aoju.bus.core.exception.CrontabException;
 import org.aoju.bus.core.key.UUID;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.thread.ExecutorBuilder;
 import org.aoju.bus.core.thread.ThreadBuilder;
-import org.aoju.bus.core.toolkit.CollKit;
+import org.aoju.bus.core.toolkit.MapKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.cron.factory.InvokeTask;
 import org.aoju.bus.cron.factory.RunnableTask;
@@ -41,6 +41,7 @@ import org.aoju.bus.cron.pattern.CronPattern;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.setting.magic.PopSetting;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.TimeZone;
@@ -75,43 +76,42 @@ import java.util.concurrent.locks.ReentrantLock;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
-public class Scheduler {
+public class Scheduler implements Serializable {
 
-    /**
-     * 同步锁
-     */
+    private static final long serialVersionUID = 1L;
+
     private final Lock lock = new ReentrantLock();
-    /**
-     * 是否为守护线程
-     */
-    protected boolean daemon;
-    /**
-     * 启动管理器
-     */
-    protected Supervisor supervisor;
-    /**
-     * 执行管理器
-     */
-    protected Manager manager;
-    /**
-     * 线程池
-     */
-    protected ExecutorService threadExecutor;
+
     /**
      * 定时任务配置
      */
     protected Configure config = new Configure();
     /**
+     * 是否为守护线程
+     */
+    protected boolean daemon;
+    /**
      * 定时任务表
      */
     protected Repertoire repertoire = new Repertoire();
     /**
+     * 启动器管理器
+     */
+    protected Supervisor supervisor;
+    /**
+     * 执行器管理器
+     */
+    protected Manager manager;
+    /**
      * 监听管理器列表
      */
     protected TaskListenerManager listenerManager = new TaskListenerManager();
+    /**
+     * 线程池，用于执行TaskLauncher和TaskExecutor
+     */
+    protected ExecutorService threadExecutor;
     /**
      * 是否已经启动
      */
@@ -122,6 +122,15 @@ public class Scheduler {
     private CronTimer timer;
 
     /**
+     * 获得时区，默认为 {@link TimeZone#getDefault()}
+     *
+     * @return 时区
+     */
+    public TimeZone getTimeZone() {
+        return this.config.getTimeZone();
+    }
+
+    /**
      * 设置时区
      *
      * @param timeZone 时区
@@ -129,6 +138,25 @@ public class Scheduler {
      */
     public Scheduler setTimeZone(TimeZone timeZone) {
         this.config.setTimeZone(timeZone);
+        return this;
+    }
+
+    /**
+     * 设置自定义线程池
+     * 自定义线程池时须考虑方法执行的线程是否为守护线程
+     *
+     * @param threadExecutor 自定义线程池
+     * @return this
+     * @throws CrontabException 定时任务已经启动抛出此异常
+     */
+    public Scheduler setThreadExecutor(ExecutorService threadExecutor) throws CrontabException {
+        lock.lock();
+        try {
+            checkStarted();
+            this.threadExecutor = threadExecutor;
+        } finally {
+            lock.unlock();
+        }
         return this;
     }
 
@@ -143,18 +171,17 @@ public class Scheduler {
 
     /**
      * 设置是否为守护线程
-     * 如果为true,则在调用{@link #stop()}方法后执行的定时任务立即结束,否则等待执行完毕才结束 默认非守护线程
+     * 如果为true，则在调用{@link #stop()}方法后执行的定时任务立即结束，否则等待执行完毕才结束。默认非守护线程
+     * 如果用户调用{@link #setThreadExecutor(ExecutorService)}自定义线程池则此参数无效
      *
-     * @param on <code>true</code>为守护线程,否则非守护线程
+     * @param on {@code true}为守护线程，否则非守护线程
      * @return this
-     * @throws InstrumentException 定时任务已经启动抛出此异常
+     * @throws CrontabException 定时任务已经启动抛出此异常
      */
-    public Scheduler setDaemon(boolean on) throws InstrumentException {
+    public Scheduler setDaemon(boolean on) throws CrontabException {
         lock.lock();
         try {
-            if (this.started) {
-                throw new InstrumentException("Scheduler already started!");
-            }
+            checkStarted();
             this.daemon = on;
         } finally {
             lock.unlock();
@@ -165,16 +192,16 @@ public class Scheduler {
     /**
      * 是否支持秒匹配
      *
-     * @return <code>true</code>使用,<code>false</code>不使用
+     * @return {@code true}使用，{@code false}不使用
      */
     public boolean isMatchSecond() {
         return this.config.isMatchSecond();
     }
 
     /**
-     * 设置是否支持秒匹配,默认不使用
+     * 设置是否支持秒匹配，默认不使用
      *
-     * @param isMatchSecond <code>true</code>支持,<code>false</code>不支持
+     * @param isMatchSecond {@code true}支持，{@code false}不支持
      * @return this
      */
     public Scheduler setMatchSecond(boolean isMatchSecond) {
@@ -212,7 +239,7 @@ public class Scheduler {
      * @return this
      */
     public Scheduler schedule(PopSetting cronSetting) {
-        if (CollKit.isNotEmpty(cronSetting)) {
+        if (MapKit.isNotEmpty(cronSetting)) {
             String group;
             for (Entry<String, LinkedHashMap<String, String>> groupedEntry : cronSetting.getGroupMap().entrySet()) {
                 group = groupedEntry.getKey();
@@ -226,7 +253,7 @@ public class Scheduler {
                     try {
                         schedule(pattern, new InvokeTask(jobClass));
                     } catch (Exception e) {
-                        throw new InstrumentException("Schedule [{}] [{}] error!", pattern, jobClass);
+                        throw new CrontabException("Schedule [{}] [{}] error!", pattern, jobClass);
                     }
                 }
             }
@@ -259,7 +286,7 @@ public class Scheduler {
     }
 
     /**
-     * 新增Task
+     * 新增Task，如果任务ID已经存在，抛出异常
      *
      * @param id      ID,为每一个Task定义一个ID
      * @param pattern {@link CronPattern}对应的String表达式
@@ -271,7 +298,7 @@ public class Scheduler {
     }
 
     /**
-     * 新增Task
+     * 新增Task，如果任务ID已经存在，抛出异常
      *
      * @param id      ID,为每一个Task定义一个ID
      * @param pattern {@link CronPattern}对应的String表达式
@@ -283,7 +310,7 @@ public class Scheduler {
     }
 
     /**
-     * 新增Task
+     * 新增Task，如果任务ID已经存在，抛出异常
      *
      * @param id      ID,为每一个Task定义一个ID
      * @param pattern {@link CronPattern}
@@ -395,11 +422,11 @@ public class Scheduler {
     /**
      * 启动
      *
-     * @param isDeamon 是否以守护线程方式启动,如果为true,则在调用{@link #stop()}方法后执行的定时任务立即结束,否则等待执行完毕才结束
+     * @param isDaemon 是否以守护线程方式启动,如果为true,则在调用{@link #stop()}方法后执行的定时任务立即结束,否则等待执行完毕才结束
      * @return this
      */
-    public Scheduler start(boolean isDeamon) {
-        this.daemon = isDeamon;
+    public Scheduler start(boolean isDaemon) {
+        this.daemon = isDaemon;
         return start();
     }
 
@@ -411,13 +438,14 @@ public class Scheduler {
     public Scheduler start() {
         lock.lock();
         try {
-            if (this.started) {
-                throw new InstrumentException("Schedule is started!");
-            }
+            checkStarted();
 
-            this.threadExecutor = ExecutorBuilder.create().useSynchronousQueue().setThreadFactory(//
-                    ThreadBuilder.create().setNamePrefix("exec-cron-").setDaemon(this.daemon).build()//
-            ).build();
+            if (null == this.threadExecutor) {
+                // 无界线程池，确保每一个需要执行的线程都可以及时运行，同时复用已有线程避免线程重复创建
+                this.threadExecutor = ExecutorBuilder.create().useSynchronousQueue().setThreadFactory(//
+                        ThreadBuilder.create().setNamePrefix("exec-cron-").setDaemon(this.daemon).build()//
+                ).build();
+            }
             this.supervisor = new Supervisor(this);
             this.manager = new Manager(this);
 
@@ -476,6 +504,17 @@ public class Scheduler {
             lock.unlock();
         }
         return this;
+    }
+
+    /**
+     * 检查定时任务是否已经启动
+     *
+     * @throws CrontabException 已经启动则抛出此异常
+     */
+    private void checkStarted() throws CrontabException {
+        if (this.started) {
+            throw new CrontabException("Scheduler already started!");
+        }
     }
 
 }

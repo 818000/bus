@@ -25,15 +25,14 @@
  ********************************************************************************/
 package org.aoju.bus.core.beans;
 
-import org.aoju.bus.core.lang.SimpleCache;
 import org.aoju.bus.core.lang.function.Func0;
+import org.aoju.bus.core.map.WeakMap;
 
 /**
  * Bean属性缓存
  * 缓存用于防止多次反射造成的性能问题
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public enum BeanCache {
@@ -45,7 +44,7 @@ public enum BeanCache {
     /**
      * 缓存
      */
-    private final SimpleCache<Class<?>, BeanDesc> bdCache = new SimpleCache<>();
+    private final WeakMap<Class<?>, BeanDesc> bdCache = new WeakMap<>();
 
     /**
      * 获得属性名和{@link BeanDesc}Map映射
@@ -55,7 +54,7 @@ public enum BeanCache {
      * @return 属性名和{@link BeanDesc}映射
      */
     public BeanDesc getBeanDesc(Class<?> beanClass, Func0<BeanDesc> supplier) {
-        return bdCache.get(beanClass, supplier);
+        return bdCache.computeIfAbsent(beanClass, supplier);
     }
 
     /**

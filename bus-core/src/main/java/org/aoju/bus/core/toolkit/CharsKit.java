@@ -49,7 +49,6 @@ import java.util.regex.Pattern;
  * 部分工具来自于Apache
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class CharsKit {
@@ -970,6 +969,23 @@ public class CharsKit {
      */
     public static String normalize(CharSequence str) {
         return Normalizer.normalize(str, Normalizer.Form.NFC);
+    }
+
+    /**
+     * 在给定字符串末尾填充指定字符，以达到给定长度
+     * 如果字符串本身的长度大于等于length，返回原字符串
+     *
+     * @param str       字符串
+     * @param fixedChar 补充的字符
+     * @param length    补充到的长度
+     * @return 补充后的字符串
+     */
+    public static String fixLength(CharSequence str, char fixedChar, int length) {
+        final int fixedLength = length - str.length();
+        if (fixedLength <= 0) {
+            return str.toString();
+        }
+        return str + repeat(fixedChar, fixedLength);
     }
 
     /**
@@ -3242,6 +3258,28 @@ public class CharsKit {
         return false;
     }
 
+
+    /**
+     * 给定字符串是否以任何一个字符串结尾（忽略大小写）
+     * 给定字符串和数组为空都返回false
+     *
+     * @param text     给定字符串
+     * @param suffixes 需要检测的结尾字符串
+     * @return 给定字符串是否以任何一个字符串结尾
+     */
+    public static boolean startWithAnyIgnoreCase(final CharSequence text, final CharSequence... suffixes) {
+        if (isEmpty(text) || ArrayKit.isEmpty(suffixes)) {
+            return false;
+        }
+
+        for (final CharSequence suffix : suffixes) {
+            if (startWith(text, suffix, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 是否以指定字符串开头,忽略大小写
      *
@@ -4393,7 +4431,7 @@ public class CharsKit {
      * @param <T>   元素类型
      * @return 第一个非空元素，如果给定的数组为空或者都为空，返回{@code null}
      */
-    public <T extends CharSequence> T firstNonNull(T... texts) {
+    public static <T extends CharSequence> T firstNonNull(T... texts) {
         return ArrayKit.firstNonNull(texts);
     }
 
@@ -4405,7 +4443,7 @@ public class CharsKit {
      * @return 第一个非空元素，如果给定的数组为空或者都为空，返回{@code null}
      * @see #isNotEmpty(CharSequence)
      */
-    public <T extends CharSequence> T firstNonEmpty(T... texts) {
+    public static <T extends CharSequence> T firstNonEmpty(T... texts) {
         return ArrayKit.firstNonNull(CharsKit::isNotEmpty, texts);
     }
 
@@ -4417,7 +4455,7 @@ public class CharsKit {
      * @return 第一个非空元素，如果给定的数组为空或者都为空，返回{@code null}
      * @see #isNotBlank(CharSequence)
      */
-    public <T extends CharSequence> T firstNonBlank(T... texts) {
+    public static <T extends CharSequence> T firstNonBlank(T... texts) {
         return ArrayKit.firstNonNull(CharsKit::isNotBlank, texts);
     }
 

@@ -28,9 +28,9 @@ package org.aoju.bus.extra.ssh;
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.ChannelSftp.LsEntrySelector;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.Filter;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.FileKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.extra.ftp.AbstractFtp;
@@ -55,7 +55,6 @@ import java.util.Vector;
  * </p>
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class Sftp extends AbstractFtp {
@@ -315,7 +314,7 @@ public class Sftp extends AbstractFtp {
             sftpATTRS = this.channel.stat(dir);
         } catch (SftpException e) {
             final String msg = e.getMessage();
-            if (msg.contains("No such file") || msg.contains("does not exist")) {
+            if (StringKit.containsAnyIgnoreCase(msg, "No such file", "does not exist")) {
                 return false;
             }
             throw new InstrumentException(e);

@@ -51,7 +51,6 @@ import java.util.Map;
  * 读取Excel工作簿
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ExcelReader extends ExcelBase<ExcelReader> {
@@ -146,6 +145,15 @@ public class ExcelReader extends ExcelBase<ExcelReader> {
         this(book.getSheet(sheetName));
     }
 
+    /**
+     * 构造
+     *
+     * @param excelFilePath Excel文件路径，绝对路径或相对于ClassPath路径
+     * @param sheetName     sheet名，第一个默认是sheet1
+     */
+    public ExcelReader(String excelFilePath, String sheetName) {
+        this(FileKit.file(excelFilePath), sheetName);
+    }
 
     /**
      * 是否忽略空行
@@ -372,7 +380,7 @@ public class ExcelReader extends ExcelBase<ExcelReader> {
 
         final List<T> beanList = new ArrayList<>(mapList.size());
         for (Map<String, Object> map : mapList) {
-            beanList.add(BeanKit.mapToBean(map, beanType, false));
+            beanList.add(BeanKit.toBeanIgnoreCase(map, beanType, false));
         }
         return beanList;
     }

@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.lang;
 
-import org.aoju.bus.core.thread.AtomicNoLock;
+import org.aoju.bus.core.lock.AtomicNoLock;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -45,7 +45,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @param <T> 生成范围对象的类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class Range<T> implements Iterable<T>, Iterator<T>, Serializable {

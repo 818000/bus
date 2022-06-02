@@ -35,7 +35,6 @@ import java.nio.file.attribute.BasicFileAttributes;
  * 文件拷贝的FileVisitor实现，用于递归遍历拷贝目录
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class CopyVisitor extends SimpleFileVisitor<Path> {
@@ -96,7 +95,7 @@ public class CopyVisitor extends SimpleFileVisitor<Path> {
     }
 
     /**
-     * 根据源文件或目录路径，拼接生成目标的文件或目录路径<br>
+     * 根据源文件或目录路径，拼接生成目标的文件或目录路径
      * 原理是首先截取源路径，得到相对路径，再和目标路径拼接
      *
      * <p>

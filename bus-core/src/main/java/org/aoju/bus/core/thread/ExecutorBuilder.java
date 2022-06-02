@@ -42,7 +42,6 @@ import java.util.concurrent.*;
  * </pre>
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ExecutorBuilder implements Builder<ThreadPoolExecutor> {
@@ -107,7 +106,7 @@ public class ExecutorBuilder implements Builder<ThreadPoolExecutor> {
             workQueue = (corePoolSize <= 0) ? new SynchronousQueue<>() : new LinkedBlockingQueue<>(DEFAULT_QUEUE_CAPACITY);
         }
         final ThreadFactory threadFactory = (null != builder.threadFactory) ? builder.threadFactory : Executors.defaultThreadFactory();
-        RejectedExecutionHandler handler = ObjectKit.defaultIfNull(builder.handler, ThreadPoolExecutor.AbortPolicy::new);
+        RejectedExecutionHandler handler = ObjectKit.defaultIfNull(builder.handler, RejectPolicy.ABORT.getValue());
 
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(//
                 corePoolSize,

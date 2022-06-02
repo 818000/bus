@@ -26,9 +26,9 @@
 package org.aoju.bus.core.text.csv;
 
 import org.aoju.bus.core.collection.ComputeIterator;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.text.TextBuilder;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.MapKit;
@@ -45,7 +45,6 @@ import java.util.*;
  * CSV行解析器,参考：FastCSV
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public final class CsvParser extends ComputeIterator<CsvRow> implements Closeable, Serializable {
@@ -416,7 +415,7 @@ public final class CsvParser extends ComputeIterator<CsvRow> implements Closeabl
         }
 
         /**
-         * 先获取当前字符，再将当前位置后移一位<br>
+         * 先获取当前字符，再将当前位置后移一位
          * 此方法不检查是否到了数组末尾，请自行使用{@link #hasRemaining()}判断。
          *
          * @return 当前位置字符

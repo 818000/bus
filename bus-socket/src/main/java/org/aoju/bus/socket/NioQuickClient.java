@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.socket;
 
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.ThreadKit;
 import org.aoju.bus.socket.handler.ChannelSocketHandler;
@@ -43,7 +43,6 @@ import java.util.Iterator;
  * NIO客户端
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class NioQuickClient implements Closeable {
@@ -155,7 +154,7 @@ public class NioQuickClient implements Closeable {
     }
 
     /**
-     * 实现写逻辑<br>
+     * 实现写逻辑
      * 当收到写出准备就绪的信号后，回调此方法，用户可向客户端发送消息
      *
      * @param datas 发送的数据

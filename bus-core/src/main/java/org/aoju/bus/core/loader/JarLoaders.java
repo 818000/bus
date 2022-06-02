@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.loader;
 
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.toolkit.*;
 
 import java.io.File;
@@ -40,11 +40,13 @@ import java.util.List;
  * 外部Jar的类加载器
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class JarLoaders extends URLClassLoader {
 
+    /**
+     * 构造
+     */
     public JarLoaders() {
         this(new URL[]{});
     }
@@ -56,6 +58,16 @@ public class JarLoaders extends URLClassLoader {
      */
     public JarLoaders(URL[] urls) {
         super(urls, ClassKit.getClassLoader());
+    }
+
+    /**
+     * 构造
+     *
+     * @param urls        被加载的URL
+     * @param classLoader 类加载器
+     */
+    public JarLoaders(URL[] urls, ClassLoader classLoader) {
+        super(urls, classLoader);
     }
 
     /**

@@ -26,7 +26,7 @@
 package org.aoju.bus.core.lang.reflect;
 
 import org.aoju.bus.core.convert.Convert;
-import org.aoju.bus.core.lang.SimpleCache;
+import org.aoju.bus.core.map.WeakMap;
 import org.aoju.bus.core.toolkit.TypeKit;
 
 import java.lang.reflect.ParameterizedType;
@@ -39,12 +39,11 @@ import java.util.Map;
  * 泛型变量和泛型实际类型映射关系缓存
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ActualTypeMapper {
 
-    private static final SimpleCache<Type, Map<Type, Type>> CACHE = new SimpleCache<>();
+    private static final WeakMap<Type, Map<Type, Type>> CACHE = new WeakMap<>();
 
     /**
      * 获取泛型变量和泛型实际类型的对应关系Map
@@ -53,7 +52,7 @@ public class ActualTypeMapper {
      * @return 泛型对应关系Map
      */
     public static Map<Type, Type> get(Type type) {
-        return CACHE.get(type, () -> createTypeMap(type));
+        return CACHE.computeIfAbsent(type, () -> createTypeMap(type));
     }
 
     /**

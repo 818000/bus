@@ -25,19 +25,22 @@
  ********************************************************************************/
 package org.aoju.bus.core.toolkit;
 
-import org.aoju.bus.core.beans.BeanDesc;
 import org.aoju.bus.core.beans.NullWrapper;
-import org.aoju.bus.core.beans.PropertyDesc;
 import org.aoju.bus.core.beans.copier.BeanCopier;
 import org.aoju.bus.core.beans.copier.CopyOptions;
 import org.aoju.bus.core.beans.copier.ValueProvider;
 import org.aoju.bus.core.compiler.JavaSourceCompiler;
 import org.aoju.bus.core.convert.BasicType;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.instance.Instances;
-import org.aoju.bus.core.lang.*;
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.Filter;
+import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.mutable.MutableObject;
+import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.core.loader.JarLoaders;
+import org.aoju.bus.core.map.WeakMap;
 
 import javax.tools.*;
 import java.beans.IntrospectionException;
@@ -45,17 +48,13 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.System;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.time.temporal.TemporalAccessor;
-import java.util.Locale;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -64,7 +63,6 @@ import java.util.jar.Manifest;
  * Class工具类
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class ClassKit {
@@ -77,17 +75,26 @@ public class ClassKit {
      * 原始类型名和其class对应表,例如：int = int.class
      */
     private static final Map<String, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+    /**
+     * 包装原始类型
+     */
     private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>();
+    /**
+     * 访问测试
+     */
     private static final int ACCESS_TEST =
             Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
     /**
-     * Array of primitive number types ordered by "promotability"
+     * 按"promotability"排序的原始数字类型数组
      */
     private static final Class<?>[] ORDERED_PRIMITIVE_TYPES = {
             Byte.TYPE, Short.TYPE, Character.TYPE, Integer.TYPE,
             Long.TYPE, Float.TYPE, Double.TYPE
     };
-    private static final SimpleCache<String, Class<?>> CLASS_CACHE = new SimpleCache<>();
+    /**
+     * 类缓存信息
+     */
+    private static final WeakMap<Pair<String, ClassLoader>, Class<?>> CLASS_CACHE = new WeakMap<>();
 
     static {
         List<Class<?>> primitiveTypes = new ArrayList<>(Normal._32);
@@ -907,25 +914,41 @@ public class ClassKit {
      */
     public static Object getDefaultValue(Class<?> clazz) {
         if (clazz.isPrimitive()) {
-            if (long.class == clazz) {
-                return 0L;
-            } else if (int.class == clazz) {
-                return 0;
-            } else if (short.class == clazz) {
-                return (short) 0;
-            } else if (char.class == clazz) {
-                return (char) 0;
-            } else if (byte.class == clazz) {
-                return (byte) 0;
-            } else if (double.class == clazz) {
-                return 0D;
-            } else if (float.class == clazz) {
-                return 0f;
-            } else if (boolean.class == clazz) {
-                return false;
-            }
+            return getPrimitiveDefaultValue(clazz);
         }
+        return null;
+    }
 
+    /**
+     * 获取指定原始类型分的默认值
+     * 默认值规则为：
+     *
+     * <pre>
+     * 1、如果为原始类型，返回0
+     * 2、非原始类型返回{@code null}
+     * </pre>
+     *
+     * @param clazz 类
+     * @return 默认值
+     */
+    public static Object getPrimitiveDefaultValue(Class<?> clazz) {
+        if (long.class == clazz) {
+            return 0L;
+        } else if (int.class == clazz) {
+            return 0;
+        } else if (short.class == clazz) {
+            return (short) 0;
+        } else if (char.class == clazz) {
+            return (char) 0;
+        } else if (byte.class == clazz) {
+            return (byte) 0;
+        } else if (double.class == clazz) {
+            return 0D;
+        } else if (float.class == clazz) {
+            return 0f;
+        } else if (boolean.class == clazz) {
+            return false;
+        }
         return null;
     }
 
@@ -944,104 +967,6 @@ public class ClassKit {
     }
 
     /**
-     * 对象转Map,不进行驼峰转下划线,不忽略值为空的字段
-     *
-     * @param bean bean对象
-     * @return Map
-     */
-    public static Map<String, Object> beanToMap(Object bean) {
-        return beanToMap(bean, false, false);
-    }
-
-    /**
-     * 对象转Map
-     *
-     * @param bean              bean对象
-     * @param isToUnderlineCase 是否转换为下划线模式
-     * @param ignoreNullValue   是否忽略值为空的字段
-     * @return Map
-     */
-    public static Map<String, Object> beanToMap(Object bean, boolean isToUnderlineCase, boolean ignoreNullValue) {
-        return beanToMap(bean, new HashMap<>(), isToUnderlineCase, ignoreNullValue);
-    }
-
-    /**
-     * 对象转Map
-     *
-     * @param bean              bean对象
-     * @param targetMap         目标的Map
-     * @param isToUnderlineCase 是否转换为下划线模式
-     * @param ignoreNullValue   是否忽略值为空的字段
-     * @return Map
-     */
-    public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, final boolean isToUnderlineCase, boolean ignoreNullValue) {
-        if (null == bean) {
-            return null;
-        }
-
-        return beanToMap(bean, targetMap, ignoreNullValue, key -> isToUnderlineCase ? StringKit.toUnderlineCase(key) : key);
-    }
-
-    /**
-     * 对象转Map
-     * 通过实现{@link Editor} 可以自定义字段值,如果这个Editor返回null则忽略这个字段,以便实现：
-     *
-     * <pre>
-     * 1. 字段筛选,可以去除不需要的字段
-     * 2. 字段变换,例如实现驼峰转下划线
-     * 3. 自定义字段前缀或后缀等等
-     * </pre>
-     *
-     * @param bean            bean对象
-     * @param targetMap       目标的Map
-     * @param ignoreNullValue 是否忽略值为空的字段
-     * @param keyEditor       属性字段(Map的key)编辑器,用于筛选、编辑key
-     * @return Map
-     */
-    public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, boolean ignoreNullValue, Editor<String> keyEditor) {
-        if (null == bean) {
-            return null;
-        }
-
-        final Collection<PropertyDesc> props = getBeanDesc(bean.getClass()).getProps();
-
-        String key;
-        Method getter;
-        Object value;
-        for (PropertyDesc prop : props) {
-            key = prop.getFieldName();
-            // 过滤class属性
-            // 得到property对应的getter方法
-            getter = prop.getGetter();
-            if (null != getter) {
-                // 只读取有getter方法的属性
-                try {
-                    value = getter.invoke(bean);
-                } catch (Exception ignore) {
-                    continue;
-                }
-                if (false == ignoreNullValue || (null != value && false == value.equals(bean))) {
-                    key = keyEditor.edit(key);
-                    if (null != key) {
-                        targetMap.put(key, value);
-                    }
-                }
-            }
-        }
-        return targetMap;
-    }
-
-    /**
-     * 获取{@link BeanDesc} Bean描述信息
-     *
-     * @param clazz Bean类
-     * @return the object
-     */
-    public static BeanDesc getBeanDesc(Class<?> clazz) {
-        return new BeanDesc(clazz);
-    }
-
-    /**
      * 获取{@link ClassLoader}
      * 获取顺序如下：
      *
@@ -1054,11 +979,11 @@ public class ClassKit {
      * @return 类加载器
      */
     public static ClassLoader getClassLoader() {
-        ClassLoader classLoader = getContextClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (null == classLoader) {
             classLoader = ClassKit.class.getClassLoader();
             if (null == classLoader) {
-                classLoader = getSystemClassLoader();
+                classLoader = ClassLoader.getSystemClassLoader();
             }
         }
         return classLoader;
@@ -1130,38 +1055,6 @@ public class ClassKit {
     }
 
     /**
-     * 获取当前线程的{@link ClassLoader}
-     *
-     * @return 当前线程的class loader
-     * @see Thread#getContextClassLoader()
-     */
-    public static ClassLoader getContextClassLoader() {
-        if (null == System.getSecurityManager()) {
-            return Thread.currentThread().getContextClassLoader();
-        } else {
-            // 绕开权限检查
-            return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
-        }
-    }
-
-    /**
-     * 获取系统{@link ClassLoader}
-     *
-     * @return 系统{@link ClassLoader}
-     * @see ClassLoader#getSystemClassLoader()
-     */
-    public static ClassLoader getSystemClassLoader() {
-        if (null == System.getSecurityManager()) {
-            return ClassLoader.getSystemClassLoader();
-        } else {
-            // 绕开权限检查
-            return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
-        }
-    }
-
-    /**
      * 加载类,通过传入类的字符串,返回其对应的类名,使用默认ClassLoader并初始化类(调用static模块内容和初始化static属性)
      * 扩展{@link Class#forName(String, boolean, ClassLoader)}方法,支持以下几类类名的加载：
      *
@@ -1221,48 +1114,20 @@ public class ClassKit {
     public static Class<?> loadClass(String name, ClassLoader classLoader, boolean isInitialized) throws InstrumentException {
         Assert.notNull(name, "Name must not be null");
 
+        // 自动将包名中的"/"替换为"."
+        name = name.replace(Symbol.SLASH, Symbol.DOT);
+        if (null == classLoader) {
+            classLoader = getClassLoader();
+        }
+
         // 加载原始类型和缓存中的类
         Class<?> clazz = loadPrimitiveClass(name);
-        if (null == clazz) {
-            clazz = CLASS_CACHE.get(name);
+        if (clazz == null) {
+            final String finalName = name;
+            final ClassLoader finalClassLoader = classLoader;
+            clazz = CLASS_CACHE.computeIfAbsent(Pair.of(name, classLoader), (key) -> doLoadClass(finalName, finalClassLoader, isInitialized));
         }
-        if (null != clazz) {
-            return clazz;
-        }
-
-        if (name.endsWith(Symbol.BRACKET)) {
-            // 对象数组"java.lang.String[]"风格
-            final String elementClassName = name.substring(0, name.length() - Symbol.BRACKET.length());
-            final Class<?> elementClass = loadClass(elementClassName, classLoader, isInitialized);
-            clazz = Array.newInstance(elementClass, 0).getClass();
-        } else if (name.startsWith(Symbol.NON_PREFIX) && name.endsWith(Symbol.SEMICOLON)) {
-            // "[Ljava.lang.String;" 风格
-            final String elementName = name.substring(Symbol.NON_PREFIX.length(), name.length() - 1);
-            final Class<?> elementClass = loadClass(elementName, classLoader, isInitialized);
-            clazz = Array.newInstance(elementClass, 0).getClass();
-        } else if (name.startsWith(Symbol.BRACKET_LEFT)) {
-            // "[[I" 或 "[[Ljava.lang.String;" 风格
-            final String elementName = name.substring(Symbol.BRACKET_LEFT.length());
-            final Class<?> elementClass = loadClass(elementName, classLoader, isInitialized);
-            clazz = Array.newInstance(elementClass, 0).getClass();
-        } else {
-            // 加载普通类
-            if (null == classLoader) {
-                classLoader = getClassLoader();
-            }
-            try {
-                clazz = Class.forName(name, isInitialized, classLoader);
-            } catch (ClassNotFoundException ex) {
-                // 尝试获取内部类,例如java.lang.Thread.State = java.lang.Thread$State
-                clazz = tryLoadInnerClass(name, classLoader, isInitialized);
-                if (null == clazz) {
-                    throw new InstrumentException(ex);
-                }
-            }
-        }
-
-        // 加入缓存并返回
-        return CLASS_CACHE.put(name, clazz);
+        return clazz;
     }
 
     /**
@@ -1335,28 +1200,6 @@ public class ClassKit {
         } catch (Throwable ex) {
             return false;
         }
-    }
-
-    /**
-     * 尝试转换并加载内部类,例如java.lang.Thread.State = java.lang.Thread$State
-     *
-     * @param name          类名
-     * @param classLoader   {@link ClassLoader},{@code null} 则使用系统默认ClassLoader
-     * @param isInitialized 是否初始化类(调用static模块内容和初始化static属性)
-     * @return 类名对应的类
-     */
-    private static Class<?> tryLoadInnerClass(String name, ClassLoader classLoader, boolean isInitialized) {
-        // 尝试获取内部类,例如java.lang.Thread.State = java.lang.Thread$State
-        final int lastDotIndex = name.lastIndexOf(Symbol.C_DOT);
-        if (lastDotIndex > 0) {// 类与内部类的分隔符不能在第一位,因此>0
-            final String innerClassName = name.substring(0, lastDotIndex) + Symbol.C_DOLLAR + name.substring(lastDotIndex + 1);
-            try {
-                return Class.forName(innerClassName, isInitialized, classLoader);
-            } catch (ClassNotFoundException ex2) {
-                // 尝试获取内部类失败时,忽略之
-            }
-        }
-        return null;
     }
 
     /**
@@ -3777,6 +3620,144 @@ public class ClassKit {
      */
     public static JavaSourceCompiler getCompiler(ClassLoader parent) {
         return JavaSourceCompiler.create(parent);
+    }
+
+    /**
+     * 加载非原始类类，无缓存
+     *
+     * @param name          类名
+     * @param classLoader   {@link ClassLoader}
+     * @param isInitialized 是否初始化
+     * @return 类
+     */
+    private static Class<?> doLoadClass(String name, ClassLoader classLoader, boolean isInitialized) {
+        Class<?> clazz;
+        if (name.endsWith(Symbol.BRACKET)) {
+            // 对象数组"java.lang.String[]"风格
+            final String elementClassName = name.substring(0, name.length() - Symbol.BRACKET.length());
+            final Class<?> elementClass = loadClass(elementClassName, classLoader, isInitialized);
+            clazz = Array.newInstance(elementClass, 0).getClass();
+        } else if (name.startsWith(Symbol.NON_PREFIX) && name.endsWith(Symbol.SEMICOLON)) {
+            // "[Ljava.lang.String;" 风格
+            final String elementName = name.substring(Symbol.NON_PREFIX.length(), name.length() - 1);
+            final Class<?> elementClass = loadClass(elementName, classLoader, isInitialized);
+            clazz = Array.newInstance(elementClass, 0).getClass();
+        } else if (name.startsWith(Symbol.BRACKET_LEFT)) {
+            // "[[I" 或 "[[Ljava.lang.String;" 风格
+            final String elementName = name.substring(Symbol.BRACKET_LEFT.length());
+            final Class<?> elementClass = loadClass(elementName, classLoader, isInitialized);
+            clazz = Array.newInstance(elementClass, 0).getClass();
+        } else {
+            // 加载普通类
+            if (null == classLoader) {
+                classLoader = getClassLoader();
+            }
+            try {
+                clazz = Class.forName(name, isInitialized, classLoader);
+            } catch (ClassNotFoundException ex) {
+                // 尝试获取内部类,例如java.lang.Thread.State = java.lang.Thread$State
+                clazz = tryLoadInnerClass(name, classLoader, isInitialized);
+                if (null == clazz) {
+                    throw new InstrumentException(ex);
+                }
+            }
+        }
+        return clazz;
+    }
+
+    /**
+     * 尝试转换并加载内部类，例如java.lang.Thread.State - java.lang.Thread$State
+     *
+     * @param name          类名
+     * @param classLoader   {@link ClassLoader}，{@code null} 则使用系统默认ClassLoader
+     * @param isInitialized 是否初始化类（调用static模块内容和初始化static属性）
+     * @return 类名对应的类
+     */
+    private static Class<?> tryLoadInnerClass(String name, ClassLoader classLoader, boolean isInitialized) {
+        // 尝试获取内部类，例如java.lang.Thread.State = java.lang.Thread$State
+        final int lastDotIndex = name.lastIndexOf(Symbol.C_DOT);
+        if (lastDotIndex > 0) {// 类与内部类的分隔符不能在第一位，因此>0
+            final String innerClassName = name.substring(0, lastDotIndex) + Symbol.C_DOLLAR + name.substring(lastDotIndex + 1);
+            try {
+                return Class.forName(innerClassName, isInitialized, classLoader);
+            } catch (ClassNotFoundException ex2) {
+                // 尝试获取内部类失败时，忽略之。
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取class类路径URL, 不管是否在jar包中都会返回文件夹的路径
+     * class在jar包中返回jar所在文件夹,class不在jar中返回文件夹目录
+     * jdk中的类不能使用此方法
+     *
+     * @param clazz 类
+     * @return URL
+     */
+    public static URL getLocation(Class<?> clazz) {
+        if (null == clazz) {
+            return null;
+        }
+        return clazz.getProtectionDomain().getCodeSource().getLocation();
+    }
+
+    /**
+     * 获取class类路径, 不管是否在jar包中都会返回文件夹的路径
+     * class在jar包中返回jar所在文件夹,class不在jar中返回文件夹目录
+     * jdk中的类不能使用此方法
+     *
+     * @param clazz 类
+     * @return class路径
+     */
+    public static String getLocationPath(Class<?> clazz) {
+        final URL location = getLocation(clazz);
+        if (null == location) {
+            return null;
+        }
+        return location.getPath();
+    }
+
+    /**
+     * 是否为抽象类或接口
+     *
+     * @param clazz 类
+     * @return 是否为抽象类或接口
+     */
+    public static boolean isAbstractOrInterface(Class<?> clazz) {
+        return isAbstract(clazz) || isInterface(clazz);
+    }
+
+    /**
+     * 是否为JDK中定义的类或接口，判断依据：
+     *
+     * <pre>
+     * 1、以java.、javax.开头的包名
+     * 2、ClassLoader为null
+     * </pre>
+     *
+     * @param clazz 被检查的类
+     * @return 是否为JDK中定义的类或接口
+     */
+    public static boolean isJdkClass(Class<?> clazz) {
+        final Package objectPackage = clazz.getPackage();
+        if (null == objectPackage) {
+            return false;
+        }
+        final String objectPackageName = objectPackage.getName();
+        return objectPackageName.startsWith("java.")
+                || objectPackageName.startsWith("javax.")
+                || clazz.getClassLoader() == null;
+    }
+
+    /**
+     * 是否为接口
+     *
+     * @param clazz 类
+     * @return 是否为接口
+     */
+    public static boolean isInterface(Class<?> clazz) {
+        return clazz.isInterface();
     }
 
     public enum Interfaces {

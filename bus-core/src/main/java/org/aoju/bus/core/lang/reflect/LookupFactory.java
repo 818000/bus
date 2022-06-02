@@ -25,7 +25,7 @@
  ********************************************************************************/
 package org.aoju.bus.core.lang.reflect;
 
-import org.aoju.bus.core.lang.exception.InstrumentException;
+import org.aoju.bus.core.exception.InstrumentException;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
@@ -33,12 +33,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * {@link MethodHandles.Lookup}工厂，用于创建{@link MethodHandles.Lookup}对象<br>
+ * {@link MethodHandles.Lookup}工厂，用于创建{@link MethodHandles.Lookup}对象
  * jdk8中如果直接调用{@link MethodHandles#lookup()}获取到的{@link MethodHandles.Lookup}在调用findSpecial和unreflectSpecial
  * 时会出现权限不够问题，抛出"no private access for invokespecial"异常，因此针对JDK8及JDK9+分别封装lookup方法。
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class LookupFactory {

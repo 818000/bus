@@ -27,7 +27,6 @@ package org.aoju.bus.core.collection;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -39,10 +38,9 @@ import java.util.NoSuchElementException;
  *
  * @param <E> 元素类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
-public class ArrayIterator<E> implements IterableIterator<E>, Serializable {
+public class ArrayIterator<E> implements IterableIterator<E>, ResettableIterator<E>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -93,7 +91,7 @@ public class ArrayIterator<E> implements IterableIterator<E>, Serializable {
      * @throws IllegalArgumentException array对象不为数组抛出此异常
      * @throws NullPointerException     array对象为null
      */
-    public ArrayIterator(final Object array, final int startIndex) {
+    public ArrayIterator(Object array, int startIndex) {
         this(array, startIndex, -1);
     }
 
@@ -154,13 +152,9 @@ public class ArrayIterator<E> implements IterableIterator<E>, Serializable {
     /**
      * 重置数组位置
      */
+    @Override
     public void reset() {
         this.index = this.startIndex;
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return this;
     }
 
 }

@@ -27,7 +27,6 @@ package org.aoju.bus.core.instance;
 
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.lang.SimpleCache;
 import org.aoju.bus.core.lang.Symbol;
 import org.aoju.bus.core.lang.function.Func0;
 import org.aoju.bus.core.toolkit.ArrayKit;
@@ -35,14 +34,15 @@ import org.aoju.bus.core.toolkit.ClassKit;
 import org.aoju.bus.core.toolkit.ReflectKit;
 import org.aoju.bus.core.toolkit.StringKit;
 
-import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 实例化工具类
  * 对于 {@link InstanceFactory} 的便于使用
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 @ThreadSafe
@@ -51,7 +51,8 @@ public final class Instances {
     /**
      * 如果对象池中存在此对象
      */
-    private static final SimpleCache<String, Object> POOL = new SimpleCache<>(new HashMap<>());
+
+    private static final ConcurrentHashMap<String, Object> POOL = new ConcurrentHashMap<>();
 
     private Instances() {
 
@@ -140,7 +141,12 @@ public final class Instances {
      * @return 单例对象
      */
     public static <T> T singletion(String key, Func0<T> supplier) {
-        return (T) POOL.get(key, supplier::call);
+        Object value = POOL.get(key);
+        if (null == value) {
+            POOL.putIfAbsent(key, supplier.callWithRuntimeException());
+            value = POOL.get(key);
+        }
+        return (T) value;
     }
 
     /**
@@ -176,6 +182,30 @@ public final class Instances {
      */
     public static void put(String key, Object obj) {
         POOL.put(key, obj);
+    }
+
+    /**
+     * 判断某个类的对象是否存在
+     *
+     * @param clazz  类
+     * @param params 构造参数
+     * @return 是否存在
+     */
+    public static boolean exists(Class<?> clazz, Object... params) {
+        if (null != clazz) {
+            final String key = buildKey(clazz.getName(), params);
+            return POOL.containsKey(key);
+        }
+        return false;
+    }
+
+    /**
+     * 获取单例池中存在的所有类
+     *
+     * @return 非重复的类集合
+     */
+    public static Set<Class<?>> getExistClass() {
+        return POOL.values().stream().map(Object::getClass).collect(Collectors.toSet());
     }
 
     /**

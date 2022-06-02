@@ -26,8 +26,8 @@
 package org.aoju.bus.core.toolkit;
 
 import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.*;
-import org.aoju.bus.core.lang.exception.InstrumentException;
 import org.aoju.bus.core.map.TableMap;
 
 import java.io.*;
@@ -40,7 +40,6 @@ import java.util.jar.JarFile;
  * URL相关工具
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class UriKit {
@@ -1642,7 +1641,7 @@ public class UriKit {
      * @param value 值
      * @return this
      */
-    public UriKit addQuery(String key, String value) {
+    public UriKit addQuery(String key, Object value) {
         if (StringKit.isEmpty(key)) {
             return this;
         }

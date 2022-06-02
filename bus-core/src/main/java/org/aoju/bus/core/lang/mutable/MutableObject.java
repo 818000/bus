@@ -34,7 +34,6 @@ import java.io.Serializable;
  *
  * @param <T> 可变的类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class MutableObject<T> implements Mutable<T>, Serializable {
@@ -57,6 +56,10 @@ public class MutableObject<T> implements Mutable<T>, Serializable {
      */
     public MutableObject(final T value) {
         this.value = value;
+    }
+
+    public static <T> MutableObject<T> of(T value) {
+        return new MutableObject<>(value);
     }
 
     @Override

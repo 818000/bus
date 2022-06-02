@@ -27,7 +27,9 @@ package org.aoju.bus.core.map;
 
 import org.aoju.bus.core.builder.Builder;
 import org.aoju.bus.core.collection.ComputeIterator;
+import org.aoju.bus.core.collection.TransitionIterator;
 import org.aoju.bus.core.toolkit.IterKit;
+import org.aoju.bus.core.toolkit.MapKit;
 
 import java.util.*;
 
@@ -39,7 +41,6 @@ import java.util.*;
  * @param <C> 列类型
  * @param <V> 值类型
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class RowKeyTable<R, C, V> extends AbstractTable<R, C, V> {
@@ -57,6 +58,15 @@ public class RowKeyTable<R, C, V> extends AbstractTable<R, C, V> {
      */
     public RowKeyTable() {
         this(new HashMap<>());
+    }
+
+    /**
+     * 构造
+     *
+     * @param isLinked 是否有序，有序则使用{@link java.util.LinkedHashMap}作为原始Map
+     */
+    public RowKeyTable(boolean isLinked) {
+        this(MapKit.newHashMap(isLinked), () -> MapKit.newHashMap(isLinked));
     }
 
     /**
@@ -139,6 +149,18 @@ public class RowKeyTable<R, C, V> extends AbstractTable<R, C, V> {
     }
 
     @Override
+    public List<C> columnKeys() {
+        final Collection<Map<C, V>> values = this.raw.values();
+        final List<C> result = new ArrayList<>(values.size() * 16);
+        for (Map<C, V> map : values) {
+            map.forEach((key, value) -> {
+                result.add(key);
+            });
+        }
+        return result;
+    }
+
+    @Override
     public Map<R, V> getColumn(C columnKey) {
         return new Column(columnKey);
     }
@@ -155,8 +177,8 @@ public class RowKeyTable<R, C, V> extends AbstractTable<R, C, V> {
 
         @Override
         public Iterator<Map.Entry<C, Map<R, V>>> iterator() {
-            return new TransIterator<>(columnKeySet.iterator(),
-                    c -> new AbstractMap.SimpleEntry<>(c, getColumn(c)));
+            return new TransitionIterator<>(columnKeySet.iterator(),
+                    c -> MapKit.entry(c, getColumn(c)));
         }
 
         @Override

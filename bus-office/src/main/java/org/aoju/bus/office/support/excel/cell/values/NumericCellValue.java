@@ -37,11 +37,10 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import java.util.Date;
 
 /**
- * 数字类型单元格值<br>
+ * 数字类型单元格值
  * 单元格值可能为Long、Double、Date
  *
  * @author Kimi Liu
- * @version 6.5.0
  * @since Java 17+
  */
 public class NumericCellValue implements CellValue<Object> {
