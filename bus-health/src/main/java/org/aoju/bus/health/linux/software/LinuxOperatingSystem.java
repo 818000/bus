@@ -27,7 +27,6 @@ package org.aoju.bus.health.linux.software;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.linux.LibC;
-import com.sun.jna.platform.linux.LibC.Sysinfo;
 import com.sun.jna.platform.linux.Udev;
 import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.Normal;
@@ -37,6 +36,7 @@ import org.aoju.bus.core.lang.tuple.Triple;
 import org.aoju.bus.health.Builder;
 import org.aoju.bus.health.Config;
 import org.aoju.bus.health.Executor;
+import org.aoju.bus.health.builtin.Struct;
 import org.aoju.bus.health.builtin.software.*;
 import org.aoju.bus.health.linux.LinuxLibc;
 import org.aoju.bus.health.linux.ProcPath;
@@ -565,8 +565,7 @@ public class LinuxOperatingSystem extends AbstractOperatingSystem {
 
     @Override
     public int getThreadCount() {
-        try {
-            Sysinfo info = new Sysinfo();
+        try (Struct.CloseableSysinfo info = new Struct.CloseableSysinfo()) {
             if (0 != LibC.INSTANCE.sysinfo(info)) {
                 Logger.error("Failed to get process thread count. Error code: {}", Native.getLastError());
                 return 0;
@@ -605,8 +604,8 @@ public class LinuxOperatingSystem extends AbstractOperatingSystem {
         }
         boolean systemctlFound = false;
         List<String> systemctl = Executor.runNative("systemctl list-unit-files");
-        for (String str : systemctl) {
-            String[] split = RegEx.SPACES.split(str);
+        for (String text : systemctl) {
+            String[] split = RegEx.SPACES.split(text);
             if (split.length >= 2 && split[0].endsWith(".service") && "enabled".equals(split[1])) {
                 // remove .service extension
                 String name = split[0].substring(0, split[0].length() - 8);

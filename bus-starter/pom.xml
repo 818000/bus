@@ -6,7 +6,7 @@
 
     <groupId>org.aoju</groupId>
     <artifactId>bus-starter</artifactId>
-    <version>6.5.2</version>
+    <version>6.5.3</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -46,7 +46,7 @@
         <lombok.version>1.18.24</lombok.version>
         <aspectj.version>1.9.6</aspectj.version>
         <persistence.version>2.2</persistence.version>
-        <guava.version>30.1.1-jre</guava.version>
+        <guava.version>31.1-jre</guava.version>
         <vertx.version>4.3.1</vertx.version>
         <guice.version>5.0.1</guice.version>
         <mybatis.version>3.5.10</mybatis.version>
@@ -153,6 +153,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bus-socket</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.aoju</groupId>
+            <artifactId>bus-spring</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
@@ -316,7 +322,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -377,7 +383,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.12</version>
+                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>sonatype-nexus-staging</serverId>

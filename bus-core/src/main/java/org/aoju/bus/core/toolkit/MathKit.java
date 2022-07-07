@@ -1053,11 +1053,11 @@ public class MathKit {
      * @param text 字符串值
      * @return 是否为数字
      */
-    public static boolean isNumber(String text) {
+    public static boolean isNumber(CharSequence text) {
         if (StringKit.isBlank(text)) {
             return false;
         }
-        char[] chars = text.toCharArray();
+        char[] chars = text.toString().toCharArray();
         int sz = chars.length;
         boolean hasExp = false;
         boolean hasDecPoint = false;
@@ -1190,12 +1190,15 @@ public class MathKit {
      * @return 是否为{@link Double}类型
      */
     public static boolean isDouble(String s) {
+        if (StringKit.isBlank(s)) {
+            return false;
+        }
         try {
             Double.parseDouble(s);
-            return s.contains(Symbol.DOT);
         } catch (NumberFormatException e) {
             return false;
         }
+        return s.contains(Symbol.DOT);
     }
 
     /**
@@ -1695,6 +1698,21 @@ public class MathKit {
         Assert.notNull(bigNum1);
         Assert.notNull(bigNum2);
         return bigNum1.compareTo(bigNum2) <= 0;
+    }
+
+    /**
+     * 检查值是否在指定范围内
+     *
+     * @param value      值
+     * @param minInclude 最小值（包含）
+     * @param maxInclude 最大值（包含）
+     * @return 经过检查后的值
+     */
+    public static boolean isIn(final BigDecimal value, final BigDecimal minInclude, final BigDecimal maxInclude) {
+        Assert.notNull(value);
+        Assert.notNull(minInclude);
+        Assert.notNull(maxInclude);
+        return isGreaterOrEqual(value, minInclude) && isLessOrEqual(value, maxInclude);
     }
 
     /**
@@ -3159,6 +3177,9 @@ public class MathKit {
      * @return 检查结果，非数字类型和Null将返回true
      */
     public static boolean isValidNumber(Number number) {
+        if (null == number) {
+            return false;
+        }
         if (number instanceof Double) {
             return (false == ((Double) number).isInfinite()) && (false == ((Double) number).isNaN());
         } else if (number instanceof Float) {
