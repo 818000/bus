@@ -6,7 +6,7 @@
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/search?q=org.aoju">
-		<img src="https://img.shields.io/badge/maven--central-v6.5.3-blue.svg?label=Maven%20Central" />
+		<img src="https://img.shields.io/badge/maven--central-v6.5.2-blue.svg?label=Maven%20Central" />
 	</a>
 	<a target="_blank" href="https://travis-ci.org/aoju/bus">
 		<img src="https://travis-ci.com/aoju/bus.svg?branch=main">
@@ -97,7 +97,7 @@ Bus (应用/服务总线) 是一个基础框架、服务套件，它基于Java17
 <dependency>
     <groupId>org.aoju</groupId>
     <artifactId>bus-all</artifactId>
-    <version>6.5.3</version>
+    <version>6.5.2</version>
 </dependency>
 ```
 
@@ -164,7 +164,7 @@ welcome.
 
 ## 许可证(license)
 
-### MIT
+### MIT  
 
 Open sourced under the MIT license.
 
@@ -177,6 +177,6 @@ Thanks JetBrains for the OpenSource license.
 感谢JetBrains提供IDEA开源license
 
 ##
-
+   
 源码永远是最好的教程，善于读源码和DEBUG朋友掌握完全是轻而易举的事。源码是作者设计理念最直观的展现，这也是开源的魅力所在。"Talk is cheap, Show me the code."
 ，开源让技术难题的探讨变得更加务实，在您看完源码后心中对它都会有一个定论。在作者看来，Bus切切实实降低了开发学习门槛，也保障了服务的高性能、高可用。如果读者朋友对源码中某些部分的设计存在疑虑，也欢迎与作者保持沟通。
