@@ -26,7 +26,6 @@
 package org.aoju.bus.base.advice;
 
 import org.aoju.bus.base.service.ErrorService;
-import org.aoju.bus.core.toolkit.ObjectKit;
 import org.aoju.bus.core.toolkit.RuntimeKit;
 import org.aoju.bus.logger.Logger;
 import org.aoju.bus.spring.SpringBuilder;
@@ -48,16 +47,17 @@ public class ErrorAdvice {
      * @return 如果执行链应该继续执行, 则为:true 否则:false
      */
     public boolean handler(Exception ex) {
+        ErrorService errorService = null;
         try {
-            ErrorService errorService = SpringBuilder.getBean(ErrorService.class);
-            if (ObjectKit.isNotNull(errorService)) {
-                errorService.before(ex);
-                errorService.after(ex);
-            } else {
-                Logger.error(RuntimeKit.getStackTrace(ex));
-            }
+            errorService = SpringBuilder.getBean(ErrorService.class);
         } catch (RuntimeException ignore) {
-            return false;
+
+        }
+        if (null != errorService) {
+            errorService.before(ex);
+            errorService.after(ex);
+        } else {
+            Logger.error(RuntimeKit.getStackTrace(ex));
         }
         return true;
     }

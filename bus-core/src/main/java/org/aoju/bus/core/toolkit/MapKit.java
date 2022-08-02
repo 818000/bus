@@ -26,6 +26,7 @@
 package org.aoju.bus.core.toolkit;
 
 import org.aoju.bus.core.convert.Convert;
+import org.aoju.bus.core.exception.InstrumentException;
 import org.aoju.bus.core.lang.Editor;
 import org.aoju.bus.core.lang.Filter;
 import org.aoju.bus.core.lang.Normal;
@@ -213,10 +214,15 @@ public class MapKit {
      * @return {@link Map}实例
      */
     public static <K, V> Map<K, V> createMap(Class<?> mapType) {
-        if (mapType.isAssignableFrom(AbstractMap.class)) {
+        if (null == mapType || mapType.isAssignableFrom(AbstractMap.class)) {
             return new HashMap<>();
         } else {
-            return (Map<K, V>) ReflectKit.newInstance(mapType);
+            try {
+                return (Map<K, V>) ReflectKit.newInstance(mapType);
+            } catch (InstrumentException e) {
+                // 不支持的map类型，返回默认的HashMap
+                return new HashMap<>();
+            }
         }
     }
 
@@ -1247,6 +1253,17 @@ public class MapKit {
      */
     public static <K, V> Map<K, V> empty() {
         return Collections.emptyMap();
+    }
+
+    /**
+     * 返回一个初始大小为0的HashMap(初始为0，可加入元素)
+     *
+     * @param <K> 键类型
+     * @param <V> 值类型
+     * @return 初始大小为0的HashMap
+     */
+    public static <K, V> Map<K, V> zero() {
+        return new HashMap<>(0, 1);
     }
 
     /**
