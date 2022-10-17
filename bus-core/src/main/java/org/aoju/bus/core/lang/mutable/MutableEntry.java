@@ -23,85 +23,93 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.map;
+package org.aoju.bus.core.lang.mutable;
 
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.map.AbstractEntry;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
- * 驼峰Key风格的Map
- * 对KEY转换为驼峰,get("int_value")和get("intValue")获得的值相同,put进入的值也会被覆盖
+ * 可变键和值的{@link Map.Entry}实现，可以修改键和值
  *
  * @param <K> 键类型
  * @param <V> 值类型
  * @author Kimi Liu
  * @since Java 17+
  */
-public class CamelCaseMap<K, V> extends FuncKeyMap<K, V> {
+public class MutableEntry<K, V> extends AbstractEntry<K, V> implements Mutable<Map.Entry<K, V>>, Serializable {
 
-    /**
-     * 构造
-     */
-    public CamelCaseMap() {
-        this(DEFAULT_INITIAL_CAPACITY);
-    }
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * 构造
-     *
-     * @param initialCapacity 初始大小
-     */
-    public CamelCaseMap(int initialCapacity) {
-        this(initialCapacity, DEFAULT_LOAD_FACTOR);
-    }
+    protected K key;
+    protected V value;
 
     /**
      * 构造
      *
-     * @param map Map
+     * @param key   键
+     * @param value 值
      */
-    public CamelCaseMap(Map<? extends K, ? extends V> map) {
-        this(DEFAULT_LOAD_FACTOR, map);
+    public MutableEntry(final K key, final V value) {
+        this.key = key;
+        this.value = value;
     }
 
     /**
-     * 构造
+     * 获取键
      *
-     * @param loadFactor 加载因子
-     * @param map        初始Map，数据会被默认拷贝到一个新的HashMap中
+     * @return 键
      */
-    public CamelCaseMap(float loadFactor, Map<? extends K, ? extends V> map) {
-        this(map.size(), loadFactor);
-        this.putAll(map);
+    @Override
+    public K getKey() {
+        return this.key;
     }
 
     /**
-     * 构造
+     * 获取值
      *
-     * @param initialCapacity 初始大小
-     * @param loadFactor      加载因子
+     * @return 值
      */
-    public CamelCaseMap(int initialCapacity, float loadFactor) {
-        this(MapBuilder.create(new HashMap<>(initialCapacity, loadFactor)));
+    @Override
+    public V getValue() {
+        return this.value;
     }
 
     /**
-     * 构造
-     * 注意此构造将传入的Map作为被包装的Map，针对任何修改，传入的Map都会被同样修改
+     * 设置键
      *
-     * @param emptyMapBuilder Map构造器，必须构造空的Map
+     * @param key 新键
+     * @return old key
      */
-    CamelCaseMap(final MapBuilder<K, V> emptyMapBuilder) {
-        super(emptyMapBuilder.build(), (Function<Object, K> & Serializable) (key) -> {
-            if (key instanceof CharSequence) {
-                key = StringKit.toCamelCase(key.toString());
-            }
-            return (K) key;
-        });
+    public K setKey(final K key) {
+        final K oldKey = this.key;
+        this.key = key;
+        return oldKey;
+    }
+
+    /**
+     * 设置值
+     *
+     * @param value 新值
+     * @return old value
+     */
+    @Override
+    public V setValue(final V value) {
+        final V oldValue = this.value;
+        this.value = value;
+        return oldValue;
+    }
+
+    @Override
+    public Map.Entry<K, V> get() {
+        return this;
+    }
+
+    @Override
+    public void set(final Map.Entry<K, V> pair) {
+        this.key = pair.getKey();
+        this.value = pair.getValue();
     }
 
 }
