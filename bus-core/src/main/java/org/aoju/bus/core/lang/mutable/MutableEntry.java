@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org mybatis.io and other contributors.           *
+ * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -23,43 +23,93 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.pager.plugins;
+package org.aoju.bus.core.lang.mutable;
 
-import org.aoju.bus.core.toolkit.StringKit;
+import org.aoju.bus.core.map.AbstractEntry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
+ * 可变键和值的{@link Map.Entry}实现，可以修改键和值
+ *
+ * @param <K> 键类型
+ * @param <V> 值类型
  * @author Kimi Liu
  * @since Java 17+
  */
-public class PageBoundSqlHandler {
+public class MutableEntry<K, V> extends AbstractEntry<K, V> implements Mutable<Map.Entry<K, V>>, Serializable {
 
-    private BoundSqlHandler.Chain chain;
+    private static final long serialVersionUID = 1L;
 
-    public void setProperties(Properties properties) {
-        // 初始化 boundSqlInterceptorChain
-        String boundSqlInterceptorStr = properties.getProperty("boundSqlInterceptors");
-        if (StringKit.isNotEmpty(boundSqlInterceptorStr)) {
-            String[] boundSqlInterceptors = boundSqlInterceptorStr.split("[;|,]");
-            List<BoundSqlHandler> list = new ArrayList<>();
-            for (int i = 0; i < boundSqlInterceptors.length; i++) {
-                try {
-                    list.add((BoundSqlHandler) Class.forName(boundSqlInterceptors[i]).getConstructor().newInstance());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (list.size() > 0) {
-                chain = new BoundSqlChain(null, list);
-            }
-        }
+    protected K key;
+    protected V value;
+
+    /**
+     * 构造
+     *
+     * @param key   键
+     * @param value 值
+     */
+    public MutableEntry(final K key, final V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public BoundSqlHandler.Chain getChain() {
-        return chain;
+    /**
+     * 获取键
+     *
+     * @return 键
+     */
+    @Override
+    public K getKey() {
+        return this.key;
+    }
+
+    /**
+     * 获取值
+     *
+     * @return 值
+     */
+    @Override
+    public V getValue() {
+        return this.value;
+    }
+
+    /**
+     * 设置键
+     *
+     * @param key 新键
+     * @return old key
+     */
+    public K setKey(final K key) {
+        final K oldKey = this.key;
+        this.key = key;
+        return oldKey;
+    }
+
+    /**
+     * 设置值
+     *
+     * @param value 新值
+     * @return old value
+     */
+    @Override
+    public V setValue(final V value) {
+        final V oldValue = this.value;
+        this.value = value;
+        return oldValue;
+    }
+
+    @Override
+    public Map.Entry<K, V> get() {
+        return this;
+    }
+
+    @Override
+    public void set(final Map.Entry<K, V> pair) {
+        this.key = pair.getKey();
+        this.value = pair.getValue();
     }
 
 }
