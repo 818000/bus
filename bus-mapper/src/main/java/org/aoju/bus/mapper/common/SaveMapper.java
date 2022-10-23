@@ -23,58 +23,28 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.pager.dialect;
+package org.aoju.bus.mapper.common;
 
-import org.aoju.bus.core.exception.PageException;
-import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.pager.Dialect;
-import org.aoju.bus.pager.Property;
-import org.aoju.bus.pager.parser.CountSqlParser;
-import org.aoju.bus.pager.parser.JSqlParser;
-import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.RowBounds;
-
-import java.util.Properties;
+import org.aoju.bus.mapper.provider.SaveProvider;
+import org.apache.ibatis.annotations.InsertProvider;
 
 /**
- * 基于 CountSqlParser 的智能 Count 查询
+ * 通用Mapper接口,保存
+ * 判断主键是否存在, 如果存在且不为空执行update语句,如果主键不存在或为空, 执行insert语句
  *
+ * @param <T> 不能为空
  * @author Kimi Liu
  * @since Java 17+
  */
-public abstract class AbstractDialect implements Dialect {
+public interface SaveMapper<T> {
 
     /**
-     * 处理SQL
+     * 保存一个实体，如果实体的主键不为null则更新记录, 主键不存在或主键为null, 则插入记录
+     *
+     * @param record 不能为空
+     * @return
      */
-    protected CountSqlParser countSqlParser;
-    protected JSqlParser jSqlParser;
-
-    @Override
-    public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey countKey) {
-        return countSqlParser.getSmartCountSql(boundSql.getSql());
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        // 自定义 jsqlparser 的 sql 解析器
-        String sqlParser = properties.getProperty("sqlParser");
-        if (StringKit.isNotEmpty(sqlParser)) {
-            try {
-                Class<?> aClass = Class.forName(sqlParser);
-                jSqlParser = (JSqlParser) aClass.getConstructor().newInstance();
-                if (jSqlParser instanceof Property) {
-                    ((Property) jSqlParser).setProperties(properties);
-                }
-            } catch (Exception e) {
-                throw new PageException(e);
-            }
-        } else {
-            jSqlParser = JSqlParser.DEFAULT;
-        }
-        this.countSqlParser = new CountSqlParser(jSqlParser);
-    }
+    @InsertProvider(type = SaveProvider.class, method = "dynamicSQL")
+    int save(T record);
 
 }

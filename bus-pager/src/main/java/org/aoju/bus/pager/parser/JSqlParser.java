@@ -23,58 +23,33 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.pager.dialect;
+package org.aoju.bus.pager.parser;
 
-import org.aoju.bus.core.exception.PageException;
-import org.aoju.bus.core.toolkit.StringKit;
-import org.aoju.bus.pager.Dialect;
-import org.aoju.bus.pager.Property;
-import org.aoju.bus.pager.parser.CountSqlParser;
-import org.aoju.bus.pager.parser.JSqlParser;
-import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.RowBounds;
-
-import java.util.Properties;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 
 /**
- * 基于 CountSqlParser 的智能 Count 查询
+ * 为了兼容不同版本 jdk 和 jsqlparser
+ * 使用 sqlserver 时，可以重写parse方法
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public abstract class AbstractDialect implements Dialect {
+public interface JSqlParser {
 
     /**
-     * 处理SQL
+     * 默认实现
      */
-    protected CountSqlParser countSqlParser;
-    protected JSqlParser jSqlParser;
+    JSqlParser DEFAULT = statementReader -> CCJSqlParserUtil.parse(statementReader);
 
-    @Override
-    public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey countKey) {
-        return countSqlParser.getSmartCountSql(boundSql.getSql());
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        // 自定义 jsqlparser 的 sql 解析器
-        String sqlParser = properties.getProperty("sqlParser");
-        if (StringKit.isNotEmpty(sqlParser)) {
-            try {
-                Class<?> aClass = Class.forName(sqlParser);
-                jSqlParser = (JSqlParser) aClass.getConstructor().newInstance();
-                if (jSqlParser instanceof Property) {
-                    ((Property) jSqlParser).setProperties(properties);
-                }
-            } catch (Exception e) {
-                throw new PageException(e);
-            }
-        } else {
-            jSqlParser = JSqlParser.DEFAULT;
-        }
-        this.countSqlParser = new CountSqlParser(jSqlParser);
-    }
+    /**
+     * 解析 SQL
+     *
+     * @param statementReader SQL
+     * @return
+     * @throws JSQLParserException
+     */
+    Statement parse(String statementReader) throws JSQLParserException;
 
 }
