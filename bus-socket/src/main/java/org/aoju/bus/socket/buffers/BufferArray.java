@@ -23,55 +23,36 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.buffers;
 
-import org.aoju.bus.socket.AioQuickClient;
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.SocketStatus;
-
-import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.ByteBuffer;
 
 /**
- * 断链重连插件
- *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ReconnectPlugin extends AbstractPlugin {
+public class BufferArray {
 
-    private final AsynchronousChannelGroup asynchronousChannelGroup;
-    private final AioQuickClient client;
-    private boolean shutdown = false;
+    private final ByteBuffer[] buffers;
+    private final int offset;
+    private final int length;
 
-    public ReconnectPlugin(AioQuickClient client) {
-        this(client, null);
+    public BufferArray(ByteBuffer[] buffers, int offset, int length) {
+        this.buffers = buffers;
+        this.offset = offset;
+        this.length = length;
     }
 
-    public ReconnectPlugin(AioQuickClient client, AsynchronousChannelGroup asynchronousChannelGroup) {
-        this.client = client;
-        this.asynchronousChannelGroup = asynchronousChannelGroup;
+    public ByteBuffer[] getBuffers() {
+        return buffers;
     }
 
-    @Override
-    public void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable) {
-        if (socketStatus != SocketStatus.SESSION_CLOSED || shutdown) {
-            return;
-        }
-        try {
-            if (null == asynchronousChannelGroup) {
-                client.start();
-            } else {
-                client.start(asynchronousChannelGroup);
-            }
-        } catch (Exception e) {
-            shutdown = true;
-            e.printStackTrace();
-        }
-
+    public int getOffset() {
+        return offset;
     }
 
-    public void shutdown() {
-        shutdown = true;
+    public int getLength() {
+        return length;
     }
 
 }

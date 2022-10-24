@@ -23,55 +23,14 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
-
-import org.aoju.bus.socket.AioQuickClient;
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.SocketStatus;
-
-import java.nio.channels.AsynchronousChannelGroup;
+package org.aoju.bus.socket.buffers;
 
 /**
- * 断链重连插件
- *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ReconnectPlugin extends AbstractPlugin {
+public interface VirtualFactory {
 
-    private final AsynchronousChannelGroup asynchronousChannelGroup;
-    private final AioQuickClient client;
-    private boolean shutdown = false;
-
-    public ReconnectPlugin(AioQuickClient client) {
-        this(client, null);
-    }
-
-    public ReconnectPlugin(AioQuickClient client, AsynchronousChannelGroup asynchronousChannelGroup) {
-        this.client = client;
-        this.asynchronousChannelGroup = asynchronousChannelGroup;
-    }
-
-    @Override
-    public void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable) {
-        if (socketStatus != SocketStatus.SESSION_CLOSED || shutdown) {
-            return;
-        }
-        try {
-            if (null == asynchronousChannelGroup) {
-                client.start();
-            } else {
-                client.start(asynchronousChannelGroup);
-            }
-        } catch (Exception e) {
-            shutdown = true;
-            e.printStackTrace();
-        }
-
-    }
-
-    public void shutdown() {
-        shutdown = true;
-    }
+    VirtualBuffer newBuffer(BufferPage bufferPage);
 
 }

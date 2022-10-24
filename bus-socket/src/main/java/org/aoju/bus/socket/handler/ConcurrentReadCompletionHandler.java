@@ -23,55 +23,55 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.handler;
 
-import org.aoju.bus.socket.AioQuickClient;
-import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.SocketStatus;
+import org.aoju.bus.socket.TcpAioSession;
 
-import java.nio.channels.AsynchronousChannelGroup;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 断链重连插件
+ * 读写事件回调处理类
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ReconnectPlugin extends AbstractPlugin {
+public class ConcurrentReadCompletionHandler extends ReadCompletionHandler {
 
-    private final AsynchronousChannelGroup asynchronousChannelGroup;
-    private final AioQuickClient client;
-    private boolean shutdown = false;
+    /**
+     * 读回调资源信号量
+     */
+    private final Semaphore semaphore;
 
-    public ReconnectPlugin(AioQuickClient client) {
-        this(client, null);
-    }
+    private final ThreadLocal<ConcurrentReadCompletionHandler> threadLocal = new ThreadLocal<>();
 
-    public ReconnectPlugin(AioQuickClient client, AsynchronousChannelGroup asynchronousChannelGroup) {
-        this.client = client;
-        this.asynchronousChannelGroup = asynchronousChannelGroup;
+    private final ThreadPoolExecutor threadPoolExecutor;
+
+    public ConcurrentReadCompletionHandler(final Semaphore semaphore, ThreadPoolExecutor threadPoolExecutor) {
+        this.semaphore = semaphore;
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     @Override
-    public void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable) {
-        if (socketStatus != SocketStatus.SESSION_CLOSED || shutdown) {
+    public void completed(final Integer result, final TcpAioSession aioSession) {
+        if (threadLocal.get() != null) {
+            super.completed(result, aioSession);
             return;
         }
-        try {
-            if (null == asynchronousChannelGroup) {
-                client.start();
-            } else {
-                client.start(asynchronousChannelGroup);
+        if (semaphore.tryAcquire()) {
+            threadLocal.set(this);
+            //处理当前读回调任务
+            super.completed(result, aioSession);
+            Runnable task;
+            while ((task = threadPoolExecutor.getQueue().poll()) != null) {
+                task.run();
             }
-        } catch (Exception e) {
-            shutdown = true;
-            e.printStackTrace();
+            semaphore.release();
+            threadLocal.set(null);
+            return;
         }
-
-    }
-
-    public void shutdown() {
-        shutdown = true;
+        // 线程资源不足,暂时积压任务
+        threadPoolExecutor.execute(() -> ConcurrentReadCompletionHandler.super.completed(result, aioSession));
     }
 
 }
