@@ -23,55 +23,34 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.protocol;
 
-import org.aoju.bus.socket.AioQuickClient;
 import org.aoju.bus.socket.AioSession;
-import org.aoju.bus.socket.SocketStatus;
+import org.aoju.bus.socket.Protocol;
 
-import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.ByteBuffer;
 
 /**
- * 断链重连插件
- *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ReconnectPlugin extends AbstractPlugin {
-
-    private final AsynchronousChannelGroup asynchronousChannelGroup;
-    private final AioQuickClient client;
-    private boolean shutdown = false;
-
-    public ReconnectPlugin(AioQuickClient client) {
-        this(client, null);
-    }
-
-    public ReconnectPlugin(AioQuickClient client, AsynchronousChannelGroup asynchronousChannelGroup) {
-        this.client = client;
-        this.asynchronousChannelGroup = asynchronousChannelGroup;
-    }
+public abstract class FixedLengthBytesProtocol<T> implements Protocol<T> {
 
     @Override
-    public void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable) {
-        if (socketStatus != SocketStatus.SESSION_CLOSED || shutdown) {
-            return;
+    public final T decode(ByteBuffer readBuffer, AioSession session) {
+        if (readBuffer.remaining() < Integer.BYTES) {
+            return null;
         }
-        try {
-            if (null == asynchronousChannelGroup) {
-                client.start();
-            } else {
-                client.start(asynchronousChannelGroup);
-            }
-        } catch (Exception e) {
-            shutdown = true;
-            e.printStackTrace();
+        readBuffer.mark();
+        int length = readBuffer.getInt();
+        if (readBuffer.remaining() < length) {
+            readBuffer.reset();
+            return null;
         }
-
+        byte[] bytes = new byte[length];
+        readBuffer.get(bytes);
+        return decode(bytes, session);
     }
 
-    public void shutdown() {
-        shutdown = true;
-    }
-
+    protected abstract T decode(byte[] bytes, AioSession session);
 }

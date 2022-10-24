@@ -23,55 +23,68 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.socket.plugins;
+package org.aoju.bus.socket.handler;
 
-import org.aoju.bus.socket.AioQuickClient;
-import org.aoju.bus.socket.AioSession;
+import org.aoju.bus.socket.NetMonitor;
 import org.aoju.bus.socket.SocketStatus;
+import org.aoju.bus.socket.TcpAioSession;
+import org.aoju.bus.socket.channel.EnhanceAsynchronousChannelProvider;
 
-import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.CompletionHandler;
 
 /**
- * 断链重连插件
+ * 读写事件回调处理类
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ReconnectPlugin extends AbstractPlugin {
+public class ReadCompletionHandler implements CompletionHandler<Integer, TcpAioSession> {
 
-    private final AsynchronousChannelGroup asynchronousChannelGroup;
-    private final AioQuickClient client;
-    private boolean shutdown = false;
-
-    public ReconnectPlugin(AioQuickClient client) {
-        this(client, null);
-    }
-
-    public ReconnectPlugin(AioQuickClient client, AsynchronousChannelGroup asynchronousChannelGroup) {
-        this.client = client;
-        this.asynchronousChannelGroup = asynchronousChannelGroup;
+    /**
+     * 处理消息读回调事件
+     *
+     * @param result     已读消息字节数
+     * @param aioSession 当前触发读回调的会话
+     */
+    @Override
+    public void completed(final Integer result, final TcpAioSession aioSession) {
+        try {
+            // 释放缓冲区
+            if (result == EnhanceAsynchronousChannelProvider.READ_MONITOR_SIGNAL) {
+                aioSession.suspendRead();
+                return;
+            }
+            if (result == EnhanceAsynchronousChannelProvider.READABLE_SIGNAL) {
+                aioSession.doRead();
+                return;
+            }
+            // 接收到的消息进行预处理
+            NetMonitor monitor = aioSession.getServerConfig().getMonitor();
+            if (monitor != null) {
+                monitor.afterRead(aioSession, result);
+            }
+            // 触发读回调
+            aioSession.flipRead(result == -1);
+            aioSession.signalRead();
+        } catch (Exception e) {
+            failed(e, aioSession);
+        }
     }
 
     @Override
-    public void stateEvent(SocketStatus socketStatus, AioSession session, Throwable throwable) {
-        if (socketStatus != SocketStatus.SESSION_CLOSED || shutdown) {
-            return;
-        }
+    public final void failed(Throwable exc, TcpAioSession aioSession) {
         try {
-            if (null == asynchronousChannelGroup) {
-                client.start();
-            } else {
-                client.start(asynchronousChannelGroup);
-            }
+            aioSession.getServerConfig().getProcessor().stateEvent(aioSession, SocketStatus.INPUT_EXCEPTION, exc);
         } catch (Exception e) {
-            shutdown = true;
             e.printStackTrace();
         }
-
-    }
-
-    public void shutdown() {
-        shutdown = true;
+        try {
+            // 兼容性处理，windows要强制关闭,其他系统优雅关闭
+            // aioSession.close(IoKit.OS_WINDOWS);
+            aioSession.close(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
