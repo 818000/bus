@@ -43,10 +43,8 @@ import java.util.stream.Collectors;
  */
 public class EnumConverter extends AbstractConverter {
 
-    private static final long serialVersionUID = 1L;
-
     public static final EnumConverter INSTANCE = new EnumConverter();
-
+    private static final long serialVersionUID = 1L;
     private static final WeakMap<Class<?>, Map<Class<?>, Method>> VALUE_OF_METHOD_CACHE = new WeakMap<>();
 
     /**

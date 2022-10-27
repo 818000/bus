@@ -58,10 +58,8 @@ import java.util.Objects;
  */
 public class TemporalConverter extends AbstractConverter {
 
-    private static final long serialVersionUID = 1L;
-
     public static final TemporalConverter INSTANCE = new TemporalConverter();
-
+    private static final long serialVersionUID = 1L;
     /**
      * 日期格式化
      */

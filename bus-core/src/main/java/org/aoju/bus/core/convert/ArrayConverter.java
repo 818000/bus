@@ -43,12 +43,11 @@ import java.util.List;
  */
 public class ArrayConverter extends AbstractConverter {
 
-    private static final long serialVersionUID = 1L;
     /**
      * 单例对象
      */
     public static final ArrayConverter INSTANCE = new ArrayConverter();
-
+    private static final long serialVersionUID = 1L;
     /**
      * 是否忽略元素转换错误
      */

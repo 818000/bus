@@ -50,9 +50,8 @@ import java.util.function.Function;
  */
 public class PrimitiveConverter extends AbstractConverter {
 
-    private static final long serialVersionUID = 1L;
-
     public static final PrimitiveConverter INSTANCE = new PrimitiveConverter();
+    private static final long serialVersionUID = 1L;
 
     /**
      * 将指定值转换为原始类型的值
