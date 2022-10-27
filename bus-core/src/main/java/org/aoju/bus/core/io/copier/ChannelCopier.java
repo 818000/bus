@@ -27,7 +27,6 @@ package org.aoju.bus.core.io.copier;
 
 import org.aoju.bus.core.exception.InternalException;
 import org.aoju.bus.core.io.Progress;
-import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.toolkit.IoKit;
 
 import java.io.IOException;
@@ -84,9 +83,6 @@ public class ChannelCopier extends IoCopier<ReadableByteChannel, WritableByteCha
 
     @Override
     public long copy(ReadableByteChannel source, WritableByteChannel target) {
-        Assert.notNull(source, "InputStream is null !");
-        Assert.notNull(target, "OutputStream is null !");
-
         final Progress progress = this.progress;
         if (null != progress) {
             progress.start();

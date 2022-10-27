@@ -26,38 +26,57 @@
 package org.aoju.bus.core.io.stream;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.OutputStream;
 
 /**
+ * 此OutputStream写出数据到<b>/dev/null</b>,既忽略所有数据
+ * 来自 Apache Commons io
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class StringReader extends Reader {
+public class EmptyOutputStream extends OutputStream {
 
-    private final CharSequence cs;
-    private int index;
+    /**
+     * 单例
+     */
+    public static final EmptyOutputStream INSTANCE = new EmptyOutputStream();
 
-    public StringReader(CharSequence cs) {
-        this.cs = cs;
-        index = 0;
+    private EmptyOutputStream() {
+
     }
 
+    /**
+     * 什么也不做，写出到{@code /dev/null}
+     *
+     * @param b   写出的数据
+     * @param off 开始位置
+     * @param len 长度
+     */
     @Override
-    public void close() throws IOException {
+    public void write(final byte[] b, final int off, final int len) {
+
     }
 
+    /**
+     * 什么也不做，写出到 {@code /dev/null}
+     *
+     * @param b 写出的数据
+     */
     @Override
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        if (index >= cs.length())
-            return -1;
-        int count = 0;
-        for (int i = off; i < (off + len); i++) {
-            if (index >= cs.length())
-                return count;
-            cbuf[i] = cs.charAt(index++);
-            count++;
-        }
-        return count;
+    public void write(final int b) {
+
+    }
+
+    /**
+     * 什么也不做，写出到 {@code /dev/null}
+     *
+     * @param b 写出的数据
+     * @throws IOException 不抛出
+     */
+    @Override
+    public void write(final byte[] b) throws IOException {
+
     }
 
 }

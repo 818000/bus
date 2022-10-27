@@ -25,38 +25,65 @@
  ********************************************************************************/
 package org.aoju.bus.core.io.stream;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStream;
 
 /**
+ * 空的流
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class StringWriter extends Writer {
+public final class EmptyInputStream extends InputStream {
 
-    private final StringBuilder sb;
+    /**
+     * 单例实例
+     */
+    public static final EmptyInputStream INSTANCE = new EmptyInputStream();
 
-    public StringWriter(StringBuilder sb) {
-        this.sb = sb;
+    private EmptyInputStream() {
+
     }
 
     @Override
-    public void close() throws IOException {
+    public int available() {
+        return 0;
     }
 
     @Override
-    public void flush() throws IOException {
+    public void close() {
     }
 
     @Override
-    public void write(char[] cbuf, int off, int len) throws IOException {
-        for (int i = off; i < (off + len); i++) {
-            sb.append(cbuf[i]);
-        }
+    public void mark(final int readLimit) {
     }
 
-    public StringBuilder getStringBuilder() {
-        return sb;
+    @Override
+    public boolean markSupported() {
+        return true;
+    }
+
+    @Override
+    public int read() {
+        return -1;
+    }
+
+    @Override
+    public int read(final byte[] buf) {
+        return -1;
+    }
+
+    @Override
+    public int read(final byte[] buf, final int off, final int len) {
+        return -1;
+    }
+
+    @Override
+    public void reset() {
+    }
+
+    @Override
+    public long skip(final long n) {
+        return 0L;
     }
 
 }
