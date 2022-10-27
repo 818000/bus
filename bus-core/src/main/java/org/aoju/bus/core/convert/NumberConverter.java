@@ -60,8 +60,9 @@ import java.util.function.Function;
  */
 public class NumberConverter extends AbstractConverter {
 
-    public static final NumberConverter INSTANCE = new NumberConverter();
     private static final long serialVersionUID = 1L;
+
+    public static final NumberConverter INSTANCE = new NumberConverter();
 
     /**
      * 转换对象为数字，支持的对象包括：

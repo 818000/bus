@@ -1429,8 +1429,8 @@ public class ObjectKit {
      *
      * <ul>
      *     <li>如需对null友好操作如下</li>
-     *     <li>{@code Comparator.nullsLast(CompareUtil.natural())}</li>
-     *     <li>{@code Comparator.nullsFirst(CompareUtil.natural())}</li>
+     *     <li>{@code Comparator.nullsLast(CompareKit.natural())}</li>
+     *     <li>{@code Comparator.nullsFirst(CompareKit.natural())}</li>
      * </ul>
      *
      * @param <E> 排序节点类型
@@ -1445,8 +1445,8 @@ public class ObjectKit {
      *
      * <ul>
      *     <li>如需对null友好操作如下</li>
-     *     <li>{@code Comparator.nullsLast(CompareUtil.naturalReverse())}</li>
-     *     <li>{@code Comparator.nullsFirst(CompareUtil.naturalReverse())}</li>
+     *     <li>{@code Comparator.nullsLast(CompareKit.naturalReverse())}</li>
+     *     <li>{@code Comparator.nullsFirst(CompareKit.naturalReverse())}</li>
      * </ul>
      *
      * @param <E> 排序节点类型
@@ -1461,8 +1461,8 @@ public class ObjectKit {
      *
      * <ul>
      *     <li>如需对null友好操作如下</li>
-     *     <li>{@code Comparator.nullsLast(CompareUtil.reverse())}</li>
-     *     <li>{@code Comparator.nullsFirst(CompareUtil.reverse())}</li>
+     *     <li>{@code Comparator.nullsLast(CompareKit.reverse())}</li>
+     *     <li>{@code Comparator.nullsFirst(CompareKit.reverse())}</li>
      * </ul>
      *
      * @param <E>        排序节点类型
