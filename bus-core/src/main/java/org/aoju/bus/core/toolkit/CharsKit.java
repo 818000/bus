@@ -4425,6 +4425,25 @@ public class CharsKit {
     /**
      * 创建StringBuilder对象
      *
+     * @return StringBuilder对象
+     */
+    public static StringBuilder builder() {
+        return new StringBuilder();
+    }
+
+    /**
+     * 创建StringBuilder对象
+     *
+     * @param capacity 初始大小
+     * @return StringBuilder对象
+     */
+    public static StringBuilder builder(final int capacity) {
+        return new StringBuilder(capacity);
+    }
+
+    /**
+     * 创建StringBuilder对象
+     *
      * @param args 初始字符串列表
      * @return StringBuilder对象
      */

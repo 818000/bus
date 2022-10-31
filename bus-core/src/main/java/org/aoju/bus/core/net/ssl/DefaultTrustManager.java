@@ -23,74 +23,59 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.http.accord.platform;
+package org.aoju.bus.core.net.ssl;
 
-import org.aoju.bus.http.Protocol;
-
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLSocket;
-import java.util.List;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.net.Socket;
+import java.security.cert.X509Certificate;
 
 /**
- * Android 10+
+ * 默认信任管理器，默认信任所有客户端和服务端证书
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-class Android10Platform extends AndroidPlatform {
+public class DefaultTrustManager extends X509ExtendedTrustManager {
 
-    Android10Platform(Class<?> sslParametersClass) {
-        super(sslParametersClass, null, null, null, null, null);
-    }
+    /**
+     * 默认的全局单例默认信任管理器，默认信任所有客户端和服务端证书
+     */
+    public static DefaultTrustManager INSTANCE = new DefaultTrustManager();
 
-    public static Platform buildIfSupported() {
-        if (!isAndroid()) {
-            return null;
-        }
-
-        try {
-            Class<?> sslParametersClass =
-                    Class.forName("com.android.org.conscrypt.SSLParametersImpl");
-
-            return new Android10Platform(sslParametersClass);
-        } catch (ReflectiveOperationException ignored) {
-        }
-
-        return null; // Not an Android 10+ runtime.
+    @Override
+    public X509Certificate[] getAcceptedIssuers() {
+        return new X509Certificate[0];
     }
 
     @Override
-    public void configureTlsExtensions(
-            SSLSocket sslSocket, String hostname, List<Protocol> protocols) {
-        try {
-            enableSessionTickets(sslSocket);
-
-            SSLParameters sslParameters = sslSocket.getSSLParameters();
-
-            // Enable ALPN.
-            String[] protocolsArray = alpnProtocolNames(protocols).toArray(new String[0]);
-            sslParameters.setApplicationProtocols(protocolsArray);
-
-            sslSocket.setSSLParameters(sslParameters);
-        } catch (IllegalArgumentException ex) {
-            // probably java.lang.IllegalArgumentException: Invalid input to toASCII from IDN.toASCII
-            throw new AssertionError(ex);
-        }
-    }
-
-    private void enableSessionTickets(SSLSocket sslSocket) {
+    public void checkClientTrusted(X509Certificate[] chain, String authType) {
 
     }
 
     @Override
-    public String getSelectedProtocol(SSLSocket socket) {
-        String alpnResult = socket.getApplicationProtocol();
+    public void checkServerTrusted(X509Certificate[] chain, String authType) {
 
-        if (alpnResult == null || alpnResult.isEmpty()) {
-            return null;
-        }
+    }
 
-        return alpnResult;
+    @Override
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
+
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
+
+    }
+
+    @Override
+    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
+
+    }
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
+
     }
 
 }

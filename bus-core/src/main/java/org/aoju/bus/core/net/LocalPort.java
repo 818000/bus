@@ -23,59 +23,51 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.http.secure;
+package org.aoju.bus.core.net;
 
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.X509ExtendedTrustManager;
-import java.net.Socket;
-import java.security.cert.X509Certificate;
+import org.aoju.bus.core.toolkit.NetKit;
+
+import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 默认信任管理器，默认信任所有客户端和服务端证书
+ * 本地端口生成器Percent
+ * 用于生成本地可用（未被占用）的端口号Percent
+ * 注意：多线程甚至单线程访问时可能会返回同一端口（例如获取了端口但是没有使用）
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class DefaultTrustManager extends X509ExtendedTrustManager {
+public class LocalPort implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 默认的全局单例默认信任管理器，默认信任所有客户端和服务端证书
+     * 备选的本地端口
      */
-    public static DefaultTrustManager INSTANCE = new DefaultTrustManager();
+    private final AtomicInteger alternativePort;
 
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        return new X509Certificate[0];
+    /**
+     * 构造
+     *
+     * @param beginPort 起始端口号
+     */
+    public LocalPort(final int beginPort) {
+        alternativePort = new AtomicInteger(beginPort);
     }
 
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType) {
-
-    }
-
-    @Override
-    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
-
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
-
-    }
-
-    @Override
-    public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
-
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
-
+    /**
+     * 生成一个本地端口，用于远程端口映射
+     *
+     * @return 未被使用的本地端口
+     */
+    public int generate() {
+        int validPort = alternativePort.get();
+        // 获取可用端口
+        while (false == NetKit.isUsableLocalPort(validPort)) {
+            validPort = alternativePort.incrementAndGet();
+        }
+        return validPort;
     }
 
 }

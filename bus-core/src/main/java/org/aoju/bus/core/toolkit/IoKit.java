@@ -35,7 +35,6 @@ import org.aoju.bus.core.io.buffer.Buffer;
 import org.aoju.bus.core.io.copier.ChannelCopier;
 import org.aoju.bus.core.io.copier.FileChannelCopier;
 import org.aoju.bus.core.io.copier.ReaderWriterCopier;
-import org.aoju.bus.core.io.copier.StreamCopier;
 import org.aoju.bus.core.io.sink.BufferSink;
 import org.aoju.bus.core.io.sink.RealSink;
 import org.aoju.bus.core.io.sink.Sink;
@@ -250,7 +249,9 @@ public class IoKit {
     public static long copy(final InputStream in, final OutputStream out, final int bufferSize, final long count, final Progress progress) {
         Assert.notNull(in, "InputStream is null !");
         Assert.notNull(out, "OutputStream is null !");
-        return new StreamCopier(bufferSize, count, progress).copy(in, out);
+        final long copySize = copy(Channels.newChannel(in), Channels.newChannel(out), bufferSize, count, progress);
+        flush(out);
+        return copySize;
     }
 
     /**

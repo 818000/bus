@@ -25,6 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.http.secure;
 
+import org.aoju.bus.core.lang.Http;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,23 +43,23 @@ public enum TlsVersion {
     /**
      * 2016年版本
      */
-    TLS_1_3("TLSv1.3"),
+    TLS_1_3(Http.TLS_V_13),
     /**
      * 2008年版本
      */
-    TLS_1_2("TLSv1.2"),
+    TLS_1_2(Http.TLS_V_12),
     /**
      * 2006年版本
      */
-    TLS_1_1("TLSv1.1"),
+    TLS_1_1(Http.TLS_V_11),
     /**
      * 1999年版本
      */
-    TLS_1_0("TLSv1"),
+    TLS_1_0(Http.TLS_V_10),
     /**
      * 1996年版本
      */
-    SSL_3_0("SSLv3");
+    SSL_3_0(Http.SSL_V_30);
 
     public final String javaName;
 
@@ -67,15 +69,15 @@ public enum TlsVersion {
 
     public static TlsVersion forJavaName(String javaName) {
         switch (javaName) {
-            case "TLSv1.3":
+            case Http.TLS_V_13:
                 return TLS_1_3;
-            case "TLSv1.2":
+            case Http.TLS_V_12:
                 return TLS_1_2;
-            case "TLSv1.1":
+            case Http.TLS_V_11:
                 return TLS_1_1;
-            case "TLSv1":
+            case Http.TLS_V_10:
                 return TLS_1_0;
-            case "SSLv3":
+            case Http.SSL_V_30:
                 return SSL_3_0;
         }
         throw new IllegalArgumentException("Unexpected TLS version: " + javaName);
