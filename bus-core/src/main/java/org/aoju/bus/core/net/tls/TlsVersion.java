@@ -23,7 +23,7 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.http.secure;
+package org.aoju.bus.core.net.tls;
 
 import org.aoju.bus.core.lang.Http;
 
