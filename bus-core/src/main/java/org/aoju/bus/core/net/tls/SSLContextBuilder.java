@@ -23,7 +23,7 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.net.ssl;
+package org.aoju.bus.core.net.tls;
 
 import org.aoju.bus.core.builder.Builder;
 import org.aoju.bus.core.exception.InternalException;
