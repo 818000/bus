@@ -23,61 +23,62 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.core.io.stream;
+package org.aoju.bus.core.io.reader;
 
-import org.aoju.bus.core.exception.InternalException;
-import org.aoju.bus.core.io.reader.ReaderWrapper;
 import org.aoju.bus.core.lang.Assert;
+import org.aoju.bus.core.lang.function.XWrapper;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.CharBuffer;
 
 /**
- * 读取带BOM头的流内容的Reader，如果非bom的流或无法识别的编码，则默认UTF-8
- * BOM定义：http://www.unicode.org/unicode/faq/utf_bom.html
- *
- * <ul>
- * <li>00 00 FE FF = UTF-32, big-endian</li>
- * <li>FF FE 00 00 = UTF-32, little-endian</li>
- * <li>EF BB BF = UTF-8</li>
- * <li>FE FF = UTF-16, big-endian</li>
- * <li>FF FE = UTF-16, little-endian</li>
- * </ul>
- * 使用：
- * <code>
- * FileInputStream fis = new FileInputStream(file);
- * BOMReader uin = new BOMReader(fis);
- * </code>
+ * {@link Reader} 包装
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class BOMReader extends ReaderWrapper {
+public class ReaderWrapper extends Reader implements XWrapper<Reader> {
+
+    protected final Reader raw;
 
     /**
      * 构造
      *
-     * @param in 流
+     * @param reader {@link Reader}
      */
-    public BOMReader(final InputStream in) {
-        super(initReader(in));
+    public ReaderWrapper(final Reader reader) {
+        this.raw = Assert.notNull(reader);
     }
 
-    /**
-     * 初始化为{@link InputStreamReader}，将给定流转换为{@link BOMInputStream}
-     *
-     * @param in {@link InputStream}
-     * @return {@link InputStreamReader}
-     */
-    private static InputStreamReader initReader(final InputStream in) {
-        Assert.notNull(in, "InputStream must be not null!");
-        final BOMInputStream bin = (in instanceof BOMInputStream) ? (BOMInputStream) in : new BOMInputStream(in);
-        try {
-            return new InputStreamReader(bin, bin.getCharset());
-        } catch (final UnsupportedEncodingException e) {
-            throw new InternalException(e);
-        }
+    @Override
+    public Reader getRaw() {
+        return this.raw;
+    }
+
+    @Override
+    public int read() throws IOException {
+        return raw.read();
+    }
+
+    @Override
+    public int read(final CharBuffer target) throws IOException {
+        return raw.read(target);
+    }
+
+    @Override
+    public int read(final char[] cbuf) throws IOException {
+        return raw.read(cbuf);
+    }
+
+    @Override
+    public int read(final char[] buffer, final int off, final int len) throws IOException {
+        return raw.read(buffer, off, len);
+    }
+
+    @Override
+    public void close() throws IOException {
+        raw.close();
     }
 
 }
