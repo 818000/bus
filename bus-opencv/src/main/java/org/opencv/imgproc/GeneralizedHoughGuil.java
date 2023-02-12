@@ -3,8 +3,6 @@
 //
 package org.opencv.imgproc;
 
-import org.opencv.imgproc.GeneralizedHough;
-
 // C++: class GeneralizedHoughGuil
 /**
  * finds arbitrary template in the grayscale image using Generalized Hough Transform
@@ -313,7 +311,7 @@ public class GeneralizedHoughGuil extends GeneralizedHough {
     // C++:  int cv::GeneralizedHoughGuil::getPosThresh()
     private static native int getPosThresh_0(long nativeObj);
 
-    // native support for deleting native object
+    // native support for java finalize()
     private static native void delete(long nativeObj);
 
 }

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -44,12 +44,12 @@ import org.aoju.bus.logger.Logger;
  */
 public class BridgeVerticleService extends AbstractVerticle {
 
-    private final BridgeProperties properties;
-
-    @Resource
-    Vertx vertx;
     @Resource
     Resolvable resolvable;
+    @Resource
+    Vertx vertx;
+
+    private final BridgeProperties properties;
 
     public BridgeVerticleService(BridgeProperties properties) {
         this.properties = properties;

@@ -552,13 +552,12 @@ public class Imgcodecs {
 
     /**
      * Loads a multi-page image from a file.
-     * <p>
-     * The function imreadmulti loads a multi-page image from the specified file into a vector of Mat objects.
      *
+     * The function imreadmulti loads a multi-page image from the specified file into a vector of Mat objects.
      * @param filename Name of file to be loaded.
-     * @param mats     A vector of Mat objects holding each page.
-     * @param flags    Flag that can take values of cv::ImreadModes, default with cv::IMREAD_ANYCOLOR.
-     *                 SEE: cv::imread
+     * @param flags Flag that can take values of cv::ImreadModes, default with cv::IMREAD_ANYCOLOR.
+     * @param mats A vector of Mat objects holding each page, if more than one.
+     * SEE: cv::imread
      * @return automatically generated
      */
     public static boolean imreadmulti(String filename, List<Mat> mats, int flags) {
@@ -574,7 +573,7 @@ public class Imgcodecs {
      *
      * The function imreadmulti loads a multi-page image from the specified file into a vector of Mat objects.
      * @param filename Name of file to be loaded.
-     * @param mats A vector of Mat objects holding each page.
+     * @param mats A vector of Mat objects holding each page, if more than one.
      * SEE: cv::imread
      * @return automatically generated
      */
@@ -596,10 +595,10 @@ public class Imgcodecs {
      *
      * The function imreadmulti loads a specified range from a multi-page image from the specified file into a vector of Mat objects.
      * @param filename Name of file to be loaded.
-     * @param mats A vector of Mat objects holding each page.
      * @param start Start index of the image to load
      * @param count Count number of images to load
      * @param flags Flag that can take values of cv::ImreadModes, default with cv::IMREAD_ANYCOLOR.
+     * @param mats A vector of Mat objects holding each page, if more than one.
      * SEE: cv::imread
      * @return automatically generated
      */
@@ -616,9 +615,9 @@ public class Imgcodecs {
      *
      * The function imreadmulti loads a specified range from a multi-page image from the specified file into a vector of Mat objects.
      * @param filename Name of file to be loaded.
-     * @param mats A vector of Mat objects holding each page.
      * @param start Start index of the image to load
      * @param count Count number of images to load
+     * @param mats A vector of Mat objects holding each page, if more than one.
      * SEE: cv::imread
      * @return automatically generated
      */
@@ -802,7 +801,7 @@ public class Imgcodecs {
      * The function imencode compresses the image and stores it in the memory buffer that is resized to fit the
      * result. See cv::imwrite for the list of supported formats and flags description.
      *
-     * @param ext File extension that defines the output format. Must include a leading period.
+     * @param ext File extension that defines the output format.
      * @param img Image to be written.
      * @param buf Output buffer resized to fit the compressed image.
      * @param params Format-specific parameters. See cv::imwrite and cv::ImwriteFlags.
@@ -820,7 +819,7 @@ public class Imgcodecs {
      * The function imencode compresses the image and stores it in the memory buffer that is resized to fit the
      * result. See cv::imwrite for the list of supported formats and flags description.
      *
-     * @param ext File extension that defines the output format. Must include a leading period.
+     * @param ext File extension that defines the output format.
      * @param img Image to be written.
      * @param buf Output buffer resized to fit the compressed image.
      * @return automatically generated

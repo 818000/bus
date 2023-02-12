@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -47,26 +47,37 @@ public interface FreeBsdLibc extends CLibrary {
     int UTX_LINESIZE = 16;
     int UTX_IDSIZE = 8;
     int UTX_HOSTSIZE = 128;
+
     /**
-     * Constant <code>UINT64_SIZE=Native.getNativeSize(long.class)</code>
+     * Reads a line from the current file position in the utmp file. It returns a
+     * pointer to a structure containing the fields of the line.
+     * <p>
+     * Not thread safe
+     *
+     * @return a {@link FreeBsdUtmpx} on success, and NULL on failure (which
+     * includes the "record not found" case)
      */
-    int UINT64_SIZE = Native.getNativeSize(long.class);
+    FreeBsdUtmpx getutxent();
 
     /*
      * Data size
      */
     /**
+     * Constant <code>UINT64_SIZE=Native.getNativeSize(long.class)</code>
+     */
+    int UINT64_SIZE = Native.getNativeSize(long.class);
+    /**
      * Constant <code>INT_SIZE=Native.getNativeSize(int.class)</code>
      */
     int INT_SIZE = Native.getNativeSize(int.class);
-    /**
-     * Constant <code>CPUSTATES=5</code>
-     */
-    int CPUSTATES = 5;
 
     /*
      * CPU state indices
      */
+    /**
+     * Constant <code>CPUSTATES=5</code>
+     */
+    int CPUSTATES = 5;
     /**
      * Constant <code>CP_USER=0</code>
      */
@@ -87,17 +98,6 @@ public interface FreeBsdLibc extends CLibrary {
      * Constant <code>CP_IDLE=4</code>
      */
     int CP_IDLE = 4;
-
-    /**
-     * Reads a line from the current file position in the utmp file. It returns a
-     * pointer to a structure containing the fields of the line.
-     * <p>
-     * Not thread safe
-     *
-     * @return a {@link FreeBsdUtmpx} on success, and NULL on failure (which
-     * includes the "record not found" case)
-     */
-    FreeBsdUtmpx getutxent();
 
     /**
      * Stores the system-wide thread identifier for the current kernel-scheduled thread in the variable pointed by the

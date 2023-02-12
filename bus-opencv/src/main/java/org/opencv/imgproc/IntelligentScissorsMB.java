@@ -5,7 +5,6 @@ package org.opencv.imgproc;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.imgproc.IntelligentScissorsMB;
 
 // C++: class IntelligentScissorsMB
 /**
@@ -24,10 +23,7 @@ import org.opencv.imgproc.IntelligentScissorsMB;
 public class IntelligentScissorsMB {
 
     protected final long nativeObj;
-    protected IntelligentScissorsMB(long addr) {
-      nativeObj = addr;
-      
-    }
+    protected IntelligentScissorsMB(long addr) { nativeObj = addr; }
 
     public long getNativeObjAddr() { return nativeObj; }
 
@@ -39,7 +35,7 @@ public class IntelligentScissorsMB {
     //
 
     public IntelligentScissorsMB() {
-        this(IntelligentScissorsMB_0());
+        nativeObj = IntelligentScissorsMB_0();
     }
 
 
@@ -209,7 +205,7 @@ public class IntelligentScissorsMB {
     //
 
     /**
-     * Specify custom features of input image
+     * Specify custom features of imput image
      *
      * Customized advanced variant of applyImage() call.
      *
@@ -224,7 +220,7 @@ public class IntelligentScissorsMB {
     }
 
     /**
-     * Specify custom features of input image
+     * Specify custom features of imput image
      *
      * Customized advanced variant of applyImage() call.
      *
@@ -324,7 +320,7 @@ public class IntelligentScissorsMB {
     private static native void getContour_0(long nativeObj, double targetPt_x, double targetPt_y, long contour_nativeObj, boolean backward);
     private static native void getContour_1(long nativeObj, double targetPt_x, double targetPt_y, long contour_nativeObj);
 
-    // native support for deleting native object
+    // native support for java finalize()
     private static native void delete(long nativeObj);
 
 }

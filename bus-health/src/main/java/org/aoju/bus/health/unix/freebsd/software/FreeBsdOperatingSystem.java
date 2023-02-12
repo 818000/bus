@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -56,24 +56,9 @@ import java.util.stream.Collectors;
 @ThreadSafe
 public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
 
-    static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name)
-            .map(name -> name.toLowerCase(Locale.ROOT)).collect(Collectors.joining(","));
-
+    static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name).map(String::toLowerCase)
+            .collect(Collectors.joining(","));
     private static final long BOOTTIME = querySystemBootTime();
-
-    private static long querySystemBootTime() {
-        Timeval tv = new Timeval();
-        if (!BsdSysctlKit.sysctl("kern.boottime", tv) || tv.tv_sec == 0) {
-            // Usually this works. If it doesn't, fall back to text parsing.
-            // Boot time will be the first consecutive string of digits.
-            return Builder.parseLongOrDefault(
-                    Executor.getFirstAnswer("sysctl -n kern.boottime").split(",")[0].replaceAll("\\D", Normal.EMPTY),
-                    System.currentTimeMillis() / 1000);
-        }
-        // tv now points to a 128-bit timeval structure for boot time.
-        // First 8 bytes are seconds, second 8 bytes are microseconds (we ignore)
-        return tv.tv_sec;
-    }
 
     private List<OSProcess> getProcessListFromPS(int pid) {
         String psCommand = "ps -awwxo " + PS_COMMAND_ARGS;
@@ -87,6 +72,20 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
                 .map(psMap -> new FreeBsdOSProcess(
                         pid < 0 ? Builder.parseIntOrDefault(psMap.get(PsKeywords.PID), 0) : pid, psMap, this))
                 .filter(OperatingSystem.ProcessFiltering.VALID_PROCESS).collect(Collectors.toList());
+    }
+
+    private static long querySystemBootTime() {
+        Timeval tv = new Timeval();
+        if (!BsdSysctlKit.sysctl("kern.boottime", tv) || tv.tv_sec == 0) {
+            // Usually this works. If it doesn't, fall back to text parsing.
+            // Boot time will be the first consecutive string of digits.
+            return Builder.parseLongOrDefault(
+                    Executor.getFirstAnswer("sysctl -n kern.boottime").split(",")[0].replaceAll("\\D", Normal.EMPTY),
+                    System.currentTimeMillis() / 1000);
+        }
+        // tv now points to a 128-bit timeval structure for boot time.
+        // First 8 bytes are seconds, second 8 bytes are microseconds (we ignore)
+        return tv.tv_sec;
     }
 
     @Override

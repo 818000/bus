@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -33,7 +33,6 @@ import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.exception.InternalException;
 import org.aoju.bus.core.lang.Editor;
 import org.aoju.bus.core.lang.Normal;
-import org.aoju.bus.core.lang.mutable.MutableEntry;
 import org.aoju.bus.core.map.CaseInsensitiveMap;
 
 import java.beans.*;
@@ -42,7 +41,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -582,7 +580,7 @@ public class BeanKit {
             return bean;
         }
 
-        return BeanCopier.of(valueProvider, bean, copyOptions).copy();
+        return BeanCopier.create(valueProvider, bean, copyOptions).copy();
     }
 
     /**
@@ -655,7 +653,7 @@ public class BeanKit {
         if (isToCamelCase) {
             map = MapKit.toCamelCaseMap(map);
         }
-        return BeanCopier.of(map, bean, copyOptions).copy();
+        return BeanCopier.create(map, bean, copyOptions).copy();
     }
 
     /**
@@ -676,21 +674,17 @@ public class BeanKit {
      * @param properties 需要拷贝的属性值，{@code null}或空表示拷贝所有值
      * @return Map
      */
-    public static Map<String, Object> beanToMap(final Object bean, final String... properties) {
+    public static Map<String, Object> beanToMap(Object bean, String... properties) {
         int mapSize = 16;
-        UnaryOperator<MutableEntry<String, Object>> editor = null;
+        Editor<String> keyEditor = null;
         if (ArrayKit.isNotEmpty(properties)) {
             mapSize = properties.length;
             final Set<String> propertiesSet = CollKit.newHashSet(false, properties);
-            editor = entry -> {
-                final String key = entry.getKey();
-                entry.setKey(propertiesSet.contains(key) ? key : null);
-                return entry;
-            };
+            keyEditor = property -> propertiesSet.contains(property) ? property : null;
         }
 
         // 指明了要复制的属性 所以不忽略null值
-        return beanToMap(bean, new LinkedHashMap<>(mapSize, 1), false, editor);
+        return beanToMap(bean, new LinkedHashMap<>(mapSize, 1), false, keyEditor);
     }
 
     /**
@@ -701,7 +695,7 @@ public class BeanKit {
      * @param ignoreNullValue   是否忽略值为空的字段
      * @return Map
      */
-    public static Map<String, Object> beanToMap(final Object bean, final boolean isToUnderlineCase, final boolean ignoreNullValue) {
+    public static Map<String, Object> beanToMap(Object bean, boolean isToUnderlineCase, boolean ignoreNullValue) {
         if (null == bean) {
             return null;
         }
@@ -717,21 +711,16 @@ public class BeanKit {
      * @param ignoreNullValue   是否忽略值为空的字段
      * @return Map
      */
-    public static Map<String, Object> beanToMap(final Object bean, final Map<String, Object> targetMap, final boolean isToUnderlineCase, final boolean ignoreNullValue) {
+    public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, final boolean isToUnderlineCase, boolean ignoreNullValue) {
         if (null == bean) {
             return null;
         }
-
-        return beanToMap(bean, targetMap, ignoreNullValue, entry -> {
-            final String key = entry.getKey();
-            entry.setKey(isToUnderlineCase ? StringKit.toUnderlineCase(key) : key);
-            return entry;
-        });
+        return beanToMap(bean, targetMap, ignoreNullValue, key -> isToUnderlineCase ? StringKit.toUnderlineCase(key) : key);
     }
 
     /**
      * 对象转Map
-     * 通过实现{@link UnaryOperator} 可以自定义字段值,如果这个Editor返回null则忽略这个字段,以便实现：
+     * 通过实现{@link Editor} 可以自定义字段值,如果这个Editor返回null则忽略这个字段,以便实现：
      *
      * <pre>
      * 1. 字段筛选,可以去除不需要的字段
@@ -742,20 +731,40 @@ public class BeanKit {
      * @param bean            bean对象
      * @param targetMap       目标的Map
      * @param ignoreNullValue 是否忽略值为空的字段
-     * @param keyEditor       属性字段(Map的key)编辑器,用于筛选、编辑key,如果这个Editor返回null则忽略这个字段
+     * @param keyEditor       属性字段(Map的key)编辑器,用于筛选、编辑key
      * @return Map
      */
-    public static Map<String, Object> beanToMap(final Object bean, final Map<String, Object> targetMap,
-                                                final boolean ignoreNullValue, final UnaryOperator<MutableEntry<String, Object>> keyEditor) {
+    public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, boolean ignoreNullValue, Editor<String> keyEditor) {
         if (null == bean) {
             return null;
         }
 
-        return BeanCopier.of(bean, targetMap,
-                CopyOptions.of()
-                        .setIgnoreNullValue(ignoreNullValue)
-                        .setFieldEditor(keyEditor)
-        ).copy();
+        final Collection<PropertyDesc> props = getBeanDesc(bean.getClass()).getProps();
+
+        String key;
+        Method getter;
+        Object value;
+        for (PropertyDesc prop : props) {
+            key = prop.getFieldName();
+            // 过滤class属性
+            // 得到property对应的getter方法
+            getter = prop.getGetter();
+            if (null != getter) {
+                // 只读取有getter方法的属性
+                try {
+                    value = getter.invoke(bean);
+                } catch (Exception ignore) {
+                    continue;
+                }
+                if (false == ignoreNullValue || (null != value && false == value.equals(bean))) {
+                    key = keyEditor.edit(key);
+                    if (null != key) {
+                        targetMap.put(key, value);
+                    }
+                }
+            }
+        }
+        return targetMap;
     }
 
     /**
@@ -775,12 +784,12 @@ public class BeanKit {
      * @param copyOptions 拷贝选项
      * @return the Map
      */
-    public static Map<String, Object> beanToMap(final Object bean, final Map<String, Object> targetMap, final CopyOptions copyOptions) {
+    public static Map<String, Object> beanToMap(Object bean, Map<String, Object> targetMap, CopyOptions copyOptions) {
         if (null == bean) {
             return null;
         }
 
-        return BeanCopier.of(bean, targetMap, copyOptions).copy();
+        return BeanCopier.create(bean, targetMap, copyOptions).copy();
     }
 
     /**
@@ -821,7 +830,7 @@ public class BeanKit {
      * @param ignoreCase 是否忽略大小写
      */
     public static void copyProperties(Object source, Object target, boolean ignoreCase) {
-        BeanCopier.of(source, target, CopyOptions.of().setIgnoreCase(ignoreCase)).copy();
+        BeanCopier.create(source, target, CopyOptions.of().setIgnoreCase(ignoreCase)).copy();
     }
 
     /**
@@ -833,7 +842,7 @@ public class BeanKit {
      * @param copyOptions 拷贝选项,见 {@link CopyOptions}
      */
     public static void copyProperties(Object source, Object target, CopyOptions copyOptions) {
-        BeanCopier.of(source, target, ObjectKit.defaultIfNull(copyOptions, CopyOptions::of)).copy();
+        BeanCopier.create(source, target, ObjectKit.defaultIfNull(copyOptions, CopyOptions::of)).copy();
     }
 
     /**

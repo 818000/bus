@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,7 +29,6 @@ import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.health.Executor;
-import org.aoju.bus.health.IdGroup;
 
 /**
  * Utility to read info from {@code dmidecode}
@@ -84,12 +83,10 @@ public final class Dmidecode {
      */
     public static String querySerialNumber() {
         // If root privileges this will work
-        if (IdGroup.isElevated()) {
-            String marker = "Serial Number:";
-            for (String checkLine : Executor.runNative("dmidecode -t system")) {
-                if (checkLine.contains(marker)) {
-                    return checkLine.split(marker)[1].trim();
-                }
+        String marker = "Serial Number:";
+        for (String checkLine : Executor.runNative("dmidecode -t system")) {
+            if (checkLine.contains(marker)) {
+                return checkLine.split(marker)[1].trim();
             }
         }
         return null;
@@ -102,12 +99,10 @@ public final class Dmidecode {
      */
     public static String queryUUID() {
         // If root privileges this will work
-        if (IdGroup.isElevated()) {
-            String marker = "UUID:";
-            for (String checkLine : Executor.runNative("dmidecode -t system")) {
-                if (checkLine.contains(marker)) {
-                    return checkLine.split(marker)[1].trim();
-                }
+        String marker = "UUID:";
+        for (String checkLine : Executor.runNative("dmidecode -t system")) {
+            if (checkLine.contains(marker)) {
+                return checkLine.split(marker)[1].trim();
             }
         }
         return null;
@@ -123,23 +118,21 @@ public final class Dmidecode {
         String biosName = null;
         String revision = null;
 
-        // Requires root, may not return anything
-        if (IdGroup.isElevated()) {
-            final String biosMarker = "SMBIOS";
-            final String revMarker = "Bios Revision:";
+        final String biosMarker = "SMBIOS";
+        final String revMarker = "Bios Revision:";
 
-            for (final String checkLine : Executor.runNative("dmidecode -t bios")) {
-                if (checkLine.contains(biosMarker)) {
-                    String[] biosArr = RegEx.SPACES.split(checkLine);
-                    if (biosArr.length >= 2) {
-                        biosName = biosArr[0] + " " + biosArr[1];
-                    }
+        // Requires root, may not return anything
+        for (final String checkLine : Executor.runNative("dmidecode -t bios")) {
+            if (checkLine.contains(biosMarker)) {
+                String[] biosArr = RegEx.SPACES.split(checkLine);
+                if (biosArr.length >= 2) {
+                    biosName = biosArr[0] + " " + biosArr[1];
                 }
-                if (checkLine.contains(revMarker)) {
-                    revision = checkLine.split(revMarker)[1].trim();
-                    // SMBIOS should be first line so if we're here we are done iterating
-                    break;
-                }
+            }
+            if (checkLine.contains(revMarker)) {
+                revision = checkLine.split(revMarker)[1].trim();
+                // SMBIOS should be first line so if we're here we are done iterating
+                break;
             }
         }
         return Pair.of(biosName, revision);

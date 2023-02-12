@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -38,7 +38,6 @@ import org.aoju.bus.health.builtin.software.OSProcess;
 import org.aoju.bus.health.builtin.software.OSThread;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -698,9 +697,8 @@ public interface CentralProcessor {
 
             @Override
             public String toString() {
-                return name().substring(0, 1) + name().substring(1).toLowerCase(Locale.ROOT);
+                return name().substring(0, 1) + name().substring(1).toLowerCase();
             }
-
         }
     }
 
@@ -731,7 +729,7 @@ public interface CentralProcessor {
 
         public ProcessorIdentifier(String cpuVendor, String cpuName, String cpuFamily, String cpuModel,
                                    String cpuStepping, String processorID, boolean cpu64bit, long vendorFreq) {
-            this.cpuVendor = cpuVendor.startsWith("0x") ? queryVendorFromImplementer() : cpuVendor;
+            this.cpuVendor = cpuVendor;
             this.cpuName = cpuName;
             this.cpuFamily = cpuFamily;
             this.cpuModel = cpuModel;
@@ -884,7 +882,7 @@ public interface CentralProcessor {
             // Intel is default, no prefix
             StringBuilder sb = new StringBuilder();
             // AMD and ARM properties have prefix
-            String ucVendor = this.cpuVendor.toUpperCase(Locale.ROOT);
+            String ucVendor = this.cpuVendor.toUpperCase();
             if (ucVendor.contains("AMD")) {
                 sb.append("amd.");
             } else if (ucVendor.contains("ARM")) {
@@ -923,13 +921,6 @@ public interface CentralProcessor {
         public String toString() {
             return getIdentifier();
         }
-
-        private String queryVendorFromImplementer() {
-            Properties archProps = Config.readProperties(Config.ARCHITECTURE_PROPERTIES);
-            String vendor = archProps.getProperty("hw_impl." + this.cpuVendor);
-            return (vendor == null ? this.cpuVendor : vendor);
-        }
-
     }
 
 }

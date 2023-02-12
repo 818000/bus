@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,7 +26,6 @@
 package org.aoju.bus.office.excel;
 
 import org.aoju.bus.core.lang.Assert;
-import org.aoju.bus.core.map.ListValueMap;
 import org.aoju.bus.core.toolkit.CollKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.apache.poi.hssf.usermodel.*;
@@ -36,7 +35,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Excel图片工具类
@@ -53,7 +54,7 @@ public class ExcelPicKit {
      * @param sheetIndex sheet的索引
      * @return 图片映射, 键格式：行_列,值：{@link PictureData}
      */
-    public static ListValueMap<String, PictureData> getPicMap(Workbook workbook, int sheetIndex) {
+    public static Map<String, PictureData> getPicMap(Workbook workbook, int sheetIndex) {
         Assert.notNull(workbook, "Workbook must be not null !");
         if (sheetIndex < 0) {
             sheetIndex = 0;
@@ -75,8 +76,8 @@ public class ExcelPicKit {
      * @param sheetIndex sheet的索引
      * @return 图片映射, 键格式：行_列,值：{@link PictureData}
      */
-    private static ListValueMap<String, PictureData> getPicMapXls(HSSFWorkbook workbook, int sheetIndex) {
-        final ListValueMap<String, PictureData> picMap = new ListValueMap<>();
+    private static Map<String, PictureData> getPicMapXls(HSSFWorkbook workbook, int sheetIndex) {
+        final Map<String, PictureData> picMap = new HashMap<>();
         final List<HSSFPictureData> pictures = workbook.getAllPictures();
         if (CollKit.isNotEmpty(pictures)) {
             final HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
@@ -86,7 +87,7 @@ public class ExcelPicKit {
                 if (shape instanceof HSSFPicture) {
                     pictureIndex = ((HSSFPicture) shape).getPictureIndex() - 1;
                     anchor = (HSSFClientAnchor) shape.getAnchor();
-                    picMap.putValue(StringKit.format("{}_{}", anchor.getRow1(), anchor.getCol1()), pictures.get(pictureIndex));
+                    picMap.put(StringKit.format("{}_{}", anchor.getRow1(), anchor.getCol1()), pictures.get(pictureIndex));
                 }
             }
         }
@@ -100,8 +101,8 @@ public class ExcelPicKit {
      * @param sheetIndex sheet的索引
      * @return 图片映射, 键格式：行_列,值：{@link PictureData}
      */
-    private static ListValueMap<String, PictureData> getPicMapXlsx(XSSFWorkbook workbook, int sheetIndex) {
-        final ListValueMap<String, PictureData> sheetIndexPicMap = new ListValueMap<>();
+    private static Map<String, PictureData> getPicMapXlsx(XSSFWorkbook workbook, int sheetIndex) {
+        final Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         final XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
         XSSFDrawing drawing;
         for (POIXMLDocumentPart dr : sheet.getRelations()) {
@@ -114,7 +115,7 @@ public class ExcelPicKit {
                     if (shape instanceof XSSFPicture) {
                         pic = (XSSFPicture) shape;
                         ctMarker = pic.getPreferredSize().getFrom();
-                        sheetIndexPicMap.putValue(StringKit.format("{}_{}", ctMarker.getRow(), ctMarker.getCol()), pic.getPictureData());
+                        sheetIndexPicMap.put(StringKit.format("{}_{}", ctMarker.getRow(), ctMarker.getCol()), pic.getPictureData());
                     }
                 }
             }

@@ -21,10 +21,7 @@ package org.opencv.core;
 public class TickMeter {
 
     protected final long nativeObj;
-    protected TickMeter(long addr) {
-      nativeObj = addr;
-      
-    }
+    protected TickMeter(long addr) { nativeObj = addr; }
 
     public long getNativeObjAddr() { return nativeObj; }
 
@@ -36,7 +33,7 @@ public class TickMeter {
     //
 
     public TickMeter() {
-        this(TickMeter_0());
+        nativeObj = TickMeter_0();
     }
 
 
@@ -182,7 +179,7 @@ public class TickMeter {
     // C++:  void cv::TickMeter::reset()
     private static native void reset_0(long nativeObj);
 
-    // native support for deleting native object
+    // native support for java finalize()
     private static native void delete(long nativeObj);
 
 }

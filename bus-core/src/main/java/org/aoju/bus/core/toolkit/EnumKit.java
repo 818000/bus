@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -341,7 +341,9 @@ public class EnumKit {
      */
     public static Map<String, Object> getNameFieldMap(Class<? extends Enum<?>> clazz, String fieldName) {
         final Enum<?>[] enums = clazz.getEnumConstants();
-        Assert.notNull(enums, "Class [{}] is not an Enum type!", clazz);
+        if (null == enums) {
+            return null;
+        }
         final Map<String, Object> map = MapKit.newHashMap(enums.length, true);
         for (Enum<?> e : enums) {
             map.put(e.name(), ReflectKit.getFieldValue(e, fieldName));

@@ -1,4 +1,4 @@
-#### 项目说明
+Supported platforms
 --------------------------- 
 Windows • Linux • Mac OS • Unix (Solaris, FreeBSD)
 

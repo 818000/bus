@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -65,7 +65,6 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
     private final List<LogicalProcessor> logicalProcessors;
     private final List<PhysicalProcessor> physicalProcessors;
     private final List<ProcessorCache> processorCaches;
-
     /**
      * Create a Processor
      */
@@ -114,11 +113,11 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
         // 3:0 – Stepping
         processorIdBytes |= steppingL & 0xf;
         // 19:16,7:4 – Model
-        processorIdBytes |= (modelL & 0xf) << 4;
-        processorIdBytes |= (modelL & 0xf0) << 12; // shift high 4 bits
+        processorIdBytes |= (modelL & 0x0f) << 4;
+        processorIdBytes |= (modelL & 0xf0) << 16;
         // 27:20,11:8 – Family
-        processorIdBytes |= (familyL & 0xf) << 8;
-        processorIdBytes |= (familyL & 0xff0) << 16; // shift high 8 bits
+        processorIdBytes |= (familyL & 0x0f) << 8;
+        processorIdBytes |= (familyL & 0xf0) << 20;
         // 13:12 – Processor Type, assume 0
         long hwcap = 0L;
         if (Platform.isLinux()) {
@@ -224,7 +223,7 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
                 }
             }
         }
-        return String.format(Locale.ROOT, "%016X", processorIdBytes);
+        return String.format("%016X", processorIdBytes);
     }
 
     /**
@@ -261,9 +260,7 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
      *
      * @return The max frequency.
      */
-    protected long queryMaxFreq() {
-        return Arrays.stream(getCurrentFreq()).max().orElse(-1L);
-    }
+    protected abstract long queryMaxFreq();
 
     @Override
     public long[] getCurrentFreq() {
