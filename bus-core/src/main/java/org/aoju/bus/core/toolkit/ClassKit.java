@@ -1038,7 +1038,7 @@ public class ClassKit {
         if (null == valueProvider) {
             return bean;
         }
-        return BeanCopier.create(valueProvider, bean, copyOptions).copy();
+        return BeanCopier.of(valueProvider, bean, copyOptions).copy();
     }
 
     /**

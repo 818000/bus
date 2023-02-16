@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
+ * @param <T> 对象泛型
  * @author Kimi Liu
  * @since Java 17+
  */
