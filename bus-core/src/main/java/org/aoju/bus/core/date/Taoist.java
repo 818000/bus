@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org 6tail and other contributors.                *
+ * Copyright (c) 2015-2023 aoju.org 6tail and other contributors.                *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -63,7 +63,7 @@ public class Taoist {
     /**
      * 日期对应的节日
      */
-    public static final Map<String, List<Festival>> FESTIVAL = new HashMap<String, List<Festival>>() {
+    public static final Map<String, List<Festival>> FESTIVAL = new HashMap<>() {
         private static final long serialVersionUID = 1;
 
         {
@@ -169,7 +169,7 @@ public class Taoist {
     /**
      * 八会日
      */
-    public static final Map<String, String> BA_HUI = new HashMap<String, String>() {
+    public static final Map<String, String> BA_HUI = new HashMap<>() {
 
         private static final long serialVersionUID = 1;
 
@@ -188,7 +188,7 @@ public class Taoist {
     /**
      * 八节日
      */
-    public static final Map<String, String> BA_JIE = new HashMap<String, String>() {
+    public static final Map<String, String> BA_JIE = new HashMap<>() {
 
         private static final long serialVersionUID = 1;
 

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -32,7 +32,6 @@ import org.aoju.bus.core.toolkit.IoKit;
 import org.aoju.bus.core.toolkit.StringKit;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -951,7 +950,7 @@ public class FileType {
      * @throws InternalException 读取文件引起的异常
      */
     public static String getType(File file) throws InternalException {
-        FileInputStream in = null;
+        InputStream in = null;
         try {
             in = IoKit.toStream(file);
             return getType(in);

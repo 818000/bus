@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -222,11 +222,11 @@ public class Http {
     /**
      * The IPV4 127.0.0.1
      */
-    public static final String HTTP_HOST_IPV4 = "127.0.0.1";
+    public static final String HOST_IPV4 = "127.0.0.1";
     /**
      * The localhost
      */
-    public static final String HTTP_HOST_LOCAL = "localhost";
+    public static final String HOST_LOCAL = "localhost";
     /**
      * HTTP Status-Code 100: Continue.
      */
@@ -462,7 +462,7 @@ public class Http {
      * @return true: 本地主机（域名）, false: 非本地主机（域名）
      */
     public static boolean isLocalHost(String url) {
-        return StringKit.isEmpty(url) || url.contains(Http.HTTP_HOST_IPV4) || url.contains(Http.HTTP_HOST_LOCAL);
+        return StringKit.isEmpty(url) || url.contains(Http.HOST_IPV4) || url.contains(Http.HOST_LOCAL);
     }
 
     /**

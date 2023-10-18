@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -108,8 +108,8 @@ public class DateTime extends Date {
     /**
      * 给定日期的构造
      *
-     * @param date     日期
-     * @param timeZone 时区
+     * @param date     日期，{@code null}表示当前时间
+     * @param timeZone 时区，{@code null}表示默认时区
      */
     public DateTime(Date date, TimeZone timeZone) {
         this(ObjectKit.defaultIfNull(date, Date::new).getTime(), timeZone);
@@ -118,7 +118,7 @@ public class DateTime extends Date {
     /**
      * 给定日期的构造
      *
-     * @param calendar {@link Calendar}
+     * @param calendar {@link Calendar}，不能为{@code null}
      */
     public DateTime(Calendar calendar) {
         this(calendar.getTime(), calendar.getTimeZone());
@@ -128,7 +128,7 @@ public class DateTime extends Date {
     /**
      * 给定日期Instant的构造
      *
-     * @param instant {@link Instant} 对象
+     * @param instant {@link Instant} 对象，不能为{@code null}
      */
     public DateTime(Instant instant) {
         this(instant.toEpochMilli());

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org 6tail and other contributors.                *
+ * Copyright (c) 2015-2023 aoju.org 6tail and other contributors.                *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,7 +29,10 @@ import org.aoju.bus.core.lang.Fields;
 import org.aoju.bus.core.lang.Normal;
 import org.aoju.bus.core.lang.Symbol;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 八字
@@ -208,8 +211,7 @@ public class EightChar {
     }
 
     private String getDiShi(int zhiIndex) {
-        int offset = CHANG_SHENG_OFFSET.get(getDayGan());
-        int index = offset + (getDayGanIndex() % 2 == 0 ? zhiIndex : -zhiIndex);
+        int index = CHANG_SHENG_OFFSET.get(getDayGan()) + (getDayGanIndex() % 2 == 0 ? zhiIndex : -zhiIndex);
         if (index >= 12) {
             index -= 12;
         }

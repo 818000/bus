@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -141,18 +141,7 @@ public class MapToBeanCopier<T> extends AbstractCopier<Map<?, ?>, T> {
         // 转驼峰尝试查找
         key = StringKit.toCamelCase(key);
         propDesc = map.get(key);
-        if (null != propDesc) {
-            return propDesc;
-        }
-
-        // boolean类型参数名转换尝试查找
-        if (key.startsWith("is")) {
-            key = StringKit.removePreAndLowerFirst(key, 2);
-            propDesc = map.get(key);
-            return propDesc;
-        }
-
-        return null;
+        return propDesc;
     }
 
 }

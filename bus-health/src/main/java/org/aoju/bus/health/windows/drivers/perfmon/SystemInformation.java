@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -40,31 +40,6 @@ import java.util.Map;
 @ThreadSafe
 public final class SystemInformation {
 
-    /**
-     * Context switch property
-     */
-    public enum ContextSwitchProperty implements PerfCounterQuery.PdhCounterProperty {
-        CONTEXTSWITCHESPERSEC(null, "Context Switches/sec");
-
-        private final String instance;
-        private final String counter;
-
-        ContextSwitchProperty(String instance, String counter) {
-            this.instance = instance;
-            this.counter = counter;
-        }
-
-        @Override
-        public String getInstance() {
-            return instance;
-        }
-
-        @Override
-        public String getCounter() {
-            return counter;
-        }
-    }
-
     private SystemInformation() {
     }
 
@@ -91,6 +66,31 @@ public final class SystemInformation {
         }
         return PerfCounterQuery.queryValues(ProcessorQueueLengthProperty.class, PerfmonConsts.SYSTEM,
                 PerfmonConsts.WIN32_PERF_RAW_DATA_PERF_OS_SYSTEM);
+    }
+
+    /**
+     * Context switch property
+     */
+    public enum ContextSwitchProperty implements PerfCounterQuery.PdhCounterProperty {
+        CONTEXTSWITCHESPERSEC(null, "Context Switches/sec");
+
+        private final String instance;
+        private final String counter;
+
+        ContextSwitchProperty(String instance, String counter) {
+            this.instance = instance;
+            this.counter = counter;
+        }
+
+        @Override
+        public String getInstance() {
+            return instance;
+        }
+
+        @Override
+        public String getCounter() {
+            return counter;
+        }
     }
 
     /**

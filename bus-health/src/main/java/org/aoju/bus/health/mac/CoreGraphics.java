@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -60,6 +60,10 @@ public interface CoreGraphics extends Library {
     int kCGWindowListOptionIncludingWindow = 1 << 3;
     int kCGWindowListExcludeDesktopElements = 1 << 4;
 
+    CFArrayRef CGWindowListCopyWindowInfo(int option, int relativeToWindow);
+
+    boolean CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect rect);
+
     /**
      * A point with X and Y coordinates
      */
@@ -77,10 +81,6 @@ public interface CoreGraphics extends Library {
         public double width;
         public double height;
     }
-
-    CFArrayRef CGWindowListCopyWindowInfo(int option, int relativeToWindow);
-
-    boolean CGRectMakeWithDictionaryRepresentation(CFDictionaryRef dict, CGRect rect);
 
     /**
      * A rectangle with origin and size

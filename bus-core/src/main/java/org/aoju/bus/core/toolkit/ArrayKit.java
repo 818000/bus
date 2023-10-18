@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -6389,6 +6389,7 @@ public class ArrayKit {
      * 如果插入位置为为负数，从原数组从后向前计数，若大于原数组长度，则空白处用null填充
      *
      * @param <T>         数组元素类型
+     * @param <A>         泛型对象
      * @param array       已有数组
      * @param index       插入位置，此位置为对应此位置元素之前的空档
      * @param newElements 新元素

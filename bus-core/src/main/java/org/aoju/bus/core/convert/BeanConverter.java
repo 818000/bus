@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -106,7 +106,7 @@ public class BeanConverter implements Converter, Serializable {
             }
 
             // 限定被转换对象类型
-            return BeanCopier.create(value, ReflectKit.newInstanceIfPossible(targetClass), targetType, this.copyOptions).copy();
+            return BeanCopier.of(value, ReflectKit.newInstanceIfPossible(targetClass), targetType, this.copyOptions).copy();
         } else if (value instanceof byte[]) {
             // 尝试反序列化
             return ObjectKit.deserialize((byte[]) value);

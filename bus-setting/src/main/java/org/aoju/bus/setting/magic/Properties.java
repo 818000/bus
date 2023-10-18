@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -176,15 +176,6 @@ public final class Properties extends java.util.Properties implements TypeGetter
     }
 
     /**
-     * 初始化配置文件
-     *
-     * @param url {@link URL}
-     */
-    public void load(final URL url) {
-        load(new UriResource(url));
-    }
-
-    /**
      * 加载配置文件内容到{@link java.util.Properties}中
      * 需要注意的是，如果资源文件的扩展名是.xml，会调用{@link java.util.Properties#loadFromXML(InputStream)} 读取。
      *
@@ -209,6 +200,15 @@ public final class Properties extends java.util.Properties implements TypeGetter
                 throw new InternalException(e);
             }
         }
+    }
+
+    /**
+     * 初始化配置文件
+     *
+     * @param url {@link URL}
+     */
+    public void load(final URL url) {
+        load(new UriResource(url));
     }
 
     /**

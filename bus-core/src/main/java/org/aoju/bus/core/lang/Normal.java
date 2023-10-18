@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -363,17 +363,16 @@ public class Normal {
     public static final String UPPER_LOWER = UPPER + LOWER;
 
     /**
+     * 字符串: 小字母数字
+     */
+    public static final String UPPER_LOWER_NUMBER = UPPER_LOWER + NUMBER;
+    /**
      * 字符串: 小写字母 + 大写字母
      */
     public static final String LOWER_UPPER = LOWER + UPPER;
 
     /**
-     * 字符串: 大小字母数字
-     */
-    public static final String UPPER_LOWER_NUMBER = UPPER_LOWER + NUMBER;
-
-    /**
-     * 字符串: 大小字母数字
+     * 字符串: 大字母数字
      */
     public static final String LOWER_UPPER_NUMBER = LOWER_UPPER + NUMBER;
 

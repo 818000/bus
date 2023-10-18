@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,6 +26,7 @@
 package org.aoju.bus.core.convert;
 
 import org.aoju.bus.core.date.DateTime;
+import org.aoju.bus.core.lang.Fields;
 import org.aoju.bus.core.toolkit.DateKit;
 import org.aoju.bus.core.toolkit.ObjectKit;
 import org.aoju.bus.core.toolkit.StringKit;
@@ -171,7 +172,14 @@ public class TemporalConverter extends AbstractConverter {
             return IsoEra.of(Math.toIntExact(time));
         }
 
-        return parseFromInstant(targetClass, Instant.ofEpochMilli(time), null);
+        final Instant instant;
+        if (Fields.NORM_FORMAT_SECONDS.equals(this.format)) {
+            // Unix时间戳
+            instant = Instant.ofEpochSecond(time);
+        } else {
+            instant = Instant.ofEpochMilli(time);
+        }
+        return parseFromInstant(targetClass, instant, null);
     }
 
     /**

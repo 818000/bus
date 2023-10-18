@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -29,10 +29,7 @@ import org.aoju.bus.core.annotation.Alias;
 import org.aoju.bus.core.annotation.Ignore;
 import org.aoju.bus.core.convert.Convert;
 import org.aoju.bus.core.exception.InternalException;
-import org.aoju.bus.core.toolkit.AnnoKit;
-import org.aoju.bus.core.toolkit.BeanKit;
-import org.aoju.bus.core.toolkit.ReflectKit;
-import org.aoju.bus.core.toolkit.TypeKit;
+import org.aoju.bus.core.toolkit.*;
 
 import java.beans.Transient;
 import java.lang.reflect.Field;
@@ -155,7 +152,7 @@ public class PropertyDesc {
      */
     public Object getValue(Object bean) {
         if (null != this.getter) {
-            return ReflectKit.invoke(bean, this.getter);
+            return LambdaKit.buildGetter(this.getter).apply(bean);
         } else if (BeanKit.isPublic(this.field) || BeanKit.isProtected(this.field)) {
             return ReflectKit.getFieldValue(bean, this.field);
         }
@@ -244,7 +241,7 @@ public class PropertyDesc {
      */
     public PropertyDesc setValue(Object bean, Object value) {
         if (null != this.setter) {
-            ReflectKit.invoke(bean, this.setter, value);
+            LambdaKit.buildSetter(this.setter).accept(bean, value);
         } else if (BeanKit.isPublic(this.field) || BeanKit.isProtected(this.field)) {
             ReflectKit.setFieldValue(bean, this.field, value);
         }

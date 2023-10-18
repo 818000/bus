@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -398,20 +398,27 @@ public class StopWatch {
             sb.append("No task info kept");
         } else {
             sb.append("---------------------------------------------").append(FileKit.getLineSeparator());
-            sb.append(DateKit.getShotName(unit)).append("         %     Task name").append(FileKit.getLineSeparator());
+            sb.append(DateKit.getShotName(unit)).append("          %     Task name").append(FileKit.getLineSeparator());
             sb.append("---------------------------------------------").append(FileKit.getLineSeparator());
 
             final NumberFormat nf = NumberFormat.getNumberInstance();
-            nf.setMinimumIntegerDigits(9);
             nf.setGroupingUsed(false);
 
             final NumberFormat pf = NumberFormat.getPercentInstance();
-            pf.setMinimumIntegerDigits(2);
             pf.setGroupingUsed(false);
 
-            for (TaskInfo task : getTaskInfo()) {
-                sb.append(nf.format(task.getTime(unit))).append("  ");
-                sb.append(pf.format((double) task.getTimeNanos() / getTotalTimeNanos())).append("   ");
+            for (final TaskInfo task : getTaskInfo()) {
+                final String taskTimeStr = nf.format(task.getTime(unit));
+                sb.append(taskTimeStr);
+                if (taskTimeStr.length() < 11) {
+                    sb.append(StringKit.repeat(' ', 11 - taskTimeStr.length()));
+                }
+
+                final String percentText = pf.format((double) task.getTimeNanos() / getTotalTimeNanos());
+                if (percentText.length() < 4) {
+                    sb.append(StringKit.repeat(' ', 4 - percentText.length()));
+                }
+                sb.append(percentText).append("   ");
                 sb.append(task.getTaskName()).append(FileKit.getLineSeparator());
             }
         }

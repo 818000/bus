@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -31,6 +31,7 @@ import org.aoju.bus.core.annotation.ThreadSafe;
 import org.aoju.bus.core.lang.RegEx;
 import org.aoju.bus.core.lang.tuple.Pair;
 import org.aoju.bus.health.Builder;
+import org.aoju.bus.health.Config;
 import org.aoju.bus.health.Executor;
 import org.aoju.bus.health.Memoize;
 import org.aoju.bus.health.builtin.software.*;
@@ -67,6 +68,7 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
     private static final Supplier<Pair<Long, Long>> BOOT_UPTIME = Memoize
             .memoize(SolarisOperatingSystem::queryBootAndUptime, Memoize.defaultExpiration());
     private static final long BOOTTIME = querySystemBootTime();
+    private static final boolean ALLOW_KSTAT2 = Config.get(Config.OS_SOLARIS_ALLOWKSTAT2, true);
 
     static {
         String[] split = RegEx.SPACES.split(Executor.getFirstAnswer("uname -rv"));
@@ -75,46 +77,13 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
 
         Kstat2 lib = null;
         try {
-            lib = Kstat2.INSTANCE;
+            if (ALLOW_KSTAT2) {
+                lib = Kstat2.INSTANCE;
+            }
         } catch (UnsatisfiedLinkError e) {
             // 11.3 or earlier, no kstat2
         }
         HAS_KSTAT2 = lib != null;
-    }
-
-    private List<OSProcess> queryAllProcessesFromPrStat() {
-        return getProcessListFromProcfs(-1);
-    }
-
-    private List<OSProcess> getProcessListFromProcfs(int pid) {
-        List<OSProcess> procs = new ArrayList<>();
-
-        File[] numericFiles = null;
-        if (pid < 0) {
-            // If no pid, get process files in proc
-            File directory = new File("/proc");
-            numericFiles = directory.listFiles(file -> RegEx.NUMBERS.matcher(file.getName()).matches());
-        } else {
-            // If pid specified just find that file
-            File pidFile = new File("/proc/" + pid);
-            if (pidFile.exists()) {
-                numericFiles = new File[1];
-                numericFiles[0] = pidFile;
-            }
-        }
-        if (numericFiles == null) {
-            return procs;
-        }
-
-        // Iterate files
-        for (File pidFile : numericFiles) {
-            int pidNum = Builder.parseIntOrDefault(pidFile.getName(), 0);
-            OSProcess proc = new SolarisOSProcess(pidNum, this);
-            if (proc.getState() != OSProcess.State.INVALID) {
-                procs.add(proc);
-            }
-        }
-        return procs;
     }
 
     private static long querySystemUptime() {
@@ -154,6 +123,41 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
         long snap = results[1] == null ? 0L : (long) results[1] / 1_000_000_000L;
 
         return Pair.of(boot, snap);
+    }
+
+    private List<OSProcess> queryAllProcessesFromPrStat() {
+        return getProcessListFromProcfs(-1);
+    }
+
+    private List<OSProcess> getProcessListFromProcfs(int pid) {
+        List<OSProcess> procs = new ArrayList<>();
+
+        File[] numericFiles = null;
+        if (pid < 0) {
+            // If no pid, get process files in proc
+            File directory = new File("/proc");
+            numericFiles = directory.listFiles(file -> RegEx.NUMBERS.matcher(file.getName()).matches());
+        } else {
+            // If pid specified just find that file
+            File pidFile = new File("/proc/" + pid);
+            if (pidFile.exists()) {
+                numericFiles = new File[1];
+                numericFiles[0] = pidFile;
+            }
+        }
+        if (numericFiles == null) {
+            return procs;
+        }
+
+        // Iterate files
+        for (File pidFile : numericFiles) {
+            int pidNum = Builder.parseIntOrDefault(pidFile.getName(), 0);
+            OSProcess proc = new SolarisOSProcess(pidNum, this);
+            if (proc.getState() != OSProcess.State.INVALID) {
+                procs.add(proc);
+            }
+        }
+        return procs;
     }
 
     @Override

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -48,13 +48,12 @@ public class SyncFinisher implements Closeable {
 
     private final Set<Worker> workers;
     private final int threadSize;
-    private ExecutorService executorService;
-
-    private boolean isBeginAtSameTime;
     /**
      * 启动同步器，用于保证所有worker线程同时开始
      */
     private final CountDownLatch beginLatch;
+    private ExecutorService executorService;
+    private boolean isBeginAtSameTime;
     /**
      * 结束同步器，用于等待所有worker线程同时结束
      */

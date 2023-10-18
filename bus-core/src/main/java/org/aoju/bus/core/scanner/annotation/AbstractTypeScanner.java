@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -43,6 +43,7 @@ import java.util.function.UnaryOperator;
 /**
  * 为需要从类的层级结构中获取注解的{@link AnnotationScanner}提供基本实现
  *
+ * @param <T> 对象泛型
  * @author Kimi Liu
  * @since Java 17+
  */

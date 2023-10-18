@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -26,11 +26,12 @@
 package org.aoju.bus.core.lang.mutable;
 
 import org.aoju.bus.core.lang.Normal;
+import org.aoju.bus.core.toolkit.ObjectKit;
 
 import java.io.Serializable;
 
 /**
- * 可变<code>Object</code>
+ * 可变{@code Object}
  *
  * @param <T> 可变的类型
  * @author Kimi Liu
@@ -82,7 +83,7 @@ public class MutableObject<T> implements Mutable<T>, Serializable {
         }
         if (this.getClass() == object.getClass()) {
             final MutableObject<?> that = (MutableObject<?>) object;
-            return this.value.equals(that.value);
+            return ObjectKit.equals(this.value, that.value);
         }
         return false;
     }

@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -67,7 +67,7 @@ public interface OSFileStore {
 
     /**
      * Logical volume of the File System.
-     *
+     * <p>
      * Provides an optional alternative volume identifier for the file system. Only
      * supported on Linux, provides symlink value via '/dev/mapper/' (used with LVM
      * file systems).
@@ -146,7 +146,7 @@ public interface OSFileStore {
      * Windows.
      *
      * @return Total / maximum number of inodes of the filesystem (count), or -1 if
-     *         unimplemented
+     * unimplemented
      */
     long getTotalInodes();
 
@@ -156,7 +156,7 @@ public interface OSFileStore {
      * frequent periodic updates of file store statistics.
      *
      * @return True if the update was (probably) successful, false if the disk was
-     *         not found
+     * not found
      */
     boolean updateAttributes();
 

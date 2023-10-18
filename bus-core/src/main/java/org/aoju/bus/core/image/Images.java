@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -1034,6 +1034,9 @@ public class Images implements Serializable {
      * @return 旋转后的图片
      */
     public Images rotate(int degree) {
+        if (0 == degree) {
+            return this;
+        }
         final java.awt.Image image = getValidSrcImg();
         int width = image.getWidth(null);
         int height = image.getHeight(null);

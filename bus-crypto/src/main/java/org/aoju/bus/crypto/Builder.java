@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -2725,7 +2725,7 @@ public class Builder {
      * @return {@link KeyStore}
      */
     public static KeyStore getKeyStore(final String type) {
-        final java.security.Provider provider = Instances.singletion(Holder.class).getProvider();;
+        final java.security.Provider provider = Instances.singletion(Holder.class).getProvider();
         try {
             return null == provider ? KeyStore.getInstance(type) : KeyStore.getInstance(type, provider);
         } catch (final KeyStoreException e) {

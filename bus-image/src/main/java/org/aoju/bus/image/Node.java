@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -84,7 +84,7 @@ public class Node {
         } catch (UnknownHostException e) {
             Logger.error("Cannot resolve hostname", e);
         }
-        return StringKit.hasText(hostname) ? hostname : Http.HTTP_HOST_IPV4;
+        return StringKit.hasText(hostname) ? hostname : Http.HOST_IPV4;
     }
 
     public static Node buildLocalDicomNode(Association as) {

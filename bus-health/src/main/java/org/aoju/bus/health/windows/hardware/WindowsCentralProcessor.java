@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org OSHI and other contributors.                 *
+ * Copyright (c) 2015-2023 aoju.org OSHI and other contributors.                 *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -46,10 +46,7 @@ import org.aoju.bus.health.windows.drivers.perfmon.SystemInformation;
 import org.aoju.bus.health.windows.drivers.wmi.Win32Processor;
 import org.aoju.bus.logger.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -66,13 +63,6 @@ final class WindowsCentralProcessor extends AbstractCentralProcessor {
     // Whether to match task manager using Processor Utility ticks
     private static final boolean USE_CPU_UTILITY = VersionHelpers.IsWindows8OrGreater()
             && Config.get(Config.OS_WINDOWS_CPU_UTILITY, false);
-    // This tick query is memoized to enforce a minimum elapsed time for determining
-    // the capacity base multiplier
-    private final Supplier<Pair<List<String>, Map<ProcessorInformation.ProcessorUtilityTickCountProperty, List<Long>>>> processorUtilityCounters = USE_CPU_UTILITY
-            ? Memoize.memoize(WindowsCentralProcessor::queryProcessorUtilityCounters, TimeUnit.MILLISECONDS.toNanos(300L))
-            : null;
-    // populated by initProcessorCounts called by the parent constructor
-    private Map<String, Integer> numaNodeProcToLogicalProcMap;
     // Whether to start a daemon thread ot calculate load average
     private static final boolean USE_LOAD_AVERAGE = Config.get(Config.OSHI_OS_WINDOWS_LOADAVERAGE, false);
 
@@ -82,12 +72,21 @@ final class WindowsCentralProcessor extends AbstractCentralProcessor {
         }
     }
 
+    // This tick query is memoized to enforce a minimum elapsed time for determining
+    // the capacity base multiplier
+    private final Supplier<Pair<List<String>, Map<ProcessorInformation.ProcessorUtilityTickCountProperty, List<Long>>>> processorUtilityCounters = USE_CPU_UTILITY
+            ? Memoize.memoize(WindowsCentralProcessor::queryProcessorUtilityCounters, TimeUnit.MILLISECONDS.toNanos(300L))
+            : null;
+    // populated by initProcessorCounts called by the parent constructor
+    private Map<String, Integer> numaNodeProcToLogicalProcMap;
     // Store the initial query and start the memoizer expiration
     private Map<ProcessorInformation.ProcessorUtilityTickCountProperty, List<Long>> initialUtilityCounters = USE_CPU_UTILITY
             ? processorUtilityCounters.get().getRight()
             : null;
     // Lazily initialized
     private Long utilityBaseMultiplier = null;
+    // Use to backup queryNTPower
+    private long cpuVendorFreq = 0L;
 
     /**
      * Parses identifier string
@@ -191,7 +190,7 @@ final class WindowsCentralProcessor extends AbstractCentralProcessor {
                     curNode = node;
                     procNum = 0;
                 }
-                numaNodeProcToLogicalProcMap.put(String.format("%d,%d", logProc.getNumaNode(), procNum++), lp++);
+                numaNodeProcToLogicalProcMap.put(String.format(Locale.ROOT, "%d,%d", logProc.getNumaNode(), procNum++), lp++);
             }
             return procs;
         } else {
@@ -282,6 +281,10 @@ final class WindowsCentralProcessor extends AbstractCentralProcessor {
                 freqs[i] = ppiArray[i].currentMhz * 1_000_000L;
             } else {
                 freqs[i] = -1L;
+            }
+            // In Win11 23H2 CallNtPowerInformation returns all 0's so use vendor freq
+            if (freqs[i] == 0) {
+                freqs[i] = this.cpuVendorFreq;
             }
         }
         return freqs;

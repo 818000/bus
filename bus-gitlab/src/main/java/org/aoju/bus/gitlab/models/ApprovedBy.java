@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org Greg Messner and other contributors.         *
+ * Copyright (c) 2015-2023 aoju.org Greg Messner and other contributors.         *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * This class is used by various models to represent the approved_by property,
  * which can contain a User or Group instance.
- *
  */
 public class ApprovedBy {
 

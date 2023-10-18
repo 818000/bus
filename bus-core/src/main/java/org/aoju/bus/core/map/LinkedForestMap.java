@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -344,7 +344,8 @@ public class LinkedForestMap<K, V> implements ForestMap<K, V> {
     /**
      * 树节点
      *
-     * @param <K> key类型
+     * @param <K> 对象泛型键
+     * @param <V> 对象泛型值
      */
     public static class TreeEntryNode<K, V> implements TreeEntry<K, V> {
 

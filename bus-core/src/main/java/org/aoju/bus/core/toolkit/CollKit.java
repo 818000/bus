@@ -2,7 +2,7 @@
  *                                                                               *
  * The MIT License (MIT)                                                         *
  *                                                                               *
- * Copyright (c) 2015-2022 aoju.org and other contributors.                      *
+ * Copyright (c) 2015-2023 aoju.org and other contributors.                      *
  *                                                                               *
  * Permission is hereby granted, free of charge, to any person obtaining a copy  *
  * of this software and associated documentation files (the "Software"), to deal *
@@ -1309,7 +1309,7 @@ public class CollKit {
      *
      * @param <T>        元素类型
      * @param collection 集合
-     * @param predicate    匹配器，为空则全部匹配
+     * @param predicate  匹配器，为空则全部匹配
      * @return 位置数组
      */
     public static <T> int[] indexOfAll(final Collection<T> collection, final Predicate<? super T> predicate) {
@@ -1972,9 +1972,9 @@ public class CollKit {
     /**
      * 集合中匹配规则的数量
      *
-     * @param <T>      集合元素类型
-     * @param iterable {@link Iterable}
-     * @param predicate  匹配器,为空则全部匹配
+     * @param <T>       集合元素类型
+     * @param iterable  {@link Iterable}
+     * @param predicate 匹配器,为空则全部匹配
      * @return 匹配数量
      */
     public static <T> int count(final Iterable<T> iterable, final Predicate<T> predicate) {
@@ -3114,6 +3114,9 @@ public class CollKit {
      * @return 反转后的List
      */
     public static <T> List<T> reverse(List<T> list) {
+        if (isEmpty(list)) {
+            return list;
+        }
         Collections.reverse(list);
         return list;
     }
