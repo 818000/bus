@@ -1,4 +1,4 @@
-## 功能概述
+#### 项目说明
 
 bus-socket是一款开源的Java AIO框架，支持 TCP、UDP、SSL/TLS，追求代码量、性能、稳定性、接口设计各方面都达到极致。
 
@@ -7,16 +7,17 @@ bus-socket是一款开源的Java AIO框架，支持 TCP、UDP、SSL/TLS，追求
 要求Java 17+
 
 *
-* 通常情况下仅需实现{@link org.aoju.bus.socket.Protocol}、{@link org.aoju.bus.socket.process.MessageProcessor}即可
-* 如需仅需通讯层面的监控，bus-socket提供了接口{@link org.aoju.bus.socket.NetMonitor}以供使用
+* 通常情况下仅需实现{@link socket.org.miaixz.bus.Protocol}、{@link process.socket.org.miaixz.bus.MessageProcessor}即可
+* 如需仅需通讯层面的监控，bus-socket提供了接口{@link socket.org.miaixz.bus.NetMonitor}以供使用
 *
-* 完成本package的接口开发后，便可使用{@link org.aoju.bus.socket.AioQuickClient} / {@link
-  org.aoju.bus.socket.AioQuickServer}提供AIO的客户端/服务端通信服务
+* 完成本package的接口开发后，便可使用{@link socket.org.miaixz.bus.AioQuickClient} / {@link
+  socket.org.miaixz.bus.AioQuickServer}提供AIO的客户端/服务端通信服务
 *
 
 服务端开发主要分两步：
 
-1.构造服务端对象AioQuickServer。该类的构造方法有以下几个入参： port，服务端监听端口号； Protocol，协议解码类，正是上一步骤实现的解码算法类：StringProtocol；
+1.构造服务端对象AioQuickServer。该类的构造方法有以下几个入参： port，服务端监听端口号；
+Protocol，协议解码类，正是上一步骤实现的解码算法类：StringProtocol；
 MessageProcessor，消息处理器，对Protocol解析出来的消息进行业务处理。 因为只是个简单示例，采用匿名内部类的形式做演示。实际业务场景中可能涉及到更复杂的逻辑，开发同学自行把控。
 
 ```java
@@ -274,7 +275,7 @@ public class NioServer {
 ## 性能测试
 
 - 环境准备
-    1. 测试项目：[abarth](https://github.com/aoju/abarth)
+    1. 测试项目：[abarth](https://github.com/839128/abarth)
     2. 通信协议：Http
     3. 压测工具：[wrk](https://github.com/wg/wrk)
     4. 测试机：MacBook Pro, 2.9Ghz i5, 4核8G内存
@@ -284,7 +285,8 @@ public class NioServer {
     ```
 - 测试结果：bus-socket的性能表现基本稳定维持在 128MB/s 左右。
 
-  | 连接数 | Requests/sec | Transfer/sec | | -- | -- | -- | | 512 | 924343.47 | 128.70MB| | 1024 | 922967.92 | 128.51MB| |
+  | 连接数 | Requests/sec | Transfer/sec | | -- | -- | -- | | 512 | 924343.47 | 128.70MB| | 1024 | 922967.92 |
+  128.51MB| |
   2048 | 933479.41 | 129.97MB| | 4096 | 922589.53 | 128.46MB|
 
 ### 致谢

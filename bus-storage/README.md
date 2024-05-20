@@ -7,7 +7,7 @@
 ```xml
     <aliyun.oss.version>3.4.2</aliyun.oss.version>
     <baidu.bos.version>0.10.48</baidu.bos.version>
-    <huawei.oss.version>3.0.2</huawei.oss.version>
+    <huawei.oss.version>3.0.5</huawei.oss.version>
     <jd.oss.version>1.11.136</jd.oss.version>
     <minio.oss.version>3.0.12</minio.oss.version>
     <qiniu.oss.version>[7.2.0, 7.2.99]</qiniu.oss.version>
@@ -122,11 +122,11 @@ extend:
       qliyun:
         accessKey: 10******85
         secretKey: 1f7d************************d629e
-        prefix: http://oauth.aoju.org/qq/callback
+        prefix: http://oauth.miaixz.org/qq/callback
       baidu:
         accessKey: 10******85
         secretKey: 1f7d************************d629e
-        prefix: http://oauth.aoju.org/qq/callback
+        prefix: http://oauth.miaixz.org/qq/callback
 ......
 ```
 
@@ -147,7 +147,7 @@ provider.upload("test", null, new File("/Users/leaves/logo.gif"));
 ##### 用法②
 
 ```java
-@Autowired
+@Resource
 StorageProviderService service;
         service.get(Registry.ALIYUN);
         provider.upload("test",null,new File("/Users/leaves/logo.gif"));

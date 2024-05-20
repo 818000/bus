@@ -58,16 +58,16 @@ public class Size {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Size)) return false;
-        Size it = (Size) object;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Size)) return false;
+        Size it = (Size) obj;
         return width == it.width && height == it.height;
     }
 
     @Override
     public String toString() {
-        return (int)width + "x" + (int)height;
+        return (int) width + "x" + (int) height;
     }
 
 }

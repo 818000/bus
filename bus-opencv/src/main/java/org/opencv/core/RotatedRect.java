@@ -40,8 +40,7 @@ public class RotatedRect {
         }
     }
 
-    public void points(Point pt[])
-    {
+    public void points(Point pt[]) {
         double _angle = angle * Math.PI / 180.0;
         double b = (double) Math.cos(_angle) * 0.5f;
         double a = (double) Math.sin(_angle) * 0.5f;
@@ -63,8 +62,7 @@ public class RotatedRect {
                 2 * center.y - pt[1].y);
     }
 
-    public Rect boundingRect()
-    {
+    public Rect boundingRect() {
         Point pt[] = new Point[4];
         points(pt);
         Rect r = new Rect((int) Math.floor(Math.min(Math.min(Math.min(pt[0].x, pt[1].x), pt[2].x), pt[3].x)),
@@ -99,10 +97,10 @@ public class RotatedRect {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof RotatedRect)) return false;
-        RotatedRect it = (RotatedRect) object;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RotatedRect)) return false;
+        RotatedRect it = (RotatedRect) obj;
         return center.equals(it.center) && size.equals(it.size) && angle == it.angle;
     }
 
@@ -110,4 +108,5 @@ public class RotatedRect {
     public String toString() {
         return "{ " + center + " " + size + " * " + angle + " }";
     }
+
 }

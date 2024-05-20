@@ -1,4 +1,4 @@
-# GitLab API (bus-gitlab)<br />Java Client Library for the GitLab REST API
+#### 项目说明
 
 GitLab API (bus-gitlab) provides a full featured and easy to consume Java library for working with GitLab repositories
 via the GitLab REST API. Additionally, full support for working with GitLab webhooks and system hooks is also provided.
@@ -60,17 +60,17 @@ file:<br />
 ```
 dependencies {
     ...
-    compile group: 'org.aoju', name: 'bus-gitlab', version: 'x.x.x'
+    compile group: 'org.miaixz', name: 'bus-gitlab', version: 'x.x.x'
 }
 ```
 
 **Maven: pom.xml**
 
-```
+```xml
 <dependency>
-    <groupId>org.aoju</groupId>
+    <groupId>org.miaixz</groupId>
     <artifactId>bus-gitlab</artifactId>
-    <version>6.6.0</version>
+    <version>x.x.x</version>
 </dependency>
 ```
 

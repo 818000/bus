@@ -18,6 +18,10 @@ public class Range {
         set(vals);
     }
 
+    public static Range all() {
+        return new Range(Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
     public void set(double[] vals) {
         if (vals != null) {
             start = vals.length > 0 ? (int) vals[0] : 0;
@@ -35,10 +39,6 @@ public class Range {
 
     public boolean empty() {
         return end <= start;
-    }
-
-    public static Range all() {
-        return new Range(Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     public Range intersection(Range r1) {
@@ -68,10 +68,10 @@ public class Range {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Range)) return false;
-        Range it = (Range) object;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Range)) return false;
+        Range it = (Range) obj;
         return start == it.start && end == it.end;
     }
 

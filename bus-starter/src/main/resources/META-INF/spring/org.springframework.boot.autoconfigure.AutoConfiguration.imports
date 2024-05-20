@@ -1,0 +1,3 @@
+org.miaixz.bus.spring.Configurable
+org.miaixz.bus.spring.GenieBuilder
+org.miaixz.bus.spring.BusXHolder
