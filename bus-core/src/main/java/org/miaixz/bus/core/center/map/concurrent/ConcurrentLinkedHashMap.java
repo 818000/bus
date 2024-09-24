@@ -27,13 +27,6 @@
 */
 package org.miaixz.bus.core.center.map.concurrent;
 
-import org.miaixz.bus.core.center.queue.DiscardingQueue;
-import org.miaixz.bus.core.center.queue.Linked;
-import org.miaixz.bus.core.center.queue.LinkedDeque;
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.xyz.RuntimeKit;
-
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -46,6 +39,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
+
+import org.miaixz.bus.core.center.queue.DiscardingQueue;
+import org.miaixz.bus.core.center.queue.Linked;
+import org.miaixz.bus.core.center.queue.LinkedDeque;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.xyz.RuntimeKit;
 
 /**
  * A hash table supporting full concurrency of retrievals, adjustable expected concurrency for updates, and a maximum
@@ -1319,13 +1319,13 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
         }
 
         @Override
-        public boolean contains(final Object obj) {
-            return containsKey(obj);
+        public boolean contains(final Object object) {
+            return containsKey(object);
         }
 
         @Override
-        public boolean remove(final Object obj) {
-            return (map.remove(obj) != null);
+        public boolean remove(final Object object) {
+            return (map.remove(object) != null);
         }
 
         @Override
@@ -1439,11 +1439,11 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
         }
 
         @Override
-        public boolean contains(final Object obj) {
-            if (!(obj instanceof Entry)) {
+        public boolean contains(final Object object) {
+            if (!(object instanceof Entry)) {
                 return false;
             }
-            final Entry<K, Node<K, V>> entry = (Entry<K, Node<K, V>>) obj;
+            final Entry<K, Node<K, V>> entry = (Entry<K, Node<K, V>>) object;
             final Node<K, V> node = map.data.get(entry.getKey());
             return (node != null) && (node.getValue().equals(entry.getValue()));
         }
@@ -1454,11 +1454,11 @@ public final class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V>
         }
 
         @Override
-        public boolean remove(final Object obj) {
-            if (!(obj instanceof Entry<?, ?>)) {
+        public boolean remove(final Object object) {
+            if (!(object instanceof Entry<?, ?>)) {
                 return false;
             }
-            final Entry<K, V> entry = (Entry<K, V>) obj;
+            final Entry<K, V> entry = (Entry<K, V>) object;
             return map.remove(entry.getKey(), entry.getValue());
         }
     }

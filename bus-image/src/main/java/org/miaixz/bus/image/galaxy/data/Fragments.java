@@ -27,15 +27,15 @@
 */
 package org.miaixz.bus.image.galaxy.data;
 
-import org.miaixz.bus.image.Tag;
-import org.miaixz.bus.image.galaxy.io.ImageEncodingOptions;
-import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ListIterator;
+
+import org.miaixz.bus.image.Tag;
+import org.miaixz.bus.image.galaxy.io.ImageEncodingOptions;
+import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
 
 /**
  * Fragments are used for encapsulation of an encoded (=compressed) pixel data stream into the Pixel Data (7FE0,0010)
@@ -153,15 +153,15 @@ public class Fragments extends ArrayList<Object> implements Value {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(Object object) {
+        if (this == object)
             return true;
-        if (obj == null)
+        if (object == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != object.getClass())
             return false;
 
-        Fragments other = (Fragments) obj;
+        Fragments other = (Fragments) object;
         if (bigEndian != other.bigEndian)
             return false;
         if (vr != other.vr)

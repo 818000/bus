@@ -27,16 +27,16 @@
 */
 package org.miaixz.bus.core.center.date.printer;
 
-import org.miaixz.bus.core.center.date.format.parser.FastDateParser;
-import org.miaixz.bus.core.center.map.concurrent.SafeConcurrentHashMap;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.exception.DateException;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.text.DateFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+
+import org.miaixz.bus.core.center.date.format.parser.FastDateParser;
+import org.miaixz.bus.core.center.map.concurrent.SafeConcurrentHashMap;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.exception.DateException;
 
 /**
  * {@link java.text.SimpleDateFormat} 的线程安全版本，用于将 {@link Date} 格式化输出 Thanks to Apache Commons Lang 3.5
@@ -415,18 +415,19 @@ public class FastDatePrinter extends SimpleDatePrinter implements FormatPrinter 
     /**
      * Formats a {@code Date}, {@code Calendar} or {@code Long} (milliseconds) object.
      *
-     * @param obj the object to format
+     * @param object the object to format
      * @return The formatted value.
      */
-    public String format(final Object obj) {
-        if (obj instanceof Date) {
-            return format((Date) obj);
-        } else if (obj instanceof Calendar) {
-            return format((Calendar) obj);
-        } else if (obj instanceof Long) {
-            return format(((Long) obj).longValue());
+    public String format(final Object object) {
+        if (object instanceof Date) {
+            return format((Date) object);
+        } else if (object instanceof Calendar) {
+            return format((Calendar) object);
+        } else if (object instanceof Long) {
+            return format(((Long) object).longValue());
         } else {
-            throw new IllegalArgumentException("Unknown class: " + (obj == null ? "<null>" : obj.getClass().getName()));
+            throw new IllegalArgumentException(
+                    "Unknown class: " + (object == null ? "<null>" : object.getClass().getName()));
         }
     }
 
@@ -1173,12 +1174,12 @@ public class FastDatePrinter extends SimpleDatePrinter implements FormatPrinter 
         }
 
         @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
+        public boolean equals(final Object object) {
+            if (this == object) {
                 return true;
             }
-            if (obj instanceof TimeZoneDisplayKey) {
-                final TimeZoneDisplayKey other = (TimeZoneDisplayKey) obj;
+            if (object instanceof TimeZoneDisplayKey) {
+                final TimeZoneDisplayKey other = (TimeZoneDisplayKey) object;
                 return mTimeZone.equals(other.mTimeZone) && mStyle == other.mStyle && mLocale.equals(other.mLocale);
             }
             return false;

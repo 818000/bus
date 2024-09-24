@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.core.xyz;
 
-import org.miaixz.bus.core.io.stream.FastByteArrayOutputStream;
-import org.miaixz.bus.core.lang.exception.InternalException;
-
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+
+import org.miaixz.bus.core.io.stream.FastByteArrayOutputStream;
+import org.miaixz.bus.core.lang.exception.InternalException;
 
 /**
  * 序列化工具类 注意！此工具类依赖于JDK的序列化机制，某些版本的JDK中可能存在远程注入漏洞。
@@ -44,31 +44,31 @@ public class SerializeKit {
     /**
      * 序列化后拷贝流的方式克隆 对象必须实现Serializable接口
      *
-     * @param <T> 对象类型
-     * @param obj 被克隆对象
+     * @param <T>    对象类型
+     * @param object 被克隆对象
      * @return 克隆后的对象
      * @throws InternalException IO异常和ClassNotFoundException封装
      */
-    public static <T> T clone(final T obj) {
-        if (!(obj instanceof Serializable)) {
+    public static <T> T clone(final T object) {
+        if (!(object instanceof Serializable)) {
             return null;
         }
-        return deserialize(serialize(obj));
+        return deserialize(serialize(object));
     }
 
     /**
      * 序列化 对象必须实现Serializable接口
      *
-     * @param <T> 对象类型
-     * @param obj 要被序列化的对象
+     * @param <T>    对象类型
+     * @param object 要被序列化的对象
      * @return 序列化后的字节码
      */
-    public static <T> byte[] serialize(final T obj) {
-        if (!(obj instanceof Serializable)) {
+    public static <T> byte[] serialize(final T object) {
+        if (!(object instanceof Serializable)) {
             return null;
         }
         final FastByteArrayOutputStream byteOut = new FastByteArrayOutputStream();
-        IoKit.writeObjects(byteOut, false, obj);
+        IoKit.write(byteOut, false, object);
         return byteOut.toByteArray();
     }
 

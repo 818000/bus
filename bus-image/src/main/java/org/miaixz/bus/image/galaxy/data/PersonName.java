@@ -27,12 +27,12 @@
 */
 package org.miaixz.bus.image.galaxy.data;
 
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.image.Builder;
 import org.miaixz.bus.logger.Logger;
-
-import java.util.Arrays;
-import java.util.StringTokenizer;
 
 /**
  * @author Kimi Liu
@@ -230,11 +230,11 @@ public class PersonName {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
+    public boolean equals(Object object) {
+        if (object == this)
             return true;
 
-        if (!(obj instanceof PersonName other))
+        if (!(object instanceof PersonName other))
             return false;
 
         return Arrays.equals(fields, other.fields);

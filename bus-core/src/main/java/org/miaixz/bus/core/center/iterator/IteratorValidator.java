@@ -27,16 +27,16 @@
 */
 package org.miaixz.bus.core.center.iterator;
 
-import org.miaixz.bus.core.center.CollectionValidator;
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.xyz.MathKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+
+import org.miaixz.bus.core.center.CollectionValidator;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.xyz.MathKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * Iterator检查工具类，提供字对象的blank和empty等检查
@@ -193,10 +193,10 @@ public class IteratorValidator {
         final Map<?, Integer> countMap2 = countMap(iter.iterator());
 
         // 遍历第一个Iterable中的每个元素
-        for (final Object obj : subIter) {
+        for (final Object object : subIter) {
             // 比较第一个Iterable中元素的出现次数和第二个Iterable中元素的出现次数
             // 如果第一个Iterable中元素的出现次数大于第二个Iterable中元素的出现次数，则不是子集合关系
-            if (MathKit.nullToZero(countMap1.get(obj)) > MathKit.nullToZero(countMap2.get(obj))) {
+            if (MathKit.nullToZero(countMap1.get(object)) > MathKit.nullToZero(countMap2.get(object))) {
                 return false;
             }
         }
@@ -254,9 +254,9 @@ public class IteratorValidator {
                 return false;
             }
 
-            for (final Object obj : iterable1) {
+            for (final Object object : iterable1) {
                 // 比较第一个Iterable中元素的出现次数和第二个Iterable中元素的出现次数
-                if (MathKit.nullToZero(countMap1.get(obj)) != MathKit.nullToZero(countMap2.get(obj))) {
+                if (MathKit.nullToZero(countMap1.get(object)) != MathKit.nullToZero(countMap2.get(object))) {
                     return false;
                 }
             }

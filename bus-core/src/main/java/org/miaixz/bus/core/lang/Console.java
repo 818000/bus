@@ -27,14 +27,14 @@
 */
 package org.miaixz.bus.core.lang;
 
-import org.miaixz.bus.core.convert.Convert;
-import org.miaixz.bus.core.xyz.ArrayKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import org.miaixz.bus.core.convert.Convert;
+import org.miaixz.bus.core.xyz.ArrayKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * 命令行（控制台）工具方法类 此类主要针对{@link System#out} 和 {@link System#err} 做封装。
@@ -54,14 +54,14 @@ public class Console {
     /**
      * 同 System.out.println()方法，打印控制台日志 如果传入打印对象为{@link Throwable}对象，那么同时打印堆栈
      *
-     * @param obj 要打印的对象
+     * @param object 要打印的对象
      */
-    public static void log(final Object obj) {
-        if (obj instanceof Throwable) {
-            final Throwable e = (Throwable) obj;
+    public static void log(final Object object) {
+        if (object instanceof Throwable) {
+            final Throwable e = (Throwable) object;
             log(e, e.getMessage());
         } else {
-            log(Symbol.DELIM, obj);
+            log(Symbol.DELIM, object);
         }
     }
 
@@ -130,23 +130,23 @@ public class Console {
     /**
      * 同 System.out.print()方法，打印控制台日志
      *
-     * @param obj 要打印的对象
+     * @param object 要打印的对象
      */
-    public static void print(final Object obj) {
-        print(Symbol.DELIM, obj);
+    public static void print(final Object object) {
+        print(Symbol.DELIM, object);
     }
 
     /**
      * 同 System.out.println()方法，打印控制台日志 如果传入打印对象为{@link Throwable}对象，那么同时打印堆栈
      *
-     * @param obj1      第一个要打印的对象
+     * @param object    第一个要打印的对象
      * @param otherObjs 其它要打印的对象
      */
-    public static void print(final Object obj1, final Object... otherObjs) {
+    public static void print(final Object object, final Object... otherObjs) {
         if (ArrayKit.isEmpty(otherObjs)) {
-            print(obj1);
+            print(object);
         } else {
-            print(buildTemplateSplitBySpace(otherObjs.length + 1), ArrayKit.insert(otherObjs, 0, obj1));
+            print(buildTemplateSplitBySpace(otherObjs.length + 1), ArrayKit.insert(otherObjs, 0, object));
         }
     }
 
@@ -206,28 +206,28 @@ public class Console {
     /**
      * 同 System.err.println()方法，打印控制台日志
      *
-     * @param obj 要打印的对象
+     * @param object 要打印的对象
      */
-    public static void error(final Object obj) {
-        if (obj instanceof Throwable) {
-            final Throwable e = (Throwable) obj;
+    public static void error(final Object object) {
+        if (object instanceof Throwable) {
+            final Throwable e = (Throwable) object;
             error(e, e.getMessage());
         } else {
-            error(Symbol.DELIM, obj);
+            error(Symbol.DELIM, object);
         }
     }
 
     /**
      * 同 System.out.println()方法，打印控制台日志 如果传入打印对象为{@link Throwable}对象，那么同时打印堆栈
      *
-     * @param obj1      第一个要打印的对象
+     * @param object    第一个要打印的对象
      * @param otherObjs 其它要打印的对象
      */
-    public static void error(final Object obj1, final Object... otherObjs) {
+    public static void error(final Object object, final Object... otherObjs) {
         if (ArrayKit.isEmpty(otherObjs)) {
-            error(obj1);
+            error(object);
         } else {
-            error(buildTemplateSplitBySpace(otherObjs.length + 1), ArrayKit.insert(otherObjs, 0, obj1));
+            error(buildTemplateSplitBySpace(otherObjs.length + 1), ArrayKit.insert(otherObjs, 0, object));
         }
     }
 

@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.core.convert;
 
-import org.miaixz.bus.core.xyz.TypeKit;
-
 import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicReference;
+
+import org.miaixz.bus.core.xyz.TypeKit;
 
 /**
  * {@link AtomicReference}转换器
@@ -42,14 +42,24 @@ public class AtomicReferenceConverter extends AbstractConverter {
 
     private static final long serialVersionUID = -1L;
 
+    private final Converter converter;
+
+    /**
+     * 构造
+     *
+     * @param converter 用于转换AtomicReference包装的对象类型
+     */
+    public AtomicReferenceConverter(final Converter converter) {
+        this.converter = converter;
+    }
+
     @Override
     protected AtomicReference<?> convertInternal(final Class<?> targetClass, final Object value) {
-
         // 尝试将值转换为Reference泛型的类型
         Object targetValue = null;
         final Type paramType = TypeKit.getTypeArgument(AtomicReference.class);
         if (!TypeKit.isUnknown(paramType)) {
-            targetValue = CompositeConverter.getInstance().convert(paramType, value);
+            targetValue = converter.convert(paramType, value);
         }
         if (null == targetValue) {
             targetValue = value;

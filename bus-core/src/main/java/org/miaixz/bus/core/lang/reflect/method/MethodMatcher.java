@@ -27,10 +27,6 @@
 */
 package org.miaixz.bus.core.lang.reflect.method;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.annotation.resolve.AnnotatedElements;
-import org.miaixz.bus.core.xyz.*;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,6 +35,10 @@ import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.annotation.resolve.AnnotatedElements;
+import org.miaixz.bus.core.xyz.*;
 
 /**
  * 方法匹配器工具类，用于基于各种预设条件创建方法匹配器。
@@ -119,7 +119,7 @@ public class MethodMatcher {
      * @return 方法匹配器
      */
     public static Predicate<Method> forModifiers(final int... modifiers) {
-        return method -> ModifierKit.hasAllModifier(method.getModifiers(), modifiers);
+        return method -> ModifierKit.hasAll(method.getModifiers(), modifiers);
     }
 
     /**

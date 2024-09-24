@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.core.convert;
 
+import java.lang.reflect.Type;
+
 import org.miaixz.bus.core.lang.exception.ConvertException;
 import org.miaixz.bus.core.lang.tuple.Tuple;
-
-import java.lang.reflect.Type;
 
 /**
  * {@link Tuple}转换器
@@ -47,8 +47,7 @@ public class TupleConverter implements Converter {
 
     @Override
     public Object convert(final Type targetType, final Object value) throws ConvertException {
-        final Object[] convert = (Object[]) ArrayConverter.INSTANCE.convert(Object[].class, value);
-        return Tuple.of(convert);
+        return Tuple.of(ArrayConverter.INSTANCE.convert(Object[].class, value));
     }
 
 }

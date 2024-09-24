@@ -27,20 +27,21 @@
 */
 package org.miaixz.bus.core.lang;
 
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.InitialDirContext;
+
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.BooleanKit;
 import org.miaixz.bus.core.xyz.MapKit;
 import org.miaixz.bus.core.xyz.ObjectKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.InitialDirContext;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * 系统属性名称常量池 封装了包括Java运行时环境信息、Java虚拟机信息、Java类信息、OS信息、用户信息等
@@ -251,6 +252,11 @@ public class Keys {
      */
     public static final boolean IS_OPENJ9;
 
+    /**
+     * 是否GraalVM Native Image环境
+     */
+    public static final boolean IS_GRAALVM_NATIVE;
+
     static {
         // JVM版本
         JVM_VERSION = _getJvmVersion();
@@ -261,6 +267,8 @@ public class Keys {
         final String jvmName = _getJvmName();
         IS_ANDROID = jvmName.equals("Dalvik");
         IS_OPENJ9 = jvmName.contains("OpenJ9");
+        // GraalVM
+        IS_GRAALVM_NATIVE = null != System.getProperty("org.graalvm.nativeimage.imagecode");
     }
 
     /**

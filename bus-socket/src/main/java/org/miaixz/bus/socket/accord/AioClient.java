@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kimi Liu
  * @since Java 17+
  */
-public final class AioClient {
+public class AioClient {
 
     /**
      * 健康检查

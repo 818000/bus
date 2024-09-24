@@ -27,6 +27,21 @@
 */
 package org.miaixz.bus.core.xyz;
 
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.nio.CharBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.*;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Predicate;
+
 import org.miaixz.bus.core.center.function.ConsumerX;
 import org.miaixz.bus.core.center.iterator.LineIterator;
 import org.miaixz.bus.core.io.BomReader;
@@ -49,23 +64,9 @@ import org.miaixz.bus.core.io.stream.StreamReader;
 import org.miaixz.bus.core.io.stream.StreamWriter;
 import org.miaixz.bus.core.io.timout.AsyncTimeout;
 import org.miaixz.bus.core.io.timout.Timeout;
-import org.miaixz.bus.core.lang.Console;
 import org.miaixz.bus.core.lang.*;
+import org.miaixz.bus.core.lang.Console;
 import org.miaixz.bus.core.lang.exception.InternalException;
-
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.nio.CharBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.*;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * IO工具类 IO工具类只是辅助流的读写，并不负责关闭流。原因是流可能被多次读写，读写关闭后容易造成问题。
@@ -665,6 +666,28 @@ public class IoKit {
     }
 
     /**
+     * 从流中读取内容，直到遇到给定token
+     *
+     * @param in    输入流
+     * @param token 停止的字符
+     * @return 输出流
+     */
+    public static FastByteArrayOutputStream readToToken(final InputStream in, final int token) {
+        return readTo(in, (c) -> c == token);
+    }
+
+    /**
+     * 从流中读取内容，直到遇到给定token满足{@link Predicate#test(Object)}
+     *
+     * @param in        输入流
+     * @param predicate 读取结束条件, {@link Predicate#test(Object)}返回true表示结束
+     * @return 输出流
+     */
+    public static FastByteArrayOutputStream readTo(final InputStream in, final Predicate<Integer> predicate) {
+        return StreamReader.of(in, false).readTo(predicate);
+    }
+
+    /**
      * String 转为UTF-8编码的字节流流
      *
      * @param content 内容
@@ -968,7 +991,7 @@ public class IoKit {
      * @param contents   写入的内容，调用toString()方法，不包括不会自动换行
      * @throws InternalException IO异常
      */
-    public static void write(final OutputStream out, final boolean isCloseOut, final Object... contents)
+    public static void write(final OutputStream out, final boolean isCloseOut, final CharSequence... contents)
             throws InternalException {
         write(out, Charset.UTF_8, isCloseOut, contents);
     }
@@ -983,7 +1006,7 @@ public class IoKit {
      * @throws InternalException IO异常
      */
     public static void write(final OutputStream out, final java.nio.charset.Charset charset, final boolean isCloseOut,
-            final Object... contents) throws InternalException {
+            final CharSequence... contents) throws InternalException {
         StreamWriter.of(out, isCloseOut).writeString(charset, contents);
     }
 
@@ -995,7 +1018,7 @@ public class IoKit {
      * @param contents   写入的内容
      * @throws InternalException IO异常
      */
-    public static void writeObjects(final OutputStream out, final boolean isCloseOut, final Object... contents)
+    public static void write(final OutputStream out, final boolean isCloseOut, final Object... contents)
             throws InternalException {
         StreamWriter.of(out, isCloseOut).writeObject(contents);
     }
@@ -1185,11 +1208,11 @@ public class IoKit {
     /**
      * 尝试关闭指定对象 判断对象如果实现了{@link AutoCloseable}，则调用之
      *
-     * @param obj 可关闭对象
+     * @param object 可关闭对象
      */
-    public static void close(final Object obj) {
-        if (obj instanceof AutoCloseable) {
-            closeQuietly((AutoCloseable) obj);
+    public static void close(final Object object) {
+        if (object instanceof AutoCloseable) {
+            closeQuietly((AutoCloseable) object);
         }
     }
 
@@ -1839,6 +1862,23 @@ public class IoKit {
         if (name.indexOf(Symbol.C_COLON) < 2)
             return new FileInputStream(name);
         return new URL(name).openStream();
+    }
+
+    /**
+     * 获取流长度，对于文件流，会调用{@link FileInputStream#available()}方法，对于其他流，返回-1 对于网络流，available可能为分段大小，所以返回-1
+     *
+     * @param in 流
+     * @return 长度，-1表示未知长度
+     */
+    public static int length(final InputStream in) {
+        if (in instanceof FileInputStream) {
+            try {
+                return in.available();
+            } catch (final IOException e) {
+                throw new InternalException(e);
+            }
+        }
+        return -1;
     }
 
 }

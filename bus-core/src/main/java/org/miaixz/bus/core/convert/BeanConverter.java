@@ -27,6 +27,10 @@
 */
 package org.miaixz.bus.core.convert;
 
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.Map;
+
 import org.miaixz.bus.core.bean.copier.BeanCopier;
 import org.miaixz.bus.core.bean.copier.CopyOptions;
 import org.miaixz.bus.core.bean.copier.ValueProvider;
@@ -34,10 +38,6 @@ import org.miaixz.bus.core.center.map.MapProxy;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ConvertException;
 import org.miaixz.bus.core.xyz.*;
-
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.util.Map;
 
 /**
  * Bean转换器，支持：
@@ -97,7 +97,7 @@ public class BeanConverter implements Converter, Serializable {
     }
 
     private Object convertInternal(final Type targetType, final Class<?> targetClass, final Object value) {
-        if (value instanceof Map || value instanceof ValueProvider || BeanKit.isWritableBean(value.getClass())) {
+        if (value instanceof Map || value instanceof ValueProvider || BeanKit.isReadableBean(value.getClass())) {
             if (value instanceof Map && targetClass.isInterface()) {
                 // 将Map动态代理为Bean
                 return MapProxy.of((Map<?, ?>) value).toProxyBean(targetClass);

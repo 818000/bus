@@ -27,14 +27,14 @@
 */
 package org.miaixz.bus.core.io;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.function.Predicate;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.ArrayKit;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.function.Predicate;
 
 /**
  * Byte Order Mark (BOM) 头描述
@@ -162,11 +162,11 @@ public class ByteOrderMark implements Predicate<byte[]>, Comparable<ByteOrderMar
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof ByteOrderMark)) {
+    public boolean equals(final Object object) {
+        if (!(object instanceof ByteOrderMark)) {
             return false;
         }
-        final ByteOrderMark bom = (ByteOrderMark) obj;
+        final ByteOrderMark bom = (ByteOrderMark) object;
         return Arrays.equals(this.bytes, bom.bytes);
     }
 

@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.image.galaxy.data;
 
+import java.util.*;
+
 import org.miaixz.bus.image.Builder;
 import org.miaixz.bus.image.Tag;
-
-import java.util.*;
 
 /**
  * @author Kimi Liu
@@ -194,10 +194,10 @@ public class IDWithIssuer {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(Object object) {
+        if (this == object)
             return true;
-        if (!(obj instanceof IDWithIssuer other))
+        if (!(object instanceof IDWithIssuer other))
             return false;
         return (Objects.equals(id, other.getID())) && (Objects.equals(typeOfPatientID, other.getTypeOfPatientID()))
                 && (Objects.equals(identifierTypeCode, other.getIdentifierTypeCode()))

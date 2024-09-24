@@ -27,13 +27,6 @@
 */
 package org.miaixz.bus.core.convert;
 
-import org.miaixz.bus.core.center.date.DateTime;
-import org.miaixz.bus.core.center.date.Resolver;
-import org.miaixz.bus.core.center.date.format.CustomFormat;
-import org.miaixz.bus.core.xyz.DateKit;
-import org.miaixz.bus.core.xyz.ObjectKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.time.*;
 import java.time.chrono.Era;
 import java.time.chrono.IsoEra;
@@ -42,6 +35,13 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+
+import org.miaixz.bus.core.center.date.DateTime;
+import org.miaixz.bus.core.center.date.Resolver;
+import org.miaixz.bus.core.center.date.format.CustomFormat;
+import org.miaixz.bus.core.xyz.DateKit;
+import org.miaixz.bus.core.xyz.ObjectKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * JDK8中新加入的java.time包对象解析转换器 支持的对象包括：
@@ -156,11 +156,9 @@ public class TemporalAccessorConverter extends AbstractConverter {
             instant = formatter.parse(value, Instant::from);
             zoneId = formatter.getZone();
         } else {
-            final Date date = Resolver.parse(value);
+            final DateTime date = Resolver.parse(value);
             instant = Objects.requireNonNull(date).toInstant();
-            if (date instanceof DateTime) {
-                zoneId = ((DateTime) date).getZoneId();
-            }
+            zoneId = date.getZoneId();
         }
         return parseFromInstant(targetClass, instant, zoneId);
     }

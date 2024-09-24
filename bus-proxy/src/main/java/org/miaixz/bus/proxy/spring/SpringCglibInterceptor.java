@@ -27,13 +27,13 @@
 */
 package org.miaixz.bus.proxy.spring;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.miaixz.bus.proxy.Aspect;
 import org.miaixz.bus.proxy.invoker.Interceptor;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Spring-cglib实现的动态代理切面
@@ -56,7 +56,7 @@ public class SpringCglibInterceptor extends Interceptor implements MethodInterce
     }
 
     @Override
-    public Object intercept(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
+    public Object intercept(final Object object, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
         final Object target = this.target;
         Object result = null;

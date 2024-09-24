@@ -27,9 +27,12 @@
 */
 package org.miaixz.bus.health.linux.hardware;
 
-import com.sun.jna.platform.linux.Udev;
-import com.sun.jna.platform.linux.Udev.UdevContext;
-import com.sun.jna.platform.linux.Udev.UdevDevice;
+import java.io.File;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -41,11 +44,9 @@ import org.miaixz.bus.health.linux.SysPath;
 import org.miaixz.bus.health.linux.software.LinuxOperatingSystem;
 import org.miaixz.bus.logger.Logger;
 
-import java.io.File;
-import java.net.NetworkInterface;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.sun.jna.platform.linux.Udev;
+import com.sun.jna.platform.linux.Udev.UdevContext;
+import com.sun.jna.platform.linux.Udev.UdevDevice;
 
 /**
  * LinuxNetworks class.
@@ -250,9 +251,9 @@ public final class LinuxNetworkIF extends AbstractNetworkIF {
         this.inErrors = Builder.getUnsignedLongFromFile(name + "/statistics/rx_errors");
         this.collisions = Builder.getUnsignedLongFromFile(name + "/statistics/collisions");
         this.inDrops = Builder.getUnsignedLongFromFile(name + "/statistics/rx_dropped");
-        long speedMiB = Builder.getUnsignedLongFromFile(name + "/speed");
+        long speedMbps = Builder.getUnsignedLongFromFile(name + "/speed");
         // speed may be -1 from file.
-        this.speed = speedMiB < 0 ? 0 : speedMiB << 20;
+        this.speed = speedMbps < 0 ? 0 : speedMbps * 1000000L;
         this.ifAlias = Builder.getStringFromFile(name + "/ifalias");
         this.ifOperStatus = parseIfOperStatus(Builder.getStringFromFile(name + "/operstate"));
 

@@ -41,7 +41,7 @@ import java.nio.ByteBuffer;
  * @author Kimi Liu
  * @since Java 17+
  */
-public final class UdpSession extends Session {
+public class UdpSession extends Session {
 
     private final UdpChannel udpChannel;
 

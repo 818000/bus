@@ -27,18 +27,19 @@
 */
 package org.miaixz.bus.health.windows;
 
-import com.sun.jna.platform.win32.COM.Wbemcli;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.logger.Logger;
+
 import com.sun.jna.platform.win32.PdhUtil;
 import com.sun.jna.platform.win32.PdhUtil.PdhException;
 import com.sun.jna.platform.win32.VersionHelpers;
 import com.sun.jna.platform.win32.Win32Exception;
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.logger.Logger;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.sun.jna.platform.win32.COM.Wbemcli;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * Enables queries of Performance Counters using wild cards to filter instances
@@ -86,7 +87,7 @@ public final class PerfCounterQuery {
                 return valueMap;
             }
             // If we are here, query failed
-            Logger.warn("Disabling further attempts to query {}.", perfObject);
+            Logger.info("Disabling further attempts to query {}.", perfObject);
             FAILED_QUERY_CACHE.add(perfObject);
         }
         return queryValuesFromWMI(propertyEnum, perfWmiClass);
@@ -192,7 +193,7 @@ public final class PerfCounterQuery {
                     String.format(Locale.ROOT, "0x%x", e.getHR().intValue()),
                     "See https://support.microsoft.com/en-us/help/300956/how-to-manually-rebuild-performance-counter-library-values");
         } catch (PdhException e) {
-            Logger.warn("Unable to localize {} performance counter.  Error {}.", perfObject,
+            Logger.debug("Unable to localize {} performance counter.  Error {}.", perfObject,
                     String.format(Locale.ROOT, "0x%x", e.getErrorCode()));
         }
         if (localized.isEmpty()) {

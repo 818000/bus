@@ -27,15 +27,15 @@
 */
 package org.miaixz.bus.core.data.id;
 
-import org.miaixz.bus.core.codec.No128;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.xyz.RandomKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
+
+import org.miaixz.bus.core.codec.No128;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.xyz.RandomKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * 提供通用唯一识别码（universally unique identifier）（UUID）实现，UUID表示一个128位的值。 此类拷贝自java.util.UUID，用于生成不带-的UUID字符串
@@ -410,15 +410,15 @@ public class UUID implements java.io.Serializable, Comparable<UUID> {
     /**
      * 将此对象与指定对象比较。 当且仅当参数不为 {@code null}、而是一个 UUID 对象、具有与此 UUID 相同的 varriant、包含相同的值（每一位均相同）时，结果才为 {@code true}。
      *
-     * @param obj 要与之比较的对象
+     * @param object 要与之比较的对象
      * @return 如果对象相同，则返回 {@code true}；否则返回 {@code false}
      */
     @Override
-    public boolean equals(final Object obj) {
-        if ((null == obj) || (obj.getClass() != UUID.class)) {
+    public boolean equals(final Object object) {
+        if ((null == object) || (object.getClass() != UUID.class)) {
             return false;
         }
-        final UUID id = (UUID) obj;
+        final UUID id = (UUID) object;
 
         final long mostSigBits = this.getLeastSignificantBits();
         final long leastSigBits = this.getLeastSignificantBits();

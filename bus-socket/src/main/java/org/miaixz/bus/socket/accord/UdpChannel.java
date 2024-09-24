@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Kimi Liu
  * @since Java 17+
  */
-public final class UdpChannel {
+public class UdpChannel {
 
     /**
      * 服务上下文

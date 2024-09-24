@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.core.lang.ref;
 
-import org.miaixz.bus.core.xyz.ObjectKit;
-
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Objects;
+
+import org.miaixz.bus.core.xyz.ObjectKit;
 
 /**
  * 虚引用对象，在GC时发现虚引用对象，会将{@link PhantomReference}插入{@link ReferenceQueue}。
@@ -48,12 +48,12 @@ public class PhantomObject<T> extends PhantomReference<T> implements Ref<T> {
     /**
      * 构造
      *
-     * @param obj   原始对象
-     * @param queue {@link ReferenceQueue}
+     * @param object 原始对象
+     * @param queue  {@link ReferenceQueue}
      */
-    public PhantomObject(final T obj, final ReferenceQueue<? super T> queue) {
-        super(obj, queue);
-        hashCode = Objects.hashCode(obj);
+    public PhantomObject(final T object, final ReferenceQueue<? super T> queue) {
+        super(object, queue);
+        hashCode = Objects.hashCode(object);
     }
 
     @Override

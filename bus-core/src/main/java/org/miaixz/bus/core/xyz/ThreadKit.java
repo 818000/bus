@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.core.xyz;
 
-import org.miaixz.bus.core.lang.thread.*;
-
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+
+import org.miaixz.bus.core.lang.thread.*;
 
 /**
  * 线程池工具
@@ -697,12 +697,12 @@ public class ThreadKit {
     /**
      * 阻塞当前线程，保证在main方法中执行不被退出
      *
-     * @param obj 对象所在线程
+     * @param object 对象所在线程
      */
-    public static void sync(final Object obj) {
-        synchronized (obj) {
+    public static void sync(final Object object) {
+        synchronized (object) {
             try {
-                obj.wait();
+                object.wait();
             } catch (final InterruptedException e) {
                 // ignore
             }

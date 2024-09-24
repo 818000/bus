@@ -27,9 +27,9 @@
 */
 package org.miaixz.bus.core.lang.ref;
 
-import org.miaixz.bus.core.xyz.ObjectKit;
-
 import java.util.Objects;
+
+import org.miaixz.bus.core.xyz.ObjectKit;
 
 /**
  * 弱引用对象，在GC时发现弱引用会回收其对象
@@ -40,25 +40,25 @@ import java.util.Objects;
  */
 public class StrongObject<T> implements Ref<T> {
 
-    private final T obj;
+    private final T object;
 
     /**
      * 构造
      *
-     * @param obj 原始对象
+     * @param object 原始对象
      */
-    public StrongObject(final T obj) {
-        this.obj = obj;
+    public StrongObject(final T object) {
+        this.object = object;
     }
 
     @Override
     public T get() {
-        return this.obj;
+        return this.object;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(obj);
+        return Objects.hashCode(this.object);
     }
 
     @Override

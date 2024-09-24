@@ -27,12 +27,12 @@
 */
 package org.miaixz.bus.office.csv;
 
+import java.util.*;
+
 import org.miaixz.bus.core.bean.copier.CopyOptions;
 import org.miaixz.bus.core.center.list.ListWrapper;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.xyz.BeanKit;
-
-import java.util.*;
 
 /**
  * CSV中一行的表示
@@ -42,12 +42,11 @@ import java.util.*;
  */
 public final class CsvRow extends ListWrapper<String> {
 
+    final Map<String, Integer> headerMap;
     /**
      * 原始行号
      */
     private final long originalLineNumber;
-
-    final Map<String, Integer> headerMap;
 
     /**
      * 构造

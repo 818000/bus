@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.core.lang.ref;
 
-import org.miaixz.bus.core.xyz.ObjectKit;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.Objects;
+
+import org.miaixz.bus.core.xyz.ObjectKit;
 
 /**
  * 软引用对象，在GC报告内存不足时会被GC回收
@@ -47,12 +47,12 @@ public class SoftObject<T> extends SoftReference<T> implements Ref<T> {
     /**
      * 构造
      *
-     * @param obj   原始对象
-     * @param queue {@link ReferenceQueue}
+     * @param object 原始对象
+     * @param queue  {@link ReferenceQueue}
      */
-    public SoftObject(final T obj, final ReferenceQueue<? super T> queue) {
-        super(obj, queue);
-        hashCode = Objects.hashCode(obj);
+    public SoftObject(final T object, final ReferenceQueue<? super T> queue) {
+        super(object, queue);
+        hashCode = Objects.hashCode(object);
     }
 
     @Override

@@ -27,15 +27,15 @@
 */
 package org.miaixz.bus.core.tree;
 
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.xyz.*;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.xyz.*;
 
 /**
  * 通过转换器将你的实体转化为TreeNodeMap节点实体 属性都存在此处,属性有序，可支持排序
@@ -65,26 +65,6 @@ public class MapTree<T> extends LinkedHashMap<String, Object> implements Node<T>
      */
     public MapTree(final NodeConfig nodeConfig) {
         this.nodeConfig = ObjectKit.defaultIfNull(nodeConfig, NodeConfig.DEFAULT_CONFIG);
-    }
-
-    /**
-     * 打印
-     *
-     * @param tree   树
-     * @param writer Writer
-     * @param intent 缩进量
-     */
-    private static void printTree(final MapTree<?> tree, final PrintWriter writer, final int intent) {
-        writer.println(
-                StringKit.format("{}{}[{}]", StringKit.repeat(Symbol.C_SPACE, intent), tree.getName(), tree.getId()));
-        writer.flush();
-
-        final List<? extends MapTree<?>> children = tree.getChildren();
-        if (CollKit.isNotEmpty(children)) {
-            for (final MapTree<?> child : children) {
-                printTree(child, writer, intent + 2);
-            }
-        }
     }
 
     /**
@@ -363,28 +343,52 @@ public class MapTree<T> extends LinkedHashMap<String, Object> implements Node<T>
     }
 
     /**
+     * 打印
+     *
+     * @param tree   树
+     * @param writer Writer
+     * @param intent 缩进量
+     */
+    private static void printTree(final MapTree<?> tree, final PrintWriter writer, final int intent) {
+        writer.println(
+                StringKit.format("{}{}[{}]", StringKit.repeat(Symbol.C_SPACE, intent), tree.getName(), tree.getId()));
+        writer.flush();
+
+        final List<? extends MapTree<?>> children = tree.getChildren();
+        if (CollKit.isNotEmpty(children)) {
+            for (final MapTree<?> child : children) {
+                printTree(child, writer, intent + 2);
+            }
+        }
+    }
+
+    /**
      * 递归克隆当前节点（即克隆整个树，保留字段值） 注意，此方法只会克隆节点，节点属性如果是引用类型，不会克隆
      *
      * @return 新的节点
      */
     public MapTree<T> cloneTree() {
         final MapTree<T> result = ObjectKit.clone(this);
-        result.setChildren(cloneChildren());
+        result.setChildren(cloneChildren(result));
         return result;
     }
 
     /**
      * 递归复制子节点
      *
+     * @param parent 新的父节点
+     *
      * @return 新的子节点列表
      */
-    private List<MapTree<T>> cloneChildren() {
+    private List<MapTree<T>> cloneChildren(final MapTree<T> parent) {
         final List<MapTree<T>> children = getChildren();
         if (null == children) {
             return null;
         }
         final List<MapTree<T>> newChildren = new ArrayList<>(children.size());
-        children.forEach((t) -> newChildren.add(t.cloneTree()));
+        children.forEach((t) -> {
+            newChildren.add(t.cloneTree().setParent(parent));
+        });
         return newChildren;
     }
 

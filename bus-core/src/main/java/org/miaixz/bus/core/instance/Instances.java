@@ -27,6 +27,9 @@
 */
 package org.miaixz.bus.core.instance;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.miaixz.bus.core.center.function.SupplierX;
 import org.miaixz.bus.core.center.map.concurrent.SafeConcurrentHashMap;
 import org.miaixz.bus.core.lang.Assert;
@@ -36,9 +39,6 @@ import org.miaixz.bus.core.xyz.ArrayKit;
 import org.miaixz.bus.core.xyz.ClassKit;
 import org.miaixz.bus.core.xyz.ReflectKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 单例类 提供单例对象的统一管理，当调用get方法时，如果对象池中存在此对象，返回此对象，否则创建新对象返回
@@ -84,21 +84,21 @@ public final class Instances {
     /**
      * 将已有对象放入单例中，其Class做为键
      *
-     * @param obj 对象
+     * @param object 对象
      */
-    public static void put(final Object obj) {
-        Assert.notNull(obj, "Bean object must be not null !");
-        put(obj.getClass().getName(), obj);
+    public static void put(final Object object) {
+        Assert.notNull(object, "Bean object must be not null !");
+        put(object.getClass().getName(), object);
     }
 
     /**
      * 将已有对象放入单例中，key做为键
      *
-     * @param key 键
-     * @param obj 对象
+     * @param key    键
+     * @param object 对象
      */
-    public static void put(final String key, final Object obj) {
-        POOL.put(key, obj);
+    public static void put(final String key, final Object object) {
+        POOL.put(key, object);
     }
 
     /**

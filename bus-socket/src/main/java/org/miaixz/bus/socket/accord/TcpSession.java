@@ -67,7 +67,7 @@ import java.util.function.Supplier;
  * @author Kimi Liu
  * @since Java 17+
  */
-public final class TcpSession extends Session {
+public class TcpSession extends Session {
 
     /**
      * 底层通信channel对象
@@ -196,6 +196,11 @@ public final class TcpSession extends Session {
         return readBuffer.buffer();
     }
 
+    @Override
+    public void awaitRead() {
+        modCount++;
+    }
+
     /**
      * 读事件回调处理
      */
@@ -223,11 +228,6 @@ public final class TcpSession extends Session {
             }
         }
     };
-
-    @Override
-    public void awaitRead() {
-        modCount++;
-    }
 
     void readCompleted(int result) {
         // 释放缓冲区

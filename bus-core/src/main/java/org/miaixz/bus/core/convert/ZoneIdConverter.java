@@ -27,10 +27,11 @@
 */
 package org.miaixz.bus.core.convert;
 
-import org.miaixz.bus.core.xyz.ZoneKit;
-
+import java.lang.reflect.Type;
 import java.time.ZoneId;
 import java.util.TimeZone;
+
+import org.miaixz.bus.core.xyz.ZoneKit;
 
 /**
  * {@link ZoneId}转换器
@@ -38,9 +39,19 @@ import java.util.TimeZone;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ZoneIdConverter extends AbstractConverter {
+public class ZoneIdConverter extends AbstractConverter implements MatcherConverter {
 
     private static final long serialVersionUID = -1L;
+
+    /**
+     * 单例
+     */
+    public static final ZoneIdConverter INSTANCE = new ZoneIdConverter();
+
+    @Override
+    public boolean match(final Type targetType, final Class<?> rawType, final Object value) {
+        return ZoneId.class.isAssignableFrom(rawType);
+    }
 
     @Override
     protected ZoneId convertInternal(final Class<?> targetClass, final Object value) {

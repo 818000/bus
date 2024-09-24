@@ -27,10 +27,6 @@
 */
 package org.miaixz.bus.core.center.map.reference;
 
-import org.miaixz.bus.core.lang.ref.Ref;
-import org.miaixz.bus.core.xyz.MapKit;
-import org.miaixz.bus.core.xyz.ReferKit;
-
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -39,6 +35,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import org.miaixz.bus.core.lang.ref.Ref;
+import org.miaixz.bus.core.xyz.MapKit;
+import org.miaixz.bus.core.xyz.ReferKit;
 
 /**
  * 线程安全的ReferenceMap实现
@@ -75,12 +75,12 @@ public abstract class ReferenceConcurrentMap<K, V>
     /**
      * 去包装对象
      *
-     * @param <T> 对象类型
-     * @param obj 对象
+     * @param <T>    对象类型
+     * @param object 对象
      * @return 值
      */
-    private static <T> T unwrap(final Ref<T> obj) {
-        return ReferKit.get(obj);
+    private static <T> T unwrap(final Ref<T> object) {
+        return ReferKit.get(object);
     }
 
     /**

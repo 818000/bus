@@ -27,9 +27,9 @@
 */
 package org.miaixz.bus.core.lang.selector;
 
-import org.miaixz.bus.core.xyz.RandomKit;
-
 import java.util.ArrayList;
+
+import org.miaixz.bus.core.xyz.RandomKit;
 
 /**
  * 随机选择器
@@ -56,8 +56,8 @@ public class RandomSelector<T> extends ArrayList<T> implements Selector<T> {
      */
     public RandomSelector(final Iterable<T> objList) {
         this();
-        for (final T obj : objList) {
-            add(obj);
+        for (final T object : objList) {
+            add(object);
         }
     }
 

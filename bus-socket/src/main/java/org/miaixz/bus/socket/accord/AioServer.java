@@ -54,7 +54,7 @@ import java.util.function.Supplier;
  * @author Kimi Liu
  * @since Java 17+
  */
-public final class AioServer {
+public class AioServer {
 
     /**
      * 线程序号

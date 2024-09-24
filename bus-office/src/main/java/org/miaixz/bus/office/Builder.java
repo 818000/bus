@@ -27,6 +27,11 @@
 */
 package org.miaixz.bus.office;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.poifs.filesystem.FileMagic;
@@ -44,11 +49,6 @@ import org.miaixz.bus.core.xyz.CollKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 /**
  * 为office提供辅助功能 Excel中日期判断、读取、处理等补充工具类
  *
@@ -58,9 +58,19 @@ import java.util.List;
 public class Builder {
 
     /**
+     * xls的ContentType
+     */
+    public static final String XLS_CONTENT_TYPE = "application/vnd.ms-excel";
+
+    /**
+     * xlsx的ContentType
+     */
+    public static final String XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+    /**
      * 没有引入POI的错误消息
      */
-    public static final String NO_POI_ERROR_MSG = "You need to add dependency of 'poi-ooxml' to your project, and version >= 4.1.2";
+    public static final String NO_POI_ERROR_MSG = "You need to add dependency of 'poi-ooxml' to your project, and version >= 5.3.0";
 
     /**
      * 某些特殊的自定义日期格式
@@ -247,7 +257,6 @@ public class Builder {
                         sheetIndexPicMap.putValue(StringKit.format("{}_{}", ctMarker.getRow(), ctMarker.getCol()),
                                 pic.getPictureData());
                     }
-                    // 其他类似于图表等忽略
                 }
             }
         }

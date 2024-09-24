@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.core.lang;
 
-import org.miaixz.bus.core.io.file.FileType;
-
 import java.net.URL;
 import java.util.Date;
+
+import org.miaixz.bus.core.io.file.FileType;
 
 /**
  * 默认常量
@@ -635,6 +635,11 @@ public class Normal {
      * </pre>
      */
     public static final String[] CAPACITY_NAMES = new String[] { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+
+    /**
+     * /** 单位名称列表（简写）
+     */
+    public static final String[] CAPACITY_SIMPLE_NAMES = new String[] { "B", "K", "M", "G", "T", "P", "E" };
 
     /**
      * 七色

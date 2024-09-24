@@ -27,17 +27,6 @@
 */
 package org.miaixz.bus.core.lang.reflect;
 
-import org.miaixz.bus.core.center.iterator.EnumerationIterator;
-import org.miaixz.bus.core.io.file.FileType;
-import org.miaixz.bus.core.io.resource.JarResource;
-import org.miaixz.bus.core.lang.Charset;
-import org.miaixz.bus.core.lang.Keys;
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.net.url.UrlDecoder;
-import org.miaixz.bus.core.xyz.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -49,6 +38,17 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import org.miaixz.bus.core.center.iterator.EnumerationIterator;
+import org.miaixz.bus.core.io.file.FileType;
+import org.miaixz.bus.core.io.resource.JarResource;
+import org.miaixz.bus.core.lang.Charset;
+import org.miaixz.bus.core.lang.Keys;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.net.url.UrlDecoder;
+import org.miaixz.bus.core.xyz.*;
 
 /**
  * 类扫描器
@@ -152,7 +152,7 @@ public class ClassScanner implements Serializable {
     /**
      * 扫描指定包路径下所有包含指定注解的类，包括其他加载的jar或者类
      *
-     * @param packageName     包路径
+     * @param packageName     包路径，{@code null}表示扫描全部
      * @param annotationClass 注解类
      * @return 类集合
      */
@@ -164,7 +164,7 @@ public class ClassScanner implements Serializable {
     /**
      * 扫描指定包路径下所有包含指定注解的类 如果classpath下已经有类，不再扫描其他加载的jar或者类
      *
-     * @param packageName     包路径
+     * @param packageName     包路径，{@code null}表示扫描全部
      * @param annotationClass 注解类
      * @return 类集合
      */
@@ -176,7 +176,7 @@ public class ClassScanner implements Serializable {
     /**
      * 扫描指定包路径下所有指定类或接口的子类或实现类，不包括指定父类本身，包括其他加载的jar或者类
      *
-     * @param packageName 包路径
+     * @param packageName 包路径，{@code null}表示扫描全部
      * @param superClass  父类或接口（不包括）
      * @return 类集合
      */
@@ -187,7 +187,7 @@ public class ClassScanner implements Serializable {
     /**
      * 扫描指定包路径下所有指定类或接口的子类或实现类，不包括指定父类本身 如果classpath下已经有类，不再扫描其他加载的jar或者类
      *
-     * @param packageName 包路径
+     * @param packageName 包路径，{@code null}表示扫描全部
      * @param superClass  父类或接口（不包括）
      * @return 类集合
      */

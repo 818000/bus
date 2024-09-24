@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.image.metric.api;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.Symbol;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
 
 /**
  * @author Kimi Liu
@@ -46,8 +46,8 @@ public class ConfigurationChanges {
         this.verbose = verbose;
     }
 
-    public static <T> T nullifyIfNotVerbose(ConfigurationChanges diffs, T obj) {
-        return diffs != null && diffs.isVerbose() ? obj : null;
+    public static <T> T nullifyIfNotVerbose(ConfigurationChanges diffs, T object) {
+        return diffs != null && diffs.isVerbose() ? object : null;
     }
 
     public static ModifiedObject addModifiedObjectIfVerbose(ConfigurationChanges diffs, String dn,
@@ -69,8 +69,8 @@ public class ConfigurationChanges {
         return object;
     }
 
-    public static void removeLastIfEmpty(ConfigurationChanges diffs, ModifiedObject obj) {
-        if (obj != null && obj.isEmpty())
+    public static void removeLastIfEmpty(ConfigurationChanges diffs, ModifiedObject object) {
+        if (object != null && object.isEmpty())
             diffs.removeLast();
     }
 

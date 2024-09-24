@@ -27,17 +27,17 @@
 */
 package org.miaixz.bus.core.bean;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.miaixz.bus.core.bean.desc.PropDesc;
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.BeanException;
 import org.miaixz.bus.core.lang.exception.CloneException;
 import org.miaixz.bus.core.xyz.*;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 动态Bean，通过反射对Bean的相关方法做操作 支持Map和普通Bean和Collection
@@ -48,15 +48,14 @@ import java.util.Map;
 public class DynaBean implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -1L;
-
-    /**
-     * bean对象
-     */
-    private Object bean;
     /**
      * bean类
      */
     private final Class<?> beanClass;
+    /**
+     * bean对象
+     */
+    private Object bean;
 
     /**
      * 构造
@@ -129,9 +128,10 @@ public class DynaBean implements Cloneable, Serializable {
         } else {
             final PropDesc prop = BeanKit.getBeanDesc(beanClass).getProp(fieldName);
             if (null == prop) {
-                throw new BeanException("No public field or get method for {}", fieldName);
+                // 节点字段不存在，类似于Map无key，返回null而非报错
+                return null;
             }
-            return (T) prop.getValue(bean);
+            return (T) prop.getValue(bean, false);
         }
     }
 
@@ -233,17 +233,17 @@ public class DynaBean implements Cloneable, Serializable {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
+    public boolean equals(final Object object) {
+        if (this == object) {
             return true;
         }
-        if (obj == null) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final DynaBean other = (DynaBean) obj;
+        final DynaBean other = (DynaBean) object;
         if (bean == null) {
             return other.bean == null;
         } else

@@ -27,6 +27,12 @@
 */
 package org.miaixz.bus.image.nimble;
 
+import java.awt.image.DataBuffer;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.miaixz.bus.core.xyz.ByteKit;
 import org.miaixz.bus.image.Builder;
 import org.miaixz.bus.image.Tag;
@@ -40,12 +46,6 @@ import org.miaixz.bus.image.nimble.opencv.lut.LutShape;
 import org.miaixz.bus.logger.Logger;
 import org.opencv.core.CvType;
 import org.opencv.imgproc.Imgproc;
-
-import java.awt.image.DataBuffer;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * @author Kimi Liu
@@ -273,8 +273,8 @@ public class RGBImageVoiLut {
     }
 
     /**
-     * @return LookupTable with full range of possible input entries according to bitStored.<br>
-     *         Note that isSigned is relevant for both input and output values
+     * @return LookupTable with full range of possible input entries according to bitStored. Note that isSigned is
+     *         relevant for both input and output values
      */
     public static LookupTableCV createRescaleRampLut(LutParameters params) {
         return createRescaleRampLut(params.getIntercept(), params.getSlope(), params.getBitsStored(), params.isSigned(),
@@ -577,7 +577,7 @@ public class RGBImageVoiLut {
      * @param minOutValue
      * @param maxOutValue
      * @param inverse
-     * @return a normalized LookupTableJAI based upon given lutSequence <br>
+     * @return a normalized LookupTableJAI based upon given lutSequence
      */
     private static void setWindowLevelSequenceLut(double width, double center, LookupTableCV lookupSequence,
             int minInValue, int maxInValue, Object outLut, int minOutValue, int maxOutValue, boolean inverse) {

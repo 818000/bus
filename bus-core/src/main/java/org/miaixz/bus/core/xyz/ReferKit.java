@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.core.xyz;
 
+import java.lang.ref.*;
+
 import org.miaixz.bus.core.lang.ref.Ref;
 import org.miaixz.bus.core.lang.ref.ReferenceType;
-
-import java.lang.ref.*;
 
 /**
  * 引用工具类，主要针对{@link Reference} 工具化封装 主要封装包括：
@@ -83,23 +83,23 @@ public class ReferKit {
     /**
      * {@code null}全的解包获取原始对象
      *
-     * @param <T> 对象类型
-     * @param obj Reference对象
+     * @param <T>    对象类型
+     * @param object Reference对象
      * @return 原始对象 or {@code null}
      */
-    public static <T> T get(final Reference<T> obj) {
-        return ObjectKit.apply(obj, Reference::get);
+    public static <T> T get(final Reference<T> object) {
+        return ObjectKit.apply(object, Reference::get);
     }
 
     /**
      * {@code null}全的解包获取原始对象
      *
-     * @param <T> 对象类型
-     * @param obj Ref对象
+     * @param <T>    对象类型
+     * @param object Ref对象
      * @return 原始对象 or {@code null}
      */
-    public static <T> T get(final Ref<T> obj) {
-        return ObjectKit.apply(obj, Ref::get);
+    public static <T> T get(final Ref<T> object) {
+        return ObjectKit.apply(object, Ref::get);
     }
 
 }

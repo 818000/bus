@@ -27,19 +27,6 @@
 */
 package org.miaixz.bus.core.xyz;
 
-import org.miaixz.bus.core.bean.NullWrapper;
-import org.miaixz.bus.core.center.stream.EasyStream;
-import org.miaixz.bus.core.convert.BasicType;
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.lang.Charset;
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.lang.loader.classloader.JarClassLoader;
-import org.miaixz.bus.core.lang.reflect.ClassScanner;
-import org.miaixz.bus.core.net.url.UrlDecoder;
-import org.miaixz.bus.core.text.CharsBacker;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -53,6 +40,19 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import org.miaixz.bus.core.bean.NullWrapper;
+import org.miaixz.bus.core.center.stream.EasyStream;
+import org.miaixz.bus.core.convert.BasicType;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Charset;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.lang.loader.classloader.JarClassLoader;
+import org.miaixz.bus.core.lang.reflect.ClassScanner;
+import org.miaixz.bus.core.net.url.UrlDecoder;
+import org.miaixz.bus.core.text.CharsBacker;
 
 /**
  * 类工具类
@@ -70,12 +70,12 @@ public class ClassKit {
     /**
      * {@code null}安全的获取对象类型
      *
-     * @param <T> 对象类型
-     * @param obj 对象，如果为{@code null} 返回{@code null}
+     * @param <T>    对象类型
+     * @param object 对象，如果为{@code null} 返回{@code null}
      * @return 对象类型，提供对象如果为{@code null} 返回{@code null}
      */
-    public static <T> Class<T> getClass(final T obj) {
-        return ((null == obj) ? null : (Class<T>) obj.getClass());
+    public static <T> Class<T> getClass(final T object) {
+        return ((null == object) ? null : (Class<T>) object.getClass());
     }
 
     /**
@@ -126,15 +126,15 @@ public class ClassKit {
     /**
      * 获取类名
      *
-     * @param obj      获取类名对象
+     * @param object   获取类名对象
      * @param isSimple 是否简单类名，如果为true，返回不带包名的类名
      * @return 类名
      */
-    public static String getClassName(final Object obj, final boolean isSimple) {
-        if (null == obj) {
+    public static String getClassName(final Object object, final boolean isSimple) {
+        if (null == object) {
             return null;
         }
-        final Class<?> clazz = obj.getClass();
+        final Class<?> clazz = object.getClass();
         return getClassName(clazz, isSimple);
     }
 
@@ -187,16 +187,16 @@ public class ClassKit {
      */
     public static Class<?>[] getClasses(final Object... objects) {
         final Class<?>[] classes = new Class<?>[objects.length];
-        Object obj;
+        Object object;
         for (int i = 0; i < objects.length; i++) {
-            obj = objects[i];
-            if (obj instanceof NullWrapper) {
+            object = objects[i];
+            if (object instanceof NullWrapper) {
                 // 自定义null值的参数类型
-                classes[i] = ((NullWrapper<?>) obj).getWrappedClass();
-            } else if (null == obj) {
+                classes[i] = ((NullWrapper<?>) object).getWrappedClass();
+            } else if (null == object) {
                 classes[i] = Object.class;
             } else {
-                classes[i] = obj.getClass();
+                classes[i] = object.getClass();
             }
         }
         return classes;

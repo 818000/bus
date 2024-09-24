@@ -27,25 +27,25 @@
 */
 package org.miaixz.bus.core.text.placeholder;
 
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.text.placeholder.segment.AbstractSegment;
-import org.miaixz.bus.core.text.placeholder.segment.LiteralSegment;
-import org.miaixz.bus.core.text.placeholder.segment.StringSegment;
-import org.miaixz.bus.core.text.placeholder.template.NamedStringTemplate;
-import org.miaixz.bus.core.text.placeholder.template.SingleStringTemplate;
-import org.miaixz.bus.core.xyz.ArrayKit;
-import org.miaixz.bus.core.xyz.CollKit;
-import org.miaixz.bus.core.xyz.ListKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.text.placeholder.segment.AbstractSegment;
+import org.miaixz.bus.core.text.placeholder.segment.LiteralSegment;
+import org.miaixz.bus.core.text.placeholder.segment.StringSegment;
+import org.miaixz.bus.core.text.placeholder.template.NamedPlaceholderString;
+import org.miaixz.bus.core.text.placeholder.template.SinglePlaceholderString;
+import org.miaixz.bus.core.xyz.ArrayKit;
+import org.miaixz.bus.core.xyz.CollKit;
+import org.miaixz.bus.core.xyz.ListKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * 字符串模板 格式化 和 反解析 抽象父类
@@ -144,8 +144,8 @@ public abstract class StringTemplate {
      * @param template 字符串模板
      * @return 单占位符 模板对象的 Builder
      */
-    public static SingleStringTemplate.Builder of(final String template) {
-        return SingleStringTemplate.builder(template);
+    public static SinglePlaceholderString.Builder of(final String template) {
+        return SinglePlaceholderString.builder(template);
     }
 
     /**
@@ -157,8 +157,8 @@ public abstract class StringTemplate {
      * @param template 字符串模板
      * @return 有前缀和后缀的占位符模板对象的 Builder
      */
-    public static NamedStringTemplate.Builder ofNamed(final String template) {
-        return NamedStringTemplate.builder(template);
+    public static NamedPlaceholderString.Builder ofNamed(final String template) {
+        return NamedPlaceholderString.builder(template);
     }
 
     /**

@@ -27,12 +27,12 @@
 */
 package org.miaixz.bus.office.excel.style;
 
+import java.io.Serializable;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.miaixz.bus.core.xyz.ObjectKit;
-
-import java.io.Serializable;
 
 /**
  * 单元格边框样式和颜色封装，边框按照“上右下左”的顺序定义，与CSS一致
@@ -52,6 +52,19 @@ public class CellBorderStyle implements Serializable {
     private Short bottomColor;
     private BorderStyle leftStyle;
     private Short leftColor;
+
+    /**
+     * 根据CellStyle创建单元格边框样式对象。
+     *
+     * @param cellStyle 单元格样式
+     * @return CellBorderStyle
+     */
+    public static CellBorderStyle of(final CellStyle cellStyle) {
+        return new CellBorderStyle().setTopStyle(cellStyle.getBorderTop()).setTopColor(cellStyle.getTopBorderColor())
+                .setRightStyle(cellStyle.getBorderRight()).setRightColor(cellStyle.getRightBorderColor())
+                .setBottomStyle(cellStyle.getBorderBottom()).setBottomColor(cellStyle.getBottomBorderColor())
+                .setLeftStyle(cellStyle.getBorderLeft()).setLeftColor(cellStyle.getLeftBorderColor());
+    }
 
     /**
      * 创建单元格边框样式对象，四边框样式保持一致。
@@ -229,8 +242,8 @@ public class CellBorderStyle implements Serializable {
     /**
      * 将边框样式和颜色设置到CellStyle中
      *
-     * @param cellStyle CellStyle
-     * @return the CellStyle
+     * @param cellStyle {@link CellStyle}
+     * @return {@link CellStyle}
      */
     public CellStyle setTo(final CellStyle cellStyle) {
         ObjectKit.accept(this.topStyle, cellStyle::setBorderTop);

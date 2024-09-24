@@ -27,12 +27,6 @@
 */
 package org.miaixz.bus.core.center.stream;
 
-import org.miaixz.bus.core.center.map.concurrent.SafeConcurrentHashMap;
-import org.miaixz.bus.core.lang.Console;
-import org.miaixz.bus.core.lang.mutable.MutableInt;
-import org.miaixz.bus.core.lang.mutable.MutableObject;
-import org.miaixz.bus.core.xyz.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +34,12 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import org.miaixz.bus.core.center.map.concurrent.SafeConcurrentHashMap;
+import org.miaixz.bus.core.lang.Console;
+import org.miaixz.bus.core.lang.mutable.MutableInt;
+import org.miaixz.bus.core.lang.mutable.MutableObject;
+import org.miaixz.bus.core.xyz.*;
 
 /**
  * {@link WrappedStream}的扩展，用于为实现类提供更多中间操作方法的增强接口， 该接口提供的方法，返回值类型都为{@link Stream}。
@@ -295,13 +295,13 @@ public interface TransformableWrappedStream<T, S extends TransformableWrappedStr
     /**
      * 与给定元素组成的流合并，成为新的流
      *
-     * @param obj 元素
+     * @param object 元素
      * @return 流
      */
-    default S push(final T... obj) {
+    default S push(final T... object) {
         Stream<T> result = unwrap();
-        if (ArrayKit.isNotEmpty(obj)) {
-            result = Stream.concat(unwrap(), Stream.of(obj));
+        if (ArrayKit.isNotEmpty(object)) {
+            result = Stream.concat(unwrap(), Stream.of(object));
         }
         return wrap(result);
     }
@@ -309,13 +309,13 @@ public interface TransformableWrappedStream<T, S extends TransformableWrappedStr
     /**
      * 给定元素组成的流与当前流合并，成为新的流
      *
-     * @param obj 元素
+     * @param object 元素
      * @return 流
      */
-    default S unshift(final T... obj) {
+    default S unshift(final T... object) {
         Stream<T> result = unwrap();
-        if (ArrayKit.isNotEmpty(obj)) {
-            result = Stream.concat(Stream.of(obj), unwrap());
+        if (ArrayKit.isNotEmpty(object)) {
+            result = Stream.concat(Stream.of(object), unwrap());
         }
         return wrap(result);
     }

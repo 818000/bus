@@ -27,20 +27,22 @@
 */
 package org.miaixz.bus.health.windows;
 
-import com.sun.jna.platform.win32.COM.Wbemcli;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
-import com.sun.jna.platform.win32.PdhUtil;
-import com.sun.jna.platform.win32.PdhUtil.PdhEnumObjectItems;
-import com.sun.jna.platform.win32.PdhUtil.PdhException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.lang.tuple.Pair;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.health.Builder;
+import org.miaixz.bus.health.Config;
 import org.miaixz.bus.logger.Logger;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import com.sun.jna.platform.win32.PdhUtil;
+import com.sun.jna.platform.win32.PdhUtil.PdhEnumObjectItems;
+import com.sun.jna.platform.win32.PdhUtil.PdhException;
+import com.sun.jna.platform.win32.COM.Wbemcli;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * Enables queries of Performance Counters using wild cards to filter instances
@@ -50,6 +52,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ThreadSafe
 public final class PerfCounterWildcardQuery {
+
+    private static final boolean PERF_DISABLE_ALL_ON_FAILURE = Config.get(Config._WINDOWS_PERF_DISABLE_ALL_ON_FAILURE,
+            false);
 
     // Use a thread safe set to cache failed pdh queries
     private static final Set<String> FAILED_QUERY_CACHE = ConcurrentHashMap.newKeySet();
@@ -88,7 +93,8 @@ public final class PerfCounterWildcardQuery {
      */
     public static <T extends Enum<T>> Pair<List<String>, Map<T, List<Long>>> queryInstancesAndValues(
             Class<T> propertyEnum, String perfObject, String perfWmiClass, String customFilter) {
-        if (!FAILED_QUERY_CACHE.contains(perfObject)) {
+        if (FAILED_QUERY_CACHE.isEmpty()
+                || (!PERF_DISABLE_ALL_ON_FAILURE && !FAILED_QUERY_CACHE.contains(perfObject))) {
             Pair<List<String>, Map<T, List<Long>>> instancesAndValuesMap = queryInstancesAndValuesFromPDH(propertyEnum,
                     perfObject, customFilter);
             if (!instancesAndValuesMap.getLeft().isEmpty()) {
@@ -96,7 +102,11 @@ public final class PerfCounterWildcardQuery {
             }
             // If we are here, query returned no results
             if (StringKit.isBlank(customFilter)) {
-                Logger.warn("Disabling further attempts to query {}.", perfObject);
+                if (PERF_DISABLE_ALL_ON_FAILURE) {
+                    Logger.info("Disabling further attempts to query performance counters.");
+                } else {
+                    Logger.info("Disabling further attempts to query {}.", perfObject);
+                }
                 FAILED_QUERY_CACHE.add(perfObject);
             }
         }

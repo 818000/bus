@@ -27,6 +27,12 @@
 */
 package org.miaixz.bus.core.text;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.Function;
+
 import org.miaixz.bus.core.center.iterator.ArrayIterator;
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.lang.Normal;
@@ -34,12 +40,6 @@ import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.ArrayKit;
 import org.miaixz.bus.core.xyz.IteratorKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * 字符串连接器（拼接器），通过给定的字符串和多个元素，拼接为一个字符串 相较于{@link java.util.StringJoiner}提供更加灵活的配置，包括：
@@ -241,23 +241,23 @@ public class StringJoiner implements Appendable, Serializable {
      * <li>{@link Map.Entry}，追加键，分隔符，再追加值</li>
      * </ul>
      *
-     * @param obj 对象，支持数组、集合等
+     * @param object 对象，支持数组、集合等
      * @return this
      */
-    public StringJoiner append(final Object obj) {
-        if (null == obj) {
+    public StringJoiner append(final Object object) {
+        if (null == object) {
             append((CharSequence) null);
-        } else if (ArrayKit.isArray(obj)) {
-            append(new ArrayIterator<>(obj));
-        } else if (obj instanceof Iterator) {
-            append((Iterator<?>) obj);
-        } else if (obj instanceof Iterable) {
-            append(((Iterable<?>) obj).iterator());
-        } else if (obj instanceof Map.Entry) {
-            final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
+        } else if (ArrayKit.isArray(object)) {
+            append(new ArrayIterator<>(object));
+        } else if (object instanceof Iterator) {
+            append((Iterator<?>) object);
+        } else if (object instanceof Iterable) {
+            append(((Iterable<?>) object).iterator());
+        } else if (object instanceof Map.Entry) {
+            final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) object;
             append(entry.getKey()).append(entry.getValue());
         } else {
-            append(Convert.toString(obj));
+            append(Convert.toString(object));
         }
         return this;
     }

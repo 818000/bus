@@ -27,10 +27,10 @@
 */
 package org.miaixz.bus.core.lang.mutable;
 
-import org.miaixz.bus.core.xyz.ObjectKit;
-
 import java.io.Serializable;
 import java.util.Objects;
+
+import org.miaixz.bus.core.xyz.ObjectKit;
 
 /**
  * 可变{@code Object}
@@ -83,15 +83,15 @@ public class MutableObject<T> implements Mutable<T>, Serializable {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
+    public boolean equals(final Object object) {
+        if (object == null) {
             return false;
         }
-        if (this == obj) {
+        if (this == object) {
             return true;
         }
-        if (this.getClass() == obj.getClass()) {
-            final MutableObject<?> that = (MutableObject<?>) obj;
+        if (this.getClass() == object.getClass()) {
+            final MutableObject<?> that = (MutableObject<?>) object;
             return ObjectKit.equals(this.value, that.value);
         }
         return false;

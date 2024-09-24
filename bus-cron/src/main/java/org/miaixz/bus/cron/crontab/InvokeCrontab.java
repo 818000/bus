@@ -27,6 +27,8 @@
 */
 package org.miaixz.bus.cron.crontab;
 
+import java.lang.reflect.Method;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.CrontabException;
 import org.miaixz.bus.core.lang.exception.InternalException;
@@ -34,8 +36,6 @@ import org.miaixz.bus.core.xyz.ClassKit;
 import org.miaixz.bus.core.xyz.MethodKit;
 import org.miaixz.bus.core.xyz.ReflectKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import java.lang.reflect.Method;
 
 /**
  * 反射执行任务 通过传入类名#方法名，通过反射执行相应的方法 如果是静态方法直接执行，如果是对象方法，需要类有默认的构造方法。
@@ -45,7 +45,7 @@ import java.lang.reflect.Method;
  */
 public class InvokeCrontab implements Crontab {
 
-    private final Object obj;
+    private final Object object;
     private final Method method;
 
     /**
@@ -71,7 +71,7 @@ public class InvokeCrontab implements Crontab {
         if (null == clazz) {
             throw new IllegalArgumentException("Load class with name of [" + className + "] fail !");
         }
-        this.obj = ReflectKit.newInstanceIfPossible(clazz);
+        this.object = ReflectKit.newInstanceIfPossible(clazz);
 
         // 方法
         final String methodName = classNameWithMethodName.substring(splitIndex + 1);
@@ -87,7 +87,7 @@ public class InvokeCrontab implements Crontab {
     @Override
     public void execute() {
         try {
-            MethodKit.invoke(this.obj, this.method);
+            MethodKit.invoke(this.object, this.method);
         } catch (final InternalException e) {
             throw new CrontabException(e.getCause());
         }

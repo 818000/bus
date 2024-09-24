@@ -27,16 +27,16 @@
 */
 package org.miaixz.bus.image.galaxy.data;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.StreamKit;
 import org.miaixz.bus.image.Builder;
 import org.miaixz.bus.image.galaxy.io.ImageEncodingOptions;
 import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
-
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * @author Kimi Liu
@@ -221,14 +221,14 @@ public class BulkData implements Value, Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(Object object) {
+        if (this == object)
             return true;
-        if (obj == null)
+        if (object == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != object.getClass())
             return false;
-        BulkData other = (BulkData) obj;
+        BulkData other = (BulkData) object;
         if (bigEndian != other.bigEndian)
             return false;
         if (uri == null) {
