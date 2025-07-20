@@ -25,72 +25,59 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.wrapper;
+package org.miaixz.bus.core.basic.entity;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
- * 配置信息
+ * 许可协议属性
  *
  * @author Kimi Liu
  * @since Java 17+
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = GeniusBuilder.WRAPPER)
-public class WrapperProperties {
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class License {
 
     /**
-     * 设置此注册的名称 如果没有指定，将使用bean名
+     * ID
      */
-    private String name = "_wrapper";
-    /**
-     * 设置注册bean的顺序
-     */
-    private int order = 100;
+    private String id;
 
     /**
-     * 设置访问前缀
+     * 名称
      */
-    private String prefix = Normal.EMPTY;
+    private String name;
+
     /**
-     * 标志，表示已启用注册
+     * 证书主题
      */
-    private boolean enabled = true;
+    private String subject;
+
     /**
-     * 扫描controller接口的基本包 Controller 所在包的 Ant 路径规则 主要目的是，给该 Controller 设置指定的前缀
+     * 版本
      */
-    private String[] basePackages;
+    private String version;
+
     /**
-     * 扫描包后的API地址是否入库，结合basePackages使用
+     * 证书生效时间
      */
-    private boolean inStorage;
+    private String issuedTime;
     /**
-     * fastjson、jackson 都支持 AutoType 功能，这个功能在序列化的 JSON 字符串中带上类型信息，在反序列化时，不需要传入类型，实现自动类型识别
+     * 证书失效时间
      */
-    private String autoType;
+    private String expiryTime;
+
     /**
-     * 为此注册设置初始化参数。调用此方法将替换任何现有的初始化参数
+     * 描述信息
      */
-    private Map<String, String> initParameters = new LinkedHashMap<>();
-    /**
-     * 筛选器要注册的servlet名称,这将替换以前指定的任何servlet名称
-     */
-    private Set<String> servletNames = new LinkedHashSet<>();
-    /**
-     * 过滤器将注册到的ServletRegistrationBeans
-     */
-    private Set<ServletRegistrationBean<?>> servletRegistrationBeans = new LinkedHashSet<>();
+    private String description;
 
 }
