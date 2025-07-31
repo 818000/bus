@@ -31,6 +31,9 @@ import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.crypto.Provider;
 import org.aoju.bus.crypto.symmetric.SM4;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 高级加密标准,是下一代的加密算法标准,速度快,安全级别高； AES是一个使用128为分组块的分组加密算法,分组块和128、192或256位的密钥一起作为输入, 对4×4的字节数组上进行操作
  * 众所周之AES是种十分高效的算法,尤其在8位架构中,这源于它面向字节的设计 AES 适用于8位的小型单片机或者普通的32位微处理器,并且适合用专门的硬件实现,硬件实现能够使其吞吐量(每秒可以到达的加密/解密bit数) 达到十亿量级
@@ -39,6 +42,11 @@ import org.aoju.bus.crypto.symmetric.SM4;
  * @since Java 17+
  */
 public class SM4Provider implements Provider {
+    private final Map<String, SM4> cache = new ConcurrentHashMap<>();
+
+    public SM4 getOrCompute(String key) {
+        return cache.computeIfAbsent(key, k -> new SM4(HexKit.decodeHex(k)));
+    }
 
     /**
      * 加密
@@ -51,7 +59,7 @@ public class SM4Provider implements Provider {
         if (StringKit.isEmpty(key)) {
             throw new InternalException("key is null!");
         }
-        SM4 sm4 = new SM4(HexKit.decodeHex(key));
+        SM4 sm4 = getOrCompute(key);
         return sm4.encrypt(content);
     }
 
@@ -66,7 +74,7 @@ public class SM4Provider implements Provider {
         if (StringKit.isEmpty(key)) {
             throw new InternalException("key is null!");
         }
-        SM4 sm4 = new SM4(HexKit.decodeHex(key));
+        SM4 sm4 = getOrCompute(key);
         return sm4.decrypt(content);
     }
 

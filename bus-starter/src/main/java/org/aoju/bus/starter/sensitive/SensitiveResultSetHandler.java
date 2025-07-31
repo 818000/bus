@@ -105,7 +105,12 @@ public class SensitiveResultSetHandler extends AbstractSqlHandler implements Int
                                 String value = (String) objMetaObject.getValue(property);
                                 if (StringKit.isNotEmpty(value)) {
                                     Logger.debug("Query data decryption enabled ...");
-                                    String decryptValue = org.aoju.bus.crypto.Builder.decrypt(this.type, this.key, value, Charset.UTF_8);
+                                    String decryptValue = value;
+                                    try {
+                                        decryptValue = org.aoju.bus.crypto.Builder.decrypt(this.type, this.key, value, Charset.UTF_8);
+                                    } catch (Exception e) {
+                                        Logger.error(e,e.getMessage());
+                                    }
                                     objMetaObject.setValue(property, decryptValue);
                                 }
                             }
