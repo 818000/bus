@@ -25,42 +25,49 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.handler;
+
+import org.springframework.boot.webmvc.autoconfigure.WebMvcRegistrations;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
 /**
- * bus.bom
- * 
+ * Spring Boot 专用 Web MVC 注册配置类，用于自定义 MVC 组件，避免直接继承 WebConfigurationSupport 破坏 Spring 的自动配置
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+public class ApiWebMvcRegistrations implements WebMvcRegistrations {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 提供自定义的 RequestMappingHandlerMapping 实现
+     *
+     * @return 自定义的 ApiRequestMappingHandlerMapping 实例
+     */
+    @Override
+    public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
+        return new ApiRequestMappingHandlerMapping();
+    }
 
-    exports org.miaixz.bus;
+    /**
+     * 提供自定义的 RequestMappingHandlerAdapter 实现（当前未自定义）
+     *
+     * @return 返回 null，保留 Spring Boot 默认配置
+     */
+    @Override
+    public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
+        return null;
+    }
+
+    /**
+     * 提供自定义的 ExceptionHandlerExceptionResolver 实现（当前未自定义）
+     *
+     * @return 返回 null，保留 Spring Boot 默认配置
+     */
+    @Override
+    public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
+        return null;
+    }
 
 }

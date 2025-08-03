@@ -25,42 +25,59 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.registry;
+
+import org.miaixz.bus.vortex.Assets;
+import org.miaixz.bus.vortex.magic.Limiter;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 默认限流注册实现类，基于 AbstractRegistry 提供限流配置（Limiter）的注册和管理功能
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public class DefaultLimiterRegistry extends AbstractRegistry<Limiter> implements LimiterRegistry {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 添加限流配置到注册表，使用 IP、方法名和版本号的组合作为键
+     *
+     * @param limiter 要添加的限流配置对象
+     */
+    @Override
+    public void addLimiter(Limiter limiter) {
+        String nameVersion = limiter.getMethod() + limiter.getVersion();
+        String ip = limiter.getIp();
+        add(ip + nameVersion, limiter);
+    }
 
-    exports org.miaixz.bus;
+    /**
+     * 修改注册表中的限流配置（当前为空实现）
+     *
+     * @param limitCfg 要更新的限流配置对象
+     */
+    @Override
+    public void amendLimiter(Limiter limitCfg) {
+        // 空实现，待扩展
+    }
+
+    /**
+     * 根据方法名和版本号获取对应的资产（当前返回 null）
+     *
+     * @param method  方法名
+     * @param version 版本号
+     * @return 当前实现始终返回 null，待扩展
+     */
+    @Override
+    public Assets getLimiter(String method, String version) {
+        return null;
+    }
+
+    /**
+     * 初始化注册表（当前为空实现，子类可根据需要扩展）
+     */
+    @Override
+    public void init() {
+        // 空实现，留给子类扩展
+    }
 
 }

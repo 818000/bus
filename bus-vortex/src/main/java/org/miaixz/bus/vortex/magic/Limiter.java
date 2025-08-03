@@ -25,42 +25,84 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.magic;
+
+import com.google.common.util.concurrent.RateLimiter;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 限流器类，基于令牌桶算法实现请求限流功能
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+@Getter
+@Setter
+@SuperBuilder
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class Limiter {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 请求来源的 IP 地址
+     */
+    private String ip;
 
-    exports org.miaixz.bus;
+    /**
+     * 请求的方法名
+     */
+    private String method;
+
+    /**
+     * 请求的版本号
+     */
+    private String version;
+
+    /**
+     * 令牌桶的令牌生成速率（每秒生成令牌数）
+     */
+    private int tokenCount;
+
+    /**
+     * 令牌桶实例，使用 Google Guava 的 RateLimiter 实现限流
+     */
+    private volatile RateLimiter rateLimiter;
+
+    /**
+     * 初始化令牌桶，设置令牌生成速率 使用 synchronized 确保线程安全
+     */
+    public synchronized void initRateLimiter() {
+        rateLimiter = RateLimiter.create(tokenCount);
+    }
+
+    /**
+     * 获取令牌桶实例，采用双重检查锁确保线程安全
+     *
+     * @return 限流器实例（RateLimiter）
+     */
+    public RateLimiter fetchRateLimiter() {
+        if (null == rateLimiter) {
+            synchronized (this) {
+                if (null == rateLimiter) {
+                    rateLimiter = RateLimiter.create(tokenCount);
+                }
+            }
+        }
+        return rateLimiter;
+    }
+
+    /**
+     * 尝试获取一个令牌，阻塞直到获取成功
+     *
+     * @return 获取令牌的等待时间（秒）
+     */
+    public double acquire() {
+        return fetchRateLimiter().acquire();
+    }
 
 }

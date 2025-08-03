@@ -25,42 +25,28 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.provider;
+
+import org.miaixz.bus.extra.json.JsonKit;
+import org.miaixz.bus.vortex.Provider;
+
 /**
- * bus.bom
- * 
+ * JSON 序列化提供者，实现对象到 JSON 字符串的转换
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+public class JsonProvider implements Provider {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
-
-    exports org.miaixz.bus;
+    /**
+     * 将对象序列化为 JSON 字符串
+     *
+     * @param object 要序列化的对象
+     * @return 序列化后的 JSON 字符串
+     */
+    @Override
+    public String serialize(Object object) {
+        return JsonKit.toJsonString(object);
+    }
 
 }

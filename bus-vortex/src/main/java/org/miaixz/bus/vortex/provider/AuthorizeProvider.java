@@ -25,42 +25,27 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.provider;
+
+import org.miaixz.bus.vortex.magic.Delegate;
+import org.miaixz.bus.vortex.magic.Token;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 访问授权认证接口，定义授权认证相关的功能
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public interface AuthorizeProvider {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
-
-    exports org.miaixz.bus;
+    /**
+     * 执行认证操作，验证授权令牌并返回认证结果
+     *
+     * @param token 授权令牌，包含认证所需的信息
+     * @return Delegate 认证结果对象，默认为空 Delegate 实例
+     */
+    default Delegate authorize(Token token) {
+        return new Delegate();
+    }
 
 }

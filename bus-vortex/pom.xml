@@ -31,12 +31,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.miaixz</groupId>
-    <artifactId>bus-bom</artifactId>
+    <artifactId>bus-vortex</artifactId>
     <version>8.2.2</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
-    <description>Bus Bom</description>
+    <description>Bus Vortex</description>
     <url>https://github.com/818000/bus</url>
     <inceptionYear>2015</inceptionYear>
 
@@ -86,34 +86,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <bus.version>8.2.2</bus.version>
+        <lombok.version>1.18.38</lombok.version>
+        <spring.boot.version>4.0.0-M1</spring.boot.version>
+        <guava.version>33.4.8-jre</guava.version>
+        <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-auth</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-base</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-cache</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-core</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-cron</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.miaixz</groupId>
             <artifactId>bus-crypto</artifactId>
@@ -126,108 +105,67 @@
         </dependency>
         <dependency>
             <groupId>org.miaixz</groupId>
-            <artifactId>bus-gitlab</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-health</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
             <artifactId>bus-http</artifactId>
             <version>${bus.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-image</artifactId>
-            <version>${bus.version}</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-limiter</artifactId>
-            <version>${bus.version}</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-logger</artifactId>
-            <version>${bus.version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-mapper</artifactId>
-            <version>${bus.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.version}</version>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-json</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jdk8</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-notify</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-office</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-pager</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-pay</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-proxy</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-sensitive</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-setting</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-shade</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-socket</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-starter</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-storage</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-tracer</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-validate</artifactId>
-            <version>${bus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.miaixz</groupId>
-            <artifactId>bus-vortex</artifactId>
-            <version>${bus.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>${spring.boot.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -237,7 +175,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
-                <configuration />
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
