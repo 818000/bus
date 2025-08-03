@@ -25,42 +25,33 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.starter.vortex;
+
+import org.miaixz.bus.vortex.Config;
+import org.miaixz.bus.spring.GeniusBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * bus.bom
- * 
+ * 路由配置
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+@Getter
+@Setter
+@ConfigurationProperties(GeniusBuilder.VORTEX)
+public class VortexProperties {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
-
-    exports org.miaixz.bus;
+    /**
+     * 默认配置
+     */
+    private final Config server = new Config();
+    /**
+     * 自定义Spring MVC配置处理
+     */
+    private boolean condition;
 
 }

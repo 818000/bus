@@ -25,42 +25,34 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.annotation;
+
+import java.lang.annotation.*;
+
 /**
- * bus.bom
- * 
+ * 客户端版本注解，用于指定客户端终端类型和版本条件，支持 Spring MVC 请求匹配。 可通过 TerminalVersion 数组或字符串表达式定义匹配规则。
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+@Inherited
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface ClientVersion {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 终端版本条件数组，指定终端类型、版本号和比较操作符。
+     *
+     * @return TerminalVersion 数组，默认为空数组
+     */
+    TerminalVersion[] value() default {};
 
-    exports org.miaixz.bus;
+    /**
+     * 字符串表达式数组，用于解析终端版本条件，与 value 属性效果一致。 格式示例：["1,2>=1.0", "3==2.0"]。
+     *
+     * @return 字符串表达式数组，默认为空数组
+     */
+    String[] expression() default {};
 
 }

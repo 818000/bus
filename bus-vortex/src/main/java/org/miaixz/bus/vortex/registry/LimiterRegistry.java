@@ -25,42 +25,41 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.registry;
+
+import org.miaixz.bus.vortex.Assets;
+import org.miaixz.bus.vortex.Registry;
+import org.miaixz.bus.vortex.magic.Limiter;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 限流注册接口，定义限流配置（Limiter）的注册、修改和查询功能
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public interface LimiterRegistry extends Registry<Limiter> {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 添加限流配置到注册表
+     *
+     * @param limiter 要添加的限流配置对象
+     */
+    void addLimiter(Limiter limiter);
 
-    exports org.miaixz.bus;
+    /**
+     * 修改注册表中的限流配置
+     *
+     * @param limiter 要更新的限流配置对象
+     */
+    void amendLimiter(Limiter limiter);
+
+    /**
+     * 根据 IP 和方法名版本号组合获取对应的资产
+     *
+     * @param ip          IP 地址
+     * @param nameVersion 方法名和版本号的组合
+     * @return 匹配的资产对象，若不存在返回 null
+     */
+    Assets getLimiter(String ip, String nameVersion);
 
 }

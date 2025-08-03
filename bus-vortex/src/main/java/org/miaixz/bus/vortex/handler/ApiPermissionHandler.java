@@ -25,42 +25,31 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.handler;
+
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+
 /**
- * bus.bom
- * 
+ * API 权限处理类，继承自 AbstractApiHandler，用于处理 API 请求的权限验证
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+public class ApiPermissionHandler extends AbstractApiHandler {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
-
-    exports org.miaixz.bus;
+    /**
+     * 前置处理方法，执行 API 请求的权限验证
+     *
+     * @param request  当前的 HTTP 请求对象
+     * @param response 当前的 HTTP 响应对象
+     * @param object   处理器对象（通常为控制器或处理方法）
+     * @param args     请求参数或上下文信息
+     * @return 始终返回 true，表示权限验证通过，允许继续处理请求
+     */
+    @Override
+    public boolean preHandle(ServerHttpRequest request, ServerHttpResponse response, Object object, Object args) {
+        return true;
+    }
 
 }
