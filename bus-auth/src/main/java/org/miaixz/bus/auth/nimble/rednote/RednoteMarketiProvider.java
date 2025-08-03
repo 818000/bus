@@ -25,68 +25,75 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.auth.nimble.meituan;
+package org.miaixz.bus.auth.nimble.rednote;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.miaixz.bus.auth.magic.AuthToken;
-import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
-import org.miaixz.bus.core.lang.Gender;
-import org.miaixz.bus.core.lang.exception.AuthorizedException;
-import org.miaixz.bus.extra.json.JsonKit;
-import org.miaixz.bus.http.Httpx;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
+import org.miaixz.bus.cache.CacheX;
+import org.miaixz.bus.core.basic.entity.Message;
+import org.miaixz.bus.core.lang.exception.AuthorizedException;
+import org.miaixz.bus.extra.json.JsonKit;
+import org.miaixz.bus.http.Httpx;
 
 /**
- * 美团 登录
+ * 小红书商业平台
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class MeituanProvider extends AbstractProvider {
+public class RednoteMarketiProvider extends AbstractProvider {
 
-    public MeituanProvider(Context context) {
-        super(context, Registry.MEITUAN);
+    public RednoteMarketiProvider(Context context) {
+        super(context, Registry.REDNOTE_MARKET);
     }
 
-    public MeituanProvider(Context context, CacheX cache) {
-        super(context, Registry.MEITUAN, cache);
+    public RednoteMarketiProvider(Context context, CacheX cache) {
+        super(context, Registry.REDNOTE_MARKET, cache);
+    }
+
+    /**
+     * 返回带{@code state}参数的授权url，授权回调时会带上这个{@code state}
+     *
+     * @param state state 验证授权流程的参数，可以防止csrf
+     * @return 返回授权地址
+     */
+    @Override
+    public String authorize(String state) {
+        return Builder.fromUrl(this.complex.authorize()).queryParam("appId", this.context.getAppKey())
+                .queryParam("scope", this.getScopes(" ", true, getDefaultScopes(RednoteMarketiScope.values())))
+                .queryParam("redirectUri", this.context.getRedirectUri()).queryParam("state", getRealState(state))
+                .build();
     }
 
     @Override
     public AuthToken getAccessToken(Callback callback) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("app_id", context.getAppKey());
-        form.put("secret", context.getAppSecret());
+        form.put("app_id", this.context.getAppKey());
+        form.put("secret", this.context.getAppSecret());
         form.put("code", callback.getCode());
-        form.put("grant_type", "authorization_code");
-
         String response = Httpx.post(this.complex.accessToken(), form);
         try {
             Map<String, Object> object = JsonKit.toPojo(response, Map.class);
             if (object == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
-
             this.checkResponse(object);
-
             String accessToken = (String) object.get("access_token");
             if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String refreshToken = (String) object.get("refresh_token");
-            Object expiresInObj = object.get("expires_in");
-            int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-
-            return AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).expireIn(expiresIn).build();
+            return AuthToken.builder().accessToken((String) object.get("access_token"))
+                    .expireIn((Integer) object.get("access_token_expires_in"))
+                    .refreshToken((String) object.get("refresh_token")).scope((String) object.get("scope")).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -94,78 +101,53 @@ public class MeituanProvider extends AbstractProvider {
 
     @Override
     public Material getUserInfo(AuthToken authToken) {
-        Map<String, String> form = new HashMap<>(5);
-        form.put("app_id", context.getAppKey());
-        form.put("secret", context.getAppSecret());
-        form.put("access_token", authToken.getAccessToken());
-
-        String response = Httpx.post(this.complex.userinfo(), form);
-        try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
-                throw new AuthorizedException("Failed to parse user info response: empty response");
-            }
-
-            this.checkResponse(object);
-
-            String openid = (String) object.get("openid");
-            if (openid == null) {
-                throw new AuthorizedException("Missing openid in user info response");
-            }
-            String nickname = (String) object.get("nickname");
-            String avatar = (String) object.get("avatar");
-
-            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(openid).username(nickname)
-                    .nickname(nickname).avatar(avatar).gender(Gender.UNKNOWN).token(authToken)
-                    .source(complex.toString()).build();
-        } catch (Exception e) {
-            throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
-        }
+        throw new UnsupportedOperationException("不支持获取用户信息 url");
     }
 
     @Override
     public Message refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("app_id", context.getAppKey());
-        form.put("secret", context.getAppSecret());
+        form.put("app_id", this.context.getAppKey());
+        form.put("secret", this.context.getAppSecret());
         form.put("refresh_token", authToken.getRefreshToken());
-        form.put("grant_type", "refresh_token");
 
         String response = Httpx.post(this.complex.refresh(), form);
         try {
             Map<String, Object> object = JsonKit.toPojo(response, Map.class);
             if (object == null) {
-                throw new AuthorizedException("Failed to parse refresh token response: empty response");
+                throw new AuthorizedException("Failed to parse access token response: empty response");
             }
-
             this.checkResponse(object);
-
             String accessToken = (String) object.get("access_token");
             if (accessToken == null) {
-                throw new AuthorizedException("Missing access_token in refresh response");
+                throw new AuthorizedException("Missing access_token in response");
             }
-            String refreshToken = (String) object.get("refresh_token");
-            Object expiresInObj = object.get("expires_in");
-            int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                    AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).expireIn(expiresIn).build())
+            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
+                    .data(AuthToken.builder().accessToken((String) object.get("access_token"))
+                            .refreshToken((String) object.get("refresh_token")).scope((String) object.get("scope"))
+                            .expireIn((Integer) object.get("expires_in")).build())
                     .build();
         } catch (Exception e) {
-            throw new AuthorizedException("Failed to parse refresh token response: " + e.getMessage());
+            throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
     }
 
+    /**
+     * 校验响应结果
+     *
+     * @param object 接口返回的结果
+     */
     private void checkResponse(Map<String, Object> object) {
-        if (object.containsKey("error_code")) {
-            String errorMsg = (String) object.get("erroe_msg"); // 注意原代码中的拼写错误 "erroe_msg"
-            throw new AuthorizedException(errorMsg != null ? errorMsg : "Unknown error");
+        if ((Integer) object.get("code") != 0) {
+            String error = (String) object.get("error");
+            throw new AuthorizedException(error != null ? error : "Unknown error");
         }
-    }
-
-    @Override
-    public String authorize(String state) {
-        return Builder.fromUrl(super.authorize(state)).queryParam("scope", "").build();
+        if (object.containsKey("error")) {
+            String subError = (String) object.get("sub_error");
+            String errorDescription = (String) object.get("error_description");
+            throw new AuthorizedException((subError != null ? subError : "Unknown sub_error") + ":"
+                    + (errorDescription != null ? errorDescription : "Unknown description"));
+        }
     }
 
 }

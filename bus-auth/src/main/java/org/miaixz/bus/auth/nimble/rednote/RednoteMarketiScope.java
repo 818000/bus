@@ -25,85 +25,31 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.notify.cache;
+package org.miaixz.bus.auth.nimble.rednote;
 
-import java.util.Collection;
-import java.util.Map;
+import org.miaixz.bus.auth.nimble.AuthorizeScope;
 
-import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.cache.metric.MemoryCache;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * 默认缓存实现
- *
+ * 小红书商业平台 OAuth 授权范围
+ * 
  * @author Kimi Liu
  * @since Java 17+
  */
-public enum NotifyCache implements CacheX<String, Object> {
+@Getter
+@AllArgsConstructor
+public enum RednoteMarketiScope implements AuthorizeScope {
 
     /**
-     * 当前实例
+     * {@code scope} 含义，以{@code description} 为准
      */
-    INSTANCE;
+    report_service("report_service", "获取账户报表信息", true), ad_query("ad_query", "获取推广计划、推广单元、推广创意信息", false),
+    ad_manage("ad_manage", "创建&修改推广计划、推广单元、推广创意", false), account_manage("account_manage", "账户管理", false);
 
-    private CacheX<String, Object> cache;
-
-    NotifyCache() {
-        cache = new MemoryCache();
-    }
-
-    /**
-     * 获取缓存内容
-     *
-     * @param key 缓存key
-     * @return 缓存内容
-     */
-    @Override
-    public Object read(String key) {
-        return cache.read(key);
-    }
-
-    @Override
-    public Map read(Collection<String> keys) {
-        return this.cache.read(keys);
-    }
-
-    /**
-     * 是否存在key，如果对应key的value值已过期，也返回false
-     *
-     * @param key 缓存key
-     * @return true：存在key，并且value没过期；false：key不存在或者已过期
-     */
-    @Override
-    public boolean containsKey(String key) {
-        return this.cache.containsKey(key);
-    }
-
-    @Override
-    public void write(Map map, long expire) {
-        this.cache.write(map, expire);
-    }
-
-    /**
-     * 存入缓存
-     *
-     * @param key    缓存key
-     * @param value  缓存内容
-     * @param expire 指定缓存过期时间（毫秒）
-     */
-    @Override
-    public void write(String key, Object value, long expire) {
-        this.cache.write(key, value, expire);
-    }
-
-    @Override
-    public void remove(String[] keys) {
-        this.cache.remove(keys);
-    }
-
-    @Override
-    public void clear() {
-        this.cache.clear();
-    }
+    private final String scope;
+    private final String description;
+    private final boolean isDefault;
 
 }
