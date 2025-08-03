@@ -25,42 +25,40 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.registry;
+
+import org.miaixz.bus.vortex.Assets;
+import org.miaixz.bus.vortex.Registry;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 路由注册接口，定义资产（Assets）的注册、修改和查询功能
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public interface AssetsRegistry extends Registry<Assets> {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 添加资产到注册表
+     *
+     * @param assets 要添加的资产对象
+     */
+    void addAssets(Assets assets);
 
-    exports org.miaixz.bus;
+    /**
+     * 修改注册表中的资产
+     *
+     * @param assets 要更新的资产对象
+     */
+    void amendAssets(Assets assets);
+
+    /**
+     * 根据方法名和版本号获取对应的资产
+     *
+     * @param method  方法名
+     * @param version 版本号
+     * @return 匹配的资产对象，若不存在返回 null
+     */
+    Assets getAssets(String method, String version);
 
 }

@@ -25,42 +25,59 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 通用注册表接口，用于管理和操作键值对数据（如路由、限流配置等）
+ *
+ * @param <T> 注册表中存储的值类型
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public interface Registry<T> {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 初始化注册表，加载初始数据或配置
+     */
+    void init();
 
-    exports org.miaixz.bus;
+    /**
+     * 添加键值对到注册表
+     *
+     * @param key 键，唯一标识
+     * @param reg 值，待注册的对象
+     * @return 如果添加成功返回 true，否则返回 false
+     */
+    boolean add(String key, T reg);
+
+    /**
+     * 从注册表中移除指定键的记录
+     *
+     * @param key 键，唯一标识
+     * @return 如果移除成功返回 true，否则返回 false
+     */
+    boolean remove(String key);
+
+    /**
+     * 修改注册表中的键值对
+     *
+     * @param key 键，唯一标识
+     * @param reg 新的值
+     * @return 如果修改成功返回 true，否则返回 false
+     */
+    boolean amend(String key, T reg);
+
+    /**
+     * 刷新注册表，重新加载数据或清空后初始化
+     */
+    void refresh();
+
+    /**
+     * 获取指定键对应的值
+     *
+     * @param id 键，唯一标识
+     * @return 对应的值，若不存在返回 null
+     */
+    T get(String id);
 
 }

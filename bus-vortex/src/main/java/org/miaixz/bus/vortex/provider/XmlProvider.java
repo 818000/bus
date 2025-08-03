@@ -25,42 +25,47 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.provider;
+
+import java.util.Map;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.xyz.XmlKit;
+import org.miaixz.bus.extra.json.JsonKit;
+import org.miaixz.bus.vortex.Provider;
+
 /**
- * bus.bom
- * 
+ * XML 序列化提供者，实现对象到 XML 字符串的转换
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+public class XmlProvider implements Provider {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 将对象序列化为 XML 字符串
+     *
+     * @param object 要序列化的对象
+     * @return 序列化后的 XML 字符串，若序列化失败返回空字符串
+     */
+    @Override
+    public String serialize(Object object) {
+        try {
+            // 创建 XML 头部
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 
-    exports org.miaixz.bus;
+            // 将对象转换为 Map 结构并序列化为 XML
+            Map<String, Object> map = JsonKit.getProvider().toMap(object);
+            XmlKit.mapToXmlString(map);
+
+            return buffer.toString();
+        } catch (Exception e) {
+            // 捕获异常并打印堆栈信息
+            e.printStackTrace();
+        }
+        // 序列化失败时返回空字符串
+        return Normal.EMPTY;
+    }
 
 }

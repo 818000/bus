@@ -25,42 +25,47 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.magic;
+
+import lombok.experimental.SuperBuilder;
+import org.miaixz.bus.vortex.Assets;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * Token 参数类，用于封装授权认证相关的参数信息
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+@Getter
+@Setter
+@SuperBuilder
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class Token {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 授权令牌，唯一标识认证信息
+     */
+    public final String token;
 
-    exports org.miaixz.bus;
+    /**
+     * 渠道标识，表示请求来源的类型（如 微信、钉钉等）
+     */
+    public final int channel;
+
+    /**
+     * 关联的资源信息，包含资产相关配置
+     */
+    public final Assets assets;
+
+    /**
+     * 租户 ID，标识所属租户，标记为 transient 不参与序列化
+     */
+    public transient String tenant_id;
 
 }

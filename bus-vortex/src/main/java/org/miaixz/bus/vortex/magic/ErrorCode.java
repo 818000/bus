@@ -25,42 +25,34 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.magic;
+
+import org.miaixz.bus.core.basic.normal.ErrorRegistry;
+import org.miaixz.bus.core.basic.normal.Errors;
+
 /**
- * bus.bom
+ * 自定义错误码
  * 
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+public class ErrorCode extends org.miaixz.bus.core.basic.normal.ErrorCode {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
-
-    exports org.miaixz.bus;
+    /**
+     * 没有API权限
+     */
+    public static final Errors _80010001 = ErrorRegistry.builder().key("80010001").value("没有API权限").build();
+    /**
+     * 没有角色
+     */
+    public static final Errors _80010002 = ErrorRegistry.builder().key("80010002").value("没有角色").build();
+    /**
+     * 服务端超时
+     */
+    public static final Errors _80010003 = ErrorRegistry.builder().key("80010003").value("服务端超时").build();
+    /**
+     * 服务端未响应
+     */
+    public static final Errors _80010004 = ErrorRegistry.builder().key("80010004").value("服务端未响应").build();
 
 }

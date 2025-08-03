@@ -26,41 +26,44 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.bom
+ * bus.vortex
  * 
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.bom {
+module bus.vortex {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
     requires bus.core;
-    requires bus.cron;
     requires bus.crypto;
     requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
     requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
     requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
 
-    exports org.miaixz.bus;
+    requires lombok;
+    requires jakarta.annotation;
+    requires jakarta.servlet;
+    requires spring.core;
+    requires spring.beans;
+    requires spring.web;
+    requires spring.webmvc;
+    requires spring.webflux;
+    requires spring.boot;
+    requires spring.boot.autoconfigure;
+    requires spring.boot.webflux;
+    requires spring.boot.webmvc;
+    requires reactor.core;
+    requires reactor.netty.http;
+    requires reactor.netty.core;
+    requires io.netty.handler;
+    requires org.reactivestreams;
+    requires com.google.common;
+
+    exports org.miaixz.bus.vortex;
+    exports org.miaixz.bus.vortex.annotation;
+    exports org.miaixz.bus.vortex.filter;
+    exports org.miaixz.bus.vortex.handler;
+    exports org.miaixz.bus.vortex.magic;
+    exports org.miaixz.bus.vortex.provider;
+    exports org.miaixz.bus.vortex.registry;
 
 }

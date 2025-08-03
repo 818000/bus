@@ -25,42 +25,54 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex;
+
+import org.miaixz.bus.logger.Logger;
+
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 服务端类，负责启动和管理基于 Reactor Netty 的 HTTP 服务器
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+public class Athlete {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * Reactor Netty 的 HTTP 服务器实例，用于处理 HTTP 请求
+     */
+    private final HttpServer httpServer;
 
-    exports org.miaixz.bus;
+    /**
+     * 可释放的服务器实例，表示已绑定的服务器资源
+     */
+    private DisposableServer disposableServer;
+
+    /**
+     * 构造器，初始化 Athlete 实例
+     *
+     * @param httpServer Reactor Netty 的 HTTP 服务器实例
+     */
+    public Athlete(HttpServer httpServer) {
+        this.httpServer = httpServer;
+    }
+
+    /**
+     * 初始化并启动 HTTP 服务器 将 httpServer 绑定到指定端口，并记录启动成功的日志
+     */
+    private void init() {
+        disposableServer = httpServer.bindNow();
+        Logger.info("reactor server start on port:{} success", disposableServer.port());
+    }
+
+    /**
+     * 停止并销毁 HTTP 服务器 释放服务器资源，并记录停止成功的日志
+     */
+    private void destroy() {
+        disposableServer.disposeNow();
+        Logger.info("reactor server stop on port:{} success", disposableServer.port());
+    }
 
 }

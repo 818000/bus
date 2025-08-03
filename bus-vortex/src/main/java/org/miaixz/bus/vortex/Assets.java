@@ -25,42 +25,107 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex;
+
+import java.util.List;
+import java.util.Objects;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.http.HttpMethod;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * api definition
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+@Getter
+@Setter
+@SuperBuilder
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class Assets {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    private String id;
+    /**
+     * 名称
+     */
+    private String name;
+    /**
+     * 服务器地址
+     */
+    private String host;
+    /**
+     * 上下文路径
+     */
+    private String path;
+    /**
+     * 端口
+     */
+    private int port;
+    /**
+     * 方法URL
+     */
+    private String url;
+    /**
+     * 完整地址
+     */
+    private String uri;
+    /**
+     * 方法
+     */
+    private String method;
+    /**
+     * 授权
+     */
+    private boolean token;
+    /**
+     * 签名
+     */
+    private boolean sign;
+    /**
+     * 策略
+     */
+    private boolean firewall;
+    /**
+     * 版本
+     */
+    private String version;
+    /**
+     * 描述
+     */
+    private String description;
+    /**
+     * 角色
+     */
+    private List<String> roleIds;
+    /**
+     * 请求方式
+     */
+    private HttpMethod httpMethod;
+    /**
+     * 超时时间
+     */
+    private long timeout = 10000;
 
-    exports org.miaixz.bus;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (null == o || getClass() != o.getClass())
+            return false;
+        Assets assets = (Assets) o;
+        return id.equals(assets.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }

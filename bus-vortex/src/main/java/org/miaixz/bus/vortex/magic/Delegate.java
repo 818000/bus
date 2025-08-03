@@ -25,42 +25,48 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.vortex.magic;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.miaixz.bus.core.basic.entity.Message;
+import org.miaixz.bus.core.basic.entity.Authorize;
+import org.miaixz.bus.core.basic.normal.Consts;
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * bus.bom
- * 
- * @author Kimi Liu
+ * 认证及委托处理类，用于封装认证结果和 OAuth2 授权信息
+ *
+ * @author Justubborn
  * @since Java 17+
  */
-module bus.bom {
+@Getter
+@Setter
+@SuperBuilder
+@AllArgsConstructor
+@RequiredArgsConstructor
+public class Delegate {
 
-    requires bus.auth;
-    requires bus.base;
-    requires bus.cache;
-    requires bus.core;
-    requires bus.cron;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.vortex;
-    requires bus.health;
-    requires bus.http;
-    requires bus.image;
-    requires bus.limiter;
-    requires bus.logger;
-    requires bus.mapper;
-    requires bus.notify;
-    requires bus.office;
-    requires bus.pager;
-    requires bus.pay;
-    requires bus.proxy;
-    requires bus.sensitive;
-    requires bus.setting;
-    requires bus.socket;
-    requires bus.starter;
-    requires bus.storage;
-    requires bus.tracer;
-    requires bus.validate;
+    /**
+     * 认证结果消息，包含错误码和错误信息等
+     */
+    private Message message;
 
-    exports org.miaixz.bus;
+    /**
+     * OAuth2 授权信息，包含认证相关的详细信息
+     */
+    private Authorize authorize;
+
+    /**
+     * 判断认证是否成功
+     *
+     * @return 如果消息错误码为 Consts.STATUS_ZERO（通常表示成功），返回 true，否则返回 false
+     */
+    public boolean isOk() {
+        return Consts.STATUS_ZERO.equals(message.getErrcode());
+    }
 
 }
