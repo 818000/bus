@@ -25,85 +25,10 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.notify.cache;
-
-import java.util.Collection;
-import java.util.Map;
-
-import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.cache.metric.MemoryCache;
-
 /**
- * 默认缓存实现
+ * VK
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public enum NotifyCache implements CacheX<String, Object> {
-
-    /**
-     * 当前实例
-     */
-    INSTANCE;
-
-    private CacheX<String, Object> cache;
-
-    NotifyCache() {
-        cache = new MemoryCache();
-    }
-
-    /**
-     * 获取缓存内容
-     *
-     * @param key 缓存key
-     * @return 缓存内容
-     */
-    @Override
-    public Object read(String key) {
-        return cache.read(key);
-    }
-
-    @Override
-    public Map read(Collection<String> keys) {
-        return this.cache.read(keys);
-    }
-
-    /**
-     * 是否存在key，如果对应key的value值已过期，也返回false
-     *
-     * @param key 缓存key
-     * @return true：存在key，并且value没过期；false：key不存在或者已过期
-     */
-    @Override
-    public boolean containsKey(String key) {
-        return this.cache.containsKey(key);
-    }
-
-    @Override
-    public void write(Map map, long expire) {
-        this.cache.write(map, expire);
-    }
-
-    /**
-     * 存入缓存
-     *
-     * @param key    缓存key
-     * @param value  缓存内容
-     * @param expire 指定缓存过期时间（毫秒）
-     */
-    @Override
-    public void write(String key, Object value, long expire) {
-        this.cache.write(key, value, expire);
-    }
-
-    @Override
-    public void remove(String[] keys) {
-        this.cache.remove(keys);
-    }
-
-    @Override
-    public void clear() {
-        this.cache.clear();
-    }
-
-}
+package org.miaixz.bus.auth.nimble.vk;
