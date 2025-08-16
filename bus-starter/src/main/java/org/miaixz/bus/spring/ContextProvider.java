@@ -25,48 +25,30 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.spring;
+
+import org.miaixz.bus.core.basic.entity.Authorize;
+
 /**
- * bus.cache
- * 
+ * 请求上下文封装类。
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.cache {
+public interface ContextProvider {
 
-    requires java.desktop;
-    requires java.sql;
-    requires java.management;
-    requires java.compiler;
-    requires java.naming;
+    /**
+     * 获取当前用户信息。
+     *
+     * @return Authorize 对象，如果无法获取则返回 null
+     */
+    Authorize getAuthorize();
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.extra;
-    requires bus.setting;
-    requires bus.proxy;
-
-    requires lombok;
-    requires jakarta.annotation;
-    requires spring.jdbc;
-    requires spring.expression;
-    requires HikariCP;
-    requires redis.clients.jedis;
-    requires xmemcached;
-    requires zookeeper;
-    requires hessian;
-    requires com.google.common;
-    requires com.google.guice;
-    requires curator.framework;
-    requires curator.recipes;
-    requires curator.client;
-    requires com.github.benmanes.caffeine;
-
-    exports org.miaixz.bus.cache;
-    exports org.miaixz.bus.cache.magic;
-    exports org.miaixz.bus.cache.magic.annotation;
-    exports org.miaixz.bus.cache.metric;
-    exports org.miaixz.bus.cache.provider;
-    exports org.miaixz.bus.cache.serialize;
-    exports org.miaixz.bus.cache.support;
+    /**
+     * 获取租户 ID。
+     *
+     * @return 租户 ID 字符串，如果未找到则返回 null
+     */
+    String getTenantId();
 
 }
