@@ -772,7 +772,7 @@ public enum Registry implements Complex {
     WECHAT_EE {
         @Override
         public String authorize() {
-            return "https://open.work.weixin.qq.com/wwopen/sso/qrConnect";
+            return "https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session";
         }
 
         @Override

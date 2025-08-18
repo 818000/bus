@@ -36,6 +36,7 @@ import org.aoju.bus.oauth.Context;
 import org.aoju.bus.oauth.Registry;
 import org.aoju.bus.oauth.magic.AccToken;
 import org.aoju.bus.oauth.magic.Callback;
+import org.aoju.bus.oauth.magic.Message;
 import org.aoju.bus.oauth.magic.Property;
 
 /**
@@ -71,6 +72,21 @@ public class WeChatEEProvider extends AbstractProvider {
                 .expireIn(object.getIntValue("expires_in"))
                 .code(callback.getCode())
                 .build();
+    }
+
+    @Override
+    public Message login(Callback callback) {
+        try {
+
+            AccToken token = this.getAccessToken(callback);
+            return Message.builder().errcode(Builder.ErrorCode.SUCCESS.getCode()).data(authorize(token)).build();
+        } catch (Exception e) {
+            String errorCode = Normal.EMPTY + Builder.ErrorCode.FAILURE.getCode();
+            if (e instanceof AuthorizedException) {
+                errorCode = ((AuthorizedException) e).getErrcode();
+            }
+            return Message.builder().errcode(errorCode).errmsg(e.getMessage()).build();
+        }
     }
 
     @Override
@@ -114,20 +130,16 @@ public class WeChatEEProvider extends AbstractProvider {
         return object;
     }
 
-    /**
-     * 返回带{@code state}参数的授权url,授权回调时会带上这个{@code state}
-     *
-     * @param state state 验证授权流程的参数,可以防止csrf
-     * @return 返回授权地址
-     */
-    @Override
-    public String authorize(String state) {
-        return Builder.fromUrl(source.authorize())
-                .queryParam("appid", context.getAppKey())
-                .queryParam("agentid", context.getAgentId())
-                .queryParam("redirect_uri", context.getRedirectUri())
-                .queryParam("state", getRealState(state))
+
+    private JSONObject authorize(AccToken token) {
+        String url = Builder.fromUrl(source.authorize())
+                .queryParam("corpid", context.getAppKey())
+                .queryParam("access_token", token.getAccessToken())
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("js_code", token.getCode())
                 .build();
+        String resp = Httpx.get(url);
+        return this.checkResponse(resp);
     }
 
     /**
