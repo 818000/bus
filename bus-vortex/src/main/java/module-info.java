@@ -45,21 +45,14 @@ module bus.vortex {
     requires spring.core;
     requires spring.beans;
     requires spring.web;
-    requires spring.webmvc;
     requires spring.webflux;
-    requires spring.boot;
-    requires spring.boot.autoconfigure;
-    requires spring.boot.webflux;
-    requires spring.boot.webmvc;
     requires reactor.core;
     requires reactor.netty.http;
     requires reactor.netty.core;
-    requires io.netty.handler;
     requires org.reactivestreams;
     requires com.google.common;
 
     exports org.miaixz.bus.vortex;
-    exports org.miaixz.bus.vortex.annotation;
     exports org.miaixz.bus.vortex.filter;
     exports org.miaixz.bus.vortex.handler;
     exports org.miaixz.bus.vortex.magic;

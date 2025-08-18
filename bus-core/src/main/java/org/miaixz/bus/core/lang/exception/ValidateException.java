@@ -72,8 +72,18 @@ public class ValidateException extends UncheckedException {
      *
      * @param errors 错误码对象，包含键和值
      */
-    protected ValidateException(final Errors errors) {
+    public ValidateException(final Errors errors) {
         super(errors);
+    }
+
+    /**
+     * 构造
+     *
+     * @param errors 错误码对象，包含键和值
+     * @param errmsg 消息
+     */
+    public ValidateException(final Errors errors, String errmsg) {
+        super(errors.getKey(), errmsg);
     }
 
     /**
