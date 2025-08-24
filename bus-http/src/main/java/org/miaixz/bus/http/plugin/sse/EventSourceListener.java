@@ -25,76 +25,58 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.http.bodys;
+package org.miaixz.bus.http.plugin.sse;
 
-import org.miaixz.bus.core.io.source.BufferSource;
-import org.miaixz.bus.core.lang.MediaType;
+import org.miaixz.bus.http.Response;
 
 /**
- * HTTP 响应体
- * <p>
- * 表示 HTTP 响应的内容，仅能使用一次。提供对响应内容的媒体类型、长度和数据源的访问。 使用字符串存储媒体类型以避免解析错误。
- * </p>
+ * 服务器推送事件（Server-Sent Events, SSE）监听器抽象类，定义了处理事件源生命周期和事件的回调方法。 子类可重写这些方法以响应事件源的打开、事件接收、关闭或失败等状态。
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class RealResponseBody extends ResponseBody {
+public abstract class EventSourceListener {
 
     /**
-     * 媒体类型字符串
-     */
-    private final String contentType;
-    /**
-     * 内容长度
-     */
-    private final long length;
-    /**
-     * 数据源
-     */
-    private final BufferSource source;
-
-    /**
-     * 构造函数，初始化 RealResponseBody 实例
+     * 当事件源被远程服务器接受并可以开始传输事件时调用。
      *
-     * @param contentType 媒体类型字符串（可能为 null）
-     * @param length      内容长度
-     * @param source      数据源
+     * @param eventSource 事件源实例
+     * @param response    服务器返回的 HTTP 响应
      */
-    public RealResponseBody(String contentType, long length, BufferSource source) {
-        this.contentType = contentType;
-        this.length = length;
-        this.source = source;
+    public void onOpen(EventSource eventSource, Response response) {
+
     }
 
     /**
-     * 获取媒体类型
+     * 当接收到新的服务器推送事件时调用。
      *
-     * @return 媒体类型（不存在时为 null）
+     * @param eventSource 事件源实例
+     * @param id          事件 ID，可能为 null
+     * @param type        事件类型，可能为 null
+     * @param data        事件数据
      */
-    @Override
-    public MediaType contentType() {
-        return null != contentType ? MediaType.valueOf(contentType) : null;
+    public void onEvent(EventSource eventSource, String id, String type, String data) {
+
     }
 
     /**
-     * 获取内容长度
+     * 当事件源正常关闭时调用。 此后不会再次调用该监听器的任何方法。
      *
-     * @return 内容长度
+     * @param eventSource 事件源实例
      */
-    @Override
-    public long length() {
-        return length;
+    public void onClosed(EventSource eventSource) {
+
     }
 
     /**
-     * 获取数据源
+     * 当事件源因网络读写错误而关闭时调用。可能丢失部分传入事件。 此后不会再次调用该监听器的任何方法。
      *
-     * @return 数据源
+     * @param eventSource 事件源实例
+     * @param throwable   发生的异常，可能为 null
+     * @param response    服务器返回的 HTTP 响应，可能为 null
      */
-    @Override
-    public BufferSource source() {
-        return source;
+    public void onFailure(EventSource eventSource, Throwable throwable, Response response) {
+
     }
 
 }

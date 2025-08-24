@@ -25,76 +25,79 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.http.bodys;
+package org.miaixz.bus.validate.magic.annotation;
 
-import org.miaixz.bus.core.io.source.BufferSource;
-import org.miaixz.bus.core.lang.MediaType;
+import java.lang.annotation.*;
+
+import org.miaixz.bus.validate.Builder;
+import org.miaixz.bus.validate.magic.ErrorCode;
+import org.miaixz.bus.validate.metric.LengthMatcher;
 
 /**
- * HTTP 响应体
+ * 字符串、数组、集合的大小校验
+ *
  * <p>
- * 表示 HTTP 响应的内容，仅能使用一次。提供对响应内容的媒体类型、长度和数据源的访问。 使用字符串存储媒体类型以避免解析错误。
- * </p>
+ * 默认被校验对象是null时,通过校验
+ * </P>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class RealResponseBody extends ResponseBody {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
+@Complex(value = Builder._LENGTH, clazz = LengthMatcher.class)
+public @interface Size {
 
     /**
-     * 媒体类型字符串
-     */
-    private final String contentType;
-    /**
-     * 内容长度
-     */
-    private final long length;
-    /**
-     * 数据源
-     */
-    private final BufferSource source;
-
-    /**
-     * 构造函数，初始化 RealResponseBody 实例
+     * 最小长度, 小于等于
      *
-     * @param contentType 媒体类型字符串（可能为 null）
-     * @param length      内容长度
-     * @param source      数据源
+     * @return the int
      */
-    public RealResponseBody(String contentType, long length, BufferSource source) {
-        this.contentType = contentType;
-        this.length = length;
-        this.source = source;
-    }
+    @Filler("min")
+    int min() default Integer.MIN_VALUE;
 
     /**
-     * 获取媒体类型
+     * 最大长度,大于等于
      *
-     * @return 媒体类型（不存在时为 null）
+     * @return the int
      */
-    @Override
-    public MediaType contentType() {
-        return null != contentType ? MediaType.valueOf(contentType) : null;
-    }
+    @Filler("max")
+    int max() default Integer.MAX_VALUE;
 
     /**
-     * 获取内容长度
+     * 如果长度为0,判断能否通过校验 默认为false true：表示长度为零,默认通过校验；false：表示长度为0,仍然要进行长度验证
      *
-     * @return 内容长度
+     * @return the boolean
      */
-    @Override
-    public long length() {
-        return length;
-    }
+    boolean zeroAble() default false;
 
     /**
-     * 获取数据源
+     * 默认使用的异常码
      *
-     * @return 数据源
+     * @return the string
      */
-    @Override
-    public BufferSource source() {
-        return source;
-    }
+    String errcode() default ErrorCode._116000;
+
+    /**
+     * 默认使用的异常信息
+     *
+     * @return the string
+     */
+    String errmsg() default "${field}长度必须在规定范围内, 最小: ${min}, 最大: ${max}";
+
+    /**
+     * 校验器组
+     *
+     * @return the array
+     */
+    String[] group() default {};
+
+    /**
+     * 被校验字段名称
+     *
+     * @return the string
+     */
+    String field() default Builder.DEFAULT_FIELD;
 
 }
