@@ -25,76 +25,25 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.http.bodys;
+package org.miaixz.bus.validate.metric;
 
-import org.miaixz.bus.core.io.source.BufferSource;
-import org.miaixz.bus.core.lang.MediaType;
+import org.miaixz.bus.core.xyz.ObjectKit;
+import org.miaixz.bus.validate.Context;
+import org.miaixz.bus.validate.magic.Matcher;
+import org.miaixz.bus.validate.magic.annotation.NotEmpty;
+import org.miaixz.bus.validate.magic.annotation.NotNull;
 
 /**
- * HTTP 响应体
- * <p>
- * 表示 HTTP 响应的内容，仅能使用一次。提供对响应内容的媒体类型、长度和数据源的访问。 使用字符串存储媒体类型以避免解析错误。
- * </p>
+ * NOT NUll 校验
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class RealResponseBody extends ResponseBody {
+public class NotEmptyMatcher implements Matcher<Object, NotEmpty> {
 
-    /**
-     * 媒体类型字符串
-     */
-    private final String contentType;
-    /**
-     * 内容长度
-     */
-    private final long length;
-    /**
-     * 数据源
-     */
-    private final BufferSource source;
-
-    /**
-     * 构造函数，初始化 RealResponseBody 实例
-     *
-     * @param contentType 媒体类型字符串（可能为 null）
-     * @param length      内容长度
-     * @param source      数据源
-     */
-    public RealResponseBody(String contentType, long length, BufferSource source) {
-        this.contentType = contentType;
-        this.length = length;
-        this.source = source;
-    }
-
-    /**
-     * 获取媒体类型
-     *
-     * @return 媒体类型（不存在时为 null）
-     */
     @Override
-    public MediaType contentType() {
-        return null != contentType ? MediaType.valueOf(contentType) : null;
-    }
-
-    /**
-     * 获取内容长度
-     *
-     * @return 内容长度
-     */
-    @Override
-    public long length() {
-        return length;
-    }
-
-    /**
-     * 获取数据源
-     *
-     * @return 数据源
-     */
-    @Override
-    public BufferSource source() {
-        return source;
+    public boolean on(Object object, NotEmpty annotation, Context context) {
+        return ObjectKit.isNotEmpty(object);
     }
 
 }

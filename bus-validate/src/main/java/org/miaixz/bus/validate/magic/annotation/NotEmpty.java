@@ -25,76 +25,52 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.http.bodys;
+package org.miaixz.bus.validate.magic.annotation;
 
-import org.miaixz.bus.core.io.source.BufferSource;
-import org.miaixz.bus.core.lang.MediaType;
+import java.lang.annotation.*;
+
+import org.miaixz.bus.validate.Builder;
+import org.miaixz.bus.validate.magic.ErrorCode;
+import org.miaixz.bus.validate.metric.NotBlankMatcher;
 
 /**
- * HTTP 响应体
- * <p>
- * 表示 HTTP 响应的内容，仅能使用一次。提供对响应内容的媒体类型、长度和数据源的访问。 使用字符串存储媒体类型以避免解析错误。
- * </p>
+ * 字符串不为空,不为null校验
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class RealResponseBody extends ResponseBody {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
+@Complex(value = Builder._NOT_BLANK, clazz = NotBlankMatcher.class)
+public @interface NotEmpty {
 
     /**
-     * 媒体类型字符串
-     */
-    private final String contentType;
-    /**
-     * 内容长度
-     */
-    private final long length;
-    /**
-     * 数据源
-     */
-    private final BufferSource source;
-
-    /**
-     * 构造函数，初始化 RealResponseBody 实例
+     * 默认使用的异常码
      *
-     * @param contentType 媒体类型字符串（可能为 null）
-     * @param length      内容长度
-     * @param source      数据源
+     * @return the string
      */
-    public RealResponseBody(String contentType, long length, BufferSource source) {
-        this.contentType = contentType;
-        this.length = length;
-        this.source = source;
-    }
+    String errcode() default ErrorCode._116000;
 
     /**
-     * 获取媒体类型
+     * 默认使用的异常信息
      *
-     * @return 媒体类型（不存在时为 null）
+     * @return the string
      */
-    @Override
-    public MediaType contentType() {
-        return null != contentType ? MediaType.valueOf(contentType) : null;
-    }
+    String errmsg() default "${field}不能为空";
 
     /**
-     * 获取内容长度
+     * 校验器组
      *
-     * @return 内容长度
+     * @return the array
      */
-    @Override
-    public long length() {
-        return length;
-    }
+    String[] group() default {};
 
     /**
-     * 获取数据源
+     * 被校验字段名称
      *
-     * @return 数据源
+     * @return the string
      */
-    @Override
-    public BufferSource source() {
-        return source;
-    }
+    String field() default Builder.DEFAULT_FIELD;
 
 }
