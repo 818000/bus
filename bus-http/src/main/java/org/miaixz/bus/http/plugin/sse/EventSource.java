@@ -25,76 +25,42 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.http.bodys;
+package org.miaixz.bus.http.plugin.sse;
 
-import org.miaixz.bus.core.io.source.BufferSource;
-import org.miaixz.bus.core.lang.MediaType;
+import org.miaixz.bus.http.Request;
 
 /**
- * HTTP 响应体
- * <p>
- * 表示 HTTP 响应的内容，仅能使用一次。提供对响应内容的媒体类型、长度和数据源的访问。 使用字符串存储媒体类型以避免解析错误。
- * </p>
+ * 服务器推送事件（Server-Sent Events, SSE）源接口，定义了与事件源交互的基本操作。 实现此接口的类负责管理 SSE 连接，包括获取原始请求和取消连接。
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class RealResponseBody extends ResponseBody {
+public interface EventSource {
 
     /**
-     * 媒体类型字符串
-     */
-    private final String contentType;
-    /**
-     * 内容长度
-     */
-    private final long length;
-    /**
-     * 数据源
-     */
-    private final BufferSource source;
-
-    /**
-     * 构造函数，初始化 RealResponseBody 实例
+     * 返回发起事件源的原始请求。
      *
-     * @param contentType 媒体类型字符串（可能为 null）
-     * @param length      内容长度
-     * @param source      数据源
+     * @return 原始的 HTTP 请求
      */
-    public RealResponseBody(String contentType, long length, BufferSource source) {
-        this.contentType = contentType;
-        this.length = length;
-        this.source = source;
-    }
+    Request request();
 
     /**
-     * 获取媒体类型
-     *
-     * @return 媒体类型（不存在时为 null）
+     * 立即且强制性地释放事件源持有的资源。如果事件源已被关闭或取消，则此方法无效。
      */
-    @Override
-    public MediaType contentType() {
-        return null != contentType ? MediaType.valueOf(contentType) : null;
-    }
+    void cancel();
 
     /**
-     * 获取内容长度
-     *
-     * @return 内容长度
+     * 事件源工厂接口，用于创建新的 {@link EventSource} 实例。
      */
-    @Override
-    public long length() {
-        return length;
-    }
-
-    /**
-     * 获取数据源
-     *
-     * @return 数据源
-     */
-    @Override
-    public BufferSource source() {
-        return source;
+    interface Factory {
+        /**
+         * 创建并立即返回一个新的事件源。创建事件源会启动一个异步过程来连接服务器。 连接成功或失败时，将通知监听器。调用者必须在不再使用返回的事件源时取消它。
+         *
+         * @param request  用于发起事件源的 HTTP 请求
+         * @param listener 事件源监听器，用于接收连接状态和事件数据
+         * @return 新创建的 {@link EventSource} 实例
+         */
+        EventSource newEventSource(Request request, EventSourceListener listener);
     }
 
 }
