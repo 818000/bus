@@ -159,4 +159,4 @@ welcome.
 
 ### ✨ 项目状态
 
-![Alt](https://repobeats.axiom.co/api/embed/f877de6e90ea63bce4c0c57fe1aee16b57dd46e2.svg "Repobeats analytics image")
+![Alt](https://repobeats.axiom.co/api/embed/52a2707cd51eecee830f6d596187122ba3ca8810.svg "Repobeats analytics image")
