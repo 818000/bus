@@ -27,18 +27,6 @@
 */
 package org.miaixz.bus.starter.jdbc;
 
-import java.lang.reflect.Method;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.miaixz.bus.core.xyz.ObjectKit;
-import org.miaixz.bus.logger.Logger;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 /**
  * 数据源信息
  *
@@ -72,52 +60,6 @@ public class DataSourceHolder {
      */
     public static void remove() {
         DATA_SOURCE_KEY.remove();
-    }
-
-    @Order(-1)
-    @Aspect
-    @Component
-    public class DataSourceSwitch {
-
-        /**
-         * 扫描所有含有@DataSource注解的类
-         */
-        @Pointcut("@annotation(org.miaixz.bus.starter.jdbc.DataSource)")
-        public void switching() {
-
-        }
-
-        /**
-         * 使用around方式监控
-         *
-         * @param point 切面信息
-         * @return the object
-         * @throws Throwable 异常
-         */
-        @Around("switching()")
-        public Object around(ProceedingJoinPoint point) throws Throwable {
-            // 获取执行方法
-            Method method = ((MethodSignature) point.getSignature()).getMethod();
-            // 获取方法的@DataSource注解
-            DataSource dataSource = method.getAnnotation(DataSource.class);
-            if (!ObjectKit.isEmptyIfString(dataSource.value())) {
-                // 获取类级别的@DataSource注解
-                dataSource = method.getDeclaringClass().getAnnotation(DataSource.class);
-            }
-            if (null != dataSource) {
-                // 设置数据源key值
-                DataSourceHolder.setKey(dataSource.value());
-                Logger.info("Switch datasource to [{}] in method [{}]", DataSourceHolder.getKey(),
-                        point.getSignature());
-            }
-            // 继续执行该方法
-            Object object = point.proceed();
-            // 恢复默认数据源
-            DataSourceHolder.remove();
-            Logger.info("Restore datasource to [{}] in method [{}]", DataSourceHolder.getKey(), point.getSignature());
-            return object;
-        }
-
     }
 
 }
