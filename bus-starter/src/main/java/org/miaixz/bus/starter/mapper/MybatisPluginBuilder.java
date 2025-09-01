@@ -50,6 +50,7 @@ import org.miaixz.bus.pager.handler.TenantProvider;
 import org.miaixz.bus.spring.ContextBuilder;
 import org.miaixz.bus.spring.GeniusBuilder;
 import org.miaixz.bus.spring.annotation.PlaceHolderBinder;
+import org.miaixz.bus.starter.jdbc.DataSourceHolder;
 import org.springframework.core.env.Environment;
 
 import net.sf.jsqlparser.expression.Expression;
@@ -141,7 +142,7 @@ public class MybatisPluginBuilder {
                 @Override
                 public boolean ignore(String name) {
                     // 忽略租户隔离主表
-                    String prefix = Context.INSTANCE.getProperty(Args.TABLE_PREFIX_KEY, Normal.EMPTY);
+                    String prefix = Context.INSTANCE.getProperty(DataSourceHolder.getKey()+"."+Args.TABLE_PREFIX_KEY, Normal.EMPTY);
                     String ignoreTables = Context.INSTANCE.getProperty("tenant.ignore", "tenant");
                     // 分割 tenant.ignore 的值并加上前缀
                     List<String> ignoreTableList = Arrays.stream(ignoreTables.split(Symbol.COMMA))

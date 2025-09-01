@@ -27,39 +27,16 @@
 */
 package org.miaixz.bus.starter.jdbc;
 
+import org.miaixz.bus.mapper.Holder;
+
 /**
- * 数据源信息
+ * 数据源持有类
  *
+ * 可继承/重写方法进行扩展
+ * 
  * @author Kimi Liu
  * @since Java 17+
  */
-public class DataSourceHolder {
-
-    private static final ThreadLocal<String> DATA_SOURCE_KEY = ThreadLocal.withInitial(() -> "dataSource");
-
-    /**
-     * Get current DataSource
-     *
-     * @return data source key
-     */
-    public static String getKey() {
-        return DATA_SOURCE_KEY.get();
-    }
-
-    /**
-     * To switch DataSource
-     *
-     * @param key the key
-     */
-    public static void setKey(String key) {
-        DATA_SOURCE_KEY.set(key);
-    }
-
-    /**
-     * To set DataSource as default
-     */
-    public static void remove() {
-        DATA_SOURCE_KEY.remove();
-    }
+public class DataSourceHolder<T> extends Holder<T> {
 
 }
