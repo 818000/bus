@@ -52,4 +52,34 @@ public class Holder<T> implements org.miaixz.bus.core.Holder<T> {
     public static final ColumnSchemaBuilder.Chain COLUMN_SCHEMA_CHAIN = new ColumnSchemaChain(
             NormalSpiLoader.loadList(false, ColumnSchemaBuilder.class));
 
+    /**
+     * 数据源信息
+     */
+    private static final ThreadLocal<String> DATA_SOURCE_KEY = ThreadLocal.withInitial(() -> "dataSource");
+
+    /**
+     * Get current DataSource
+     *
+     * @return data source key
+     */
+    public static String getKey() {
+        return DATA_SOURCE_KEY.get();
+    }
+
+    /**
+     * To switch DataSource
+     *
+     * @param key the key
+     */
+    public static void setKey(String key) {
+        DATA_SOURCE_KEY.set(key);
+    }
+
+    /**
+     * To set DataSource as default
+     */
+    public static void remove() {
+        DATA_SOURCE_KEY.remove();
+    }
+
 }
