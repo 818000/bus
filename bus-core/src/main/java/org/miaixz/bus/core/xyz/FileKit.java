@@ -170,13 +170,34 @@ public class FileKit extends PathResolve {
     }
 
     /**
+     * 递归遍历目录以及子目录中的所有文件 如果提供file为文件，直接返回过滤结果
+     *
+     * @param path   当前遍历文件或目录的路径
+     * @param hidden 是否过滤隐藏文件
+     * @return 文件列表
+     */
+    public static List<File> loopFiles(final String path, final boolean hidden) {
+        FileFilter nonHiddenFileFilter = null;
+        if (hidden) {
+            nonHiddenFileFilter = f -> {
+                try {
+                    return !Files.isHidden(f.toPath()) && !f.getName().startsWith(Symbol.DOT);
+                } catch (IOException e) {
+                    return false;
+                }
+            };
+        }
+        return loopFiles(file(path), nonHiddenFileFilter);
+    }
+
+    /**
      * 递归遍历目录以及子目录中的所有文件 如果用户传入相对路径，则是相对classpath的路径 如："test/aaa"表示"${classpath}/test/aaa"
      *
      * @param path 相对ClassPath的目录或者绝对路径目录
      * @return 文件列表
      */
     public static List<File> loopFiles(final String path) {
-        return loopFiles(file(path));
+        return loopFiles(path, false);
     }
 
     /**
@@ -187,6 +208,26 @@ public class FileKit extends PathResolve {
      */
     public static List<File> loopFiles(final File file) {
         return loopFiles(file, null);
+    }
+
+    /**
+     * 递归遍历目录以及子目录中的所有文件
+     *
+     * @param file 当前遍历文件
+     * @return 文件列表
+     */
+    public static List<File> loopFiles(final File file, final boolean hidden) {
+        FileFilter nonHiddenFileFilter = null;
+        if (hidden) {
+            nonHiddenFileFilter = f -> {
+                try {
+                    return !Files.isHidden(f.toPath()) && !f.getName().startsWith(Symbol.DOT);
+                } catch (IOException e) {
+                    return false;
+                }
+            };
+        }
+        return loopFiles(file, nonHiddenFileFilter);
     }
 
     /**
@@ -1062,7 +1103,7 @@ public class FileKit extends PathResolve {
      * <pre>
      * FileKit.rename(file, "aaa", true) xx/xx.png = xx/aaa.png
      * </pre>
-     * 
+     * <p>
      * 2、isRetainExt为false时，不保留原扩展名，需要在newName中
      *
      * <pre>
@@ -1431,7 +1472,7 @@ public class FileKit extends PathResolve {
      * <li>4. .. 和 . 转换为绝对路径，当..多于已有路径时，直接返回根路径</li>
      * <li>5. SMB路径保留，如\\127.0.0.0\a\b.zip</li>
      * </ol>
-     * 
+     *
      * <pre>
      * "/foo//" = "/foo/"
      * "/foo/./" = "/foo/"
@@ -1459,7 +1500,7 @@ public class FileKit extends PathResolve {
 
     /**
      * 获得相对子路径
-     * 
+     *
      * <pre>
      * dirPath: d:/aaa/bbb    filePath: d:/aaa/bbb/ccc         =    ccc
      * dirPath: d:/Aaa/bbb    filePath: d:/aaa/bbb/ccc.txt     =    ccc.txt
@@ -1479,7 +1520,7 @@ public class FileKit extends PathResolve {
 
     /**
      * 获得相对子路径，忽略大小写
-     * 
+     *
      * <pre>
      * dirPath: d:/aaa/bbb    filePath: d:/aaa/bbb/ccc        =    ccc
      * dirPath: d:/Aaa/bbb    filePath: d:/aaa/bbb/ccc.txt    =    ccc.txt
@@ -2032,7 +2073,7 @@ public class FileKit extends PathResolve {
      * 获得一个输出流对象
      *
      * @param file    文件
-     * @param options 选项，如追加模式传{@link java.nio.file.StandardOpenOption#APPEND}
+     * @param options 选项，如追加模式传{@link StandardOpenOption#APPEND}
      * @return 输出流对象
      */
     public static BufferedOutputStream getOutputStream(final File file, final OpenOption... options) {
@@ -2775,9 +2816,9 @@ public class FileKit extends PathResolve {
      * 创建 {@link FileSystem}
      *
      * @param path 文件路径，可以是目录或Zip文件等
-     * @return {@link java.nio.file.FileSystem}
+     * @return {@link FileSystem}
      */
-    public static java.nio.file.FileSystem of(final String path) {
+    public static FileSystem of(final String path) {
         try {
             return FileSystems.newFileSystem(Paths.get(path).toUri(), MapKit.of("create", "true"));
         } catch (final IOException e) {
@@ -2786,23 +2827,23 @@ public class FileKit extends PathResolve {
     }
 
     /**
-     * 创建 Zip的{@link java.nio.file.FileSystem}，默认UTF-8编码
+     * 创建 Zip的{@link FileSystem}，默认UTF-8编码
      *
      * @param path 文件路径，可以是目录或Zip文件等
-     * @return {@link java.nio.file.FileSystem}
+     * @return {@link FileSystem}
      */
-    public static java.nio.file.FileSystem createZip(final String path) {
+    public static FileSystem createZip(final String path) {
         return createZip(path, null);
     }
 
     /**
-     * 创建 Zip的{@link java.nio.file.FileSystem}
+     * 创建 Zip的{@link FileSystem}
      *
      * @param path    文件路径，可以是目录或Zip文件等
      * @param charset 编码
-     * @return {@link java.nio.file.FileSystem}
+     * @return {@link FileSystem}
      */
-    public static java.nio.file.FileSystem createZip(final String path, java.nio.charset.Charset charset) {
+    public static FileSystem createZip(final String path, java.nio.charset.Charset charset) {
         if (null == charset) {
             charset = Charset.UTF_8;
         }
@@ -2820,7 +2861,7 @@ public class FileKit extends PathResolve {
     /**
      * 获取目录的根路径，或Zip文件中的根路径
      *
-     * @param fileSystem {@link java.nio.file.FileSystem}
+     * @param fileSystem {@link FileSystem}
      * @return 根 {@link Path}
      */
     public static Path getRoot(final FileSystem fileSystem) {
