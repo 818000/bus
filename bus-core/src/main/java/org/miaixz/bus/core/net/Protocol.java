@@ -29,6 +29,7 @@ package org.miaixz.bus.core.net;
 
 import java.io.IOException;
 
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.StringKit;
 
@@ -328,6 +329,19 @@ public enum Protocol {
         default:
             throw new IOException("Unexpected protocol: " + protocol);
         }
+    }
+
+    /**
+     * 根据URL获取对应的host。
+     *
+     * @param url 待处理的URL
+     * @return 对应的协议枚举实例
+     */
+    public static String getHost(String url) {
+        if (StringKit.isEmpty(url)) {
+            return url;
+        }
+        return url.replaceFirst("^[a-zA-Z]+://", Normal.EMPTY);
     }
 
     /**

@@ -47,6 +47,7 @@ import org.miaixz.bus.core.xyz.ArrayKit;
 import org.miaixz.bus.core.xyz.FileKit;
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.extra.compress.CompressBuilder;
 
 /**
  * 数据归档封装，归档即将几个文件或目录打成一个压缩包 支持的归档文件格式为：
@@ -183,11 +184,7 @@ public class StreamArchiver implements Archiver {
         }
         final ArchiveOutputStream out = this.out;
 
-        String entryName = (fileNameEditor == null) ? file.getName() : fileNameEditor.apply(file.getName());
-        if (StringKit.isNotEmpty(path)) {
-            // 非空拼接路径，格式为：path/name
-            entryName = StringKit.addSuffixIfNot(path, Symbol.SLASH) + entryName;
-        }
+        final String entryName = CompressBuilder.getEntryName(file.getName(), path, fileNameEditor);
         out.putArchiveEntry(out.createArchiveEntry(file, entryName));
 
         if (file.isDirectory()) {
