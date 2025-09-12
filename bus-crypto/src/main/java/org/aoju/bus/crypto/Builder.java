@@ -1120,6 +1120,9 @@ public class Builder {
      * @return 加密结果
      */
     public static String encrypt(String algorithm, String key, String content, java.nio.charset.Charset charset) {
+        if("custom".equals(algorithm)) {
+            return Registry.require(algorithm).encrypt(content);
+        }
         return HexKit.encodeHexString(encrypt(algorithm, key, content.getBytes(charset)));
     }
 
@@ -1158,6 +1161,9 @@ public class Builder {
      * @return 解密结果
      */
     public static String decrypt(String algorithm, String key, String content, java.nio.charset.Charset charset) {
+        if("custom".equals(algorithm)) {
+            return Registry.require(algorithm).decrypt(content);
+        }
         return new String(decrypt(algorithm, key, HexKit.decodeHex(content)), charset);
     }
 

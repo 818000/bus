@@ -49,4 +49,23 @@ public interface Provider {
      */
     byte[] decrypt(String key, byte[] content);
 
+    /**
+     * 数据加密 1. 私钥加密 2. 公钥加密
+     *
+     * @param content 需要加密的内容
+     * @return 加密结果
+     */
+   default String encrypt( String content) {
+       return null;
+   }
+
+    /**
+     * 数据解密 1. 公钥解密 2. 私钥解密
+     *
+     * @param content 需要解密的内容
+     * @return 解密结果
+     */
+  default   String decrypt( String content) {
+        return null;
+    }
 }
