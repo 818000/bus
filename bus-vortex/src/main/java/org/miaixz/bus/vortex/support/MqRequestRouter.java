@@ -55,6 +55,7 @@ import org.miaixz.bus.extra.mq.Message;
  * @since Java 17+
  */
 public class MqRequestRouter implements Router {
+
     /**
      * MQ配置属性
      */

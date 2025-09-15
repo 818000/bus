@@ -214,7 +214,7 @@ public class HttpRequestRouter implements Router {
                 builder.queryParams(multiValueMap);
             }
         }
-        return builder.build().encode().toUriString();
+        return builder.build().toUriString();
     }
 
     /**
