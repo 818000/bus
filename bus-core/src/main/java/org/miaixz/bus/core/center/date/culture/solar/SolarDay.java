@@ -354,7 +354,8 @@ public class SolarDay extends Loops {
         if (isBefore(start) || isAfter(end)) {
             return null;
         }
-        return equals(end) ? new PlumRainDay(PlumRain.fromIndex(1), 0) : new PlumRainDay(PlumRain.fromIndex(0), subtract(start));
+        return equals(end) ? new PlumRainDay(PlumRain.fromIndex(1), 0)
+                : new PlumRainDay(PlumRain.fromIndex(0), subtract(start));
     }
 
     /**

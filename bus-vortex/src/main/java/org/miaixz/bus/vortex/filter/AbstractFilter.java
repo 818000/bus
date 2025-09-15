@@ -157,9 +157,15 @@ public abstract class AbstractFilter implements Filter {
         Context context = getContext(exchange);
         Map<String, String> params = getRequestMap(context);
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (Normal.UNDEFINED.equals(entry.getKey().toLowerCase())
-                    || Normal.UNDEFINED.equals(entry.getValue().toLowerCase())) {
+            // 检查键是否为null或undefined
+            if (entry.getKey() != null && Normal.UNDEFINED.equals(entry.getKey().toLowerCase())) {
                 throw new BusinessException(ErrorCode._100101);
+            }
+            // 检查值是否为字符串且为undefined
+            if (entry.getValue() instanceof String) {
+                if (Normal.UNDEFINED.equals(entry.getValue().toLowerCase())) {
+                    throw new BusinessException(ErrorCode._100101);
+                }
             }
         }
         if (StringKit.isBlank(params.get(Config.METHOD))) {

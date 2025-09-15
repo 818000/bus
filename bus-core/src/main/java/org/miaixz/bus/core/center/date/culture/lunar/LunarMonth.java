@@ -377,7 +377,7 @@ public class LunarMonth extends Loops {
      */
     public Direction getJupiterDirection() {
         SixtyCycle sixtyCycle = getSixtyCycle();
-        int n = new int[]{7, -1, 1, 3}[sixtyCycle.getEarthBranch().next(-2).getIndex() % 4];
+        int n = new int[] { 7, -1, 1, 3 }[sixtyCycle.getEarthBranch().next(-2).getIndex() % 4];
         return n != -1 ? Direction.fromIndex(n) : sixtyCycle.getHeavenStem().getDirection();
     }
 
