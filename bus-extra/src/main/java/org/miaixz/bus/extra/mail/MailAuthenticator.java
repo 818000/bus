@@ -25,68 +25,63 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.mapper.support;
+package org.miaixz.bus.extra.mail;
 
-import java.util.function.Predicate;
-
-import org.miaixz.bus.mapper.parsing.ColumnMeta;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
 
 /**
- * 记录字段对应的类和字段名，用于匹配实体类字段与数据库列的属性。
- *
+ * 用户名密码授权
+ * 
  * @author Kimi Liu
  * @since Java 17+
  */
-public class ClassField implements Predicate<ColumnMeta> {
+public class MailAuthenticator extends Authenticator {
+
+    private final PasswordAuthentication auth;
 
     /**
-     * 实体类
-     */
-    private final Class<?> clazz;
-
-    /**
-     * 字段名称
-     */
-    private final String field;
-
-    /**
-     * 构造函数，初始化类和字段信息。
+     * 创建账号密码形式的{@link java.net.Authenticator} 实现。
      *
-     * @param clazz 实体类
-     * @param field 字段名称
+     * @param user 用户名
+     * @param pass 密码
+     * @return PassAuth
      */
-    public ClassField(Class<?> clazz, String field) {
-        this.clazz = clazz;
-        this.field = field;
+    public static MailAuthenticator of(final String user, final String pass) {
+        return new MailAuthenticator(user, pass);
     }
 
     /**
-     * 判断指定列的属性名是否与当前字段名匹配（忽略大小写）。
+     * 构造
      *
-     * @param column 数据库列信息
-     * @return 如果属性名匹配则返回 true，否则返回 false
+     * @param mailAccount 邮箱账号信息
      */
+    public MailAuthenticator(final MailAccount mailAccount) {
+        this.auth = new PasswordAuthentication(mailAccount.getUser(), String.valueOf(mailAccount.getPass()));
+    }
+
+    /**
+     * 构造
+     *
+     * @param userName 用户名
+     * @param password 密码
+     */
+    public MailAuthenticator(final String userName, final String password) {
+        this.auth = new PasswordAuthentication(userName, password);
+    }
+
+    /**
+     * 构造
+     *
+     * @param auth 密码授权信息
+     */
+    public MailAuthenticator(final PasswordAuthentication auth) {
+        this.auth = auth;
+    }
+
     @Override
-    public boolean test(ColumnMeta column) {
-        return getField().equalsIgnoreCase(column.property());
-    }
-
-    /**
-     * 获取实体类。
-     *
-     * @return 实体类
-     */
-    public Class<?> getClazz() {
-        return clazz;
-    }
-
-    /**
-     * 获取字段名称。
-     *
-     * @return 字段名称
-     */
-    public String getField() {
-        return field;
+    protected PasswordAuthentication getPasswordAuthentication() {
+        return this.auth;
     }
 
 }

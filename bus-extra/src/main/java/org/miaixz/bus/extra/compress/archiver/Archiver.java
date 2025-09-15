@@ -53,7 +53,7 @@ public interface Archiver extends Closeable {
     /**
      * 将文件或目录加入归档，目录采取递归读取方式按照层级加入
      *
-     * @param file      文件或目录
+     * @param file   文件或目录
      * @param filter 文件过滤器，指定哪些文件或目录可以加入，{@link Predicate#test(Object)}为{@code true}时加入，null表示全部加入
      * @return this
      */

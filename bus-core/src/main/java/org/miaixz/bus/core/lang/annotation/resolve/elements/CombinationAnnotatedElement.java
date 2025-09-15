@@ -29,7 +29,7 @@ package org.miaixz.bus.core.lang.annotation.resolve.elements;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collection;
 import java.util.Map;
@@ -41,7 +41,7 @@ import org.miaixz.bus.core.xyz.AnnoKit;
 import org.miaixz.bus.core.xyz.ArrayKit;
 
 /**
- * 组合注解 对JDK的原生注解机制做一个增强，支持类似Spring的组合注解。 核心实现使用了递归获取指定元素上的注解以及注解的注解，以实现复合注解的获取。
+ * 组合注解元素, 对JDK的原生注解机制做一个增强，支持类似Spring的组合注解。 核心实现使用了递归获取指定元素上的注解以及注解的注解，以实现复合注解的获取。
  *
  * @author Kimi Liu
  * @since Java 17+
