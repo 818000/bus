@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import org.miaixz.bus.core.lang.exception.BusinessException;
+import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.vortex.*;
 import org.miaixz.bus.vortex.magic.ErrorCode;
@@ -123,7 +123,7 @@ public class VortexHandler {
             Context context = Context.get(request);
             if (context == null) {
                 Format.error(null, "CONTEXT_NULL", "Request context is null for path: " + request.path());
-                throw new BusinessException(ErrorCode._80010002);
+                throw new ValidateException(ErrorCode._80010002);
             }
             ServerWebExchange exchange = request.exchange();
             Format.requestStart(exchange);
@@ -132,7 +132,7 @@ public class VortexHandler {
             Assets assets = context.getAssets();
             if (assets == null) {
                 Format.error(exchange, "ASSETS_NULL", "Assets is null in request context");
-                throw new BusinessException(ErrorCode._100800);
+                throw new ValidateException(ErrorCode._100800);
             }
 
             // 3. 选择路由策略
@@ -147,7 +147,7 @@ public class VortexHandler {
             // 4. 执行前置处理
             return executePreHandle(exchange, router).flatMap(preHandleResult -> {
                 if (!preHandleResult) {
-                    throw new BusinessException(ErrorCode._100800);
+                    throw new ValidateException(ErrorCode._100800);
                 }
 
                 // 5. 委托给策略实现者处理请求

@@ -30,7 +30,8 @@ package org.miaixz.bus.vortex.filter;
 import java.util.Map;
 
 import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.exception.BusinessException;
+import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.*;
 import org.miaixz.bus.vortex.magic.ErrorCode;
@@ -60,16 +61,10 @@ public abstract class AbstractFilter implements Filter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         Format.info(exchange, "FILTER_ENTER", "Entering filter: " + this.getClass().getSimpleName());
-        try {
-            return doFilter(exchange, chain, getContext(exchange)).doOnTerminate(
-                    () -> Format.debug(exchange, "FILTER_EXIT", "Exiting filter: " + this.getClass().getSimpleName()))
-                    .doOnError(e -> Format.error(exchange, "FILTER_ERROR",
-                            "Error in " + this.getClass().getSimpleName() + ": " + e.getMessage()));
-        } catch (Exception e) {
-            Format.error(exchange, "FILTER_FAILED",
-                    "Failed in " + this.getClass().getSimpleName() + ": " + e.getMessage());
-            return Mono.error(e instanceof BusinessException ? e : new BusinessException(ErrorCode._FAILURE));
-        }
+        return doFilter(exchange, chain, getContext(exchange)).doOnTerminate(
+                () -> Format.debug(exchange, "FILTER_EXIT", "Exiting filter: " + this.getClass().getSimpleName()))
+                .doOnError(e -> Format.error(exchange, "FILTER_ERROR",
+                        "Error in " + this.getClass().getSimpleName() + ": " + e.getMessage()));
     }
 
     /**
@@ -91,7 +86,7 @@ public abstract class AbstractFilter implements Filter {
     protected Context getContext(ServerWebExchange exchange) {
         Context context = Context.get(exchange);
         if (context == null) {
-            throw new BusinessException(ErrorCode._100805);
+            throw new ValidateException(ErrorCode._100805);
         }
         return context;
     }
@@ -104,7 +99,7 @@ public abstract class AbstractFilter implements Filter {
      */
     protected Assets getAssets(Context context) {
         if (context == null) {
-            throw new BusinessException(ErrorCode._100805);
+            throw new ValidateException(ErrorCode._100805);
         }
         return context.getAssets();
     }
@@ -117,7 +112,7 @@ public abstract class AbstractFilter implements Filter {
      */
     protected Map<String, String> getRequestMap(Context context) {
         if (context == null) {
-            throw new BusinessException(ErrorCode._100805);
+            throw new ValidateException(ErrorCode._100805);
         }
         return context.getRequestMap();
     }
@@ -151,7 +146,7 @@ public abstract class AbstractFilter implements Filter {
      * 校验请求参数，确保必要参数存在且有效
      *
      * @param exchange ServerWebExchange 对象
-     * @throws BusinessException 如果参数无效或缺失，抛出异常
+     * @throws ValidateException 如果参数无效或缺失，抛出异常
      */
     protected void checkParams(ServerWebExchange exchange) {
         Context context = getContext(exchange);
@@ -159,23 +154,23 @@ public abstract class AbstractFilter implements Filter {
         for (Map.Entry<String, String> entry : params.entrySet()) {
             // 检查键是否为null或undefined
             if (entry.getKey() != null && Normal.UNDEFINED.equals(entry.getKey().toLowerCase())) {
-                throw new BusinessException(ErrorCode._100101);
+                throw new ValidateException(ErrorCode._100101);
             }
             // 检查值是否为字符串且为undefined
             if (entry.getValue() instanceof String) {
                 if (Normal.UNDEFINED.equals(entry.getValue().toLowerCase())) {
-                    throw new BusinessException(ErrorCode._100101);
+                    throw new ValidateException(ErrorCode._100101);
                 }
             }
         }
         if (StringKit.isBlank(params.get(Config.METHOD))) {
-            throw new BusinessException(ErrorCode._100108);
+            throw new ValidateException(ErrorCode._100108);
         }
         if (StringKit.isBlank(params.get(Config.VERSION))) {
-            throw new BusinessException(ErrorCode._100107);
+            throw new ValidateException(ErrorCode._100107);
         }
         if (StringKit.isBlank(params.get(Config.FORMAT))) {
-            throw new BusinessException(ErrorCode._100111);
+            throw new ValidateException(ErrorCode._100111);
         }
         if (StringKit.isNotBlank(params.get(Config.SIGN))) {
             context.setNeedDecrypt(true);

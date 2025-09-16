@@ -34,7 +34,7 @@ import java.util.Objects;
 import org.miaixz.bus.core.basic.entity.Authorize;
 import org.miaixz.bus.core.bean.copier.CopyOptions;
 import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.exception.BusinessException;
+import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.BeanKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.*;
@@ -121,7 +121,7 @@ public class AuthorizeFilter extends AbstractFilter {
         if (null == assets) {
             Format.warn(exchange, "AUTH_ASSETS_NOT_FOUND",
                     "Assets not found for method: " + method + ", version: " + version);
-            return Mono.error(new BusinessException(ErrorCode._100800));
+            return Mono.error(new ValidateException(ErrorCode._100800));
         }
 
         // 执行各种验证
@@ -151,7 +151,7 @@ public class AuthorizeFilter extends AbstractFilter {
      *
      * @param exchange ServerWebExchange 对象，包含请求和响应信息
      * @param assets   资产信息，包含期望的HTTP方法类型
-     * @throws BusinessException 如果方法不匹配，抛出对应错误： - 对于GET方法，错误码为_100200 - 对于POST方法，错误码为_100201 - 对于其他方法，错误码为_100508
+     * @throws ValidateException 如果方法不匹配，抛出对应错误
      */
     protected void checkMethod(ServerWebExchange exchange, Assets assets) {
         ServerHttpRequest request = exchange.getRequest();
@@ -160,11 +160,11 @@ public class AuthorizeFilter extends AbstractFilter {
                     + request.getMethod();
             Format.warn(exchange, "AUTH_METHOD_MISMATCH", error);
             if (Objects.equals(assets.getHttpMethod(), HttpMethod.GET)) {
-                throw new BusinessException(ErrorCode._100200);
+                throw new ValidateException(ErrorCode._100200);
             } else if (Objects.equals(assets.getHttpMethod(), HttpMethod.POST)) {
-                throw new BusinessException(ErrorCode._100201);
+                throw new ValidateException(ErrorCode._100201);
             } else {
-                throw new BusinessException(ErrorCode._100803);
+                throw new ValidateException(ErrorCode._100803);
             }
         }
     }
@@ -179,14 +179,14 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param context  上下文对象，包含令牌和通道信息
      * @param assets   资产信息，指示是否需要令牌验证
      * @param params   请求参数，将用于存储认证结果
-     * @throws BusinessException 如果令牌缺失或认证失败，抛出对应错误： - 令牌缺失时，错误码为_100106 - 令牌认证失败时，使用授权提供者返回的错误码和消息
+     * @throws ValidateException 如果令牌缺失或认证失败
      */
     protected void checkToken(ServerWebExchange exchange, Context context, Assets assets, Map<String, String> params) {
         if (assets.isToken()) {
             // 检查令牌是否存在
             if (StringKit.isBlank(context.getToken())) {
                 Format.warn(exchange, "AUTH_TOKEN_MISSING", "Access token is missing");
-                throw new BusinessException(ErrorCode._100106);
+                throw new ValidateException(ErrorCode._100106);
             }
 
             // 创建令牌对象并进行授权验证
@@ -206,7 +206,7 @@ public class AuthorizeFilter extends AbstractFilter {
                 // 令牌验证失败
                 Format.error(exchange, "AUTH_TOKEN_FAILED",
                         "Error code: " + delegate.getMessage().errcode + ", message: " + delegate.getMessage().errmsg);
-                throw new BusinessException(delegate.getMessage().errcode, delegate.getMessage().errmsg);
+                throw new ValidateException(delegate.getMessage().errcode, delegate.getMessage().errmsg);
             }
         }
     }
@@ -220,7 +220,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param exchange     ServerWebExchange 对象，包含请求和响应信息
      * @param assets       资产信息，从中提取期望的应用ID
      * @param requestParam 请求参数，包含或将要包含应用ID
-     * @throws BusinessException 如果应用ID不匹配，抛出错误码为_100511的业务异常
+     * @throws ValidateException 如果应用ID不匹配，抛出异常
      */
     protected void checkAppId(ServerWebExchange exchange, Assets assets, Map<String, String> requestParam) {
         // 从方法名中提取应用ID（方法名的第一部分）
@@ -233,7 +233,7 @@ public class AuthorizeFilter extends AbstractFilter {
         String xAppId = requestParam.get("x_app_id");
         if (StringKit.isNotBlank(xAppId) && !appId.equals(xAppId)) {
             Format.warn(exchange, "AUTH_APPID_MISMATCH", "App ID mismatch, expected: " + appId + ", actual: " + xAppId);
-            throw new BusinessException(ErrorCode._100806);
+            throw new ValidateException(ErrorCode._100806);
         }
     }
 
