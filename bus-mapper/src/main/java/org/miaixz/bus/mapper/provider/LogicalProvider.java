@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.mapper.Args;
 import org.miaixz.bus.core.lang.annotation.Logical;
+import org.miaixz.bus.mapper.Args;
 import org.miaixz.bus.mapper.parsing.ColumnMeta;
 import org.miaixz.bus.mapper.parsing.SqlScript;
 import org.miaixz.bus.mapper.parsing.TableMeta;
@@ -63,7 +63,7 @@ public class LogicalProvider {
                 return "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName()
                         + where(() -> entity.whereColumns().stream().map(
                                 column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
-                                .collect(Collectors.joining(Symbol.LF)) + logicalNotEqualCondition(entity))
+                                .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, false))
                         + entity.groupByColumn().orElse("") + entity.havingColumn().orElse("")
                         + entity.orderByColumn().orElse("");
             }
@@ -88,7 +88,7 @@ public class LogicalProvider {
                                 () -> ifParameterNotNull(() -> where(() -> entity.whereColumns().stream()
                                         .map(column -> ifTest(column.notNullTest("entity."),
                                                 () -> "AND " + column.columnEqualsProperty("entity.")))
-                                        .collect(Collectors.joining(Symbol.LF)))) + logicalNotEqualCondition(entity))
+                                        .collect(Collectors.joining(Symbol.LF)))) + logicalCondition(entity, false))
                         + entity.groupByColumn().orElse("") + entity.havingColumn().orElse("")
                         + entity.orderByColumn().orElse("");
             }
@@ -112,7 +112,7 @@ public class LogicalProvider {
                         + " FROM " + entity.tableName()
                         + trim("WHERE", "", "WHERE |OR |AND ", "",
                                 () -> ifParameterNotNull(() -> Args.CONDITION_WHERE_CLAUSE)
-                                        + logicalNotEqualCondition(entity))
+                                        + logicalCondition(entity, false))
                         + ifTest("orderByClause != null", () -> " ORDER BY ${orderByClause}")
                         + ifTest("orderByClause == null", () -> entity.orderByColumn().orElse(""))
                         + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
@@ -138,7 +138,7 @@ public class LogicalProvider {
                         + entity.tableName()
                         + trim("WHERE", "", "WHERE |OR |AND ", "",
                                 () -> ifParameterNotNull(() -> Args.CONDITION_WHERE_CLAUSE)
-                                        + logicalNotEqualCondition(entity))
+                                        + logicalCondition(entity, false))
                         + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
             }
         });
@@ -157,7 +157,7 @@ public class LogicalProvider {
                 return "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName()
                         + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
                                 .collect(Collectors.joining(" AND ")))
-                        + logicalNotEqualCondition(entity);
+                        + logicalCondition(entity, false);
             }
         });
     }
@@ -175,7 +175,7 @@ public class LogicalProvider {
                 return "SELECT COUNT(*)  FROM " + entity.tableName() + Symbol.LF
                         + where(() -> entity.whereColumns().stream().map(
                                 column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
-                                .collect(Collectors.joining(Symbol.LF)) + logicalNotEqualCondition(entity));
+                                .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, false));
             }
         });
     }
@@ -199,7 +199,7 @@ public class LogicalProvider {
                         + (entity.getBoolean("updateByCondition.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
                         + trim("WHERE", "", "WHERE |OR |AND ", "",
-                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalNotEqualCondition(entity))
+                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
         });
@@ -225,7 +225,7 @@ public class LogicalProvider {
                         + (entity.getBoolean("updateByConditionSelective.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
                         + trim("WHERE", "", "WHERE |OR |AND ", "",
-                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalNotEqualCondition(entity))
+                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
         });
@@ -248,7 +248,7 @@ public class LogicalProvider {
                         + (entity.getBoolean("updateByCondition.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
                         + trim("WHERE", "", "WHERE |OR |AND ", "",
-                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalNotEqualCondition(entity))
+                                () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
         });
@@ -269,7 +269,7 @@ public class LogicalProvider {
                                 .collect(Collectors.joining(Symbol.COMMA))
                         + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
                                 .collect(Collectors.joining(" AND ")))
-                        + logicalNotEqualCondition(entity);
+                        + logicalCondition(entity, false);
             }
         });
     }
@@ -289,7 +289,7 @@ public class LogicalProvider {
                         .collect(Collectors.joining(Symbol.LF)))
                         + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
                                 .collect(Collectors.joining(" AND ")))
-                        + logicalNotEqualCondition(entity);
+                        + logicalCondition(entity, false);
             }
         });
     }
@@ -314,7 +314,7 @@ public class LogicalProvider {
                                 .collect(Collectors.joining(Symbol.LF)))
                         + where(() -> entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity."))
                                 .collect(Collectors.joining(" AND ")))
-                        + logicalNotEqualCondition(entity);
+                        + logicalCondition(entity, false);
             }
         });
     }
@@ -335,7 +335,7 @@ public class LogicalProvider {
                         + parameterNotNull("Parameter cannot be null")
                         + where(() -> entity.columns().stream().map(
                                 column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
-                                .collect(Collectors.joining(Symbol.LF)) + logicalNotEqualCondition(entity));
+                                .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, true));
             }
         });
     }
@@ -354,7 +354,7 @@ public class LogicalProvider {
                 return "UPDATE " + entity.tableName() + " SET "
                         + columnEqualsValue(logicColumn, deleteValue(logicColumn)) + " WHERE " + entity.idColumns()
                                 .stream().map(ColumnMeta::columnEqualsProperty).collect(Collectors.joining(" AND "))
-                        + logicalNotEqualCondition(entity);
+                        + logicalCondition(entity, true);
             }
         });
     }
@@ -366,16 +366,18 @@ public class LogicalProvider {
      * @return 缓存键
      */
     public static String deleteByCondition(ProviderContext providerContext) {
-        return SqlScript.caching(providerContext, (entity, util) -> {
-            ColumnMeta logicColumn = getLogical(entity);
-            return util.ifTest("startSql != null and startSql != ''", () -> "${startSql}") + "UPDATE "
-                    + entity.tableName() + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
-                    + util.parameterNotNull("Condition cannot be null")
-                    + (entity.getBoolean("deleteByCondition.allowEmpty", true) ? ""
-                            : util.variableIsFalse("_parameter.isEmpty()", "Condition Criteria cannot be empty"))
-                    + Args.CONDITION_WHERE_CLAUSE + " AND "
-                    + columnNotEqualsValueCondition(logicColumn, deleteValue(logicColumn))
-                    + util.ifTest("endSql != null and endSql != ''", () -> "${endSql}");
+        return SqlScript.caching(providerContext, new LogicalSqlScript() {
+            @Override
+            public String getSql(TableMeta entity) {
+                ColumnMeta logicColumn = getLogical(entity);
+                return ifTest("startSql != null and startSql != ''", () -> "${startSql}") + "UPDATE "
+                        + entity.tableName() + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
+                        + parameterNotNull("Condition cannot be null")
+                        + (entity.getBoolean("deleteByCondition.allowEmpty", true) ? ""
+                                : variableIsFalse("_parameter.isEmpty()", "Condition Criteria cannot be empty"))
+                        + Args.CONDITION_WHERE_CLAUSE + " AND " + logicalCondition(entity, true)
+                        + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
+            }
         });
     }
 
@@ -401,6 +403,26 @@ public class LogicalProvider {
      */
     private static String deleteValue(ColumnMeta logicColumn) {
         return logicColumn.fieldMeta().getAnnotation(Logical.class).value();
+    }
+
+    /**
+     * 获取逻辑删除字段的有效状态值。
+     *
+     * @param logicColumn 逻辑删除字段
+     * @return 有效状态值
+     */
+    private static String validValue(ColumnMeta logicColumn) {
+        return logicColumn.fieldMeta().getAnnotation(Logical.class).valid();
+    }
+
+    /**
+     * 检查是否使用等于条件。
+     *
+     * @param logicColumn 逻辑删除字段
+     * @return 是否使用等于条件
+     */
+    private static boolean useEqualsCondition(ColumnMeta logicColumn) {
+        return logicColumn.fieldMeta().getAnnotation(Logical.class).useEqualsCondition();
     }
 
     /**
@@ -466,15 +488,30 @@ public class LogicalProvider {
      * 逻辑删除 SQL 脚本接口，添加逻辑删除条件。
      */
     private interface LogicalSqlScript extends SqlScript {
+
         /**
-         * 生成逻辑删除不等于条件的 SQL 片段。
+         * 生成逻辑删除条件的 SQL 片段。 根据配置使用等于条件或不等于条件。
          *
-         * @param entity 实体表信息
+         * @param entity            实体表信息
+         * @param isDeleteOperation 是否为删除操作，删除操作总是使用不等于条件
          * @return 逻辑删除条件
          */
-        default String logicalNotEqualCondition(TableMeta entity) {
+        default String logicalCondition(TableMeta entity, boolean isDeleteOperation) {
             ColumnMeta logicalColumn = getLogical(entity);
-            return " AND " + columnNotEqualsValueCondition(logicalColumn, deleteValue(logicalColumn)) + Symbol.LF;
+
+            // 删除操作总是使用不等于条件，确保只删除未逻辑删除的记录
+            if (isDeleteOperation) {
+                return columnNotEqualsValueCondition(logicalColumn, deleteValue(logicalColumn)) + Symbol.LF;
+            }
+
+            // 查询和更新操作根据配置使用等于条件或不等于条件
+            if (useEqualsCondition(logicalColumn)) {
+                // 使用等于条件：status = 1
+                return " AND " + columnEqualsValueCondition(logicalColumn, validValue(logicalColumn)) + Symbol.LF;
+            } else {
+                // 使用不等于条件：status != -1（原有逻辑）
+                return " AND " + columnNotEqualsValueCondition(logicalColumn, deleteValue(logicalColumn)) + Symbol.LF;
+            }
         }
     }
 
