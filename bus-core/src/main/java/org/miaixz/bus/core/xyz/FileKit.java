@@ -136,16 +136,49 @@ public class FileKit extends PathResolve {
     }
 
     /**
-     * 递归遍历目录以及子目录中的所有文件 如果提供file为文件，直接返回过滤结果
+     * 检查文件或目录是否为隐藏
      *
-     * @param file 文件/目录
-     * @return 文件列表
+     * @param file 文件或目录路径
+     * @return 如果是隐藏返回true，否则返回false
      */
     public static boolean isHidden(final File file) {
+        return isHidden(file.toPath());
+    }
+
+    /**
+     * 检查文件或目录是否为隐藏，包括Office应用程序创建的临时隐藏文件
+     *
+     * @param path 文件或目录路径
+     * @return 如果是隐藏返回true，否则返回false
+     */
+    public static boolean isHidden(Path path) {
+        if (path == null) {
+            return false;
+        }
+
         try {
-            return !Files.isHidden(file.toPath()) && !file.getName().startsWith(Symbol.DOT)
-                    && !file.getName().startsWith(Symbol.TILDE + Symbol.DOLLAR);
-        } catch (IOException e) {
+            String fileName = path.getFileName().toString();
+
+            // 检查Unix/Linux风格的隐藏文件（以点开头）
+            if (fileName.startsWith(Symbol.DOT)) {
+                return true;
+            }
+
+            // 检查Office临时文件（以~$开头）
+            if (fileName.startsWith(Symbol.TILDE + Symbol.DOLLAR)) {
+                return true;
+            }
+
+            // 检查临时文件（以.tmp结尾）
+            if (fileName.toLowerCase().endsWith(".tmp")) {
+                return true;
+            }
+
+            // 检查Windows风格的隐藏文件（具有隐藏属性）
+            // 使用Files.isHidden()方法，它会根据操作系统自动处理
+            return Files.isHidden(path);
+        } catch (Exception e) {
+            // 出错时保守处理，认为不是隐藏文件
             return false;
         }
     }
