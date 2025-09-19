@@ -225,11 +225,11 @@ public class FileKit extends PathResolve {
      * @return 文件列表
      */
     public static List<File> loopFiles(final String path, final boolean hidden) {
-        FileFilter nonHiddenFileFilter = null;
+        FileFilter fileFilter = null;
         if (hidden) {
-            nonHiddenFileFilter = f -> isHidden(f);
+            fileFilter = f -> !isHidden(f);
         }
-        return loopFiles(file(path), nonHiddenFileFilter);
+        return loopFiles(file(path), fileFilter);
     }
 
     /**
