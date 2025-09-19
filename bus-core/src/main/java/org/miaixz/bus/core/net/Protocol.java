@@ -338,10 +338,37 @@ public enum Protocol {
      * @return 对应的协议枚举实例
      */
     public static String getHost(String url) {
+        return getHost(url, true);
+    }
+
+    /**
+     * 根据URL获取对应的host。
+     *
+     * @param url      待处理的URL
+     * @param withPort 是否包含端口
+     * @return 对应的host
+     */
+    public static String getHost(String url, boolean withPort) {
         if (StringKit.isEmpty(url)) {
             return url;
         }
-        return url.replaceFirst("^[a-zA-Z]+://", Normal.EMPTY);
+
+        // 首先移除协议部分
+        String withoutProtocol = url.replaceFirst("^[a-zA-Z]+://", Normal.EMPTY);
+
+        // 如果需要包含端口，直接返回
+        if (withPort) {
+            return withoutProtocol;
+        }
+
+        // 如果不需要包含端口，检查是否存在端口号
+        int portIndex = withoutProtocol.indexOf(':');
+        if (portIndex != -1) {
+            return withoutProtocol.substring(0, portIndex);
+        }
+
+        // 如果没有端口，直接返回
+        return withoutProtocol;
     }
 
     /**

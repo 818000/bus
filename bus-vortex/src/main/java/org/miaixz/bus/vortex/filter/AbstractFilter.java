@@ -30,7 +30,6 @@ package org.miaixz.bus.vortex.filter;
 import java.util.Map;
 
 import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.*;
