@@ -93,27 +93,26 @@ public class AliYunOssProvider extends AbstractProvider {
         Assert.notBlank(this.context.getAccessKey(), "[accessKey] cannot be blank");
         Assert.notBlank(this.context.getSecretKey(), "[secretKey] cannot be blank");
 
-        long readTimeout = this.context.getReadTimeout() != 0 ? this.context.getReadTimeout() : 10;
-        long writeTimeout = this.context.getWriteTimeout() != 0 ? this.context.getWriteTimeout() : 60;
-
         ClientOverrideConfiguration overrideConfig = ClientOverrideConfiguration.builder()
-                .apiCallTimeout(Duration.ofSeconds(writeTimeout)).apiCallAttemptTimeout(Duration.ofSeconds(readTimeout))
-                .build();
+                .apiCallTimeout(Duration.ofSeconds(this.context.getWriteTimeout()))
+                .apiCallAttemptTimeout(Duration.ofSeconds(this.context.getReadTimeout())).build();
 
         AwsBasicCredentials credentials = AwsBasicCredentials.create(this.context.getAccessKey(),
                 this.context.getSecretKey());
+
+        // 创建自定义Client
+        ClientX clientx = new ClientX.ClientBuilder()
+                .connectTimeout(Duration.ofSeconds(this.context.getConnectTimeout()))
+                .readTimeout(Duration.ofSeconds(this.context.getReadTimeout()))
+                .writeTimeout(Duration.ofSeconds(this.context.getWriteTimeout())).addInterceptor(chain -> {
+                    Request request = chain.request();
+                    return chain.proceed(request);
+                }).build();
 
         // 配置S3客户端以兼容阿里云OSS
         S3Configuration s3Config = S3Configuration.builder().pathStyleAccessEnabled(this.context.isPathStyle())
                 // 禁用chunked编码，解决阿里云OSS兼容性问题
                 .chunkedEncodingEnabled(false).build();
-
-        // 创建自定义OkHttpClient
-        ClientX clientx = new ClientX.ClientBuilder().connectTimeout(Duration.ofSeconds(5))
-                .readTimeout(Duration.ofSeconds(30)).writeTimeout(Duration.ofSeconds(30)).addInterceptor(chain -> {
-                    Request request = chain.request();
-                    return chain.proceed(request);
-                }).build();
 
         this.client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .httpClient(clientx).endpointOverride(URI.create(this.context.getEndpoint()))
