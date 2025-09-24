@@ -104,7 +104,6 @@ module bus.starter {
     requires org.apache.httpcomponents.httpclient;
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpasyncclient;
-    requires bus.starter;
 
     exports org.miaixz.bus.spring;
     exports org.miaixz.bus.spring.annotation;

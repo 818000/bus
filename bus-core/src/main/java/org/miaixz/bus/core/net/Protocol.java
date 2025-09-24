@@ -406,10 +406,10 @@ public enum Protocol {
         }
 
         // 查找端口分隔符
-        int portIndex = hostPort.lastIndexOf(':');
+        int portIndex = hostPort.lastIndexOf(Symbol.C_COLON);
         if (portIndex >= 0) {
             // 确保不是IPv6地址中的冒号
-            if (hostPort.lastIndexOf(']') < portIndex) {
+            if (hostPort.lastIndexOf(Symbol.C_BRACKET_RIGHT) < portIndex) {
                 String portStr = hostPort.substring(portIndex + 1);
                 try {
                     return Integer.parseInt(portStr);

@@ -54,26 +54,49 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class Nexus implements Condition {
 
     /**
-     * 功能注册表：一个静态不可变的 Map，作为所有相关功能的“单一事实来源”。
-     * <ul>
-     * <li><b>Key (String):</b> 功能在配置文件中的启用属性名。</li>
-     * <li><b>Value (Class):</b> 功能的启用注解。</li>
-     * </ul>
-     * 当需要添加一个新的、能够触发此条件的子功能时，只需在此 Map 中增加一个条目即可。
+     * 功能注册表：一个静态不可变的 Map，作为所有相关功能的“单一事实来源”。 Key 为属性名，Value 为功能的启用注解。
      */
     private static final Map<String, Class<? extends Annotation>> FEATURES = Map.ofEntries(
-            Map.entry(GeniusBuilder.AUTH, EnableAuth.class), Map.entry(GeniusBuilder.BRIDGE, EnableBridge.class),
-            Map.entry(GeniusBuilder.CACHE, EnableCache.class), Map.entry(GeniusBuilder.CORS, EnableCors.class),
-            Map.entry(GeniusBuilder.DUBBO, EnableDubbo.class), Map.entry(GeniusBuilder.ELASTIC, EnableElastic.class),
-            Map.entry(GeniusBuilder.HEALTH, EnableHealth.class), Map.entry(GeniusBuilder.I18N, EnableI18n.class),
-            Map.entry(GeniusBuilder.IMAGE, EnableImage.class), Map.entry(GeniusBuilder.LIMITER, EnableLimiter.class),
-            Map.entry(GeniusBuilder.MAPPER, EnableMapper.class), Map.entry(GeniusBuilder.NOTIFY, EnableNotify.class),
+            // 认证授权
+            Map.entry(GeniusBuilder.AUTH, EnableAuth.class),
+            // 服务桥接
+            Map.entry(GeniusBuilder.BRIDGE, EnableBridge.class),
+            // 缓存管理
+            Map.entry(GeniusBuilder.CACHE, EnableCache.class),
+            // 跨域资源共享
+            Map.entry(GeniusBuilder.CORS, EnableCors.class),
+            // Dubbo 集成
+            Map.entry(GeniusBuilder.DUBBO, EnableDubbo.class),
+            // Elasticsearch
+            Map.entry(GeniusBuilder.ELASTIC, EnableElastic.class),
+            // 健康检查
+            Map.entry(GeniusBuilder.HEALTH, EnableHealth.class),
+            // 国际化(i18n)
+            Map.entry(GeniusBuilder.I18N, EnableI18n.class),
+            // 图像处理
+            Map.entry(GeniusBuilder.IMAGE, EnableImage.class),
+            // 接口限流
+            Map.entry(GeniusBuilder.LIMITER, EnableLimiter.class),
+            // ORM/数据映射
+            Map.entry(GeniusBuilder.MAPPER, EnableMapper.class),
+            // 消息通知
+            Map.entry(GeniusBuilder.NOTIFY, EnableNotify.class),
+            // Office文档处理
             Map.entry(GeniusBuilder.OFFICE, EnableOffice.class),
+            // 数据脱敏
             Map.entry(GeniusBuilder.SENSITIVE, EnableSensitive.class),
-            Map.entry(GeniusBuilder.SOCKET, EnableSocket.class), Map.entry(GeniusBuilder.STORAGE, EnableStorage.class),
+            // WebSocket
+            Map.entry(GeniusBuilder.SOCKET, EnableSocket.class),
+            // 分布式存储
+            Map.entry(GeniusBuilder.STORAGE, EnableStorage.class),
+            // 分布式链路追踪
             Map.entry(GeniusBuilder.TRACER, EnableTracer.class),
+            // 参数校验
             Map.entry(GeniusBuilder.VALIDATE, EnableValidate.class),
-            Map.entry(GeniusBuilder.VORTEX, EnableVortex.class), Map.entry(GeniusBuilder.WRAPPER, EnableWrapper.class));
+            // Vortex网关
+            Map.entry(GeniusBuilder.VORTEX, EnableVortex.class),
+            // 请求/响应包装
+            Map.entry(GeniusBuilder.WRAPPER, EnableWrapper.class));
 
     /**
      * 评估此条件是否匹配。

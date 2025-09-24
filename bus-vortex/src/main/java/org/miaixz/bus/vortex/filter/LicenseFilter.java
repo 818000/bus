@@ -53,7 +53,9 @@ import reactor.core.publisher.Mono;
  * <p>
  * 作为系统中最高优先级的过滤器之一，它在所有请求的最前端强制执行许可证有效性检查。 如果许可证校验失败，请求将被立即中断，不会进入后续的业务逻辑。
  * </p>
- * 
+ *
+ * @author Kimi Liu
+ * @since Java 17+
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class LicenseFilter extends AbstractFilter {
@@ -87,7 +89,7 @@ public class LicenseFilter extends AbstractFilter {
      */
     @Override
     protected Mono<Void> doFilter(ServerWebExchange exchange, WebFilterChain chain, Context context) {
-        // 使用 HttpKit 中健壮的方法获取域名
+        // 获取域名
         Optional<String> domainOptional = getOriginalDomain(exchange.getRequest());
 
         // 使用 Optional 的 API 来处理结果

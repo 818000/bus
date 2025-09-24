@@ -33,11 +33,7 @@ import org.miaixz.bus.starter.cors.CorsConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
- * /** 启用应用的跨域资源共享 (CORS) 功能。
- * <p>
- * 通过 {@link Import} 注解，此注解会加载 {@link CorsConfiguration} 中定义的所有相关 Beans。
- * <p>
- * 同时，它也被 {@link EnableProxyViaAnnotation} 所标记，意味着启用此功能 也会自动满足开启代理头解析功能的条件之一。
+ * 启用跨域支持
  *
  * @author Kimi Liu
  * @since Java 17+
