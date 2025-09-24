@@ -68,7 +68,7 @@ import jakarta.annotation.Resource;
  * @since Java 17+
  */
 @ConditionalOnMissingBean(MapperFactoryBean.class)
-@EnableConfigurationProperties(value = { MybatisProperties.class })
+@EnableConfigurationProperties(value = { MapperProperties.class })
 @ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
 @AutoConfigureBefore(name = "org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration")
 public class MapperConfiguration implements InitializingBean {
@@ -92,7 +92,7 @@ public class MapperConfiguration implements InitializingBean {
      * MyBatis属性配置
      */
     @Resource
-    MybatisProperties properties;
+    MapperProperties properties;
 
     /**
      * 构造函数，初始化环境、资源加载器和配置定制器
@@ -171,7 +171,7 @@ public class MapperConfiguration implements InitializingBean {
         }
         factory.setConfiguration(configuration);
         // 插件配置
-        factory.setPlugins(MybatisPluginBuilder.build(environment));
+        factory.setPlugins(MapperPluginBuilder.build(environment));
 
         SqlSessionFactory sqlSessionFactory = factory.getObject();
         Logger.info("SqlSessionFactory created successfully");

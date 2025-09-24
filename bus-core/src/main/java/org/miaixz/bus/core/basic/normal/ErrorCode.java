@@ -331,6 +331,26 @@ public class ErrorCode {
     public static final Errors _100523 = ErrorRegistry.builder().key("100523").value("未绑定手机号码").build();
 
     /**
+     * 许可证无效
+     */
+    public static final Errors _100524 = ErrorRegistry.builder().key("100524").value("许可证无效").build();
+
+    /**
+     * 许可证已过期
+     */
+    public static final Errors _100525 = ErrorRegistry.builder().key("100525").value("许可证已过期").build();
+
+    /**
+     * 许可证验证失败
+     */
+    public static final Errors _100526 = ErrorRegistry.builder().key("100526").value("许可证验证失败").build();
+
+    /**
+     * 请联系官方激活
+     */
+    public static final Errors _100527 = ErrorRegistry.builder().key("100527").value("请联系官方激活").build();
+
+    /**
      * 无权操作
      */
     public static final Errors _100800 = ErrorRegistry.builder().key("100800").value("无权操作").build();
