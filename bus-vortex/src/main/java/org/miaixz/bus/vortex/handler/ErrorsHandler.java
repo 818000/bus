@@ -29,9 +29,7 @@ package org.miaixz.bus.vortex.handler;
 
 import lombok.*;
 import org.miaixz.bus.core.lang.Charset;
-import org.miaixz.bus.core.lang.exception.BusinessException;
-import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.lang.exception.*;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Format;
@@ -96,27 +94,22 @@ public class ErrorsHandler implements WebExceptionHandler {
      * @return 错误消息对象
      */
     protected Message buildErrorMessage(Throwable ex, ServerWebExchange exchange) {
-        // 处理 WebClientException
+        // 1. 首先处理不属于 UncheckedException 继承体系的特定异常
         if (ex instanceof WebClientException) {
             return handleWebClientException((WebClientException) ex, exchange);
         }
 
-        // 处理 InternalException
-        if (ex instanceof InternalException) {
-            return handleInternalException((InternalException) ex, exchange);
+        // 2. 然后，用一个 if 块处理所有 UncheckedException 及其子类
+        // InternalException, ValidateException, BusinessException 都会在这里被捕获
+        if (ex instanceof UncheckedException) {
+            return handleUncheckedException((UncheckedException) ex, exchange);
         }
 
-        // 处理 ValidateException
-        if (ex instanceof ValidateException) {
-            return handleValidateException((ValidateException) ex, exchange);
-        }
+        // 注意: 你的代码中还有一个 handleBusinessException(LicenseException ex, ...)，
+        // 如果 LicenseException 也继承自 UncheckedException, 它也会被上面的代码块处理。
+        // 如果它有特殊逻辑，需要单独处理，则应放在 UncheckedException 检查之前。
 
-        // 处理 BusinessException
-        if (ex instanceof BusinessException) {
-            return handleBusinessException((BusinessException) ex, exchange);
-        }
-
-        // 处理未知异常
+        // 3. 最后，处理所有其他未知异常
         return handleUnknownException(ex, exchange);
     }
 
@@ -138,41 +131,13 @@ public class ErrorsHandler implements WebExceptionHandler {
     /**
      * 处理 InternalException
      */
-    protected Message handleInternalException(InternalException ex, ServerWebExchange exchange) {
+    protected Message handleUncheckedException(UncheckedException ex, ServerWebExchange exchange) {
         if (StringKit.isNotBlank(ex.getErrcode())) {
             Format.error(exchange, "INTERNAL_EXCEPTION",
                     "ErrorCode: " + ex.getErrcode() + ", Message: " + ex.getErrmsg());
             return Message.builder().errcode(ex.getErrcode()).errmsg(ex.getErrmsg()).build();
         } else {
             Format.error(exchange, "INTERNAL_EXCEPTION", "Generic InternalException: " + ex.getMessage());
-            return Message.builder().errcode(ErrorCode._100807.getKey()).errmsg(ErrorCode._100807.getValue()).build();
-        }
-    }
-
-    /**
-     * 处理 ValidateException
-     */
-    protected Message handleValidateException(ValidateException ex, ServerWebExchange exchange) {
-        if (StringKit.isNotBlank(ex.getErrcode())) {
-            Format.error(exchange, "VALIDATE_EXCEPTION",
-                    "ErrorCode: " + ex.getErrcode() + ", Message: " + ex.getErrmsg());
-            return Message.builder().errcode(ex.getErrcode()).errmsg(ex.getErrmsg()).build();
-        } else {
-            Format.error(exchange, "VALIDATE_EXCEPTION", "Generic ValidateException: " + ex.getMessage());
-            return Message.builder().errcode(ErrorCode._100807.getKey()).errmsg(ErrorCode._100807.getValue()).build();
-        }
-    }
-
-    /**
-     * 处理 BusinessException
-     */
-    protected Message handleBusinessException(BusinessException ex, ServerWebExchange exchange) {
-        if (StringKit.isNotBlank(ex.getErrcode())) {
-            Format.error(exchange, "BUSINESS_EXCEPTION",
-                    "ErrorCode: " + ex.getErrcode() + ", Message: " + ex.getErrmsg());
-            return Message.builder().errcode(ex.getErrcode()).errmsg(ex.getErrmsg()).build();
-        } else {
-            Format.error(exchange, "BUSINESS_EXCEPTION", "Generic BusinessException: " + ex.getMessage());
             return Message.builder().errcode(ErrorCode._100807.getKey()).errmsg(ErrorCode._100807.getValue()).build();
         }
     }

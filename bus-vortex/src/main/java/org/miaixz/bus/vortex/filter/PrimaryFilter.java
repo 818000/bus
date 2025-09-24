@@ -66,12 +66,11 @@ import reactor.util.retry.Retry;
  * <li><b>请求体复用:</b> 对于POST等包含请求体的请求，在读取后会通过 {@link ServerHttpRequestDecorator} 将请求体重新包装，以确保下游组件可以再次读取。</li>
  * <li><b>自动重试:</b> 内置了对请求体解析的重试机制，以增强系统在处理网络波动时的健壮性。</li>
  * </ul>
- * </p>
  *
  * @author Justubborn
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 public class PrimaryFilter extends AbstractFilter {
 
     /**

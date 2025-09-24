@@ -34,7 +34,7 @@ import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.core.center.map.multi.Graph;
+import org.miaixz.bus.core.center.map.multiple.Graph;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.annotation.Alias;
 import org.miaixz.bus.core.lang.annotation.resolve.elements.MetaAnnotatedElement;

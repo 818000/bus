@@ -44,6 +44,8 @@ public interface EnumValue<E extends EnumValue<E>> extends Enumers {
     /**
      * 操作类型
      */
+    @Getter
+    @AllArgsConstructor
     enum Action {
 
         /**

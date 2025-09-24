@@ -41,8 +41,6 @@ public class ErrorCode extends org.miaixz.bus.core.basic.normal.ErrorCode {
     /**
      * 默认错误码
      */
-    public static final String _116000 = "116000";
-
-    public static final Errors __116000 = ErrorRegistry.builder().key(_116000).value("参数校验失败").build();
+    public static final Errors _116000 = ErrorRegistry.builder().key("116000").value("参数校验失败").build();
 
 }

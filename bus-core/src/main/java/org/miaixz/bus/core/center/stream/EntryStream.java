@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.miaixz.bus.core.center.map.multi.RowKeyTable;
-import org.miaixz.bus.core.center.map.multi.Table;
+import org.miaixz.bus.core.center.map.multiple.RowKeyTable;
+import org.miaixz.bus.core.center.map.multiple.Table;
 import org.miaixz.bus.core.center.set.ConcurrentHashSet;
 import org.miaixz.bus.core.xyz.CollectorKit;
 import org.miaixz.bus.core.xyz.IteratorKit;

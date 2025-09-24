@@ -51,7 +51,6 @@ module bus.vortex {
     requires reactor.netty.core;
     requires org.reactivestreams;
     requires com.google.common;
-    requires bus.vortex;
 
     exports org.miaixz.bus.vortex;
     exports org.miaixz.bus.vortex.filter;

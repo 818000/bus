@@ -37,6 +37,7 @@ import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.net.PORT;
 import org.miaixz.bus.core.net.Protocol;
 
 /**
@@ -162,9 +163,9 @@ public class UnoUrl {
      */
     public static int defaultPort(String scheme) {
         if (Protocol.HTTP.name.equals(scheme)) {
-            return 80;
+            return PORT._80;
         } else if (Protocol.HTTPS.name.equals(scheme)) {
-            return 443;
+            return PORT._443;
         } else {
             return -1;
         }

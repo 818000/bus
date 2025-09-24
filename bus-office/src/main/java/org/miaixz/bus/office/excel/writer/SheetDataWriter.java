@@ -40,7 +40,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.miaixz.bus.core.center.map.multi.Table;
+import org.miaixz.bus.core.center.map.multiple.Table;
 import org.miaixz.bus.core.xyz.*;
 import org.miaixz.bus.office.excel.RowGroup;
 import org.miaixz.bus.office.excel.cell.editors.CellEditor;

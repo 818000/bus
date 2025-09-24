@@ -27,7 +27,7 @@
 */
 package org.miaixz.bus.vortex.provider;
 
-import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.lang.exception.LicenseException;
 
 /**
  * 许可证校验提供者接口。
@@ -43,15 +43,16 @@ public interface LicenseProvider {
      * <b>实现约定:</b>
      * <ul>
      * <li>如果许可证对给定的验证主体有效，此方法应正常返回，不执行任何操作。</li>
-     * <li>如果许可证无效（如过期、主体不匹配、签名错误等），此方法应抛出 {@link ValidateException} 或其他运行时异常来中断操作。</li>
+     * <li>如果许可证无效（如过期、主体不匹配、签名错误等），此方法应抛出 {@link LicenseException} 或其他运行时异常来中断操作。</li>
      * </ul>
      *
-     * @param subject 用于验证许可证的标的物，通常是请求的域名或主机名。
-     * @throws ValidateException 如果许可证校验失败。
+     * @param principal 用于验证许可证的实体标识，例如域名 (e.g., "example.com:443") * 或公司名称 (e.g., "Acme Corporation")。
+     * @throws LicenseException 如果许可证校验失败。
      */
-    default void validate(String subject) {
+    default boolean validate(String principal) {
         // 默认实现为空，允许在某些环境中禁用许可证检查。
         // 具体的校验逻辑应由实现类提供。
+        return true;
     }
 
 }

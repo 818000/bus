@@ -60,7 +60,7 @@ import reactor.core.publisher.Mono;
  * @author Justubborn
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 2)
+@Order(Ordered.HIGHEST_PRECEDENCE + 3)
 public class AuthorizeFilter extends AbstractFilter {
 
     /**

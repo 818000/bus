@@ -29,6 +29,8 @@ package org.miaixz.bus.core.net;
 
 import java.io.IOException;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -40,6 +42,8 @@ import org.miaixz.bus.core.xyz.StringKit;
  * @author Kimi Liu
  * @since Java 17+
  */
+@Getter
+@AllArgsConstructor
 public enum Protocol {
 
     /**
@@ -288,15 +292,6 @@ public enum Protocol {
      * 协议名称，用于标识协议类型。
      */
     public final String name;
-
-    /**
-     * 构造函数，初始化协议名称。
-     *
-     * @param name 协议名称
-     */
-    Protocol(String name) {
-        this.name = name;
-    }
 
     /**
      * 根据协议名称获取对应的协议枚举实例。

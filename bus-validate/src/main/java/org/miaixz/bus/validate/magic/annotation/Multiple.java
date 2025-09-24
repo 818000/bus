@@ -25,52 +25,66 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.core.center.map.multi;
+package org.miaixz.bus.validate.magic.annotation;
 
-import java.io.Serial;
-import java.util.*;
-import java.util.function.Supplier;
+import java.lang.annotation.*;
+
+import org.miaixz.bus.validate.Builder;
+import org.miaixz.bus.validate.magic.Matcher;
+import org.miaixz.bus.validate.metric.MultipleMatcher;
 
 /**
- * 值作为集合Set（LinkedHashSet）的Map实现，通过调用putValue可以在相同key时加入多个值，多个值用集合表示
+ * 多重校验器, 可以配置多个校验器
  *
- * @param <K> 键类型
- * @param <V> 值类型
  * @author Kimi Liu
  * @since Java 17+
  */
-public class SetValueMap<K, V> extends AbstractCollValueMap<K, V> {
-
-    @Serial
-    private static final long serialVersionUID = 2852277962550L;
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
+@Complex(value = Builder._MULTI, clazz = MultipleMatcher.class)
+public @interface Multiple {
 
     /**
-     * 基于{@code mapFactory}创建一个值为{@link Set}的多值映射集合
+     * 校验器名称数组,优先使用校验器名称中的校验器,并忽略校验器类中的校验器
      *
-     * @param mapFactory 创建集合的工厂反方
+     * @return the array
      */
-    public SetValueMap(final Supplier<Map<K, Collection<V>>> mapFactory) {
-        super(mapFactory);
-    }
+    String[] value() default {};
 
     /**
-     * 基于{@link HashMap}创建一个值为{@link Set}的多值映射集合
+     * 校验器类数组, 当校验器名称数组为空时,使用校验器类数组中的校验器
      *
-     * @param map 提供数据的原始集合
+     * @return the object
      */
-    public SetValueMap(final Map<K, Collection<V>> map) {
-        super(map);
-    }
+    Class<? extends Matcher>[] classes() default {};
 
     /**
-     * 基于{@link HashMap}创建一个值为{@link Set}的多值映射集合
+     * 默认使用的异常码
+     *
+     * @return the string
      */
-    public SetValueMap() {
-    }
+    String errcode() default Builder.DEFAULT_ERRCODE;
 
-    @Override
-    protected Set<V> createCollection() {
-        return new LinkedHashSet<>(DEFAULT_COLLECTION_INITIAL_CAPACITY);
-    }
+    /**
+     * 默认使用的异常信息
+     *
+     * @return the string
+     */
+    String errmsg() default "${field}参数校验失败";
+
+    /**
+     * 校验器组
+     *
+     * @return the array
+     */
+    String[] group() default {};
+
+    /**
+     * 被校验字段名称
+     *
+     * @return the string
+     */
+    String field() default Builder.DEFAULT_FIELD;
 
 }

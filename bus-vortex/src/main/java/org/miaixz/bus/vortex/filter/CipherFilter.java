@@ -68,7 +68,7 @@ import reactor.core.publisher.Mono;
  * @author Kimi Liu
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@Order(Ordered.HIGHEST_PRECEDENCE + 2)
 public class CipherFilter extends AbstractFilter {
 
     /**
