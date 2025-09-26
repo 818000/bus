@@ -33,6 +33,7 @@ import java.util.Optional;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.miaixz.bus.core.basic.entity.Tracer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
@@ -66,11 +67,6 @@ public class Context extends Tracer {
     private Map<String, Part> filePartMap;
 
     /**
-     * 资产信息，具体内容由 Assets 类定义
-     */
-    private Assets assets;
-
-    /**
      * 数据格式，默认使用 JSON 格式
      */
     private Format format = Format.JSON;
@@ -81,19 +77,28 @@ public class Context extends Tracer {
     private Channel channel = Channel.WEB;
 
     /**
+     * 请求类型
+     */
+    private HttpMethod httpMethod;
+
+    /**
+     * 资产信息，具体内容由 Assets 类定义
+     */
+    private Assets assets;
+    /**
      * 令牌，用于身份验证或会话管理
      */
     private String token;
 
     /**
-     * 是否需要解密请求数据，默认为 false
+     * 数据是否加密签名
      */
-    private boolean needDecrypt = false;
+    private Integer sign;
 
     /**
      * 请求开始时间，用于性能监控或日志记录
      */
-    private long startTime;
+    private long timestamp;
 
     /**
      * 从 ServerWebExchange 获取或初始化上下文对象

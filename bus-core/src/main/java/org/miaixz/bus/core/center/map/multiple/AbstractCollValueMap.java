@@ -52,7 +52,8 @@ import org.miaixz.bus.core.xyz.ObjectKit;
  * @see ListValueMap
  * @since Java 17+
  */
-public abstract class AbstractCollValueMap<K, V> extends MapWrapper<K, Collection<V>> implements MultipleValueMap<K, V> {
+public abstract class AbstractCollValueMap<K, V> extends MapWrapper<K, Collection<V>>
+        implements MultipleValueMap<K, V> {
 
     @Serial
     private static final long serialVersionUID = 2852276903237L;

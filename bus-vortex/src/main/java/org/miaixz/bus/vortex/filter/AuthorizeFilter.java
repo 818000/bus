@@ -27,14 +27,13 @@
 */
 package org.miaixz.bus.vortex.filter;
 
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import org.miaixz.bus.core.basic.entity.Authorize;
+import org.miaixz.bus.core.basic.normal.Consts;
+import org.miaixz.bus.core.basic.normal.Errors;
 import org.miaixz.bus.core.bean.copier.CopyOptions;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.xyz.BeanKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.*;
@@ -51,6 +50,11 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * 访问鉴权过滤器，负责验证请求的合法性、方法、令牌和应用 ID
  * <p>
@@ -60,7 +64,7 @@ import reactor.core.publisher.Mono;
  * @author Justubborn
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 3)
+@Order(Ordered.HIGHEST_PRECEDENCE + 2)
 public class AuthorizeFilter extends AbstractFilter {
 
     /**
@@ -124,14 +128,16 @@ public class AuthorizeFilter extends AbstractFilter {
             return Mono.error(new ValidateException(ErrorCode._100800));
         }
 
-        // 执行各种验证
-        checkMethod(exchange, assets);
-        checkToken(exchange, context, assets, params);
-        checkAppId(exchange, assets, params);
+        this.checkMethod(exchange, assets);
+        if (Consts.TYPE_ONE == assets.getFirewall()) {
+            // 执行各种验证
+            this.checkToken(exchange, context, assets, params);
+            this.checkAppId(exchange, assets, params);
+        }
 
         // 填充额外参数并清理不需要的参数
-        fillXParam(exchange, params);
-        cleanParam(params);
+        this.fillXParam(exchange, params);
+        this.cleanParam(params);
 
         // 将资产信息设置到上下文中
         context.setAssets(assets);
@@ -155,17 +161,25 @@ public class AuthorizeFilter extends AbstractFilter {
      */
     protected void checkMethod(ServerWebExchange exchange, Assets assets) {
         ServerHttpRequest request = exchange.getRequest();
-        if (!Objects.equals(request.getMethod(), assets.getHttpMethod())) {
-            String error = "HTTP method mismatch, expected: " + assets.getHttpMethod() + ", actual: "
-                    + request.getMethod();
-            Format.warn(exchange, "AUTH_METHOD_MISMATCH", error);
-            if (Objects.equals(assets.getHttpMethod(), HttpMethod.GET)) {
-                throw new ValidateException(ErrorCode._100200);
-            } else if (Objects.equals(assets.getHttpMethod(), HttpMethod.POST)) {
-                throw new ValidateException(ErrorCode._100201);
-            } else {
-                throw new ValidateException(ErrorCode._100803);
-            }
+
+        final HttpMethod expectedMethod = this.valueOf(assets.getType());
+
+        if (!Objects.equals(request.getMethod(), expectedMethod)) {
+            String errors = "HTTP method mismatch, expected: " + expectedMethod + ", actual: " + request.getMethod();
+            Format.warn(exchange, "AUTH_METHOD_MISMATCH", errors);
+
+            final Errors error = switch (expectedMethod.name()) {
+            case HTTP.GET -> ErrorCode._100200;
+            case HTTP.POST -> ErrorCode._100201;
+            case HTTP.PUT -> ErrorCode._100202;
+            case HTTP.DELETE -> ErrorCode._100203;
+            case HTTP.OPTIONS -> ErrorCode._100204;
+            case HTTP.HEAD -> ErrorCode._100205;
+            case HTTP.PATCH -> ErrorCode._100206;
+            case HTTP.TRACE -> ErrorCode._100207;
+            default -> ErrorCode._100802;
+            };
+            throw new ValidateException(error);
         }
     }
 
@@ -182,7 +196,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @throws ValidateException 如果令牌缺失或认证失败
      */
     protected void checkToken(ServerWebExchange exchange, Context context, Assets assets, Map<String, String> params) {
-        if (assets.isToken()) {
+        if (Consts.TYPE_ONE == assets.getToken()) {
             // 检查令牌是否存在
             if (StringKit.isBlank(context.getToken())) {
                 Format.warn(exchange, "AUTH_TOKEN_MISSING", "Access token is missing");

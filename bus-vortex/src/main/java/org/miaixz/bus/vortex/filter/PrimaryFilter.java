@@ -32,6 +32,7 @@ import java.util.*;
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.xyz.DateKit;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Format;
@@ -70,7 +71,7 @@ import reactor.util.retry.Retry;
  * @author Justubborn
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class PrimaryFilter extends AbstractFilter {
 
     /**
@@ -120,7 +121,7 @@ public class PrimaryFilter extends AbstractFilter {
         }
 
         ServerWebExchange mutate = setContentType(exchange);
-        context.setStartTime(System.currentTimeMillis());
+        context.setTimestamp(DateKit.current());
         ServerHttpRequest request = mutate.getRequest();
 
         // 根据HTTP方法和Content-Type分发到不同的处理器
@@ -158,13 +159,13 @@ public class PrimaryFilter extends AbstractFilter {
     private Mono<Void> handleGetRequest(ServerWebExchange exchange, WebFilterChain chain, Context context) {
         MultiValueMap<String, String> params = exchange.getRequest().getQueryParams();
         context.setRequestMap(params.toSingleValueMap());
-        checkParams(exchange);
+        this.validate(exchange);
         Format.info(exchange, "GET_PARAMS_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath() + ", Params: "
                 + JsonKit.toJsonString(context.getRequestMap()));
 
         return chain.filter(exchange).doOnSuccess(
                 v -> Format.info(exchange, "REQUEST_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath()
-                        + ", ExecutionTime: " + (System.currentTimeMillis() - context.getStartTime()) + "ms"));
+                        + ", ExecutionTime: " + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
     }
 
     /**
@@ -238,13 +239,13 @@ public class PrimaryFilter extends AbstractFilter {
             // 使用装饰后的新请求构建新的ServerWebExchange
             ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
 
-            checkParams(newExchange);
+            this.validate(newExchange);
             Format.info(newExchange, "JSON_PARAMS_PROCESSED", "Path: " + newExchange.getRequest().getURI().getPath()
                     + ", Params: " + JsonKit.toJsonString(jsonMap));
             return chain.filter(newExchange)
                     .doOnTerminate(() -> Format.info(newExchange, "REQUEST_PROCESSED",
                             "Path: " + newExchange.getRequest().getURI().getPath() + ", ExecutionTime: "
-                                    + (System.currentTimeMillis() - context.getStartTime()) + "ms"));
+                                    + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
         } catch (Exception e) {
             Format.error(exchange, "JSON_PROCESSING_ERROR", "Failed to process JSON: " + e.getMessage());
             return Mono.error(e); // 将同步异常转换为异步错误
@@ -315,13 +316,13 @@ public class PrimaryFilter extends AbstractFilter {
             // 从可重复读的请求中解析表单数据
             return newExchange.getFormData().flatMap(params -> {
                 context.setRequestMap(params.toSingleValueMap());
-                checkParams(newExchange);
+                this.validate(newExchange);
                 Format.info(newExchange, "FORM_PARAMS_PROCESSED", "Path: " + newExchange.getRequest().getURI().getPath()
                         + ", Params: " + JsonKit.toJsonString(context.getRequestMap()));
                 return chain.filter(newExchange)
                         .doOnTerminate(() -> Format.info(newExchange, "REQUEST_PROCESSED",
                                 "Path: " + newExchange.getRequest().getURI().getPath() + ", ExecutionTime: "
-                                        + (System.currentTimeMillis() - context.getStartTime()) + "ms"));
+                                        + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
             });
         } catch (Exception e) {
             Format.error(exchange, "FORM_PROCESSING_ERROR", "Failed to process form: " + e.getMessage());
@@ -392,14 +393,14 @@ public class PrimaryFilter extends AbstractFilter {
 
             context.setRequestMap(formMap);
             context.setFilePartMap(fileMap);
-            checkParams(exchange);
+            this.validate(exchange);
 
             Format.info(exchange, "MULTIPART_PARAMS_PROCESSED",
                     "Path: " + exchange.getRequest().getURI().getPath() + ", Params: " + JsonKit.toJsonString(formMap));
 
             return chain.filter(exchange).doOnTerminate(
                     () -> Format.info(exchange, "REQUEST_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath()
-                            + ", ExecutionTime: " + (System.currentTimeMillis() - context.getStartTime()) + "ms"));
+                            + ", ExecutionTime: " + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
         } catch (Exception e) {
             Format.error(exchange, "MULTIPART_PROCESSING_ERROR", "Failed to process multipart: " + e.getMessage());
             return Mono.error(e);

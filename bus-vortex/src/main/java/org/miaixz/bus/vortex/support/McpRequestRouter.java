@@ -35,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.*;
@@ -73,7 +75,7 @@ public class McpRequestRouter implements Router {
      * </p>
      */
     private static final ExchangeStrategies CACHED_EXCHANGE_STRATEGIES = ExchangeStrategies.builder()
-            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(Config.MAX_INMEMORY_SIZE)).build();
+            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(Math.toIntExact(Normal.MEBI_128))).build();
 
     /**
      * 线程安全的WebClient缓存，按baseUrl存储已初始化的WebClient实例。
@@ -198,7 +200,7 @@ public class McpRequestRouter implements Router {
         String targetUri = buildMcpTargetUri(assets, context);
 
         // 4. 配置MCP请求
-        WebClient.RequestBodySpec bodySpec = webClient.method(assets.getHttpMethod()).uri(targetUri);
+        WebClient.RequestBodySpec bodySpec = webClient.method(context.getHttpMethod()).uri(targetUri);
 
         // 5. 配置MCP协议特有的请求头
         bodySpec.headers(headers -> {

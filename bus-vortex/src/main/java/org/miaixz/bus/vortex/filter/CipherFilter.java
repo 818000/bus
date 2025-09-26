@@ -29,6 +29,7 @@ package org.miaixz.bus.vortex.filter;
 
 import java.util.Map;
 import org.miaixz.bus.core.basic.entity.Message;
+import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.lang.Algorithm;
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Symbol;
@@ -68,7 +69,7 @@ import reactor.core.publisher.Mono;
  * @author Kimi Liu
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 2)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 public class CipherFilter extends AbstractFilter {
 
     /**
@@ -127,18 +128,19 @@ public class CipherFilter extends AbstractFilter {
      */
     @Override
     protected Mono<Void> doFilter(ServerWebExchange exchange, WebFilterChain chain, Context context) {
-        // 1. 处理请求解密
-        if (decrypt.isEnabled() && context.isNeedDecrypt()) {
-            doDecrypt(exchange, getRequestMap(context));
-            Format.info(exchange, "DECRYPT_PERFORMED", "Path: " + exchange.getRequest().getURI().getPath());
-        }
+        if (Consts.TYPE_ONE == context.getSign()) {
+            // 1. 处理请求解密
+            if (decrypt.isEnabled()) {
+                doDecrypt(exchange, getRequestMap(context));
+                Format.info(exchange, "DECRYPT_PERFORMED", "Path: " + exchange.getRequest().getURI().getPath());
+            }
 
-        // 2. 处理响应加密
-        if (encrypt.isEnabled()
-                && (Format.XML.equals(context.getFormat()) || Format.JSON.equals(context.getFormat()))) {
-            exchange = exchange.mutate().response(process(exchange)).build();
+            // 2. 处理响应加密
+            if (encrypt.isEnabled()
+                    && (Format.XML.equals(context.getFormat()) || Format.JSON.equals(context.getFormat()))) {
+                exchange = exchange.mutate().response(process(exchange)).build();
+            }
         }
-
         return chain.filter(exchange);
     }
 
@@ -186,8 +188,8 @@ public class CipherFilter extends AbstractFilter {
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
                 // 获取资产配置，检查是否需要签名（加密）
-                boolean isSign = getAssets(getContext(exchange)).isSign();
-                if (isSign) {
+                Integer isSign = getAssets(getContext(exchange)).getSign();
+                if (Consts.TYPE_ONE == isSign) {
                     // 将响应数据流转换为Flux
                     Flux<? extends DataBuffer> flux = Flux.from(body);
 

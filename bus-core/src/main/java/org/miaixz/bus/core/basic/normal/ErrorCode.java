@@ -351,6 +351,16 @@ public class ErrorCode {
     public static final Errors _100527 = ErrorRegistry.builder().key("100527").value("请联系官方激活").build();
 
     /**
+     * 许可证签发失败
+     */
+    public static final Errors _100528 = ErrorRegistry.builder().key("100528").value("许可证签发失败").build();
+
+    /**
+     * 许可证信息错误
+     */
+    public static final Errors _100529 = ErrorRegistry.builder().key("100529").value("许可证信息错误").build();
+
+    /**
      * 无权操作
      */
     public static final Errors _100800 = ErrorRegistry.builder().key("100800").value("无权操作").build();

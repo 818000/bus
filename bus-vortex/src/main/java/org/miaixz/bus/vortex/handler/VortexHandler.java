@@ -114,7 +114,6 @@ public class VortexHandler {
      *
      * @param request 客户端的ServerRequest对象，包含请求的所有信息
      * @return {@link Mono<ServerResponse>} 包含目标服务的响应，以响应式方式返回
-     * @throws RuntimeException 如果请求上下文或配置资产为null
      */
     @NonNull
     public Mono<ServerResponse> handle(ServerRequest request) {
@@ -136,12 +135,14 @@ public class VortexHandler {
             }
 
             // 3. 选择路由策略
-            String strategyName = assets.getStrategy();
-            if (strategyName == null || strategyName.trim().isEmpty()) {
-                Format.warn(exchange, "STRATEGY_NULL", "Strategy is null or empty, using default strategy");
-                strategyName = Protocol.HTTP.name;
-            }
-            Router router = strategies.getOrDefault(strategyName, defaultRouter);
+            String mode = switch (assets.getMode()) {
+            case 1 -> Protocol.HTTP.name();
+            case 2 -> Protocol.MQ.name();
+            case 3 -> Protocol.MCP.name();
+            default -> Protocol.HTTP.name();
+            };
+
+            Router router = strategies.getOrDefault(mode, defaultRouter);
             Format.info(exchange, "STRATEGY_SELECTED", "Using route strategy: " + router.getClass().getSimpleName());
 
             // 4. 执行前置处理

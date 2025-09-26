@@ -32,6 +32,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.miaixz.bus.core.lang.Normal;
 
 /**
  * 服务端配置类，用于存储和管理服务器相关的配置信息
@@ -52,14 +53,14 @@ public class Config {
     public static final String METHOD = "method";
 
     /**
-     * 版本信息参数名，用于指定接口版本
-     */
-    public static final String VERSION = "v";
-
-    /**
      * 格式化数据参数名，用于指定响应数据格式
      */
     public static final String FORMAT = "format";
+
+    /**
+     * 版本信息参数名，用于指定接口版本
+     */
+    public static final String VERSION = "v";
 
     /**
      * 签名信息参数名，用于验证请求签名
@@ -75,11 +76,6 @@ public class Config {
      * 访问来源头，标识请求的渠道来源
      */
     public static final String X_REMOTE_CHANNEL = "x_remote_channel";
-
-    /**
-     * 默认最大内存数据大小，100MB，用于限制内存中处理的数据量
-     */
-    public static final Integer MAX_INMEMORY_SIZE = 100 * 1024 * 1024;
 
     /**
      * 加密配置，默认初始化

@@ -488,6 +488,36 @@ public class Normal {
     public static final Date[] EMPTY_DATE_OBJECT_ARRAY = new Date[0];
 
     /**
+     * 64 MiB in bytes.
+     */
+    public static final long MEBI_64 = MEBI * 64;
+
+    /**
+     * 128 MiB in bytes.
+     */
+    public static final long MEBI_128 = MEBI * 128;
+
+    /**
+     * 256 MiB in bytes.
+     */
+    public static final long MEBI_256 = MEBI * 256;
+
+    /**
+     * 512 MiB in bytes.
+     */
+    public static final long MEBI_512 = MEBI * 512;
+
+    /**
+     * 1024 MiB in bytes (which is also 1 GiB).
+     */
+    public static final long MEBI_1024 = MEBI * 1024;
+
+    /**
+     * 2048 MiB in bytes (which is also 2 GiB).
+     */
+    public static final long MEBI_2048 = MEBI * 2048;
+
+    /**
      * Bytes per Kilobyte(KB).
      */
     public static final long BYTES_PER_KB = _1024;

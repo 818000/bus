@@ -45,7 +45,7 @@ import reactor.core.publisher.Mono;
  * @author Justubborn
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 4)
+@Order(Ordered.HIGHEST_PRECEDENCE + 3)
 public class LimitFilter extends AbstractFilter {
 
     private final LimiterRegistry registry;

@@ -29,6 +29,7 @@ package org.miaixz.bus.starter.vortex;
 
 import java.util.List;
 
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.net.PORT;
 import org.miaixz.bus.vortex.Config;
 import org.miaixz.bus.vortex.Filter;
@@ -176,7 +177,7 @@ public class VortexConfiguration {
 
         // 配置编解码器，设置最大内存大小
         ServerCodecConfigurer configurer = ServerCodecConfigurer.create();
-        configurer.defaultCodecs().maxInMemorySize(Config.MAX_INMEMORY_SIZE);
+        configurer.defaultCodecs().maxInMemorySize(Math.toIntExact(Normal.MEBI_128));
 
         // 构建 WebHandler，集成过滤器和异常处理器
         WebHandler webHandler = RouterFunctions.toWebHandler(routerFunction);
