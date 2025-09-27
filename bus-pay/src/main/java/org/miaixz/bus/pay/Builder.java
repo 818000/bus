@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.*;
@@ -52,6 +51,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.miaixz.bus.core.center.date.DateTime;
 import org.miaixz.bus.core.codec.binary.Base64;
 import org.miaixz.bus.core.io.resource.ClassPathResource;
+import org.miaixz.bus.core.lang.Algorithm;
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -148,7 +148,7 @@ public class Builder {
         // 使用私钥签名,初始化签名实例
         signature.initSign(privateKey);
         // 签名原文
-        byte[] plainText = content.getBytes(StandardCharsets.UTF_8);
+        byte[] plainText = content.getBytes(Charset.UTF_8);
         // 写入签名原文到算法中
         signature.update(plainText);
         // 计算签名值
@@ -164,8 +164,8 @@ public class Builder {
      * @throws Exception 异常信息
      */
     public static byte[] sm3Hash(String content) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SM3", new BouncyCastleProvider());
-        byte[] contentDigest = digest.digest(content.getBytes(StandardCharsets.UTF_8));
+        MessageDigest digest = MessageDigest.getInstance(Algorithm.SM3.getValue(), new BouncyCastleProvider());
+        byte[] contentDigest = digest.digest(content.getBytes(Charset.UTF_8));
         return Arrays.copyOf(contentDigest, 16);
     }
 
@@ -184,10 +184,10 @@ public class Builder {
         Cipher cipher = Cipher.getInstance("SM4/GCM/NoPadding", new BouncyCastleProvider());
         byte[] keyByte = Builder.sm3Hash(key3);
         SecretKeySpec key = new SecretKeySpec(keyByte, "SM4");
-        GCMParameterSpec spec = new GCMParameterSpec(128, nonce.getBytes(StandardCharsets.UTF_8));
+        GCMParameterSpec spec = new GCMParameterSpec(128, nonce.getBytes(Charset.UTF_8));
         cipher.init(Cipher.DECRYPT_MODE, key, spec);
-        cipher.updateAAD(associatedData.getBytes(StandardCharsets.UTF_8));
-        return new String(cipher.doFinal(Base64.decode(cipherText)), StandardCharsets.UTF_8);
+        cipher.updateAAD(associatedData.getBytes(Charset.UTF_8));
+        return new String(cipher.doFinal(Base64.decode(cipherText)), Charset.UTF_8);
     }
 
     public static boolean sm4Verify(String publicKey, String plainText, String originalSignature) throws Exception {
@@ -209,8 +209,8 @@ public class Builder {
                 new BouncyCastleProvider());
         signature.initVerify(publicKey);
         // 写入待验签的签名原文到算法中
-        signature.update(data.getBytes(StandardCharsets.UTF_8));
-        return signature.verify(Base64.decode(originalSignature.getBytes(StandardCharsets.UTF_8)));
+        signature.update(data.getBytes(Charset.UTF_8));
+        return signature.verify(Base64.decode(originalSignature.getBytes(Charset.UTF_8)));
     }
 
     /**
@@ -672,7 +672,7 @@ public class Builder {
             Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, certificate.getPublicKey());
 
-            byte[] dataByte = data.getBytes(StandardCharsets.UTF_8);
+            byte[] dataByte = data.getBytes(Charset.UTF_8);
             byte[] cipherData = cipher.doFinal(dataByte);
             return Base64.encode(cipherData);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -697,7 +697,7 @@ public class Builder {
             Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] data = Base64.decode(cipherText);
-            return new String(cipher.doFinal(data), StandardCharsets.UTF_8);
+            return new String(cipher.doFinal(data), Charset.UTF_8);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
             throw new RuntimeException("当前Java环境不支持RSA v1.5/OAEP", e);
         } catch (InvalidKeyException e) {
@@ -754,7 +754,7 @@ public class Builder {
      * @return 文件内容
      */
     public static String getCertFileContent(String path) throws IOException {
-        return IoKit.read(getCertFileInputStream(path), StandardCharsets.UTF_8);
+        return IoKit.read(getCertFileInputStream(path), Charset.UTF_8);
     }
 
     /**

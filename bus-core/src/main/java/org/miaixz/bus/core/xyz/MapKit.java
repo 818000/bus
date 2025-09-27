@@ -1316,4 +1316,38 @@ public class MapKit extends MapGets {
         return flatMap;
     }
 
+    /**
+     * 从Map中获取第一个非null值
+     * <p>
+     * 该方法按优先级顺序检查Map中的多个键，返回第一个非null值。 根据键的数量自动选择顺序流或并行流以优化性能。
+     * </p>
+     *
+     * @param <K>  键的类型
+     * @param <V>  值的类型
+     * @param map  参数Map，可以为null
+     * @param keys 要检查的键列表，按优先级顺序，可以为null
+     * @return 第一个非null值，如果没有找到或参数无效则返回null
+     */
+    public static <K, V> V getFirstNonNull(final Map<K, V> map, final K... keys) {
+        // 快速失败：如果map为null或keys为null或空，直接返回null
+        if (map == null || keys == null || keys.length == 0) {
+            return null;
+        }
+
+        // 优化：如果map为空，直接返回null
+        if (map.isEmpty()) {
+            return null;
+        }
+
+        // 对于少量键，使用顺序流更高效
+        if (keys.length < 10) {
+            return Arrays.stream(keys).filter(Objects::nonNull).map(map::get).filter(Objects::nonNull).findFirst()
+                    .orElse(null);
+        }
+
+        // 对于大量键，使用并行流
+        return Arrays.stream(keys).parallel().filter(Objects::nonNull).map(map::get).filter(Objects::nonNull)
+                .findFirst().orElse(null);
+    }
+
 }

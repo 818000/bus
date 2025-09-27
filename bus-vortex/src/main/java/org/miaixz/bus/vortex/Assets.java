@@ -92,6 +92,11 @@ public class Assets {
      */
     private Integer sign;
     /**
+     * 适用范围
+     *
+     */
+    private Integer scope;
+    /**
      * 例外规则
      */
     private Integer firewall;

@@ -32,7 +32,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.GeneralSecurityException;
@@ -47,6 +46,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.transform.stream.StreamResult;
 
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.IoKit;
@@ -238,7 +238,7 @@ public class StowRS {
     }
 
     private static String readFullyAsString(InputStream inputStream) throws IOException {
-        return readFully(inputStream).toString(StandardCharsets.UTF_8);
+        return readFully(inputStream).toString(Charset.UTF_8);
     }
 
     private static ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {

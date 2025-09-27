@@ -27,6 +27,7 @@
 */
 package org.miaixz.bus.vortex.filter;
 
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Format;
 import org.reactivestreams.Publisher;
@@ -40,7 +41,6 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -105,7 +105,7 @@ public class FormatFilter extends AbstractFilter {
                     exchange.getResponse().getHeaders().setContentType(context.getFormat().getMediaType());
 
                     // 将字节数组转换为字符串
-                    String bodyString = new String(allBytes, StandardCharsets.UTF_8);
+                    String bodyString = new String(allBytes, Charset.UTF_8);
 
                     // 使用上下文指定的提供者序列化消息
                     String formatBody = context.getFormat().getProvider().serialize(bodyString);
@@ -115,7 +115,7 @@ public class FormatFilter extends AbstractFilter {
 
                     // 将格式化后的数据写入新缓冲区
                     DataBufferFactory bufferFactory = bufferFactory();
-                    DataBuffer formattedBuffer = bufferFactory.wrap(formatBody.getBytes(StandardCharsets.UTF_8));
+                    DataBuffer formattedBuffer = bufferFactory.wrap(formatBody.getBytes(Charset.UTF_8));
 
                     // 写入格式化后的响应
                     return super.writeWith(Mono.just(formattedBuffer));

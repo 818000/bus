@@ -27,11 +27,12 @@
 */
 package org.miaixz.bus.vortex.support;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.vortex.Router;
 import org.miaixz.bus.vortex.Assets;
 import org.miaixz.bus.vortex.Context;
@@ -141,7 +142,7 @@ public class MqRequestRouter implements Router {
             // 创建消息对象（使用匿名实现类）
             Message message = new Message() {
                 private final String topic = assets.getMethod();
-                private final byte[] content = payload.getBytes(StandardCharsets.UTF_8);
+                private final byte[] content = payload.getBytes(Charset.UTF_8);
 
                 @Override
                 public String topic() {

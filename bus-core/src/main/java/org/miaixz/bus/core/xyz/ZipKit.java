@@ -28,7 +28,6 @@
 package org.miaixz.bus.core.xyz;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
@@ -578,7 +577,7 @@ public class ZipKit {
      * Gzip压缩处理
      *
      * @param content 被压缩的字符串
-     * @param charset 编码 {@link StandardCharsets#UTF_8}、 {@link Charset#UTF_8}
+     * @param charset 编码 {@link Charset#UTF_8}、 {@link Charset#UTF_8}
      * @return 压缩后的字节流
      * @throws InternalException IO异常
      */

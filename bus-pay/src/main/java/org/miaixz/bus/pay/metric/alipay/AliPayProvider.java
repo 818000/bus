@@ -29,7 +29,6 @@ package org.miaixz.bus.pay.metric.alipay;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +36,7 @@ import java.util.Map;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.lang.Algorithm;
 import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.xyz.DateKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.extra.json.JsonKit;
@@ -1377,7 +1377,7 @@ public class AliPayProvider extends AbstractProvider<Material, Context> {
         StringBuilder result = new StringBuilder();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             result.append(entry.getKey()).append("=")
-                    .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append("&");
+                    .append(URLEncoder.encode(entry.getValue(), Charset.UTF_8)).append("&");
         }
         return result.substring(0, result.length() - 1);
     }
@@ -1427,7 +1427,7 @@ public class AliPayProvider extends AbstractProvider<Material, Context> {
             StringBuilder url = new StringBuilder(getUrl()).append("?");
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 url.append(entry.getKey()).append("=")
-                        .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append("&");
+                        .append(URLEncoder.encode(entry.getValue(), Charset.UTF_8)).append("&");
             }
             return url.substring(0, url.length() - 1);
         } else {

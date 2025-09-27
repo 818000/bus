@@ -30,7 +30,6 @@ package org.miaixz.bus.pay.metric.wechat;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
@@ -47,6 +46,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.miaixz.bus.core.codec.binary.Base64;
 import org.miaixz.bus.core.lang.Algorithm;
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.net.HTTP;
@@ -797,8 +797,8 @@ public class WechatPayBuilder {
                 String associatedData = JsonKit.getValue(resource, "associated_data");
 
                 // 密文解密
-                return decryptToString(key.getBytes(StandardCharsets.UTF_8),
-                        associatedData.getBytes(StandardCharsets.UTF_8), nonceStr.getBytes(StandardCharsets.UTF_8),
+                return decryptToString(key.getBytes(Charset.UTF_8),
+                        associatedData.getBytes(Charset.UTF_8), nonceStr.getBytes(Charset.UTF_8),
                         cipherText);
             } else {
                 throw new Exception("签名错误");
@@ -922,7 +922,7 @@ public class WechatPayBuilder {
      * @throws Exception 异常信息
      */
     public static String encryptByPublicKey(String data, String publicKey, String fillMode) throws Exception {
-        byte[] dataByte = data.getBytes(StandardCharsets.UTF_8);
+        byte[] dataByte = data.getBytes(Charset.UTF_8);
         byte[] keyBytes = Base64.decode(publicKey);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(Algorithm.RSA.getValue());
@@ -966,7 +966,7 @@ public class WechatPayBuilder {
         Signature signature = Signature.getInstance("SHA256WithRSA");
 
         signature.initSign(priKey);
-        signature.update(data.getBytes(StandardCharsets.UTF_8));
+        signature.update(data.getBytes(Charset.UTF_8));
         byte[] signed = signature.sign();
         return StringKit.toString(Base64.encode(signed));
     }
@@ -982,7 +982,7 @@ public class WechatPayBuilder {
     public static String encryptByPrivateKey(String data, PrivateKey privateKey) throws Exception {
         Signature signature = Signature.getInstance("SHA256WithRSA");
         signature.initSign(privateKey);
-        signature.update(data.getBytes(StandardCharsets.UTF_8));
+        signature.update(data.getBytes(Charset.UTF_8));
         byte[] signed = signature.sign();
         return StringKit.toString(Base64.encode(signed));
     }
@@ -1002,8 +1002,8 @@ public class WechatPayBuilder {
         PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
         Signature signature = Signature.getInstance("SHA256WithRSA");
         signature.initVerify(pubKey);
-        signature.update(data.getBytes(StandardCharsets.UTF_8));
-        return signature.verify(Base64.decode(sign.getBytes(StandardCharsets.UTF_8)));
+        signature.update(data.getBytes(Charset.UTF_8));
+        return signature.verify(Base64.decode(sign.getBytes(Charset.UTF_8)));
     }
 
     /**
@@ -1018,8 +1018,8 @@ public class WechatPayBuilder {
     public static boolean checkByPublicKey(String data, String sign, PublicKey publicKey) throws Exception {
         Signature signature = Signature.getInstance("SHA256WithRSA");
         signature.initVerify(publicKey);
-        signature.update(data.getBytes(StandardCharsets.UTF_8));
-        return signature.verify(Base64.decode(sign.getBytes(StandardCharsets.UTF_8)));
+        signature.update(data.getBytes(Charset.UTF_8));
+        return signature.verify(Base64.decode(sign.getBytes(Charset.UTF_8)));
     }
 
     /**
@@ -1148,7 +1148,7 @@ public class WechatPayBuilder {
             cipher.init(Cipher.DECRYPT_MODE, aesKey, spec);
             cipher.updateAAD(associatedData);
 
-            return new String(cipher.doFinal(Base64.decode(cipherText)), StandardCharsets.UTF_8);
+            return new String(cipher.doFinal(Base64.decode(cipherText)), Charset.UTF_8);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new IllegalStateException(e);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {

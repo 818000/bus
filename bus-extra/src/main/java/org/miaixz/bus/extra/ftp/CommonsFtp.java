@@ -31,8 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -135,7 +133,7 @@ public class CommonsFtp extends AbstractFtp {
      * @param charset   编码
      * @return CommonsFtp
      */
-    public static CommonsFtp of(final Connector connector, final Charset charset) {
+    public static CommonsFtp of(final Connector connector, final java.nio.charset.Charset charset) {
         return of(connector, charset, null, null);
     }
 
@@ -148,8 +146,8 @@ public class CommonsFtp extends AbstractFtp {
      * @param systemKey          服务器标识 例如：org.apache.commons.net.ftp.FTPClientConfig.SYST_NT
      * @return CommonsFtp
      */
-    public static CommonsFtp of(final Connector connector, final Charset charset, final String serverLanguageCode,
-            final String systemKey) {
+    public static CommonsFtp of(final Connector connector, final java.nio.charset.Charset charset,
+            final String serverLanguageCode, final String systemKey) {
         return of(connector, charset, serverLanguageCode, systemKey, null);
     }
 
@@ -163,8 +161,8 @@ public class CommonsFtp extends AbstractFtp {
      * @param mode               模式
      * @return CommonsFtp
      */
-    public static CommonsFtp of(final Connector connector, final Charset charset, final String serverLanguageCode,
-            final String systemKey, final EnumValue.FtpMode mode) {
+    public static CommonsFtp of(final Connector connector, final java.nio.charset.Charset charset,
+            final String serverLanguageCode, final String systemKey, final EnumValue.FtpMode mode) {
         return new CommonsFtp(new FtpConfig(connector, charset, serverLanguageCode, systemKey), mode);
     }
 
@@ -188,7 +186,7 @@ public class CommonsFtp extends AbstractFtp {
         final FTPClient client = new FTPClient();
         client.setRemoteVerificationEnabled(false);
 
-        final Charset charset = config.getCharset();
+        final java.nio.charset.Charset charset = config.getCharset();
         if (null != charset) {
             client.setControlEncoding(charset.toString());
         }
@@ -710,8 +708,8 @@ public class CommonsFtp extends AbstractFtp {
      * @throws InternalException IO异常
      * @return 是否下载成功
      */
-    public boolean download(final String path, String fileName, final OutputStream out, final Charset fileNameCharset)
-            throws InternalException {
+    public boolean download(final String path, String fileName, final OutputStream out,
+            final java.nio.charset.Charset fileNameCharset) throws InternalException {
         String pwd = null;
         if (this.backToPwd) {
             pwd = pwd();
@@ -722,7 +720,7 @@ public class CommonsFtp extends AbstractFtp {
         }
 
         if (null != fileNameCharset) {
-            fileName = new String(fileName.getBytes(fileNameCharset), StandardCharsets.ISO_8859_1);
+            fileName = new String(fileName.getBytes(fileNameCharset), org.miaixz.bus.core.lang.Charset.ISO_8859_1);
         }
         try {
             client.setFileType(FTPClient.BINARY_FILE_TYPE);

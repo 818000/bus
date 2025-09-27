@@ -28,7 +28,6 @@
 package org.miaixz.bus.image.builtin.ldap;
 
 import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.naming.NameNotFoundException;
@@ -36,6 +35,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
 
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.image.Device;
 import org.miaixz.bus.image.Format;
 import org.miaixz.bus.image.galaxy.data.Code;
@@ -474,7 +474,7 @@ public class LdapBuilder {
     }
 
     private static String stringValue(Object o) {
-        return o instanceof byte[] ? new String((byte[]) o, StandardCharsets.UTF_8) : (String) o;
+        return o instanceof byte[] ? new String((byte[]) o, Charset.UTF_8) : (String) o;
     }
 
     public static TimeZone timeZoneValue(Attribute attr, TimeZone defVal) throws NamingException {

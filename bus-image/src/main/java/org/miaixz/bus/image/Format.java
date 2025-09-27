@@ -31,7 +31,6 @@ import static java.time.temporal.ChronoField.*;
 
 import java.io.Serial;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
@@ -52,6 +51,7 @@ import java.util.function.UnaryOperator;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.image.galaxy.data.Attributes;
@@ -1051,7 +1051,7 @@ public class Format extends java.text.Format {
             Object toArg(Attributes attrs, int tag, int index, int offset, Object dateTimeOffset,
                     UnaryOperator<String> splice) {
                 String s = attrs.getString(tag, index);
-                return s != null ? URLEncoder.encode(s, StandardCharsets.UTF_8) : null;
+                return s != null ? URLEncoder.encode(s, Charset.UTF_8) : null;
             }
         },
         rnd {
@@ -1110,7 +1110,7 @@ public class Format extends java.text.Format {
         String getMD5String(String s) {
             try {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
-                digest.update(s == null ? new byte[0] : s.getBytes(StandardCharsets.UTF_8));
+                digest.update(s == null ? new byte[0] : s.getBytes(Charset.UTF_8));
                 return toString32(digest.digest());
             } catch (NoSuchAlgorithmException e) {
                 return s;

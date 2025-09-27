@@ -27,11 +27,11 @@
 */
 package org.miaixz.bus.image.builtin;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.UUID;
 
+import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.UID;
 import org.miaixz.bus.image.galaxy.data.*;
@@ -204,7 +204,7 @@ public class DeIdentifier {
     }
 
     private static String hash(IDWithIssuer pid) {
-        return UUID.nameUUIDFromBytes(pid.toString().getBytes(StandardCharsets.UTF_8)).toString();
+        return UUID.nameUUIDFromBytes(pid.toString().getBytes(Charset.UTF_8)).toString();
     }
 
     private static int[] cat(int[] a, int[] b) {

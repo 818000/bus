@@ -36,10 +36,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents an authentication token and its associated context.
- * This class encapsulates all necessary information for authorizing and processing a request,
- * including the token string, the source channel, related resource configurations,
- * and transient runtime data like tenant ID and API key.
+ * Represents an authentication token and its associated context. This class encapsulates all necessary information for
+ * authorizing and processing a request, including the token string, the source channel, related resource
+ * configurations, and transient runtime data like tenant ID and API key.
  *
  * @author Justubborn
  * @since Java 17+
@@ -49,44 +48,36 @@ import lombok.Setter;
 @SuperBuilder
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Token {
+public class Principal {
 
     /**
-     * The unique authentication token string. This is the primary credential used
-     * to identify and authenticate a user, session, or service. It is a required,
-     * immutable field.
+     * The identifier for the tenant in a multi-tenant architecture. This field is marked as {@code transient} to
+     * prevent it from being included in serialization, as it's typically used for runtime request routing and context,
+     * not for persistent state.
      */
-    public final String token;
+    protected String id;
 
     /**
-     * An integer identifier for the source channel of the request.
-     * This can be used to differentiate between various clients or platforms,
-     * such as a mobile app, web application, or third-party integrations
-     * (e.g., WeChat, DingTalk). It is a required, immutable field.
+     * 类型 1.token 2. apiKey
      */
-    public final int channel;
+    protected Integer type;
 
     /**
-     * Contains configuration and information about the resources or "assets"
-     * associated with this token. This could include permissions, rate limits,
-     * or other service-specific settings. It is a required, immutable field.
+     * 根据type确定是token还是apiKey
      */
-    public final Assets assets;
+    protected String value;
 
     /**
-     * The identifier for the tenant in a multi-tenant architecture.
-     * This field is marked as {@code transient} to prevent it from being included
-     * in serialization, as it's typically used for runtime request routing and
-     * context, not for persistent state.
+     * An integer identifier for the source channel of the request. This can be used to differentiate between various
+     * clients or platforms, such as a mobile app, web application, or third-party integrations (e.g., WeChat,
+     * DingTalk). It is a required, immutable field.
      */
-    public transient String tenant_id;
+    protected Integer channel;
 
     /**
-     * An API key that may be used for specific API requests, often for
-     * server-to-server communication or as a supplementary authentication method.
-     * Like {@code tenant_id}, it is marked as {@code transient} and is not
-     * intended for serialization.
+     * Contains configuration and information about the resources or "assets" associated with this token. This could
+     * include permissions, rate limits, or other service-specific settings. It is a required, immutable field.
      */
-    public transient String api_key;
+    protected Assets assets;
 
 }
