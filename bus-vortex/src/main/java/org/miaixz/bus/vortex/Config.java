@@ -32,7 +32,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.miaixz.bus.core.lang.Normal;
 
 /**
  * 服务端配置类，用于存储和管理服务器相关的配置信息

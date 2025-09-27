@@ -154,7 +154,7 @@ public class VortexHandler {
                 // 5. 委托给策略实现者处理请求
                 return router.route(request, context, assets)
                         .flatMap(response -> executePostHandlers(exchange, router, response)).doOnSuccess(response -> {
-                            long duration = System.currentTimeMillis() - context.getStartTime();
+                            long duration = System.currentTimeMillis() - context.getTimestamp();
                             Format.info(exchange, "REQUEST_DURATION",
                                     "Method: " + assets.getMethod() + ", Duration: " + duration + "ms");
                         }).onErrorResume(error -> {

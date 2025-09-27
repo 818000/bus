@@ -202,7 +202,7 @@ public enum Format {
         if (context == null) {
             return;
         }
-        long executionTime = System.currentTimeMillis() - context.getStartTime();
+        long executionTime = System.currentTimeMillis() - context.getTimestamp();
         String path = getPath(exchange);
         String method = getMethod(exchange);
         info(exchange, "REQUEST_END", String.format("Method: %s, Path: %s, Status: %d, ExecutionTime: %dms", method,

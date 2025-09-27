@@ -27,6 +27,11 @@
 */
 package org.miaixz.bus.vortex.filter;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import org.miaixz.bus.core.basic.entity.Authorize;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.basic.normal.Errors;
@@ -48,12 +53,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
 
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import reactor.core.publisher.Mono;
 
 /**
  * 访问鉴权过滤器，负责验证请求的合法性、方法、令牌和应用 ID
@@ -128,16 +129,18 @@ public class AuthorizeFilter extends AbstractFilter {
             return Mono.error(new ValidateException(ErrorCode._100800));
         }
 
-        this.checkMethod(exchange, assets);
+        // 请求基础校验
+        this.method(exchange, assets);
         if (Consts.TYPE_ONE == assets.getFirewall()) {
-            // 执行各种验证
-            this.checkToken(exchange, context, assets, params);
-            this.checkAppId(exchange, assets, params);
+            // 执行token
+            this.token(exchange, context, assets, params);
+            // 执行appKey
+            this.appKey(exchange, assets, params);
         }
 
         // 填充额外参数并清理不需要的参数
-        this.fillXParam(exchange, params);
-        this.cleanParam(params);
+        this.fill(exchange, params);
+        this.clear(params);
 
         // 将资产信息设置到上下文中
         context.setAssets(assets);
@@ -159,7 +162,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param assets   资产信息，包含期望的HTTP方法类型
      * @throws ValidateException 如果方法不匹配，抛出对应错误
      */
-    protected void checkMethod(ServerWebExchange exchange, Assets assets) {
+    protected void method(ServerWebExchange exchange, Assets assets) {
         ServerHttpRequest request = exchange.getRequest();
 
         final HttpMethod expectedMethod = this.valueOf(assets.getType());
@@ -195,7 +198,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param params   请求参数，将用于存储认证结果
      * @throws ValidateException 如果令牌缺失或认证失败
      */
-    protected void checkToken(ServerWebExchange exchange, Context context, Assets assets, Map<String, String> params) {
+    protected void token(ServerWebExchange exchange, Context context, Assets assets, Map<String, String> params) {
         if (Consts.TYPE_ONE == assets.getToken()) {
             // 检查令牌是否存在
             if (StringKit.isBlank(context.getToken())) {
@@ -204,8 +207,8 @@ public class AuthorizeFilter extends AbstractFilter {
             }
 
             // 创建令牌对象并进行授权验证
-            Token access = new Token(context.getToken(), context.getChannel().getType(), assets);
-            Delegate delegate = provider.authorize(access);
+            Token token = new Token(context.getToken(), context.getChannel().getType(), assets);
+            Delegate delegate = provider.authorize(token);
 
             // 处理授权结果
             if (delegate.isOk()) {
@@ -231,20 +234,20 @@ public class AuthorizeFilter extends AbstractFilter {
      * 该方法验证请求中的应用ID是否与资产配置中的应用ID一致。 资产的应用ID是从方法名中提取的（方法名的第一部分）。 如果请求中未提供应用ID，会自动设置默认值。 如果提供了应用ID但不匹配，将抛出业务异常。
      * </p>
      *
-     * @param exchange     ServerWebExchange 对象，包含请求和响应信息
-     * @param assets       资产信息，从中提取期望的应用ID
-     * @param requestParam 请求参数，包含或将要包含应用ID
+     * @param exchange ServerWebExchange 对象，包含请求和响应信息
+     * @param assets   资产信息，从中提取期望的应用ID
+     * @param params   请求参数，包含或将要包含应用ID
      * @throws ValidateException 如果应用ID不匹配，抛出异常
      */
-    protected void checkAppId(ServerWebExchange exchange, Assets assets, Map<String, String> requestParam) {
+    protected void appKey(ServerWebExchange exchange, Assets assets, Map<String, String> params) {
         // 从方法名中提取应用ID（方法名的第一部分）
         String appId = assets.getMethod().split("\\.")[0];
 
         // 如果请求参数中没有应用ID，设置默认值
-        requestParam.putIfAbsent("x_app_id", appId);
+        params.putIfAbsent("x_app_id", appId);
 
         // 获取请求中的应用ID并验证
-        String xAppId = requestParam.get("x_app_id");
+        String xAppId = params.get("x_app_id");
         if (StringKit.isNotBlank(xAppId) && !appId.equals(xAppId)) {
             Format.warn(exchange, "AUTH_APPID_MISMATCH", "App ID mismatch, expected: " + appId + ", actual: " + xAppId);
             throw new ValidateException(ErrorCode._100806);
@@ -259,7 +262,7 @@ public class AuthorizeFilter extends AbstractFilter {
      *
      * @param params 请求参数，将从中移除网关内部参数
      */
-    private void cleanParam(Map<String, String> params) {
+    private void clear(Map<String, String> params) {
         params.remove(Config.METHOD);
         params.remove(Config.FORMAT);
         params.remove(Config.VERSION);
@@ -273,10 +276,10 @@ public class AuthorizeFilter extends AbstractFilter {
      * 如果仍不存在，使用请求的远程地址
      * </p>
      *
-     * @param exchange     ServerWebExchange 对象，包含请求和响应信息
-     * @param requestParam 请求参数，将向其中添加IP地址信息
+     * @param exchange ServerWebExchange 对象，包含请求和响应信息
+     * @param params   请求参数，将向其中添加IP地址信息
      */
-    protected void fillXParam(ServerWebExchange exchange, Map<String, String> requestParam) {
+    protected void fill(ServerWebExchange exchange, Map<String, String> params) {
         String ip = exchange.getRequest().getHeaders().getFirst("x_remote_ip");
         if (StringKit.isBlank(ip)) {
             // 尝试从X-Forwarded-For头获取IP
@@ -292,7 +295,7 @@ public class AuthorizeFilter extends AbstractFilter {
                 }
             }
             // 将IP地址添加到请求参数中
-            requestParam.put("x_remote_ip", ip);
+            params.put("x_remote_ip", ip);
         }
     }
 

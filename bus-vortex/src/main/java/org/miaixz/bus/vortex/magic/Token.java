@@ -36,7 +36,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * Token 参数类，用于封装授权认证相关的参数信息
+ * Represents an authentication token and its associated context.
+ * This class encapsulates all necessary information for authorizing and processing a request,
+ * including the token string, the source channel, related resource configurations,
+ * and transient runtime data like tenant ID and API key.
  *
  * @author Justubborn
  * @since Java 17+
@@ -49,23 +52,41 @@ import lombok.Setter;
 public class Token {
 
     /**
-     * 授权令牌，唯一标识认证信息
+     * The unique authentication token string. This is the primary credential used
+     * to identify and authenticate a user, session, or service. It is a required,
+     * immutable field.
      */
     public final String token;
 
     /**
-     * 渠道标识，表示请求来源的类型（如 微信、钉钉等）
+     * An integer identifier for the source channel of the request.
+     * This can be used to differentiate between various clients or platforms,
+     * such as a mobile app, web application, or third-party integrations
+     * (e.g., WeChat, DingTalk). It is a required, immutable field.
      */
     public final int channel;
 
     /**
-     * 关联的资源信息，包含资产相关配置
+     * Contains configuration and information about the resources or "assets"
+     * associated with this token. This could include permissions, rate limits,
+     * or other service-specific settings. It is a required, immutable field.
      */
     public final Assets assets;
 
     /**
-     * 租户 ID，标识所属租户，标记为 transient 不参与序列化
+     * The identifier for the tenant in a multi-tenant architecture.
+     * This field is marked as {@code transient} to prevent it from being included
+     * in serialization, as it's typically used for runtime request routing and
+     * context, not for persistent state.
      */
     public transient String tenant_id;
+
+    /**
+     * An API key that may be used for specific API requests, often for
+     * server-to-server communication or as a supplementary authentication method.
+     * Like {@code tenant_id}, it is marked as {@code transient} and is not
+     * intended for serialization.
+     */
+    public transient String api_key;
 
 }

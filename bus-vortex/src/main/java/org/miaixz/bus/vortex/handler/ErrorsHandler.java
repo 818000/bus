@@ -160,7 +160,7 @@ public class ErrorsHandler implements WebExceptionHandler {
      */
     private void logErrorHandling(ServerWebExchange exchange, Context context, Throwable ex) {
         if (context != null) {
-            long executionTime = System.currentTimeMillis() - context.getStartTime();
+            long executionTime = System.currentTimeMillis() - context.getTimestamp();
             Format.info(exchange, "ERROR_HANDLED", "Error handled, execution time: " + executionTime + "ms, exception: "
                     + ex.getClass().getSimpleName());
         } else {

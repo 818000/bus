@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.net.PORT;
-import org.miaixz.bus.vortex.Config;
 import org.miaixz.bus.vortex.Filter;
 import org.miaixz.bus.vortex.Handler;
 import org.miaixz.bus.vortex.Vortex;
