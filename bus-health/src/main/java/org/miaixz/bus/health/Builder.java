@@ -27,12 +27,12 @@
 */
 package org.miaixz.bus.health;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.CharsetDecoder;
 import java.nio.file.*;
-import java.nio.file.FileSystem;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -85,7 +85,7 @@ public final class Builder {
      * @return 如果字符串匹配，或者模式以 ^ 开头且剩余部分不匹配，则返回 true
      */
     public static boolean wildcardMatch(String text, String pattern) {
-        if (pattern.length() > 0 && pattern.charAt(0) == Symbol.C_CARET) {
+        if (!pattern.isEmpty() && pattern.charAt(0) == '^') {
             return !wildcardMatch(text, pattern.substring(1));
         }
         return text.matches(pattern.replace("?", ".?").replace(Symbol.STAR, ".*?"));
@@ -507,12 +507,13 @@ public final class Builder {
      * @return 表示文件每行的字符串列表，如果文件无法读取或为空则返回空列表
      */
     public static List<String> readFile(String filename, boolean reportError) {
-        if (new File(filename).canRead()) {
+        Path path = Paths.get(filename);
+        if (Files.isReadable(path)) {
             if (Logger.isDebugEnabled()) {
                 Logger.debug(READING_LOG, filename);
             }
             try {
-                return Files.readAllLines(Paths.get(filename), Charset.UTF_8);
+                return Files.readAllLines(path, Charset.UTF_8);
             } catch (IOException e) {
                 if (reportError) {
                     Logger.error("Error reading file {}. {}", filename, e.getMessage());
@@ -551,9 +552,7 @@ public final class Builder {
             if (Logger.isDebugEnabled()) {
                 Logger.debug(READING_LOG, filename);
             }
-            CharsetDecoder decoder = Charset.UTF_8.newDecoder();
-            try (Reader isr = new InputStreamReader(Files.newInputStream(file), decoder);
-                    BufferedReader reader = new BufferedReader(isr, Normal._1024)) {
+            try (BufferedReader reader = Files.newBufferedReader(file, Charset.UTF_8)) {
                 List<String> lines = new ArrayList<>(count);
                 for (int i = 0; i < count; ++i) {
                     String line = reader.readLine();
@@ -594,12 +593,13 @@ public final class Builder {
      * @return 表示文件的字节数组
      */
     public static byte[] readAllBytes(String filename, boolean reportError) {
-        if (new File(filename).canRead()) {
+        Path path = Paths.get(filename);
+        if (Files.isReadable(path)) {
             if (Logger.isDebugEnabled()) {
                 Logger.debug(READING_LOG, filename);
             }
             try {
-                return Files.readAllBytes(Paths.get(filename));
+                return Files.readAllBytes(path);
             } catch (IOException e) {
                 if (reportError) {
                     Logger.error("Error reading file {}. {}", filename, e.getMessage());

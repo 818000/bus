@@ -761,7 +761,7 @@ public final class Parsing {
 
         String result = Normal.EMPTY;
 
-        if (text.indexOf(before) >= 0 && text.indexOf(after) >= 0) {
+        if (text.contains(before) && text.contains(after)) {
             result = text.substring(text.indexOf(before) + before.length());
             result = result.substring(0, result.indexOf(after));
         }
@@ -858,7 +858,7 @@ public final class Parsing {
         }
 
         double number = Parsing.parseDoubleOrDefault(mem[0], 0L);
-        if (mem.length == 2 && mem[1] != null && mem[1].length() >= 1) {
+        if (mem.length == 2 && mem[1] != null && !mem[1].isEmpty()) {
             switch (mem[1].charAt(0)) {
                 case 'T':
                     number *= 1_000_000_000_000L;

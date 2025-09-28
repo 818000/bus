@@ -85,12 +85,16 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
         }
     }
 
-    private final String osXVersion;
-    private final int major;
-    private final int minor;
-    private int maxProc = 1024;
+    protected final String osXVersion;
+    protected final int major;
+    protected final int minor;
+    protected int maxProc;
 
     public MacOperatingSystem() {
+        this(SysctlKit.sysctl("kern.maxproc", 0x1000));
+    }
+
+    protected MacOperatingSystem(int maxproc) {
         String version = System.getProperty("os.version");
         int verMajor = Parsing.getFirstIntValue(version);
         int verMinor = Parsing.getNthIntValue(version, 2);
@@ -107,7 +111,7 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
         this.major = verMajor;
         this.minor = verMinor;
         // Set max processes
-        this.maxProc = SysctlKit.sysctl("kern.maxproc", 0x1000);
+        this.maxProc = maxproc;
     }
 
     @Override
@@ -247,7 +251,7 @@ public class MacOperatingSystem extends AbstractOperatingSystem {
 
     @Override
     public long getSystemUptime() {
-        return System.currentTimeMillis() / 1000 - BOOTTIME;
+        return System.currentTimeMillis() / 1000 - getSystemBootTime();
     }
 
     @Override

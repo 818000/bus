@@ -404,7 +404,11 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
             throw new IllegalArgumentException("Provited tick array length " + oldTicks.length + " should have "
                     + TickType.values().length + " elements");
         }
-        long[] ticks = getSystemCpuLoadTicks();
+        return getSystemCpuLoadBetweenTicks(oldTicks, getSystemCpuLoadTicks());
+    }
+
+    @Override
+    public double getSystemCpuLoadBetweenTicks(long[] oldTicks, long[] ticks) {
         // Calculate total
         long total = 0;
         for (int i = 0; i < ticks.length; i++) {
@@ -420,7 +424,11 @@ public abstract class AbstractCentralProcessor implements CentralProcessor {
 
     @Override
     public double[] getProcessorCpuLoadBetweenTicks(long[][] oldTicks) {
-        long[][] ticks = getProcessorCpuLoadTicks();
+        return getProcessorCpuLoadBetweenTicks(oldTicks, getProcessorCpuLoadTicks());
+    }
+
+    @Override
+    public double[] getProcessorCpuLoadBetweenTicks(long[][] oldTicks, long[][] ticks) {
         if (oldTicks.length != ticks.length || oldTicks[0].length != TickType.values().length) {
             throw new IllegalArgumentException("Provided tick array length " + oldTicks.length + " should be "
                     + ticks.length + ", each subarray having " + TickType.values().length + " elements");
