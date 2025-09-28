@@ -123,7 +123,9 @@ public class AuthorizeFilter extends AbstractFilter {
         // 从注册表中获取对应的资产信息
         Assets assets = registry.get(method, version);
         if (null == assets) {
-            Format.warn(exchange, "AUTH_ASSETS_NOT_FOUND",
+            Format.warn(
+                    exchange,
+                    "AUTH_ASSETS_NOT_FOUND",
                     "Assets not found for method: " + method + ", version: " + version);
             return Mono.error(new ValidateException(ErrorCode._100800));
         }
@@ -165,15 +167,15 @@ public class AuthorizeFilter extends AbstractFilter {
             Format.warn(exchange, "AUTH_METHOD_MISMATCH", errors);
 
             final Errors error = switch (expectedMethod.name()) {
-            case HTTP.GET -> ErrorCode._100200;
-            case HTTP.POST -> ErrorCode._100201;
-            case HTTP.PUT -> ErrorCode._100202;
-            case HTTP.DELETE -> ErrorCode._100203;
-            case HTTP.OPTIONS -> ErrorCode._100204;
-            case HTTP.HEAD -> ErrorCode._100205;
-            case HTTP.PATCH -> ErrorCode._100206;
-            case HTTP.TRACE -> ErrorCode._100207;
-            default -> ErrorCode._100802;
+                case HTTP.GET -> ErrorCode._100200;
+                case HTTP.POST -> ErrorCode._100201;
+                case HTTP.PUT -> ErrorCode._100202;
+                case HTTP.DELETE -> ErrorCode._100203;
+                case HTTP.OPTIONS -> ErrorCode._100204;
+                case HTTP.HEAD -> ErrorCode._100205;
+                case HTTP.PATCH -> ErrorCode._100206;
+                case HTTP.TRACE -> ErrorCode._100207;
+                default -> ErrorCode._100802;
             };
             throw new ValidateException(error);
         }
@@ -199,8 +201,9 @@ public class AuthorizeFilter extends AbstractFilter {
             }
 
             // 创建令牌对象并进行授权验证
-            Delegate delegate = provider.authorize(Principal.builder().type(Consts.TYPE_ONE).value(context.getToken())
-                    .channel(context.getChannel().getType()).assets(assets).build());
+            Delegate delegate = provider.authorize(
+                    Principal.builder().type(Consts.TYPE_ONE).value(context.getToken())
+                            .channel(context.getChannel().getType()).assets(assets).build());
 
             // 处理授权结果
             if (delegate.isOk()) {
@@ -209,11 +212,15 @@ public class AuthorizeFilter extends AbstractFilter {
                 // 将授权信息转换为Map并添加到请求参数中
                 BeanKit.beanToMap(auth, map, CopyOptions.of().setTransientSupport(false).setIgnoreCase(true));
                 map.forEach((k, v) -> context.getRequestMap().put(k, v.toString()));
-                Format.info(exchange, "AUTH_TOKEN_VALIDATED",
+                Format.info(
+                        exchange,
+                        "AUTH_TOKEN_VALIDATED",
                         "Token validated successfully for channel: " + context.getChannel().getType());
             } else {
                 // 令牌验证失败
-                Format.error(exchange, "AUTH_TOKEN_FAILED",
+                Format.error(
+                        exchange,
+                        "AUTH_TOKEN_FAILED",
                         "Error code: " + delegate.getMessage().errcode + ", message: " + delegate.getMessage().errmsg);
                 throw new ValidateException(delegate.getMessage().errcode, delegate.getMessage().errmsg);
             }
@@ -236,8 +243,9 @@ public class AuthorizeFilter extends AbstractFilter {
             }
 
             // 创建apiKey对象并进行授权验证
-            Delegate delegate = provider.authorize(Principal.builder().type(Consts.TYPE_TWO).value(apiKey)
-                    .channel(context.getChannel().getType()).assets(assets).build());
+            Delegate delegate = provider.authorize(
+                    Principal.builder().type(Consts.TYPE_TWO).value(apiKey).channel(context.getChannel().getType())
+                            .assets(assets).build());
 
             // 处理授权结果
             if (delegate.isOk()) {
@@ -246,11 +254,15 @@ public class AuthorizeFilter extends AbstractFilter {
                 // 将授权信息转换为Map并添加到请求参数中
                 BeanKit.beanToMap(auth, map, CopyOptions.of().setTransientSupport(false).setIgnoreCase(true));
                 map.forEach((k, v) -> context.getRequestMap().put(k, v.toString()));
-                Format.info(exchange, "AUTH_TOKEN_VALIDATED",
+                Format.info(
+                        exchange,
+                        "AUTH_TOKEN_VALIDATED",
                         "Token validated successfully for channel: " + context.getChannel().getType());
             } else {
                 // apiKey验证失败
-                Format.error(exchange, "AUTH_TOKEN_FAILED",
+                Format.error(
+                        exchange,
+                        "AUTH_TOKEN_FAILED",
                         "Error code: " + delegate.getMessage().errcode + ", message: " + delegate.getMessage().errmsg);
                 throw new ValidateException(delegate.getMessage().errcode, delegate.getMessage().errmsg);
             }

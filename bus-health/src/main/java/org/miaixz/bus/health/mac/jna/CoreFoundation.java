@@ -70,6 +70,7 @@ public interface CoreFoundation extends com.sun.jna.platform.mac.CoreFoundation 
      * {@link CFDateFormatterStyle#index} for the expected integer value corresponding to the C-style enum.
      */
     enum CFDateFormatterStyle {
+
         kCFDateFormatterNoStyle, kCFDateFormatterShortStyle, kCFDateFormatterMediumStyle, kCFDateFormatterLongStyle,
         kCFDateFormatterFullStyle;
 
@@ -98,7 +99,10 @@ public interface CoreFoundation extends com.sun.jna.platform.mac.CoreFoundation 
      *         <p>
      *         This reference must be released with {@link #CFRelease} to avoid leaking references.
      */
-    CFDateFormatter CFDateFormatterCreate(CFAllocatorRef allocator, CFLocale locale, CFIndex dateStyle,
+    CFDateFormatter CFDateFormatterCreate(
+            CFAllocatorRef allocator,
+            CFLocale locale,
+            CFIndex dateStyle,
             CFIndex timeStyle);
 
     /**

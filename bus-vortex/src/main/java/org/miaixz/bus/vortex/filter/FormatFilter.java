@@ -62,8 +62,11 @@ public class FormatFilter extends AbstractFilter {
      */
     @Override
     protected Mono<Void> doFilter(ServerWebExchange exchange, WebFilterChain chain, Context context) {
-        Format.info(exchange, "REQUEST_START", "Method: " + exchange.getRequest().getMethod() + ", Path: "
-                + exchange.getRequest().getPath().value() + ", Query: " + exchange.getRequest().getQueryParams());
+        Format.info(
+                exchange,
+                "REQUEST_START",
+                "Method: " + exchange.getRequest().getMethod() + ", Path: " + exchange.getRequest().getPath().value()
+                        + ", Query: " + exchange.getRequest().getQueryParams());
 
         // 如果请求明确要求XML格式，则转换为JSON
         if (Format.XML.equals(context.getFormat())) {
@@ -82,6 +85,7 @@ public class FormatFilter extends AbstractFilter {
      */
     private ServerHttpResponseDecorator process(ServerWebExchange exchange) {
         return new ServerHttpResponseDecorator(exchange.getResponse()) {
+
             /**
              * 重写响应写入逻辑，处理数据格式化
              *

@@ -69,8 +69,11 @@ public abstract class AbstractFilter implements Filter {
         Format.info(exchange, "FILTER_ENTER", "Entering filter: " + this.getClass().getSimpleName());
         return doFilter(exchange, chain, getContext(exchange)).doOnTerminate(
                 () -> Format.debug(exchange, "FILTER_EXIT", "Exiting filter: " + this.getClass().getSimpleName()))
-                .doOnError(e -> Format.error(exchange, "FILTER_ERROR",
-                        "Error in " + this.getClass().getSimpleName() + ": " + e.getMessage()));
+                .doOnError(
+                        e -> Format.error(
+                                exchange,
+                                "FILTER_ERROR",
+                                "Error in " + this.getClass().getSimpleName() + ": " + e.getMessage()));
     }
 
     /**
@@ -139,6 +142,7 @@ public abstract class AbstractFilter implements Filter {
             headers.putAll(exchange.getRequest().getHeaders());
             headers.setContentType(mediaType);
             ServerHttpRequest requestDecorator = new ServerHttpRequestDecorator(request) {
+
                 @Override
                 public HttpHeaders getHeaders() {
                     return headers;
@@ -282,24 +286,32 @@ public abstract class AbstractFilter implements Filter {
      */
     public HttpMethod valueOf(int type) {
         switch (type) {
-        case 1:
-            return HttpMethod.GET;
-        case 2:
-            return HttpMethod.POST;
-        case 3:
-            return HttpMethod.HEAD;
-        case 4:
-            return HttpMethod.PUT;
-        case 5:
-            return HttpMethod.PATCH;
-        case 6:
-            return HttpMethod.DELETE;
-        case 7:
-            return HttpMethod.OPTIONS;
-        case 8:
-            return HttpMethod.TRACE;
-        default:
-            throw new ValidateException(ErrorCode._100802);
+            case 1:
+                return HttpMethod.GET;
+
+            case 2:
+                return HttpMethod.POST;
+
+            case 3:
+                return HttpMethod.HEAD;
+
+            case 4:
+                return HttpMethod.PUT;
+
+            case 5:
+                return HttpMethod.PATCH;
+
+            case 6:
+                return HttpMethod.DELETE;
+
+            case 7:
+                return HttpMethod.OPTIONS;
+
+            case 8:
+                return HttpMethod.TRACE;
+
+            default:
+                throw new ValidateException(ErrorCode._100802);
         }
     }
 

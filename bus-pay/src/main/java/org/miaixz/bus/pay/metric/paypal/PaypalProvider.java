@@ -72,15 +72,19 @@ public class PaypalProvider extends AbstractProvider<Material, Context> {
         return getBaseHeaders(accessToken, String.valueOf(DateKit.current()), null, null);
     }
 
-    public static Map<String, String> getBaseHeaders(AccessToken accessToken, String payPalRequestId,
-            String payPalPartnerAttributionId, String prefer) {
+    public static Map<String, String> getBaseHeaders(
+            AccessToken accessToken,
+            String payPalRequestId,
+            String payPalPartnerAttributionId,
+            String prefer) {
         if (accessToken == null || StringKit.isEmpty(accessToken.getTokenType())
                 || StringKit.isEmpty(accessToken.getAccessToken())) {
             throw new RuntimeException("accessToken is null");
         }
         Map<String, String> headers = new HashMap<>(3);
         headers.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        headers.put("Authorization",
+        headers.put(
+                "Authorization",
                 accessToken.getTokenType().concat(Symbol.SPACE).concat(accessToken.getAccessToken()));
         if (StringKit.isNotEmpty(payPalRequestId)) {
             headers.put("PayPal-Request-Id", payPalRequestId);
@@ -122,9 +126,12 @@ public class PaypalProvider extends AbstractProvider<Material, Context> {
         Map<String, String> headers = new HashMap<>(3);
         headers.put("Accept", MediaType.APPLICATION_JSON);
         headers.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-        headers.put("Authorization",
-                "Basic ".concat(Base64.encode((this.context.getAppKey().concat(":").concat(this.context.getAppSecret()))
-                        .getBytes(Charset.UTF_8))));
+        headers.put(
+                "Authorization",
+                "Basic ".concat(
+                        Base64.encode(
+                                (this.context.getAppKey().concat(":").concat(this.context.getAppSecret()))
+                                        .getBytes(Charset.UTF_8))));
         Map<String, String> params = new HashMap<>(1);
         params.put("grant_type", "client_credentials");
         return post(getUrl(PayPalApi.GET_TOKEN), params, headers);

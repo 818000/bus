@@ -117,8 +117,10 @@ public class MapperConfiguration implements InitializingBean {
         if (this.properties.isCheckConfigLocation() && StringKit.hasText(this.properties.getConfigLocation())) {
             org.springframework.core.io.Resource resource = this.resourceLoader
                     .getResource(this.properties.getConfigLocation());
-            Assert.state(resource.exists(), "Cannot find config location: " + resource
-                    + " (please add config file or check your Mybatis configuration)");
+            Assert.state(
+                    resource.exists(),
+                    "Cannot find config location: " + resource
+                            + " (please add config file or check your Mybatis configuration)");
             Logger.debug("Checked MyBatis config location: {}", this.properties.getConfigLocation());
         }
     }

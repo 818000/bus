@@ -185,6 +185,7 @@ public class CipherFilter extends AbstractFilter {
      */
     private ServerHttpResponseDecorator process(ServerWebExchange exchange) {
         return new ServerHttpResponseDecorator(exchange.getResponse()) {
+
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
                 // 获取资产配置，检查是否需要签名（加密）

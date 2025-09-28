@@ -75,9 +75,12 @@ public class FigmaProvider extends AbstractProvider {
     public AuthToken getAccessToken(Callback callback) {
         Map<String, String> headers = new HashMap<>(3);
         headers.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-        headers.put("Authorization",
-                "Basic ".concat(Base64.encode((this.context.getAppKey().concat(":").concat(this.context.getAppSecret()))
-                        .getBytes(Charset.UTF_8))));
+        headers.put(
+                "Authorization",
+                "Basic ".concat(
+                        Base64.encode(
+                                (this.context.getAppKey().concat(":").concat(this.context.getAppSecret()))
+                                        .getBytes(Charset.UTF_8))));
         String response = Httpx.post(super.accessTokenUrl(callback.getCode()), headers);
         try {
             Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
@@ -125,9 +128,10 @@ public class FigmaProvider extends AbstractProvider {
             String refreshToken = (String) dataObj.get("refresh_token");
             String scope = (String) dataObj.get("scope");
 
-            return Message
-                    .builder().errcode(ErrorCode._SUCCESS.getKey()).data(AuthToken.builder().accessToken(accessToken)
-                            .openId(openId).expireIn(expiresIn).refreshToken(refreshToken).scope(scope).build())
+            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
+                    .data(
+                            AuthToken.builder().accessToken(accessToken).openId(openId).expireIn(expiresIn)
+                                    .refreshToken(refreshToken).scope(scope).build())
                     .build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse refresh token response: " + e.getMessage());

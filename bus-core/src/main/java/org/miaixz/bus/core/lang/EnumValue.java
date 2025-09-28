@@ -174,6 +174,7 @@ public interface EnumValue<E extends EnumValue<E>> extends Enumers {
     @Getter
     @AllArgsConstructor
     enum Festival {
+
         DAY(0, "日期"), TERM(1, "节气"), EVE(2, "除夕");
 
         /**
@@ -349,6 +350,7 @@ public interface EnumValue<E extends EnumValue<E>> extends Enumers {
     @Getter
     @AllArgsConstructor
     enum Modifier {
+
         /**
          * public修饰符，所有类都能访问
          */
@@ -668,6 +670,7 @@ public interface EnumValue<E extends EnumValue<E>> extends Enumers {
     @Getter
     @AllArgsConstructor
     enum Thumb {
+
         /**
          * 默认
          */

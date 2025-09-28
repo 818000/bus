@@ -998,7 +998,9 @@ public class FileKit extends PathResolve {
     public static File copy(final Resource src, final File target, final boolean isOverride) throws InternalException {
         Assert.notNull(src, "Src file must be not null!");
         Assert.notNull(target, "target file must be not null!");
-        return copy(src, target.toPath(),
+        return copy(
+                src,
+                target.toPath(),
                 isOverride ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] {}).toFile();
     }
 
@@ -1066,7 +1068,9 @@ public class FileKit extends PathResolve {
     public static File copy(final File src, final File target, final boolean isOverride) throws InternalException {
         Assert.notNull(src, "Src file must be not null!");
         Assert.notNull(target, "target file must be not null!");
-        return copy(src.toPath(), target.toPath(),
+        return copy(
+                src.toPath(),
+                target.toPath(),
                 isOverride ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] {}).toFile();
     }
 
@@ -1089,7 +1093,9 @@ public class FileKit extends PathResolve {
             throws InternalException {
         Assert.notNull(src, "Src file must be not null!");
         Assert.notNull(target, "target file must be not null!");
-        return copyContent(src.toPath(), target.toPath(),
+        return copyContent(
+                src.toPath(),
+                target.toPath(),
                 isOverride ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] {}).toFile();
     }
 
@@ -1397,7 +1403,9 @@ public class FileKit extends PathResolve {
      * @return 是否相同
      * @throws InternalException IO异常
      */
-    public static boolean contentEqualsIgnoreEOL(final File file1, final File file2,
+    public static boolean contentEqualsIgnoreEOL(
+            final File file1,
+            final File file2,
             final java.nio.charset.Charset charset) throws InternalException {
         final boolean file1Exists = file1.exists();
         if (file1Exists != file2.exists()) {
@@ -1822,7 +1830,9 @@ public class FileKit extends PathResolve {
      * @return 文件中的每行内容的集合
      * @throws InternalException IO异常
      */
-    public static <T extends Collection<String>> T readLines(final String path, final java.nio.charset.Charset charset,
+    public static <T extends Collection<String>> T readLines(
+            final String path,
+            final java.nio.charset.Charset charset,
             final T collection) throws InternalException {
         return readLines(file(path), charset, collection);
     }
@@ -1851,7 +1861,9 @@ public class FileKit extends PathResolve {
      * @return 文件中的每行内容的集合
      * @throws InternalException IO异常
      */
-    public static <T extends Collection<String>> T readLines(final File file, final java.nio.charset.Charset charset,
+    public static <T extends Collection<String>> T readLines(
+            final File file,
+            final java.nio.charset.Charset charset,
             final T collection) throws InternalException {
         return FileReader.of(file, charset).readLines(collection);
     }
@@ -1880,7 +1892,9 @@ public class FileKit extends PathResolve {
      * @return 文件中的每行内容的集合
      * @throws InternalException IO异常
      */
-    public static <T extends Collection<String>> T readLines(final URL url, final java.nio.charset.Charset charset,
+    public static <T extends Collection<String>> T readLines(
+            final URL url,
+            final java.nio.charset.Charset charset,
             final T collection) throws InternalException {
         InputStream in = null;
         try {
@@ -1984,7 +1998,9 @@ public class FileKit extends PathResolve {
      * @param lineHandler {@link ConsumerX}行处理器
      * @throws InternalException IO异常
      */
-    public static void readLines(final File file, final java.nio.charset.Charset charset,
+    public static void readLines(
+            final File file,
+            final java.nio.charset.Charset charset,
             final ConsumerX<String> lineHandler) throws InternalException {
         FileReader.of(file, charset).readLines(lineHandler);
     }
@@ -1997,7 +2013,9 @@ public class FileKit extends PathResolve {
      * @param lineHandler {@link ConsumerX}行处理器
      * @throws InternalException IO异常
      */
-    public static void readLines(final RandomAccessFile file, final java.nio.charset.Charset charset,
+    public static void readLines(
+            final RandomAccessFile file,
+            final java.nio.charset.Charset charset,
             final ConsumerX<String> lineHandler) {
         String line;
         try {
@@ -2017,7 +2035,9 @@ public class FileKit extends PathResolve {
      * @param lineHandler {@link ConsumerX}行处理器
      * @throws InternalException IO异常
      */
-    public static void readLine(final RandomAccessFile file, final java.nio.charset.Charset charset,
+    public static void readLine(
+            final RandomAccessFile file,
+            final java.nio.charset.Charset charset,
             final ConsumerX<String> lineHandler) {
         final String line = readLine(file, charset);
         if (null != line) {
@@ -2071,7 +2091,9 @@ public class FileKit extends PathResolve {
      * @return 从文件中load出的数据
      * @throws InternalException IO异常
      */
-    public static <T> T read(final String path, final java.nio.charset.Charset charset,
+    public static <T> T read(
+            final String path,
+            final java.nio.charset.Charset charset,
             final FunctionX<BufferedReader, T> readerHandler) throws InternalException {
         return read(file(path), charset, readerHandler);
     }
@@ -2100,7 +2122,9 @@ public class FileKit extends PathResolve {
      * @return 从文件中load出的数据
      * @throws InternalException IO异常
      */
-    public static <T> T read(final File file, final java.nio.charset.Charset charset,
+    public static <T> T read(
+            final File file,
+            final java.nio.charset.Charset charset,
             final FunctionX<BufferedReader, T> readerHandler) throws InternalException {
         return FileReader.of(file, charset).read(readerHandler);
     }
@@ -2136,7 +2160,9 @@ public class FileKit extends PathResolve {
      * @return BufferedReader对象
      * @throws InternalException IO异常
      */
-    public static BufferedWriter getWriter(final String path, final java.nio.charset.Charset charset,
+    public static BufferedWriter getWriter(
+            final String path,
+            final java.nio.charset.Charset charset,
             final boolean isAppend) throws InternalException {
         return getWriter(touch(path), charset, isAppend);
     }
@@ -2150,7 +2176,9 @@ public class FileKit extends PathResolve {
      * @return BufferedReader对象
      * @throws InternalException IO异常
      */
-    public static BufferedWriter getWriter(final File file, final java.nio.charset.Charset charset,
+    public static BufferedWriter getWriter(
+            final File file,
+            final java.nio.charset.Charset charset,
             final boolean isAppend) throws InternalException {
         return FileWriter.of(file, charset).getWriter(isAppend);
     }
@@ -2164,7 +2192,9 @@ public class FileKit extends PathResolve {
      * @return 打印对象
      * @throws InternalException IO异常
      */
-    public static PrintWriter getPrintWriter(final String path, final java.nio.charset.Charset charset,
+    public static PrintWriter getPrintWriter(
+            final String path,
+            final java.nio.charset.Charset charset,
             final boolean isAppend) throws InternalException {
         return new PrintWriter(getWriter(path, charset, isAppend));
     }
@@ -2178,7 +2208,9 @@ public class FileKit extends PathResolve {
      * @return 打印对象
      * @throws InternalException IO异常
      */
-    public static PrintWriter getPrintWriter(final File file, final java.nio.charset.Charset charset,
+    public static PrintWriter getPrintWriter(
+            final File file,
+            final java.nio.charset.Charset charset,
             final boolean isAppend) throws InternalException {
         return new PrintWriter(getWriter(file, charset, isAppend));
     }
@@ -2338,7 +2370,9 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File writeLines(final Collection<T> list, final String path,
+    public static <T> File writeLines(
+            final Collection<T> list,
+            final String path,
             final java.nio.charset.Charset charset) throws InternalException {
         return writeLines(list, path, charset, false);
     }
@@ -2394,7 +2428,9 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File appendLines(final Collection<T> list, final String path,
+    public static <T> File appendLines(
+            final Collection<T> list,
+            final String path,
             final java.nio.charset.Charset charset) throws InternalException {
         return writeLines(list, path, charset, true);
     }
@@ -2414,7 +2450,9 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File appendLines(final Collection<T> list, final File file,
+    public static <T> File appendLines(
+            final Collection<T> list,
+            final File file,
             final java.nio.charset.Charset charset) throws InternalException {
         return writeLines(list, file, charset, true);
     }
@@ -2430,8 +2468,11 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File writeLines(final Collection<T> list, final String path,
-            final java.nio.charset.Charset charset, final boolean isAppend) throws InternalException {
+    public static <T> File writeLines(
+            final Collection<T> list,
+            final String path,
+            final java.nio.charset.Charset charset,
+            final boolean isAppend) throws InternalException {
         return writeLines(list, file(path), charset, isAppend);
     }
 
@@ -2446,7 +2487,10 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File writeLines(final Collection<T> list, final File file, final java.nio.charset.Charset charset,
+    public static <T> File writeLines(
+            final Collection<T> list,
+            final File file,
+            final java.nio.charset.Charset charset,
             final boolean isAppend) throws InternalException {
         return FileWriter.of(file, charset).writeLines(list, isAppend);
     }
@@ -2463,8 +2507,12 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static <T> File writeLines(final Collection<T> list, final File file, final java.nio.charset.Charset charset,
-            final boolean isAppend, final boolean appendLineSeparator) throws InternalException {
+    public static <T> File writeLines(
+            final Collection<T> list,
+            final File file,
+            final java.nio.charset.Charset charset,
+            final boolean isAppend,
+            final boolean appendLineSeparator) throws InternalException {
         return FileWriter.of(file, charset).writeLines(list, null, isAppend, appendLineSeparator);
     }
 
@@ -2478,7 +2526,10 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static File writeUtf8Map(final Map<?, ?> map, final File file, final String kvSeparator,
+    public static File writeUtf8Map(
+            final Map<?, ?> map,
+            final File file,
+            final String kvSeparator,
             final boolean isAppend) throws InternalException {
         return FileWriter.of(file, Charset.UTF_8).writeMap(map, kvSeparator, isAppend);
     }
@@ -2494,8 +2545,12 @@ public class FileKit extends PathResolve {
      * @return 目标文件
      * @throws InternalException IO异常
      */
-    public static File writeMap(final Map<?, ?> map, final File file, final java.nio.charset.Charset charset,
-            final String kvSeparator, final boolean isAppend) throws InternalException {
+    public static File writeMap(
+            final Map<?, ?> map,
+            final File file,
+            final java.nio.charset.Charset charset,
+            final String kvSeparator,
+            final boolean isAppend) throws InternalException {
         return FileWriter.of(file, charset).writeMap(map, kvSeparator, isAppend);
     }
 
@@ -2533,7 +2588,11 @@ public class FileKit extends PathResolve {
      * @param isAppend 是否追加模式
      * @return 目标文件
      */
-    public static File writeBytes(final byte[] data, final File target, final int off, final int len,
+    public static File writeBytes(
+            final byte[] data,
+            final File target,
+            final int off,
+            final int len,
             final boolean isAppend) {
         return FileWriter.of(target).write(data, off, len, isAppend);
     }
@@ -2604,7 +2663,9 @@ public class FileKit extends PathResolve {
      * @return 被转换编码的文件
      * @see Charset#convert(File, java.nio.charset.Charset, java.nio.charset.Charset)
      */
-    public static File convertCharset(final File file, final java.nio.charset.Charset srcCharset,
+    public static File convertCharset(
+            final File file,
+            final java.nio.charset.Charset srcCharset,
             final java.nio.charset.Charset destCharset) {
         return Charset.convert(file, srcCharset, destCharset);
     }
@@ -2617,7 +2678,9 @@ public class FileKit extends PathResolve {
      * @param lineSeparator 换行符枚举{@link LineSeparator}
      * @return 被修改的文件
      */
-    public static File convertLineSeparator(final File file, final java.nio.charset.Charset charset,
+    public static File convertLineSeparator(
+            final File file,
+            final java.nio.charset.Charset charset,
             final LineSeparator lineSeparator) {
         final List<String> lines = readLines(file, charset);
         return FileWriter.of(file, charset).writeLines(lines, lineSeparator, false);

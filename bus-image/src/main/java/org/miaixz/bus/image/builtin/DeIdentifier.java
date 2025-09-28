@@ -216,15 +216,18 @@ public class DeIdentifier {
 
     private static String dummyValueFor(VR vr) {
         switch (vr) {
-        case DA:
-            return "19991111";
-        case DT:
-            return "19991111111111";
-        case TM:
-            return "111111";
-        case IS:
-        case DS:
-            return "0";
+            case DA:
+                return "19991111";
+
+            case DT:
+                return "19991111111111";
+
+            case TM:
+                return "111111";
+
+            case IS:
+            case DS:
+                return "0";
         }
         return "REMOVED";
     }
@@ -240,7 +243,9 @@ public class DeIdentifier {
         if (pid != null)
             attrs.setString(Tag.PatientID, VR.LO, hash(pid));
         attrs.setString(Tag.PatientIdentityRemoved, VR.CS, YES);
-        attrs.setString(Tag.LongitudinalTemporalInformationModified, VR.CS,
+        attrs.setString(
+                Tag.LongitudinalTemporalInformationModified,
+                VR.CS,
                 options.contains(Option.RetainLongitudinalTemporalInformationFullDatesOption) ? UNMODIFIED : REMOVED);
         Sequence sq = attrs.ensureSequence(Tag.DeidentificationMethodCodeSequence, options.size());
         for (Option option : options) {
@@ -298,6 +303,7 @@ public class DeIdentifier {
     }
 
     public enum Option {
+
         BasicApplicationConfidentialityProfile(DeIdentificationMethod.BasicApplicationConfidentialityProfile),
         // CleanPixelDataOption(DeIdentificationMethod.CleanPixelDataOption),
         // CleanRecognizableVisualFeaturesOption(DeIdentificationMethod.CleanRecognizableVisualFeaturesOption),

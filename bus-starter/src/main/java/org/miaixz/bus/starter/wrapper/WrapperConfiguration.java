@@ -225,9 +225,11 @@ public class WrapperConfiguration implements WebMvcRegistrations {
                         String[] arrays = StringKit.splitToArray(basePackage, Symbol.DOT);
                         String prefix = StringKit.splitToArray(packName, arrays[arrays.length - 1])[1]
                                 .replace(Symbol.C_DOT, Symbol.C_SLASH);
-                        Logger.debug("Create a URL request mapping '" + prefix
-                                + Arrays.toString(requestMappingInfo.getPathPatternsCondition().getPatterns().toArray())
-                                + "' for " + packName + Symbol.C_DOT + handlerType.getSimpleName());
+                        Logger.debug(
+                                "Create a URL request mapping '" + prefix
+                                        + Arrays.toString(
+                                                requestMappingInfo.getPathPatternsCondition().getPatterns().toArray())
+                                        + "' for " + packName + Symbol.C_DOT + handlerType.getSimpleName());
                         requestMappingInfo = RequestMappingInfo.paths(prefix).options(getBuilderConfiguration()).build()
                                 .combine(requestMappingInfo);
                     }
@@ -256,7 +258,9 @@ public class WrapperConfiguration implements WebMvcRegistrations {
          * @throws IOException      如果发生I/O异常
          */
         @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+        protected void doFilterInternal(
+                HttpServletRequest request,
+                HttpServletResponse response,
                 FilterChain filterChain) throws ServletException, IOException {
             final String method = request.getMethod();
             // 如果不是 POST PATCH PUT 等有流的接口则无需进行类型转换,提高性能

@@ -129,6 +129,7 @@ public class MapperPluginBuilder {
 
                 TenantHandler tenantHandler = new TenantHandler();
                 tenantHandler.setProvider(new TenantProvider() {
+
                     @Override
                     public Expression getTenantId() {
                         String tenantId = ContextBuilder.getTenantId();

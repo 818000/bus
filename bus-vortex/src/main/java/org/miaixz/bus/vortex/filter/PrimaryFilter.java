@@ -77,8 +77,12 @@ public class PrimaryFilter extends AbstractFilter {
     /**
      * 定义需要直接拦截并阻止访问的非法或无效请求路径列表。
      */
-    private static final List<String> BLOCKED_PATHS = Arrays.asList("/favicon.ico", "/robots.txt", "/sitemap.xml",
-            "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png",
+    private static final List<String> BLOCKED_PATHS = Arrays.asList(
+            "/favicon.ico",
+            "/robots.txt",
+            "/sitemap.xml",
+            "/apple-touch-icon.png",
+            "/apple-touch-icon-precomposed.png",
             "/.well-known/appspecific/com.chrome.devtools.json");
 
     /**
@@ -160,12 +164,18 @@ public class PrimaryFilter extends AbstractFilter {
         MultiValueMap<String, String> params = exchange.getRequest().getQueryParams();
         context.setRequestMap(params.toSingleValueMap());
         this.validate(exchange);
-        Format.info(exchange, "GET_PARAMS_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath() + ", Params: "
-                + JsonKit.toJsonString(context.getRequestMap()));
+        Format.info(
+                exchange,
+                "GET_PARAMS_PROCESSED",
+                "Path: " + exchange.getRequest().getURI().getPath() + ", Params: "
+                        + JsonKit.toJsonString(context.getRequestMap()));
 
         return chain.filter(exchange).doOnSuccess(
-                v -> Format.info(exchange, "REQUEST_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath()
-                        + ", ExecutionTime: " + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
+                v -> Format.info(
+                        exchange,
+                        "REQUEST_PROCESSED",
+                        "Path: " + exchange.getRequest().getURI().getPath() + ", ExecutionTime: "
+                                + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
     }
 
     /**
@@ -182,19 +192,26 @@ public class PrimaryFilter extends AbstractFilter {
     private Mono<Void> handleJsonRequest(ServerWebExchange exchange, WebFilterChain chain, Context context) {
         // 异步收集请求体中的所有数据片段
         return exchange.getRequest().getBody().collectList()
-                .flatMap(dataBuffers -> processJsonData(exchange, chain, context, dataBuffers))
-                .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
-                        .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75).doBeforeRetry(retrySignal -> {
-                            // 记录每次重试
-                            Format.warn(exchange, "JSON_RETRY",
-                                    "Retrying JSON request processing, attempt: " + (retrySignal.totalRetries() + 1)
-                                            + ", error: " + retrySignal.failure().getMessage());
-                        }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                            // 重试耗尽后记录严重错误并抛出异常
-                            Format.error(exchange, "JSON_RETRY_EXHAUSTED", "JSON request processing failed after "
-                                    + MAX_RETRY_ATTEMPTS + " attempts, error: " + retrySignal.failure().getMessage());
-                            return new InternalException(ErrorCode._80010002);
-                        }));
+                .flatMap(dataBuffers -> processJsonData(exchange, chain, context, dataBuffers)).retryWhen(
+                        Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
+                                .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75)
+                                .doBeforeRetry(retrySignal -> {
+                                    // 记录每次重试
+                                    Format.warn(
+                                            exchange,
+                                            "JSON_RETRY",
+                                            "Retrying JSON request processing, attempt: "
+                                                    + (retrySignal.totalRetries() + 1) + ", error: "
+                                                    + retrySignal.failure().getMessage());
+                                }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                                    // 重试耗尽后记录严重错误并抛出异常
+                                    Format.error(
+                                            exchange,
+                                            "JSON_RETRY_EXHAUSTED",
+                                            "JSON request processing failed after " + MAX_RETRY_ATTEMPTS
+                                                    + " attempts, error: " + retrySignal.failure().getMessage());
+                                    return new InternalException(ErrorCode._80010002);
+                                }));
     }
 
     /**
@@ -211,7 +228,10 @@ public class PrimaryFilter extends AbstractFilter {
      * @param dataBuffers 从请求体中收集到的数据缓冲区分片列表
      * @return {@link Mono<Void>} 表示异步处理的完成
      */
-    private Mono<Void> processJsonData(ServerWebExchange exchange, WebFilterChain chain, Context context,
+    private Mono<Void> processJsonData(
+            ServerWebExchange exchange,
+            WebFilterChain chain,
+            Context context,
             List<DataBuffer> dataBuffers) {
         try {
             // 将所有数据缓冲区合并成一个字节数组
@@ -229,6 +249,7 @@ public class PrimaryFilter extends AbstractFilter {
 
             // 创建请求装饰器，重写getBody方法，以便下游可以重复消费请求体
             ServerHttpRequest newRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+
                 @Override
                 public Flux<DataBuffer> getBody() {
                     DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();
@@ -240,10 +261,15 @@ public class PrimaryFilter extends AbstractFilter {
             ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
 
             this.validate(newExchange);
-            Format.info(newExchange, "JSON_PARAMS_PROCESSED", "Path: " + newExchange.getRequest().getURI().getPath()
-                    + ", Params: " + JsonKit.toJsonString(jsonMap));
-            return chain.filter(newExchange)
-                    .doOnTerminate(() -> Format.info(newExchange, "REQUEST_PROCESSED",
+            Format.info(
+                    newExchange,
+                    "JSON_PARAMS_PROCESSED",
+                    "Path: " + newExchange.getRequest().getURI().getPath() + ", Params: "
+                            + JsonKit.toJsonString(jsonMap));
+            return chain.filter(newExchange).doOnTerminate(
+                    () -> Format.info(
+                            newExchange,
+                            "REQUEST_PROCESSED",
                             "Path: " + newExchange.getRequest().getURI().getPath() + ", ExecutionTime: "
                                     + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
         } catch (Exception e) {
@@ -265,17 +291,24 @@ public class PrimaryFilter extends AbstractFilter {
      */
     private Mono<Void> handleFormRequest(ServerWebExchange exchange, WebFilterChain chain, Context context) {
         return exchange.getRequest().getBody().collectList()
-                .flatMap(dataBuffers -> processFormData(exchange, chain, context, dataBuffers))
-                .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
-                        .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75).doBeforeRetry(retrySignal -> {
-                            Format.warn(exchange, "FORM_RETRY",
-                                    "Retrying form request processing, attempt: " + (retrySignal.totalRetries() + 1)
-                                            + ", error: " + retrySignal.failure().getMessage());
-                        }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                            Format.error(exchange, "FORM_RETRY_EXHAUSTED", "Form request processing failed after "
-                                    + MAX_RETRY_ATTEMPTS + " attempts, error: " + retrySignal.failure().getMessage());
-                            return new InternalException(ErrorCode._80010002);
-                        }));
+                .flatMap(dataBuffers -> processFormData(exchange, chain, context, dataBuffers)).retryWhen(
+                        Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
+                                .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75)
+                                .doBeforeRetry(retrySignal -> {
+                                    Format.warn(
+                                            exchange,
+                                            "FORM_RETRY",
+                                            "Retrying form request processing, attempt: "
+                                                    + (retrySignal.totalRetries() + 1) + ", error: "
+                                                    + retrySignal.failure().getMessage());
+                                }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                                    Format.error(
+                                            exchange,
+                                            "FORM_RETRY_EXHAUSTED",
+                                            "Form request processing failed after " + MAX_RETRY_ATTEMPTS
+                                                    + " attempts, error: " + retrySignal.failure().getMessage());
+                                    return new InternalException(ErrorCode._80010002);
+                                }));
     }
 
     /**
@@ -291,7 +324,10 @@ public class PrimaryFilter extends AbstractFilter {
      * @param dataBuffers 从请求体中收集到的数据缓冲区分片列表
      * @return {@link Mono<Void>} 表示异步处理的完成
      */
-    private Mono<Void> processFormData(ServerWebExchange exchange, WebFilterChain chain, Context context,
+    private Mono<Void> processFormData(
+            ServerWebExchange exchange,
+            WebFilterChain chain,
+            Context context,
             List<DataBuffer> dataBuffers) {
         try {
             byte[] bytes = new byte[dataBuffers.stream().mapToInt(DataBuffer::readableByteCount).sum()];
@@ -304,6 +340,7 @@ public class PrimaryFilter extends AbstractFilter {
 
             // 同样，创建请求装饰器以支持请求体的重复读取
             ServerHttpRequest newRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+
                 @Override
                 public Flux<DataBuffer> getBody() {
                     DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();
@@ -317,10 +354,15 @@ public class PrimaryFilter extends AbstractFilter {
             return newExchange.getFormData().flatMap(params -> {
                 context.setRequestMap(params.toSingleValueMap());
                 this.validate(newExchange);
-                Format.info(newExchange, "FORM_PARAMS_PROCESSED", "Path: " + newExchange.getRequest().getURI().getPath()
-                        + ", Params: " + JsonKit.toJsonString(context.getRequestMap()));
-                return chain.filter(newExchange)
-                        .doOnTerminate(() -> Format.info(newExchange, "REQUEST_PROCESSED",
+                Format.info(
+                        newExchange,
+                        "FORM_PARAMS_PROCESSED",
+                        "Path: " + newExchange.getRequest().getURI().getPath() + ", Params: "
+                                + JsonKit.toJsonString(context.getRequestMap()));
+                return chain.filter(newExchange).doOnTerminate(
+                        () -> Format.info(
+                                newExchange,
+                                "REQUEST_PROCESSED",
                                 "Path: " + newExchange.getRequest().getURI().getPath() + ", ExecutionTime: "
                                         + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
             });
@@ -343,24 +385,30 @@ public class PrimaryFilter extends AbstractFilter {
      */
     private Mono<Void> handleMultipartRequest(ServerWebExchange exchange, WebFilterChain chain, Context context) {
         return exchange.getMultipartData().flatMap(params -> processMultipartData(exchange, chain, context, params))
-                .retryWhen(Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
-                        .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75).doBeforeRetry(retrySignal -> {
-                            Format.warn(exchange, "MULTIPART_RETRY",
-                                    "Retrying multipart request processing, attempt: "
-                                            + (retrySignal.totalRetries() + 1) + ", error: "
-                                            + retrySignal.failure().getMessage());
-                        }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                            Format.error(exchange, "MULTIPART_RETRY_EXHAUSTED",
-                                    "Multipart request processing failed after " + MAX_RETRY_ATTEMPTS
-                                            + " attempts, error: " + retrySignal.failure().getMessage());
+                .retryWhen(
+                        Retry.backoff(MAX_RETRY_ATTEMPTS, java.time.Duration.ofMillis(RETRY_DELAY_MS))
+                                .maxBackoff(java.time.Duration.ofMillis(500)).jitter(0.75)
+                                .doBeforeRetry(retrySignal -> {
+                                    Format.warn(
+                                            exchange,
+                                            "MULTIPART_RETRY",
+                                            "Retrying multipart request processing, attempt: "
+                                                    + (retrySignal.totalRetries() + 1) + ", error: "
+                                                    + retrySignal.failure().getMessage());
+                                }).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
+                                    Format.error(
+                                            exchange,
+                                            "MULTIPART_RETRY_EXHAUSTED",
+                                            "Multipart request processing failed after " + MAX_RETRY_ATTEMPTS
+                                                    + " attempts, error: " + retrySignal.failure().getMessage());
 
-                            // 针对特定的边界错误，返回更明确的错误码
-                            if (retrySignal.failure().getMessage() != null
-                                    && retrySignal.failure().getMessage().contains("Could not find first boundary")) {
-                                return new InternalException(ErrorCode._100303);
-                            }
-                            return new InternalException(ErrorCode._80010002);
-                        }));
+                                    // 针对特定的边界错误，返回更明确的错误码
+                                    if (retrySignal.failure().getMessage() != null && retrySignal.failure().getMessage()
+                                            .contains("Could not find first boundary")) {
+                                        return new InternalException(ErrorCode._100303);
+                                    }
+                                    return new InternalException(ErrorCode._80010002);
+                                }));
     }
 
     /**
@@ -375,7 +423,10 @@ public class PrimaryFilter extends AbstractFilter {
      * @param params   包含表单字段和文件部分的 MultiValueMap
      * @return {@link Mono<Void>} 表示异步处理的完成
      */
-    private Mono<Void> processMultipartData(ServerWebExchange exchange, WebFilterChain chain, Context context,
+    private Mono<Void> processMultipartData(
+            ServerWebExchange exchange,
+            WebFilterChain chain,
+            Context context,
             MultiValueMap<String, Part> params) {
         try {
             Map<String, String> formMap = new LinkedHashMap<>();
@@ -395,12 +446,17 @@ public class PrimaryFilter extends AbstractFilter {
             context.setFilePartMap(fileMap);
             this.validate(exchange);
 
-            Format.info(exchange, "MULTIPART_PARAMS_PROCESSED",
+            Format.info(
+                    exchange,
+                    "MULTIPART_PARAMS_PROCESSED",
                     "Path: " + exchange.getRequest().getURI().getPath() + ", Params: " + JsonKit.toJsonString(formMap));
 
             return chain.filter(exchange).doOnTerminate(
-                    () -> Format.info(exchange, "REQUEST_PROCESSED", "Path: " + exchange.getRequest().getURI().getPath()
-                            + ", ExecutionTime: " + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
+                    () -> Format.info(
+                            exchange,
+                            "REQUEST_PROCESSED",
+                            "Path: " + exchange.getRequest().getURI().getPath() + ", ExecutionTime: "
+                                    + (System.currentTimeMillis() - context.getTimestamp()) + "ms"));
         } catch (Exception e) {
             Format.error(exchange, "MULTIPART_PROCESSING_ERROR", "Failed to process multipart: " + e.getMessage());
             return Mono.error(e);

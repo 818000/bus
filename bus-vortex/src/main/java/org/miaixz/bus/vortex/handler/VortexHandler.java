@@ -136,10 +136,10 @@ public class VortexHandler {
 
             // 3. 选择路由策略
             String mode = switch (assets.getMode()) {
-            case 1 -> Protocol.HTTP.name();
-            case 2 -> Protocol.MQ.name();
-            case 3 -> Protocol.MCP.name();
-            default -> Protocol.HTTP.name();
+                case 1 -> Protocol.HTTP.name();
+                case 2 -> Protocol.MQ.name();
+                case 3 -> Protocol.MCP.name();
+                default -> Protocol.HTTP.name();
             };
 
             Router router = strategies.getOrDefault(mode, defaultRouter);
@@ -155,13 +155,17 @@ public class VortexHandler {
                 return router.route(request, context, assets)
                         .flatMap(response -> executePostHandlers(exchange, router, response)).doOnSuccess(response -> {
                             long duration = System.currentTimeMillis() - context.getTimestamp();
-                            Format.info(exchange, "REQUEST_DURATION",
+                            Format.info(
+                                    exchange,
+                                    "REQUEST_DURATION",
                                     "Method: " + assets.getMethod() + ", Duration: " + duration + "ms");
                         }).onErrorResume(error -> {
                             Format.error(exchange, "REQUEST_ERROR", "Error processing request: " + error.getMessage());
-                            return Mono.whenDelayError(handlers.stream()
-                                    .map(handler -> handler.afterCompletion(exchange, router, null, null, error))
-                                    .collect(Collectors.toList())).then(Mono.error(error));
+                            return Mono.whenDelayError(
+                                    handlers.stream().map(
+                                            handler -> handler.afterCompletion(exchange, router, null, null, error))
+                                            .collect(Collectors.toList()))
+                                    .then(Mono.error(error));
                         });
             });
         }).doOnSuccess(response -> Format.requestEnd(request.exchange(), response.statusCode().value()));
@@ -195,16 +199,20 @@ public class VortexHandler {
      * @param response 服务器响应，包含响应状态、头和体
      * @return Mono<ServerResponse> 处理后的响应，可能被拦截器修改
      */
-    private Mono<ServerResponse> executePostHandlers(ServerWebExchange exchange, Router router,
+    private Mono<ServerResponse> executePostHandlers(
+            ServerWebExchange exchange,
+            Router router,
             ServerResponse response) {
         return Mono
-                .whenDelayError(handlers.stream().map(handler -> handler.postHandle(exchange, router, null, response))
-                        .collect(Collectors.toList()))
-                .thenReturn(response)
-                .flatMap(res -> Mono.whenDelayError(
-                        handlers.stream().map(handler -> handler.afterCompletion(exchange, router, null, res, null))
+                .whenDelayError(
+                        handlers.stream().map(handler -> handler.postHandle(exchange, router, null, response))
                                 .collect(Collectors.toList()))
-                        .thenReturn(res));
+                .thenReturn(response).flatMap(
+                        res -> Mono.whenDelayError(
+                                handlers.stream()
+                                        .map(handler -> handler.afterCompletion(exchange, router, null, res, null))
+                                        .collect(Collectors.toList()))
+                                .thenReturn(res));
     }
 
 }

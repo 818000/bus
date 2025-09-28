@@ -48,11 +48,14 @@ public final class InstalledAppsData {
     private static final int[] ACCESS_FLAGS = { WinNT.KEY_WOW64_64KEY, WinNT.KEY_WOW64_32KEY };
 
     static {
-        REGISTRY_PATHS.put(WinReg.HKEY_LOCAL_MACHINE,
-                Arrays.asList("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
+        REGISTRY_PATHS.put(
+                WinReg.HKEY_LOCAL_MACHINE,
+                Arrays.asList(
+                        "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
                         "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"));
 
-        REGISTRY_PATHS.put(WinReg.HKEY_CURRENT_USER,
+        REGISTRY_PATHS.put(
+                WinReg.HKEY_CURRENT_USER,
                 Arrays.asList("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"));
     }
 
@@ -76,11 +79,20 @@ public final class InstalledAppsData {
                             }
                             String version = getRegistryValueOrUnknown(rootKey, fullPath, "DisplayVersion", accessFlag);
                             String publisher = getRegistryValueOrUnknown(rootKey, fullPath, "Publisher", accessFlag);
-                            String installDate = getRegistryValueOrUnknown(rootKey, fullPath, "InstallDate",
+                            String installDate = getRegistryValueOrUnknown(
+                                    rootKey,
+                                    fullPath,
+                                    "InstallDate",
                                     accessFlag);
-                            String installLocation = getRegistryValueOrUnknown(rootKey, fullPath, "InstallLocation",
+                            String installLocation = getRegistryValueOrUnknown(
+                                    rootKey,
+                                    fullPath,
+                                    "InstallLocation",
                                     accessFlag);
-                            String installSource = getRegistryValueOrUnknown(rootKey, fullPath, "InstallSource",
+                            String installSource = getRegistryValueOrUnknown(
+                                    rootKey,
+                                    fullPath,
+                                    "InstallSource",
                                     accessFlag);
 
                             long installDateEpoch = Parsing.parseDateToEpoch(installDate, "yyyyMMdd");

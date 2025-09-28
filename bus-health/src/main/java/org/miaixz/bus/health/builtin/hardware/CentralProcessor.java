@@ -337,6 +337,7 @@ public interface CentralProcessor {
      * arrays.
      */
     enum TickType {
+
         /**
          * CPU utilization that occurred while executing at the user level (application).
          */
@@ -391,6 +392,7 @@ public interface CentralProcessor {
      */
     @Immutable
     class LogicalProcessor {
+
         private final int processorNumber;
         private final int physicalProcessorNumber;
         private final int physicalPackageNumber;
@@ -497,6 +499,7 @@ public interface CentralProcessor {
      */
     @Immutable
     class PhysicalProcessor {
+
         private final int physicalPackageNumber;
         private final int physicalProcessorNumber;
         private final int efficiency;
@@ -684,6 +687,7 @@ public interface CentralProcessor {
          * The type of cache.
          */
         public enum Type {
+
             UNIFIED, INSTRUCTION, DATA, TRACE;
 
             @Override

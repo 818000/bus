@@ -89,7 +89,8 @@ public class HttpRequestRouter implements Router {
         String baseUrl = buildBaseUrl(assets);
 
         // 2. 获取或创建WebClient
-        WebClient webClient = clients.computeIfAbsent(baseUrl,
+        WebClient webClient = clients.computeIfAbsent(
+                baseUrl,
                 client -> WebClient.builder().exchangeStrategies(CACHED_EXCHANGE_STRATEGIES).baseUrl(baseUrl).build());
 
         // 3. 构建目标URI
@@ -125,7 +126,9 @@ public class HttpRequestRouter implements Router {
                 } else if (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
                     // 处理JSON请求体
                     return request.bodyToMono(String.class).defaultIfEmpty(Normal.EMPTY).flatMap(jsonBody -> {
-                        Format.debug(request.exchange(), "JSON_REQUEST_BODY",
+                        Format.debug(
+                                request.exchange(),
+                                "JSON_REQUEST_BODY",
                                 "JSON request body size: " + jsonBody.length());
                         return bodySpec.contentType(MediaType.APPLICATION_JSON).bodyValue(jsonBody)
                                 .httpRequest(clientHttpRequest -> {
@@ -230,8 +233,9 @@ public class HttpRequestRouter implements Router {
         return ServerResponse.ok().headers(headers -> {
             headers.addAll(responseEntity.getHeaders());
             headers.remove(HttpHeaders.CONTENT_LENGTH);
-        }).body(responseEntity.getBody() == null ? BodyInserters.empty()
-                : BodyInserters.fromDataBuffers(Flux.just(responseEntity.getBody())));
+        }).body(
+                responseEntity.getBody() == null ? BodyInserters.empty()
+                        : BodyInserters.fromDataBuffers(Flux.just(responseEntity.getBody())));
     }
 
 }

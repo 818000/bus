@@ -146,8 +146,11 @@ public class CommonsFtp extends AbstractFtp {
      * @param systemKey          服务器标识 例如：org.apache.commons.net.ftp.FTPClientConfig.SYST_NT
      * @return CommonsFtp
      */
-    public static CommonsFtp of(final Connector connector, final java.nio.charset.Charset charset,
-            final String serverLanguageCode, final String systemKey) {
+    public static CommonsFtp of(
+            final Connector connector,
+            final java.nio.charset.Charset charset,
+            final String serverLanguageCode,
+            final String systemKey) {
         return of(connector, charset, serverLanguageCode, systemKey, null);
     }
 
@@ -161,8 +164,12 @@ public class CommonsFtp extends AbstractFtp {
      * @param mode               模式
      * @return CommonsFtp
      */
-    public static CommonsFtp of(final Connector connector, final java.nio.charset.Charset charset,
-            final String serverLanguageCode, final String systemKey, final EnumValue.FtpMode mode) {
+    public static CommonsFtp of(
+            final Connector connector,
+            final java.nio.charset.Charset charset,
+            final String serverLanguageCode,
+            final String systemKey,
+            final EnumValue.FtpMode mode) {
         return new CommonsFtp(new FtpConfig(connector, charset, serverLanguageCode, systemKey), mode);
     }
 
@@ -239,12 +246,13 @@ public class CommonsFtp extends AbstractFtp {
     public CommonsFtp setMode(final EnumValue.FtpMode mode) {
         this.mode = mode;
         switch (mode) {
-        case Active:
-            this.client.enterLocalActiveMode();
-            break;
-        case Passive:
-            this.client.enterLocalPassiveMode();
-            break;
+            case Active:
+                this.client.enterLocalActiveMode();
+                break;
+
+            case Passive:
+                this.client.enterLocalPassiveMode();
+                break;
         }
         return this;
     }
@@ -708,7 +716,10 @@ public class CommonsFtp extends AbstractFtp {
      * @throws InternalException IO异常
      * @return 是否下载成功
      */
-    public boolean download(final String path, String fileName, final OutputStream out,
+    public boolean download(
+            final String path,
+            String fileName,
+            final OutputStream out,
             final java.nio.charset.Charset fileNameCharset) throws InternalException {
         String pwd = null;
         if (this.backToPwd) {

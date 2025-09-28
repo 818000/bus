@@ -305,24 +305,32 @@ public enum Protocol {
             throw new IOException("Protocol cannot be null or empty");
         }
         switch (protocol) {
-        case "HTTP/1.0":
-            return HTTP_1_0;
-        case "HTTP/1.1":
-            return HTTP_1_1;
-        case "h2_prior_knowledge":
-            return H2_PRIOR_KNOWLEDGE;
-        case "h2":
-            return HTTP_2;
-        case "spdy/3.1":
-            return SPDY_3;
-        case "quic":
-            return QUIC;
-        case "soap 1.1 protocol":
-            return SOAP_1_1;
-        case "SOAP 1.2 Protocol":
-            return SOAP_1_2;
-        default:
-            throw new IOException("Unexpected protocol: " + protocol);
+            case "HTTP/1.0":
+                return HTTP_1_0;
+
+            case "HTTP/1.1":
+                return HTTP_1_1;
+
+            case "h2_prior_knowledge":
+                return H2_PRIOR_KNOWLEDGE;
+
+            case "h2":
+                return HTTP_2;
+
+            case "spdy/3.1":
+                return SPDY_3;
+
+            case "quic":
+                return QUIC;
+
+            case "soap 1.1 protocol":
+                return SOAP_1_1;
+
+            case "SOAP 1.2 Protocol":
+                return SOAP_1_2;
+
+            default:
+                throw new IOException("Unexpected protocol: " + protocol);
         }
     }
 

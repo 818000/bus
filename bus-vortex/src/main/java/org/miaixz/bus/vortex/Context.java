@@ -28,8 +28,6 @@
 package org.miaixz.bus.vortex;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import lombok.*;
@@ -109,8 +107,7 @@ public class Context extends Tracer {
     private long timestamp;
 
     /**
-     * 从 ServerWebExchange 获取或初始化上下文对象
-     * 会自动从请求中提取header信息并设置到headerMap中
+     * 从 ServerWebExchange 获取或初始化上下文对象 会自动从请求中提取header信息并设置到headerMap中
      *
      * @param exchange 当前的 ServerWebExchange 对象
      * @return 上下文对象，若不存在则创建新的空上下文并设置header信息
@@ -120,30 +117,21 @@ public class Context extends Tracer {
         if (context == null) {
             context = new Context();
             // 从请求中提取header信息
-            Map<String, String> headers = exchange.getRequest().getHeaders().toSingleValueMap()
-                    .entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue
-                    ));
+            Map<String, String> headers = exchange.getRequest().getHeaders().toSingleValueMap().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             context.setHeaderMap(headers);
             exchange.getAttributes().put(Context.$, context);
         } else if (context.getHeaderMap() == null) {
             // 如果context存在但headerMap为null，也设置header信息
-            Map<String, String> headers = exchange.getRequest().getHeaders().toSingleValueMap()
-                    .entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue
-                    ));
+            Map<String, String> headers = exchange.getRequest().getHeaders().toSingleValueMap().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             context.setHeaderMap(headers);
         }
         return context;
     }
 
     /**
-     * 从 ServerRequest 获取或初始化上下文对象
-     * 会自动从请求中提取header信息并设置到headerMap中
+     * 从 ServerRequest 获取或初始化上下文对象 会自动从请求中提取header信息并设置到headerMap中
      *
      * @param request 当前的 ServerRequest 对象
      * @return 上下文对象，若不存在则创建新的空上下文并设置header信息
@@ -153,22 +141,14 @@ public class Context extends Tracer {
         if (context == null) {
             context = new Context();
             // 从请求中提取header信息
-            Map<String, String> headers = request.headers().asHttpHeaders().toSingleValueMap()
-                    .entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue
-                    ));
+            Map<String, String> headers = request.headers().asHttpHeaders().toSingleValueMap().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             context.setHeaderMap(headers);
             request.attributes().put(Context.$, context);
         } else if (context.getHeaderMap() == null) {
             // 如果context存在但headerMap为null，也设置header信息
-            Map<String, String> headers = request.headers().asHttpHeaders().toSingleValueMap()
-                    .entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue
-                    ));
+            Map<String, String> headers = request.headers().asHttpHeaders().toSingleValueMap().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             context.setHeaderMap(headers);
         }
         return context;

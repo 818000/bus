@@ -112,8 +112,9 @@ class Zip64 {
         writeInt(entry.compressedSize); // compressed size
         writeInt(useZip64 ? MAX32 : entry.size); // uncompressed size
         writeShort(entry.filename.length()); // filename length
-        writeShort(useZip64 ? (2 + 2 + 8) /* short + short + long */
-                : 0); // extra field len
+        writeShort(
+                useZip64 ? (2 + 2 + 8) /* short + short + long */
+                        : 0); // extra field len
         writeShort(0); // comment length
         writeShort(0); // disk number where file starts
         writeShort(0); // internal file attributes (unused)
@@ -185,6 +186,7 @@ class Zip64 {
     }
 
     static class Entry {
+
         final String filename;
         long crc;
         long size;

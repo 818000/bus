@@ -133,7 +133,9 @@ public class ErrorsHandler implements WebExceptionHandler {
      */
     protected Message handleUncheckedException(UncheckedException ex, ServerWebExchange exchange) {
         if (StringKit.isNotBlank(ex.getErrcode())) {
-            Format.error(exchange, "INTERNAL_EXCEPTION",
+            Format.error(
+                    exchange,
+                    "INTERNAL_EXCEPTION",
                     "ErrorCode: " + ex.getErrcode() + ", Message: " + ex.getErrmsg());
             return Message.builder().errcode(ex.getErrcode()).errmsg(ex.getErrmsg()).build();
         } else {
@@ -146,7 +148,9 @@ public class ErrorsHandler implements WebExceptionHandler {
      * 处理未知异常
      */
     protected Message handleUnknownException(Throwable ex, ServerWebExchange exchange) {
-        Format.error(exchange, "UNKNOWN_EXCEPTION",
+        Format.error(
+                exchange,
+                "UNKNOWN_EXCEPTION",
                 "Unknown exception type: " + ex.getClass().getName() + ", Message: " + ex.getMessage());
         return Message.builder().errcode(ErrorCode._100807.getKey()).errmsg(ErrorCode._100807.getValue()).build();
     }
@@ -161,8 +165,11 @@ public class ErrorsHandler implements WebExceptionHandler {
     private void logErrorHandling(ServerWebExchange exchange, Context context, Throwable ex) {
         if (context != null) {
             long executionTime = System.currentTimeMillis() - context.getTimestamp();
-            Format.info(exchange, "ERROR_HANDLED", "Error handled, execution time: " + executionTime + "ms, exception: "
-                    + ex.getClass().getSimpleName());
+            Format.info(
+                    exchange,
+                    "ERROR_HANDLED",
+                    "Error handled, execution time: " + executionTime + "ms, exception: "
+                            + ex.getClass().getSimpleName());
         } else {
             Format.info(exchange, "ERROR_HANDLED", "Error handled, exception: " + ex.getClass().getSimpleName());
         }

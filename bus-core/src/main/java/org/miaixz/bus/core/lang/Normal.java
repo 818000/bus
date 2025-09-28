@@ -846,8 +846,17 @@ public class Normal {
     /**
      * 元注解
      */
-    public static final Set<Class<? extends Annotation>> META_ANNOTATIONS = SetKit.of(Target.class, Retention.class,
-            Inherited.class, Documented.class, SuppressWarnings.class, Override.class, Deprecated.class);
+    public static final Set<Class<? extends Annotation>> META_ANNOTATIONS = SetKit.of(
+            Target.class,
+            Retention.class,
+            Inherited.class,
+            Documented.class,
+            SuppressWarnings.class,
+            Override.class,
+            Deprecated.class,
+            Repeatable.class,
+            Native.class,
+            FunctionalInterface.class);
 
     /**
      * 提供的URL是否为文件 文件协议包括"file", "vfsfile" 或 "vfs".

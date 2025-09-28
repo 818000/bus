@@ -103,7 +103,8 @@ public class Builder {
             for (String field : fields) {
                 if (field.contains(Symbol.EQUAL)) {
                     String[] keyValue = field.split(Symbol.EQUAL);
-                    res.put(UrlDecoder.decode(keyValue[0]),
+                    res.put(
+                            UrlDecoder.decode(keyValue[0]),
                             keyValue.length == 2 ? UrlDecoder.decode(keyValue[1]) : null);
                 }
             }

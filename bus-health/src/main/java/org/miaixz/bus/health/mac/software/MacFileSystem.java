@@ -166,9 +166,14 @@ public class MacFileSystem extends AbstractFileSystem {
                     final int flags = fs[f].f_flags;
 
                     // Skip non-local drives if requested, and exclude pseudo file systems
-                    if ((localOnly && (flags & MNT_LOCAL) == 0) || !path.equals("/")
-                            && (PSEUDO_FS_TYPES.contains(type) || Builder.isFileStoreExcluded(path, volume,
-                                    FS_PATH_INCLUDES, FS_PATH_EXCLUDES, FS_VOLUME_INCLUDES, FS_VOLUME_EXCLUDES))) {
+                    if ((localOnly && (flags & MNT_LOCAL) == 0)
+                            || !path.equals("/") && (PSEUDO_FS_TYPES.contains(type) || Builder.isFileStoreExcluded(
+                                    path,
+                                    volume,
+                                    FS_PATH_INCLUDES,
+                                    FS_PATH_EXCLUDES,
+                                    FS_VOLUME_INCLUDES,
+                                    FS_VOLUME_EXCLUDES))) {
                         continue;
                     }
 
@@ -204,7 +209,9 @@ public class MacFileSystem extends AbstractFileSystem {
                         // Get the DiskArbitration dictionary for this disk,
                         // which has volumename
                         DADiskRef disk = DiskArbitration.INSTANCE.DADiskCreateFromBSDName(
-                                CoreFoundation.INSTANCE.CFAllocatorGetDefault(), session, volume);
+                                CoreFoundation.INSTANCE.CFAllocatorGetDefault(),
+                                session,
+                                volume);
                         if (disk != null) {
                             CFDictionaryRef diskInfo = DiskArbitration.INSTANCE.DADiskCopyDescription(disk);
                             if (diskInfo != null) {
@@ -237,9 +244,11 @@ public class MacFileSystem extends AbstractFileSystem {
                         }
                     }
 
-                    fsList.add(new MacOSFileStore(name, volume, name, path, options.toString(),
-                            uuid == null ? Normal.EMPTY : uuid, Normal.EMPTY, description, type, file.getFreeSpace(),
-                            file.getUsableSpace(), file.getTotalSpace(), fs[f].f_ffree, fs[f].f_files));
+                    fsList.add(
+                            new MacOSFileStore(name, volume, name, path, options.toString(),
+                                    uuid == null ? Normal.EMPTY : uuid, Normal.EMPTY, description, type,
+                                    file.getFreeSpace(), file.getUsableSpace(), file.getTotalSpace(), fs[f].f_ffree,
+                                    fs[f].f_files));
                 }
                 daVolumeNameKey.release();
                 // Close DA session

@@ -143,8 +143,8 @@ public class Builder {
      */
     public static String sm2SignWithSm3(PrivateKey privateKey, String content) throws Exception {
         // 生成SM2sign with sm3 签名验签算法实例
-        Signature signature = Signature.getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(),
-                new BouncyCastleProvider());
+        Signature signature = Signature
+                .getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(), new BouncyCastleProvider());
         // 使用私钥签名,初始化签名实例
         signature.initSign(privateKey);
         // 签名原文
@@ -205,8 +205,8 @@ public class Builder {
      * @throws Exception 异常信息
      */
     public static boolean sm4Verify(PublicKey publicKey, String data, String originalSignature) throws Exception {
-        Signature signature = Signature.getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(),
-                new BouncyCastleProvider());
+        Signature signature = Signature
+                .getInstance(GMObjectIdentifiers.sm2sign_with_sm3.toString(), new BouncyCastleProvider());
         signature.initVerify(publicKey);
         // 写入待验签的签名原文到算法中
         signature.update(data.getBytes(Charset.UTF_8));
@@ -466,8 +466,13 @@ public class Builder {
      * @param authType  认证类型
      * @return 请求头 Authorization
      */
-    public static String getAuthorization(String mchId, String serialNo, String nonceStr, String timestamp,
-            String signature, String authType) {
+    public static String getAuthorization(
+            String mchId,
+            String serialNo,
+            String nonceStr,
+            String timestamp,
+            String signature,
+            String authType) {
         Map<String, String> params = new HashMap<>(5);
         params.put("mchid", mchId);
         params.put("serial_no", serialNo);

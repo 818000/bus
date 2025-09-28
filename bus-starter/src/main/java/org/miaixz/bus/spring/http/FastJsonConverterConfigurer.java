@@ -67,8 +67,8 @@ import jakarta.persistence.Transient;
 @ConditionalOnClass({ JSON.class })
 public class FastJsonConverterConfigurer implements JsonConverterConfigurer {
 
-    private static final List<MediaType> DEFAULT_MEDIA_TYPES = List.of(MediaType.APPLICATION_JSON,
-            new MediaType(MediaType.TEXT_PLAIN, Charset.UTF_8));
+    private static final List<MediaType> DEFAULT_MEDIA_TYPES = List
+            .of(MediaType.APPLICATION_JSON, new MediaType(MediaType.TEXT_PLAIN, Charset.UTF_8));
 
     private String autoType;
 
@@ -142,8 +142,11 @@ public class FastJsonConverterConfigurer implements JsonConverterConfigurer {
 
                 return result;
             } catch (IOException e) {
-                Logger.error("IO error occurred during JSON deserialization, class {}: {}", clazz.getName(),
-                        e.getMessage(), e);
+                Logger.error(
+                        "IO error occurred during JSON deserialization, class {}: {}",
+                        clazz.getName(),
+                        e.getMessage(),
+                        e);
                 throw new HttpMessageNotReadableException(
                         "IO error occurred during JSON deserialization: " + e.getMessage(), e, inputMessage);
             } catch (Exception e) {

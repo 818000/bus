@@ -170,8 +170,10 @@ public class LunarMonth extends Loops {
             m = new LunarMonth(c);
         } else {
             m = new LunarMonth(year, month);
-            cache.put(key, new Object[] { m.getYear(), m.getMonthWithLeap(), m.getDayCount(), m.getIndexInYear(),
-                    m.getFirstJulianDay().getDay() });
+            cache.put(
+                    key,
+                    new Object[] { m.getYear(), m.getMonthWithLeap(), m.getDayCount(), m.getIndexInYear(),
+                            m.getFirstJulianDay().getDay() });
         }
         return m;
     }

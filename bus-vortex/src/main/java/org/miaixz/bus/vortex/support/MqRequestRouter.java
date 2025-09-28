@@ -129,18 +129,23 @@ public class MqRequestRouter implements Router {
     @Override
     public Mono<ServerResponse> route(ServerRequest request, Context context, Assets assets) {
         // 记录路由开始
-        Format.info(request.exchange(), "MQ_ROUTE_START",
+        Format.info(
+                request.exchange(),
+                "MQ_ROUTE_START",
                 "Method: " + assets.getMethod() + ", Topic: " + assets.getMethod());
 
         // 读取请求体并转发到 MQ
         long startTime = System.currentTimeMillis();
         return request.bodyToMono(String.class).flatMap(payload -> {
             // 记录消息发送
-            Format.debug(request.exchange(), "MQ_MESSAGE_SEND",
+            Format.debug(
+                    request.exchange(),
+                    "MQ_MESSAGE_SEND",
                     "Method: " + assets.getMethod() + ", Payload size: " + payload.length());
 
             // 创建消息对象（使用匿名实现类）
             Message message = new Message() {
+
                 private final String topic = assets.getMethod();
                 private final byte[] content = payload.getBytes(Charset.UTF_8);
 
@@ -162,17 +167,23 @@ public class MqRequestRouter implements Router {
         }).flatMap(payload -> {
             // 记录成功响应
             long duration = System.currentTimeMillis() - startTime;
-            Format.info(request.exchange(), "MQ_ROUTE_SUCCESS",
+            Format.info(
+                    request.exchange(),
+                    "MQ_ROUTE_SUCCESS",
                     "Method: " + assets.getMethod() + ", Duration: " + duration + "ms");
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue("Request forwarded to MQ");
         }).doOnTerminate(() -> {
             long duration = System.currentTimeMillis() - startTime;
-            Format.info(request.exchange(), "MQ_ROUTE_COMPLETE",
+            Format.info(
+                    request.exchange(),
+                    "MQ_ROUTE_COMPLETE",
                     "Method: " + assets.getMethod() + ", Duration: " + duration + "ms");
         }).onErrorResume(e -> {
             // 记录错误
             long duration = System.currentTimeMillis() - startTime;
-            Format.error(request.exchange(), "MQ_ROUTE_ERROR",
+            Format.error(
+                    request.exchange(),
+                    "MQ_ROUTE_ERROR",
                     "Method: " + assets.getMethod() + ", Duration: " + duration + "ms, Error: " + e.getMessage());
 
             // 返回错误响应

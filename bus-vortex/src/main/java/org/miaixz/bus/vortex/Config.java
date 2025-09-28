@@ -112,6 +112,7 @@ public class Config {
     @Getter
     @Setter
     public static class Encrypt {
+
         /**
          * 是否启用加密
          */
@@ -139,6 +140,7 @@ public class Config {
     @Getter
     @Setter
     public static class Decrypt {
+
         /**
          * 是否启用解密
          */
@@ -166,6 +168,7 @@ public class Config {
     @Getter
     @Setter
     public static class Limit {
+
         /**
          * 是否启用限流
          */
@@ -178,6 +181,7 @@ public class Config {
     @Getter
     @Setter
     public static class Security {
+
         /**
          * 是否启用安全机制
          */

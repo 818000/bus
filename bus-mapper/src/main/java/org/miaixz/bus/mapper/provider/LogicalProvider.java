@@ -58,10 +58,11 @@ public class LogicalProvider {
      */
     public static String select(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
-                return "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName()
-                        + where(() -> entity.whereColumns().stream().map(
+                return "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName() + where(
+                        () -> entity.whereColumns().stream().map(
                                 column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
                                 .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, false))
                         + entity.groupByColumn().orElse("") + entity.havingColumn().orElse("")
@@ -78,17 +79,26 @@ public class LogicalProvider {
      */
     public static String selectColumns(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return "SELECT " + choose(
                         () -> whenTest("fns != null and fns.isNotEmpty()", () -> "${fns.baseColumnAsPropertyList()}")
                                 + otherwise(() -> entity.baseColumnAsPropertyList()))
                         + " FROM " + entity.tableName()
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
-                                () -> ifParameterNotNull(() -> where(() -> entity.whereColumns().stream()
-                                        .map(column -> ifTest(column.notNullTest("entity."),
-                                                () -> "AND " + column.columnEqualsProperty("entity.")))
-                                        .collect(Collectors.joining(Symbol.LF)))) + logicalCondition(entity, false))
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
+                                () -> ifParameterNotNull(
+                                        () -> where(
+                                                () -> entity.whereColumns().stream().map(
+                                                        column -> ifTest(
+                                                                column.notNullTest("entity."),
+                                                                () -> "AND " + column.columnEqualsProperty("entity.")))
+                                                        .collect(Collectors.joining(Symbol.LF))))
+                                        + logicalCondition(entity, false))
                         + entity.groupByColumn().orElse("") + entity.havingColumn().orElse("")
                         + entity.orderByColumn().orElse("");
             }
@@ -103,6 +113,7 @@ public class LogicalProvider {
      */
     public static String selectByCondition(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return ifTest("startSql != null and startSql != ''", () -> "${startSql}") + "SELECT "
@@ -110,7 +121,11 @@ public class LogicalProvider {
                         + ifTest("selectColumns != null and selectColumns != ''", () -> "${selectColumns}")
                         + ifTest("selectColumns == null or selectColumns == ''", entity::baseColumnAsPropertyList)
                         + " FROM " + entity.tableName()
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
                                 () -> ifParameterNotNull(() -> Args.CONDITION_WHERE_CLAUSE)
                                         + logicalCondition(entity, false))
                         + ifTest("orderByClause != null", () -> " ORDER BY ${orderByClause}")
@@ -128,15 +143,21 @@ public class LogicalProvider {
      */
     public static String countByCondition(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return ifTest("startSql != null and startSql != ''", () -> "${startSql}") + "SELECT COUNT("
                         + ifTest("distinct", () -> "distinct ")
-                        + ifTest("simpleSelectColumns != null and simpleSelectColumns != ''",
+                        + ifTest(
+                                "simpleSelectColumns != null and simpleSelectColumns != ''",
                                 () -> "${simpleSelectColumns}")
                         + ifTest("simpleSelectColumns == null or simpleSelectColumns == ''", () -> "*") + ") FROM "
                         + entity.tableName()
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
                                 () -> ifParameterNotNull(() -> Args.CONDITION_WHERE_CLAUSE)
                                         + logicalCondition(entity, false))
                         + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
@@ -152,11 +173,13 @@ public class LogicalProvider {
      */
     public static String selectByPrimaryKey(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName()
-                        + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
-                                .collect(Collectors.joining(" AND ")))
+                        + where(
+                                () -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
+                                        .collect(Collectors.joining(" AND ")))
                         + logicalCondition(entity, false);
             }
         });
@@ -170,10 +193,11 @@ public class LogicalProvider {
      */
     public static String selectCount(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
-                return "SELECT COUNT(*)  FROM " + entity.tableName() + Symbol.LF
-                        + where(() -> entity.whereColumns().stream().map(
+                return "SELECT COUNT(*)  FROM " + entity.tableName() + Symbol.LF + where(
+                        () -> entity.whereColumns().stream().map(
                                 column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
                                 .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, false));
             }
@@ -188,17 +212,23 @@ public class LogicalProvider {
      */
     public static String updateByCondition(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return ifTest("condition.startSql != null and condition.startSql != ''", () -> "${condition.startSql}")
                         + "UPDATE " + entity.tableName()
-                        + set(() -> entity.updateColumns().stream()
-                                .map(column -> column.columnEqualsProperty("entity."))
-                                .collect(Collectors.joining(Symbol.COMMA)))
+                        + set(
+                                () -> entity.updateColumns().stream()
+                                        .map(column -> column.columnEqualsProperty("entity."))
+                                        .collect(Collectors.joining(Symbol.COMMA)))
                         + variableNotNull("condition", "Condition cannot be null")
                         + (entity.getBoolean("updateByCondition.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
                                 () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
@@ -213,18 +243,26 @@ public class LogicalProvider {
      */
     public static String updateByConditionSelective(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return ifTest("condition.startSql != null and condition.startSql != ''", () -> "${condition.startSql}")
                         + "UPDATE " + entity.tableName()
-                        + set(() -> entity.updateColumns().stream()
-                                .map(column -> ifTest(column.notNullTest("entity."),
-                                        () -> column.columnEqualsProperty("entity.") + Symbol.COMMA))
-                                .collect(Collectors.joining(Symbol.LF)))
+                        + set(
+                                () -> entity.updateColumns().stream()
+                                        .map(
+                                                column -> ifTest(
+                                                        column.notNullTest("entity."),
+                                                        () -> column.columnEqualsProperty("entity.") + Symbol.COMMA))
+                                        .collect(Collectors.joining(Symbol.LF)))
                         + variableNotNull("condition", "Condition cannot be null")
                         + (entity.getBoolean("updateByConditionSelective.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
                                 () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
@@ -239,6 +277,7 @@ public class LogicalProvider {
      */
     public static String updateByConditionSetValues(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return ifTest("condition.startSql != null and condition.startSql != ''", () -> "${condition.startSql}")
@@ -247,7 +286,11 @@ public class LogicalProvider {
                         + variableNotNull("condition", "Condition cannot be null")
                         + (entity.getBoolean("updateByCondition.allowEmpty", true) ? ""
                                 : variableIsFalse("condition.isEmpty()", "Condition Criteria cannot be empty"))
-                        + trim("WHERE", "", "WHERE |OR |AND ", "",
+                        + trim(
+                                "WHERE",
+                                "",
+                                "WHERE |OR |AND ",
+                                "",
                                 () -> Args.UPDATE_BY_CONDITION_WHERE_CLAUSE + logicalCondition(entity, false))
                         + ifTest("condition.endSql != null and condition.endSql != ''", () -> "${condition.endSql}");
             }
@@ -262,13 +305,15 @@ public class LogicalProvider {
      */
     public static String updateByPrimaryKey(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 return "UPDATE " + entity.tableName() + " SET "
                         + entity.updateColumns().stream().map(ColumnMeta::columnEqualsProperty)
                                 .collect(Collectors.joining(Symbol.COMMA))
-                        + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
-                                .collect(Collectors.joining(" AND ")))
+                        + where(
+                                () -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
+                                        .collect(Collectors.joining(" AND ")))
                         + logicalCondition(entity, false);
             }
         });
@@ -282,13 +327,20 @@ public class LogicalProvider {
      */
     public static String updateByPrimaryKeySelective(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
-                return "UPDATE " + entity.tableName() + set(() -> entity.updateColumns().stream()
-                        .map(column -> ifTest(column.notNullTest(), () -> column.columnEqualsProperty() + Symbol.COMMA))
-                        .collect(Collectors.joining(Symbol.LF)))
-                        + where(() -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
-                                .collect(Collectors.joining(" AND ")))
+                return "UPDATE " + entity.tableName()
+                        + set(
+                                () -> entity.updateColumns().stream()
+                                        .map(
+                                                column -> ifTest(
+                                                        column.notNullTest(),
+                                                        () -> column.columnEqualsProperty() + Symbol.COMMA))
+                                        .collect(Collectors.joining(Symbol.LF)))
+                        + where(
+                                () -> entity.idColumns().stream().map(ColumnMeta::columnEqualsProperty)
+                                        .collect(Collectors.joining(" AND ")))
                         + logicalCondition(entity, false);
             }
         });
@@ -302,18 +354,23 @@ public class LogicalProvider {
      */
     public static String updateByPrimaryKeySelectiveWithForceFields(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
-                return "UPDATE " + entity.tableName()
-                        + set(() -> entity.updateColumns().stream()
-                                .map(column -> choose(() -> whenTest(
-                                        "fns != null and fns.fieldNames().contains('" + column.property() + "')",
-                                        () -> column.columnEqualsProperty("entity.") + Symbol.COMMA)
-                                        + whenTest(column.notNullTest("entity."),
-                                                () -> column.columnEqualsProperty("entity.") + Symbol.COMMA)))
+                return "UPDATE " + entity.tableName() + set(
+                        () -> entity.updateColumns().stream().map(
+                                column -> choose(
+                                        () -> whenTest(
+                                                "fns != null and fns.fieldNames().contains('" + column.property()
+                                                        + "')",
+                                                () -> column.columnEqualsProperty("entity.") + Symbol.COMMA)
+                                                + whenTest(
+                                                        column.notNullTest("entity."),
+                                                        () -> column.columnEqualsProperty("entity.") + Symbol.COMMA)))
                                 .collect(Collectors.joining(Symbol.LF)))
-                        + where(() -> entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity."))
-                                .collect(Collectors.joining(" AND ")))
+                        + where(
+                                () -> entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity."))
+                                        .collect(Collectors.joining(" AND ")))
                         + logicalCondition(entity, false);
             }
         });
@@ -327,15 +384,20 @@ public class LogicalProvider {
      */
     public static String delete(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 ColumnMeta logicColumn = getLogical(entity);
                 return "UPDATE " + entity.tableName() + " SET "
                         + columnEqualsValue(logicColumn, deleteValue(logicColumn))
                         + parameterNotNull("Parameter cannot be null")
-                        + where(() -> entity.columns().stream().map(
-                                column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
-                                .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, true));
+                        + where(
+                                () -> entity.columns().stream()
+                                        .map(
+                                                column -> ifTest(
+                                                        column.notNullTest(),
+                                                        () -> "AND " + column.columnEqualsProperty()))
+                                        .collect(Collectors.joining(Symbol.LF)) + logicalCondition(entity, true));
             }
         });
     }
@@ -348,6 +410,7 @@ public class LogicalProvider {
      */
     public static String deleteByPrimaryKey(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 ColumnMeta logicColumn = getLogical(entity);
@@ -367,6 +430,7 @@ public class LogicalProvider {
      */
     public static String deleteByCondition(ProviderContext providerContext) {
         return SqlScript.caching(providerContext, new LogicalSqlScript() {
+
             @Override
             public String getSql(TableMeta entity) {
                 ColumnMeta logicColumn = getLogical(entity);
