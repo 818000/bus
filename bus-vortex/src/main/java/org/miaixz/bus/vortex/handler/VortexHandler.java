@@ -122,7 +122,7 @@ public class VortexHandler {
             Context context = Context.get(request);
             if (context == null) {
                 Format.error(null, "CONTEXT_NULL", "Request context is null for path: " + request.path());
-                throw new ValidateException(ErrorCode._80010002);
+                throw new ValidateException(ErrorCode._116000);
             }
             ServerWebExchange exchange = request.exchange();
             Format.requestStart(exchange);

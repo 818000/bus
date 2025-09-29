@@ -119,12 +119,10 @@ public class ErrorsHandler implements WebExceptionHandler {
     protected Message handleWebClientException(WebClientException ex, ServerWebExchange exchange) {
         if (ex.getCause() instanceof UnknownHostException) {
             Format.error(exchange, "WEBCLIENT_UNKNOWN_HOST", "UnknownHostException: " + ex.getCause().getMessage());
-            return Message.builder().errcode(ErrorCode._80010001.getKey()).errmsg(ErrorCode._80010001.getValue())
-                    .build();
+            return Message.builder().errcode(ErrorCode._100811.getKey()).errmsg(ErrorCode._100811.getValue()).build();
         } else {
             Format.error(exchange, "WEBCLIENT_EXCEPTION", "WebClientException: " + ex.getMessage());
-            return Message.builder().errcode(ErrorCode._80010002.getKey()).errmsg(ErrorCode._80010002.getValue())
-                    .build();
+            return Message.builder().errcode(ErrorCode._116000.getKey()).errmsg(ErrorCode._116000.getValue()).build();
         }
     }
 

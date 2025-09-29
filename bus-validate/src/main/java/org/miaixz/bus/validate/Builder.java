@@ -47,7 +47,7 @@ public class Builder extends Validator {
     /**
      * 默认属性名
      */
-    public static final String DEFAULT_ERRCODE = "116000";
+    public static final String DEFAULT_ERRCODE = "115000";
     /**
      * 校验对象参数
      */

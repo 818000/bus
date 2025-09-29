@@ -190,7 +190,7 @@ public class Provider {
         String errcode = ObjectKit.defaultIfNull(material.getErrcode(), context.getErrcode());
 
         // 3. 获取错误信息：从 Errors 获取，如果 key 为 null 则使用原始 errorCode
-        String errmsg = ObjectKit.defaultIfNull(material.getErrmsg(), ErrorCode._116000.getValue());
+        String errmsg = ObjectKit.defaultIfNull(material.getErrmsg(), ErrorCode._115000.getValue());
 
         // 4. 设置材料中的错误码和错误消息
         material.setErrcode(errcode);

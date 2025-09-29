@@ -226,7 +226,6 @@ public class AuthorizeFilter extends AbstractFilter {
             }
         }
         if (Consts.TYPE_ONE == assets.getScope()) {
-            // 从方法名中提取应用ID（方法名的第一部分）
             // 优先从请求参数中获取应用ID
             String[] api_key_params = { "apiKey", "api_key", "x_api_key", "api_id", "x_api_id", "X-API-ID", "X-API-KEY",
                     "API-KEY", "API-ID" };

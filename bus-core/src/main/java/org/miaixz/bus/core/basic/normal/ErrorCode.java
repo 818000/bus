@@ -48,12 +48,12 @@ public class ErrorCode {
     public static final Errors _FAILURE = ErrorRegistry.builder().key("-1").value("系统繁忙,请稍后重试").build();
 
     /**
-     * 通用: 请求过于频繁
+     * 通用: 请求过于频繁，请稍候后再试
      */
     public static final Errors _LIMITER = ErrorRegistry.builder().key("-2").value("请求过于频繁，请稍候后再试").build();
 
     /**
-     * 通用: 非法请求
+     * 通用: 非法请求，请稍候后再试
      */
     public static final Errors _BLOCKED = ErrorRegistry.builder().key("-3").value("非法请求，请稍候后再试").build();
 
@@ -123,9 +123,9 @@ public class ErrorCode {
     public static final Errors _100112 = ErrorRegistry.builder().key("100112").value("缺少sign参数").build();
 
     /**
-     * 请求：缺少noncestr参数
+     * 请求：缺少nonce参数
      */
-    public static final Errors _100113 = ErrorRegistry.builder().key("100113").value("缺少noncestr参数").build();
+    public static final Errors _100113 = ErrorRegistry.builder().key("100113").value("缺少nonce参数").build();
 
     /**
      * 请求：缺少timestamp参数
@@ -191,6 +191,7 @@ public class ErrorCode {
      * 签名信息错误
      */
     public static final Errors _100300 = ErrorRegistry.builder().key("100300").value("签名信息无效").build();
+
     /**
      * 日期格式化错误
      */
@@ -240,6 +241,7 @@ public class ErrorCode {
      * 账号不存在
      */
     public static final Errors _100505 = ErrorRegistry.builder().key("100505").value("账号不存在").build();
+
     /**
      * 未绑定帐号
      */
@@ -414,5 +416,10 @@ public class ErrorCode {
      * 链接已过期
      */
     public static final Errors _100810 = ErrorRegistry.builder().key("100810").value("链接已过期").build();
+
+    /**
+     * 请求超时
+     */
+    public static final Errors _100811 = ErrorRegistry.builder().key("100811").value("请求超时").build();
 
 }

@@ -210,7 +210,7 @@ public class PrimaryFilter extends AbstractFilter {
                                             "JSON_RETRY_EXHAUSTED",
                                             "JSON request processing failed after " + MAX_RETRY_ATTEMPTS
                                                     + " attempts, error: " + retrySignal.failure().getMessage());
-                                    return new InternalException(ErrorCode._80010002);
+                                    return new InternalException(ErrorCode._116000);
                                 }));
     }
 
@@ -307,7 +307,7 @@ public class PrimaryFilter extends AbstractFilter {
                                             "FORM_RETRY_EXHAUSTED",
                                             "Form request processing failed after " + MAX_RETRY_ATTEMPTS
                                                     + " attempts, error: " + retrySignal.failure().getMessage());
-                                    return new InternalException(ErrorCode._80010002);
+                                    return new InternalException(ErrorCode._116000);
                                 }));
     }
 
@@ -407,7 +407,7 @@ public class PrimaryFilter extends AbstractFilter {
                                             .contains("Could not find first boundary")) {
                                         return new InternalException(ErrorCode._100303);
                                     }
-                                    return new InternalException(ErrorCode._80010002);
+                                    return new InternalException(ErrorCode._116000);
                                 }));
     }
 
