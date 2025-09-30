@@ -32,7 +32,7 @@
 
     <groupId>org.miaixz</groupId>
     <artifactId>bus-pager</artifactId>
-    <version>8.3.0</version>
+    <version>8.3.1</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -85,10 +85,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <bus.version>8.3.0</bus.version>
+        <bus.version>8.3.1</bus.version>
         <mybatis.version>3.5.19</mybatis.version>
         <jsqlparser.version>5.3</jsqlparser.version>
-        <hikaricp.version>7.0.0</hikaricp.version>
+        <hikaricp.version>7.0.2</hikaricp.version>
         <druid.version>1.2.27</druid.version>
         <slf4j.version>2.0.17</slf4j.version>
     </properties>
