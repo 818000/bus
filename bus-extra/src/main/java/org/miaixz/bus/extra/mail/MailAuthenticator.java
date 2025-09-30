@@ -25,67 +25,63 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.validate.magic.annotation;
+package org.miaixz.bus.extra.mail;
 
-import java.lang.annotation.*;
-
-import org.miaixz.bus.validate.Builder;
-import org.miaixz.bus.validate.magic.ErrorCode;
-import org.miaixz.bus.validate.magic.Matcher;
-import org.miaixz.bus.validate.metric.MultiMatcher;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
 
 /**
- * 多重校验器, 可以配置多个校验器
- *
+ * 用户名密码授权
+ * 
  * @author Kimi Liu
  * @since Java 17+
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
-@Complex(value = Builder._MULTI, clazz = MultiMatcher.class)
-public @interface Multi {
+public class MailAuthenticator extends Authenticator {
+
+    private final PasswordAuthentication auth;
 
     /**
-     * 校验器名称数组,优先使用校验器名称中的校验器,并忽略校验器类中的校验器
+     * 创建账号密码形式的{@link java.net.Authenticator} 实现。
      *
-     * @return the array
+     * @param user 用户名
+     * @param pass 密码
+     * @return PassAuth
      */
-    String[] value() default {};
+    public static MailAuthenticator of(final String user, final String pass) {
+        return new MailAuthenticator(user, pass);
+    }
 
     /**
-     * 校验器类数组, 当校验器名称数组为空时,使用校验器类数组中的校验器
+     * 构造
      *
-     * @return the object
+     * @param mailAccount 邮箱账号信息
      */
-    Class<? extends Matcher>[] classes() default {};
+    public MailAuthenticator(final MailAccount mailAccount) {
+        this.auth = new PasswordAuthentication(mailAccount.getUser(), String.valueOf(mailAccount.getPass()));
+    }
 
     /**
-     * 默认使用的异常码
+     * 构造
      *
-     * @return the string
+     * @param userName 用户名
+     * @param password 密码
      */
-    String errcode() default ErrorCode._116000;
+    public MailAuthenticator(final String userName, final String password) {
+        this.auth = new PasswordAuthentication(userName, password);
+    }
 
     /**
-     * 默认使用的异常信息
+     * 构造
      *
-     * @return the string
+     * @param auth 密码授权信息
      */
-    String errmsg() default "${field}参数校验失败";
+    public MailAuthenticator(final PasswordAuthentication auth) {
+        this.auth = auth;
+    }
 
-    /**
-     * 校验器组
-     *
-     * @return the array
-     */
-    String[] group() default {};
-
-    /**
-     * 被校验字段名称
-     *
-     * @return the string
-     */
-    String field() default Builder.DEFAULT_FIELD;
+    @Override
+    protected PasswordAuthentication getPasswordAuthentication() {
+        return this.auth;
+    }
 
 }
