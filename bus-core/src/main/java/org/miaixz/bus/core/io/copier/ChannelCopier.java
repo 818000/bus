@@ -121,7 +121,10 @@ public class ChannelCopier extends IoCopier<ReadableByteChannel, WritableByteCha
      * @return The total number of bytes copied.
      * @throws IOException If an I/O error occurs during the copy.
      */
-    private long doCopy(final ReadableByteChannel source, final WritableByteChannel target, final ByteBuffer buffer,
+    private long doCopy(
+            final ReadableByteChannel source,
+            final WritableByteChannel target,
+            final ByteBuffer buffer,
             final StreamProgress progress) throws IOException {
         long numToRead = this.count > 0 ? this.count : Long.MAX_VALUE;
         long total = 0;

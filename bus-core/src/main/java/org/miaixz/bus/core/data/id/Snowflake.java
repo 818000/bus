@@ -298,7 +298,9 @@ public class Snowflake implements Serializable {
      *                              globally reliable start and end point can be obtained in a distributed environment.
      * @return A pair containing the start ID and end ID.
      */
-    public Pair<Long, Long> getIdScopeByTimestamp(final long timestampStart, final long timestampEnd,
+    public Pair<Long, Long> getIdScopeByTimestamp(
+            final long timestampStart,
+            final long timestampEnd,
             final boolean ignoreCenterAndWorker) {
         final long startTimeMinId = (timestampStart - twepoch) << TIMESTAMP_LEFT_SHIFT;
         final long endTimeMinId = (timestampEnd - twepoch) << TIMESTAMP_LEFT_SHIFT;

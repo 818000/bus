@@ -123,7 +123,10 @@ public class Combination implements Serializable {
      * @param resultIndex The current position to fill in the {@code resultList}.
      * @param result      The final list to store all generated combinations.
      */
-    private void select(final int dataIndex, final String[] resultList, final int resultIndex,
+    private void select(
+            final int dataIndex,
+            final String[] resultList,
+            final int resultIndex,
             final List<String[]> result) {
         final int resultLen = resultList.length;
         final int resultCount = resultIndex + 1;

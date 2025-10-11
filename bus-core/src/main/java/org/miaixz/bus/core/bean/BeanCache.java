@@ -66,7 +66,8 @@ public enum BeanCache {
      * @return A map where keys are property names (or their lowercase versions if {@code ignoreCase} is true) and
      *         values are {@link PropertyDescriptor} objects.
      */
-    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(final Class<?> beanClass,
+    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(
+            final Class<?> beanClass,
             final boolean ignoreCase) {
         return getCache(ignoreCase).get(beanClass);
     }
@@ -81,7 +82,9 @@ public enum BeanCache {
      * @return A map where keys are property names (or their lowercase versions if {@code ignoreCase} is true) and
      *         values are {@link PropertyDescriptor} objects.
      */
-    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(final Class<?> beanClass, final boolean ignoreCase,
+    public Map<String, PropertyDescriptor> getPropertyDescriptorMap(
+            final Class<?> beanClass,
+            final boolean ignoreCase,
             final SupplierX<Map<String, PropertyDescriptor>> supplier) {
         return getCache(ignoreCase).computeIfAbsent(beanClass, (key) -> supplier.get());
     }
@@ -94,8 +97,10 @@ public enum BeanCache {
      * @param ignoreCase                     Whether the cached map should be associated with case-insensitive property
      *                                       names.
      */
-    public void putPropertyDescriptorMap(final Class<?> beanClass,
-            final Map<String, PropertyDescriptor> fieldNamePropertyDescriptorMap, final boolean ignoreCase) {
+    public void putPropertyDescriptorMap(
+            final Class<?> beanClass,
+            final Map<String, PropertyDescriptor> fieldNamePropertyDescriptorMap,
+            final boolean ignoreCase) {
         getCache(ignoreCase).put(beanClass, fieldNamePropertyDescriptorMap);
     }
 

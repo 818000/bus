@@ -60,8 +60,11 @@ public abstract class StringTemplate {
      * Global default features. These are used as the initial features for any new template object. Modifying this value
      * will not affect already created template instances.
      */
-    protected static int globalFeatures = Feature.of(Feature.FORMAT_MISSING_KEY_PRINT_WHOLE_PLACEHOLDER,
-            Feature.FORMAT_NULL_VALUE_TO_STR, Feature.MATCH_KEEP_DEFAULT_VALUE, Feature.MATCH_EMPTY_VALUE_TO_NULL,
+    protected static int globalFeatures = Feature.of(
+            Feature.FORMAT_MISSING_KEY_PRINT_WHOLE_PLACEHOLDER,
+            Feature.FORMAT_NULL_VALUE_TO_STR,
+            Feature.MATCH_KEEP_DEFAULT_VALUE,
+            Feature.MATCH_EMPTY_VALUE_TO_NULL,
             Feature.MATCH_NULL_STR_TO_NULL);
 
     /**
@@ -444,13 +447,21 @@ public abstract class StringTemplate {
      * @param hasDefaultValue      Whether a default value is available.
      * @param defaultValueSupplier A supplier for the default value.
      */
-    protected void matchesByKey(final String text, final BiConsumer<String, String> keyValueConsumer,
-            final boolean hasDefaultValue, final Function<AbstractSegment, String> defaultValueSupplier) {
+    protected void matchesByKey(
+            final String text,
+            final BiConsumer<String, String> keyValueConsumer,
+            final boolean hasDefaultValue,
+            final Function<AbstractSegment, String> defaultValueSupplier) {
         if (text == null || keyValueConsumer == null || CollKit.isEmpty(placeholderSegments)) {
             return;
         }
-        matchesRawBySegment(text,
-                (segment, value) -> matchByKey(keyValueConsumer, segment.getPlaceholder(), value, hasDefaultValue,
+        matchesRawBySegment(
+                text,
+                (segment, value) -> matchByKey(
+                        keyValueConsumer,
+                        segment.getPlaceholder(),
+                        value,
+                        hasDefaultValue,
                         () -> hasDefaultValue ? StringKit.toString(defaultValueSupplier.apply(segment)) : null));
     }
 
@@ -463,8 +474,12 @@ public abstract class StringTemplate {
      * @param hasDefaultValue      Whether a default value is available.
      * @param defaultValueSupplier A supplier for the default value.
      */
-    private void matchByKey(final BiConsumer<String, String> keyValueConsumer, final String key, final String value,
-            final boolean hasDefaultValue, final Supplier<String> defaultValueSupplier) {
+    private void matchByKey(
+            final BiConsumer<String, String> keyValueConsumer,
+            final String key,
+            final String value,
+            final boolean hasDefaultValue,
+            final Supplier<String> defaultValueSupplier) {
         final int features = getFeatures();
 
         if (hasDefaultValue && !Feature.MATCH_KEEP_DEFAULT_VALUE.contains(features)) {
@@ -572,7 +587,9 @@ public abstract class StringTemplate {
      * @param list                 The list of segments.
      * @param newText              The new literal text to add.
      */
-    protected void addLiteralSegment(final boolean isLastLiteralSegment, final List<StringSegment> list,
+    protected void addLiteralSegment(
+            final boolean isLastLiteralSegment,
+            final List<StringSegment> list,
             final String newText) {
         if (newText.isEmpty()) {
             return;

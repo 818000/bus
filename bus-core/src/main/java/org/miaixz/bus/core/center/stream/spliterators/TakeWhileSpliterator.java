@@ -76,7 +76,8 @@ public class TakeWhileSpliterator<T> implements Spliterator<T> {
      * @param <T>       the type of elements
      * @return a new {@code TakeWhileSpliterator} instance
      */
-    public static <T> TakeWhileSpliterator<T> create(final Spliterator<T> source,
+    public static <T> TakeWhileSpliterator<T> create(
+            final Spliterator<T> source,
             final Predicate<? super T> predicate) {
         return new TakeWhileSpliterator<>(source, predicate);
     }

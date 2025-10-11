@@ -265,7 +265,9 @@ public class Base62 {
      * @param out        The output stream to write to.
      * @param isCloseOut Whether to close the output stream after writing.
      */
-    public static void decodeToStreamInverted(final CharSequence base62, final OutputStream out,
+    public static void decodeToStreamInverted(
+            final CharSequence base62,
+            final OutputStream out,
             final boolean isCloseOut) {
         IoKit.write(out, isCloseOut, decodeInverted(base62));
     }

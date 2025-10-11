@@ -160,44 +160,44 @@ public class Http2Reader implements Closeable {
         }
 
         switch (type) {
-        case Http2.TYPE_DATA:
-            readData(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_DATA:
+                readData(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_HEADERS:
-            readHeaders(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_HEADERS:
+                readHeaders(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_PRIORITY:
-            readPriority(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_PRIORITY:
+                readPriority(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_RST_STREAM:
-            readRstStream(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_RST_STREAM:
+                readRstStream(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_SETTINGS:
-            readSettings(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_SETTINGS:
+                readSettings(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_PUSH_PROMISE:
-            readPushPromise(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_PUSH_PROMISE:
+                readPushPromise(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_PING:
-            readPing(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_PING:
+                readPing(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_GOAWAY:
-            readGoAway(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_GOAWAY:
+                readGoAway(handler, length, flags, streamId);
+                break;
 
-        case Http2.TYPE_WINDOW_UPDATE:
-            readWindowUpdate(handler, length, flags, streamId);
-            break;
+            case Http2.TYPE_WINDOW_UPDATE:
+                readWindowUpdate(handler, length, flags, streamId);
+                break;
 
-        default:
-            source.skip(length);
+            default:
+                source.skip(length);
         }
         return true;
     }
@@ -358,37 +358,37 @@ public class Http2Reader implements Closeable {
             int value = source.readInt();
 
             switch (id) {
-            case 1: // SETTINGS_HEADER_TABLE_SIZE
-                break;
+                case 1: // SETTINGS_HEADER_TABLE_SIZE
+                    break;
 
-            case 2: // SETTINGS_ENABLE_PUSH
-                if (value != 0 && value != 1) {
-                    throw Http2.ioException("PROTOCOL_ERROR SETTINGS_ENABLE_PUSH != 0 or 1");
-                }
-                break;
+                case 2: // SETTINGS_ENABLE_PUSH
+                    if (value != 0 && value != 1) {
+                        throw Http2.ioException("PROTOCOL_ERROR SETTINGS_ENABLE_PUSH != 0 or 1");
+                    }
+                    break;
 
-            case 3: // SETTINGS_MAX_CONCURRENT_STREAMS
-                id = 4; // Renumbered in draft 10.
-                break;
+                case 3: // SETTINGS_MAX_CONCURRENT_STREAMS
+                    id = 4; // Renumbered in draft 10.
+                    break;
 
-            case 4: // SETTINGS_INITIAL_WINDOW_SIZE
-                id = 7; // Renumbered in draft 10.
-                if (value < 0) {
-                    throw Http2.ioException("PROTOCOL_ERROR SETTINGS_INITIAL_WINDOW_SIZE > 2^31 - 1");
-                }
-                break;
+                case 4: // SETTINGS_INITIAL_WINDOW_SIZE
+                    id = 7; // Renumbered in draft 10.
+                    if (value < 0) {
+                        throw Http2.ioException("PROTOCOL_ERROR SETTINGS_INITIAL_WINDOW_SIZE > 2^31 - 1");
+                    }
+                    break;
 
-            case 5: // SETTINGS_MAX_FRAME_SIZE
-                if (value < Http2.INITIAL_MAX_FRAME_SIZE || value > 16777215) {
-                    throw Http2.ioException("PROTOCOL_ERROR SETTINGS_MAX_FRAME_SIZE: %s", value);
-                }
-                break;
+                case 5: // SETTINGS_MAX_FRAME_SIZE
+                    if (value < Http2.INITIAL_MAX_FRAME_SIZE || value > 16777215) {
+                        throw Http2.ioException("PROTOCOL_ERROR SETTINGS_MAX_FRAME_SIZE: %s", value);
+                    }
+                    break;
 
-            case 6: // SETTINGS_MAX_HEADER_LIST_SIZE
-                break; // Advisory only, so ignored.
+                case 6: // SETTINGS_MAX_HEADER_LIST_SIZE
+                    break; // Advisory only, so ignored.
 
-            default:
-                break; // Must ignore setting with unknown id.
+                default:
+                    break; // Must ignore setting with unknown id.
             }
             settings.set(id, value);
         }

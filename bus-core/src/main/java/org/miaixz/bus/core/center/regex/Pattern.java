@@ -113,8 +113,8 @@ public class Pattern {
      * <li>https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression</li>
      * </ul>
      */
-    public static final java.util.regex.Pattern EMAIL_PATTERN = java.util.regex.Pattern.compile(Regex.EMAIL,
-            java.util.regex.Pattern.CASE_INSENSITIVE);
+    public static final java.util.regex.Pattern EMAIL_PATTERN = java.util.regex.Pattern
+            .compile(Regex.EMAIL, java.util.regex.Pattern.CASE_INSENSITIVE);
     /**
      * Regular expression for mainland China mobile phone numbers. Example: +86 180 5690 2500, 2-digit area code + 13
      * digits.
@@ -169,8 +169,8 @@ public class Pattern {
      * Regular expression for protocol-based URLs (from: <a href="http://urlregex.com/">http://urlregex.com/</a>). This
      * regex supports URLs with protocols like FTP, File, etc.
      */
-    public static final java.util.regex.Pattern URL_HTTP_PATTERN = java.util.regex.Pattern.compile(Regex.URL_HTTP,
-            java.util.regex.Pattern.CASE_INSENSITIVE);
+    public static final java.util.regex.Pattern URL_HTTP_PATTERN = java.util.regex.Pattern
+            .compile(Regex.URL_HTTP, java.util.regex.Pattern.CASE_INSENSITIVE);
     /**
      * Regular expression for Chinese characters, English letters, numbers, and underscores.
      */

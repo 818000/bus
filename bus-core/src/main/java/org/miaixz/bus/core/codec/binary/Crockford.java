@@ -138,14 +138,14 @@ public class Crockford {
      */
     protected static boolean isWhiteSpace(final byte byteToCheck) {
         switch (byteToCheck) {
-        case Symbol.C_SPACE:
-        case '\n':
-        case '\r':
-        case '\t':
-            return true;
+            case Symbol.C_SPACE:
+            case '\n':
+            case '\r':
+            case '\t':
+                return true;
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 
@@ -246,39 +246,39 @@ public class Crockford {
 
     private static byte decode(final byte octet) {
         return switch (octet) {
-        case '0', 'O', 'o' -> 0;
-        case '1', 'I', 'i', 'L', 'l' -> 1;
-        case '2' -> 2;
-        case '3' -> 3;
-        case '4' -> 4;
-        case '5' -> 5;
-        case '6' -> 6;
-        case '7' -> 7;
-        case '8' -> 8;
-        case '9' -> 9;
-        case 'A', 'a' -> 10;
-        case 'B', 'b' -> 11;
-        case 'C', 'c' -> 12;
-        case 'D', 'd' -> 13;
-        case 'E', 'e' -> 14;
-        case 'F', 'f' -> 15;
-        case 'G', 'g' -> 16;
-        case 'H', 'h' -> 17;
-        case 'J', 'j' -> 18;
-        case 'K', 'k' -> 19;
-        case 'M', 'm' -> 20;
-        case 'N', 'n' -> 21;
-        case 'P', 'p' -> 22;
-        case 'Q', 'q' -> 23;
-        case 'R', 'r' -> 24;
-        case 'S', 's' -> 25;
-        case 'T', 't' -> 26;
-        case 'U', 'u', 'V', 'v' -> 27;
-        case 'W', 'w' -> 28;
-        case 'X', 'x' -> 29;
-        case 'Y', 'y' -> 30;
-        case 'Z', 'z' -> 31;
-        default -> -1;
+            case '0', 'O', 'o' -> 0;
+            case '1', 'I', 'i', 'L', 'l' -> 1;
+            case '2' -> 2;
+            case '3' -> 3;
+            case '4' -> 4;
+            case '5' -> 5;
+            case '6' -> 6;
+            case '7' -> 7;
+            case '8' -> 8;
+            case '9' -> 9;
+            case 'A', 'a' -> 10;
+            case 'B', 'b' -> 11;
+            case 'C', 'c' -> 12;
+            case 'D', 'd' -> 13;
+            case 'E', 'e' -> 14;
+            case 'F', 'f' -> 15;
+            case 'G', 'g' -> 16;
+            case 'H', 'h' -> 17;
+            case 'J', 'j' -> 18;
+            case 'K', 'k' -> 19;
+            case 'M', 'm' -> 20;
+            case 'N', 'n' -> 21;
+            case 'P', 'p' -> 22;
+            case 'Q', 'q' -> 23;
+            case 'R', 'r' -> 24;
+            case 'S', 's' -> 25;
+            case 'T', 't' -> 26;
+            case 'U', 'u', 'V', 'v' -> 27;
+            case 'W', 'w' -> 28;
+            case 'X', 'x' -> 29;
+            case 'Y', 'y' -> 30;
+            case 'Z', 'z' -> 31;
+            default -> -1;
         };
     }
 
@@ -487,32 +487,32 @@ public class Crockford {
         if (eof && modulus >= 2) {
             ensureBufferSize(decodeSize);
             switch (modulus) {
-            case 2 -> buffer[pos++] = (byte) ((bitWorkArea >> 2) & MASK_8BITS);
-            case 3 -> buffer[pos++] = (byte) ((bitWorkArea >> 7) & MASK_8BITS);
-            case 4 -> {
-                bitWorkArea = bitWorkArea >> 4;
-                buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
-            }
-            case 5 -> {
-                bitWorkArea = bitWorkArea >> 1;
-                buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
-            }
-            case 6 -> {
-                bitWorkArea = bitWorkArea >> 6;
-                buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
-            }
-            case 7 -> {
-                bitWorkArea = bitWorkArea >> 3;
-                buffer[pos++] = (byte) ((bitWorkArea >> 24) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
-                buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
-            }
+                case 2 -> buffer[pos++] = (byte) ((bitWorkArea >> 2) & MASK_8BITS);
+                case 3 -> buffer[pos++] = (byte) ((bitWorkArea >> 7) & MASK_8BITS);
+                case 4 -> {
+                    bitWorkArea = bitWorkArea >> 4;
+                    buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
+                }
+                case 5 -> {
+                    bitWorkArea = bitWorkArea >> 1;
+                    buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
+                }
+                case 6 -> {
+                    bitWorkArea = bitWorkArea >> 6;
+                    buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
+                }
+                case 7 -> {
+                    bitWorkArea = bitWorkArea >> 3;
+                    buffer[pos++] = (byte) ((bitWorkArea >> 24) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea >> 16) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea >> 8) & MASK_8BITS);
+                    buffer[pos++] = (byte) ((bitWorkArea) & MASK_8BITS);
+                }
             }
         }
     }
@@ -535,54 +535,54 @@ public class Crockford {
             }
             ensureBufferSize(encodeSize);
             switch (modulus) {
-            case 1 -> {
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 3) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 2) & MASK_5BITS];
-                if (usePaddingCharacter) {
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
+                case 1 -> {
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 3) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 2) & MASK_5BITS];
+                    if (usePaddingCharacter) {
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                    }
                 }
-            }
-            case 2 -> {
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 11) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 6) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 1) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 4) & MASK_5BITS];
-                if (usePaddingCharacter) {
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
+                case 2 -> {
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 11) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 6) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 1) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 4) & MASK_5BITS];
+                    if (usePaddingCharacter) {
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                    }
                 }
-            }
-            case 3 -> {
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 19) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 14) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 9) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 4) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 1) & MASK_5BITS];
-                if (usePaddingCharacter) {
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
-                    buffer[pos++] = Symbol.C_EQUAL;
+                case 3 -> {
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 19) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 14) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 9) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 4) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 1) & MASK_5BITS];
+                    if (usePaddingCharacter) {
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                        buffer[pos++] = Symbol.C_EQUAL;
+                    }
                 }
-            }
-            case 4 -> {
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 27) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 22) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 17) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 12) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 7) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 2) & MASK_5BITS];
-                buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 3) & MASK_5BITS];
-                if (usePaddingCharacter) {
-                    buffer[pos++] = Symbol.C_EQUAL;
+                case 4 -> {
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 27) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 22) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 17) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 12) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 7) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea >> 2) & MASK_5BITS];
+                    buffer[pos++] = ENCODE_TABLE[(int) (bitWorkArea << 3) & MASK_5BITS];
+                    if (usePaddingCharacter) {
+                        buffer[pos++] = Symbol.C_EQUAL;
+                    }
                 }
-            }
             }
         } else {
             for (int i = 0; i < inAvail; i++) {

@@ -84,23 +84,23 @@ public enum Units {
      */
     public static Units of(final ChronoUnit unit) {
         switch (unit) {
-        case MICROS:
-            return Units.MS;
+            case MICROS:
+                return Units.MS;
 
-        case SECONDS:
-            return Units.SECOND;
+            case SECONDS:
+                return Units.SECOND;
 
-        case MINUTES:
-            return Units.MINUTE;
+            case MINUTES:
+                return Units.MINUTE;
 
-        case HOURS:
-            return Units.HOUR;
+            case HOURS:
+                return Units.HOUR;
 
-        case DAYS:
-            return Units.DAY;
+            case DAYS:
+                return Units.DAY;
 
-        case WEEKS:
-            return Units.WEEK;
+            case WEEKS:
+                return Units.WEEK;
         }
         return null;
     }
@@ -113,23 +113,23 @@ public enum Units {
      */
     public static ChronoUnit toChronoUnit(final Units unit) {
         switch (unit) {
-        case MS:
-            return ChronoUnit.MICROS;
+            case MS:
+                return ChronoUnit.MICROS;
 
-        case SECOND:
-            return ChronoUnit.SECONDS;
+            case SECOND:
+                return ChronoUnit.SECONDS;
 
-        case MINUTE:
-            return ChronoUnit.MINUTES;
+            case MINUTE:
+                return ChronoUnit.MINUTES;
 
-        case HOUR:
-            return ChronoUnit.HOURS;
+            case HOUR:
+                return ChronoUnit.HOURS;
 
-        case DAY:
-            return ChronoUnit.DAYS;
+            case DAY:
+                return ChronoUnit.DAYS;
 
-        case WEEK:
-            return ChronoUnit.WEEKS;
+            case WEEK:
+                return ChronoUnit.WEEKS;
         }
         return null;
     }

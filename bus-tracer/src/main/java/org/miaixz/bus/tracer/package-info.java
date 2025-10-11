@@ -26,8 +26,8 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Provides core classes and interfaces for distributed call chain tracing.
- * This package includes components for creating, managing, and propagating trace information across different services and application layers.
+ * Provides core classes and interfaces for distributed call chain tracing. This package includes components for
+ * creating, managing, and propagating trace information across different services and application layers.
  *
  * @author Kimi Liu
  * @since Java 17+

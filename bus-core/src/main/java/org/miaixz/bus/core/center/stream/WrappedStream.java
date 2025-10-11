@@ -433,7 +433,9 @@ public interface WrappedStream<T, S extends WrappedStream<T, S>> extends Stream<
      * @see #reduce(Object, BinaryOperator)
      */
     @Override
-    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator,
+    default <U> U reduce(
+            final U identity,
+            final BiFunction<U, ? super T, U> accumulator,
             final BinaryOperator<U> combiner) {
         Objects.requireNonNull(accumulator);
         Objects.requireNonNull(combiner);
@@ -462,7 +464,9 @@ public interface WrappedStream<T, S extends WrappedStream<T, S>> extends Stream<
      * }</pre>
      */
     @Override
-    default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator,
+    default <R> R collect(
+            final Supplier<R> supplier,
+            final BiConsumer<R, ? super T> accumulator,
             final BiConsumer<R, R> combiner) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(accumulator);

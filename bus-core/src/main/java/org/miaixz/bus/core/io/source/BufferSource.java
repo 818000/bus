@@ -286,8 +286,8 @@ public interface BufferSource extends Source, ReadableByteChannel {
      * values is known in advance.
      * 
      * <pre>{@code
-     * Options FIELDS = Options.of(ByteString.encodeUtf8("depth="), ByteString.encodeUtf8("height="),
-     *         ByteString.encodeUtf8("width="));
+     * Options FIELDS = Options
+     *         .of(ByteString.encodeUtf8("depth="), ByteString.encodeUtf8("height="), ByteString.encodeUtf8("width="));
      *
      * Buffer buffer = new Buffer().writeUtf8("width=640\n").writeUtf8("height=480\n");
      *

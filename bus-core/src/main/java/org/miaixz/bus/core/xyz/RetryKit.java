@@ -53,8 +53,12 @@ public class RetryKit {
      * @param exs         The specified exception types that trigger a retry.
      */
     @SafeVarargs
-    public static void ofException(final Runnable run, final long maxAttempts, final Duration delay,
-            final Runnable recover, Class<? extends Throwable>... exs) {
+    public static void ofException(
+            final Runnable run,
+            final long maxAttempts,
+            final Duration delay,
+            final Runnable recover,
+            Class<? extends Throwable>... exs) {
         if (ArrayKit.isEmpty(exs)) {
             exs = ArrayKit.append(exs, RuntimeException.class);
         }
@@ -77,8 +81,12 @@ public class RetryKit {
      * @return The result of the execution.
      */
     @SafeVarargs
-    public static <T> T ofException(final Supplier<T> sup, final long maxAttempts, final Duration delay,
-            final Supplier<T> recover, Class<? extends Throwable>... exs) {
+    public static <T> T ofException(
+            final Supplier<T> sup,
+            final long maxAttempts,
+            final Duration delay,
+            final Supplier<T> recover,
+            Class<? extends Throwable>... exs) {
         if (ArrayKit.isEmpty(exs)) {
             exs = ArrayKit.append(exs, RuntimeException.class);
         }
@@ -95,8 +103,12 @@ public class RetryKit {
      * @param recover     The recovery task to run if retries fail.
      * @param predicate   A custom predicate to determine if a retry is needed. Returns `true` to retry.
      */
-    public static void ofPredicate(final Runnable run, final long maxAttempts, final Duration delay,
-            final Supplier<Void> recover, final BiPredicate<Void, Throwable> predicate) {
+    public static void ofPredicate(
+            final Runnable run,
+            final long maxAttempts,
+            final Duration delay,
+            final Supplier<Void> recover,
+            final BiPredicate<Void, Throwable> predicate) {
         RetryableTask.retryForPredicate(run, predicate).delay(delay).maxAttempts(maxAttempts).execute().get()
                 .orElseGet(recover);
     }
@@ -112,8 +124,12 @@ public class RetryKit {
      * @param <T>         The type of the result.
      * @return The result of the execution.
      */
-    public static <T> T ofPredicate(final Supplier<T> sup, final long maxAttempts, final Duration delay,
-            final Supplier<T> recover, final BiPredicate<T, Throwable> predicate) {
+    public static <T> T ofPredicate(
+            final Supplier<T> sup,
+            final long maxAttempts,
+            final Duration delay,
+            final Supplier<T> recover,
+            final BiPredicate<T, Throwable> predicate) {
         return RetryableTask.retryForPredicate(sup, predicate).delay(delay).maxAttempts(maxAttempts).execute().get()
                 .orElseGet(recover);
     }

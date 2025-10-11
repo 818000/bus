@@ -210,7 +210,10 @@ public class FileTailer implements Serializable {
 
         final LineWatcher lineWatcher = new LineWatcher(this.randomAccessFile, this.charset, this.lineHandler);
         final ScheduledFuture<?> scheduledFuture = this.executorService.scheduleAtFixedRate(//
-                lineWatcher, 0, this.period, TimeUnit.MILLISECONDS);
+                lineWatcher,
+                0,
+                this.period,
+                TimeUnit.MILLISECONDS);
 
         // Monitor for file deletion if stopOnRemove is enabled
         if (stopOnRemove) {

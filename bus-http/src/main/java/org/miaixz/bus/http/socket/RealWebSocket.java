@@ -313,7 +313,10 @@ public final class RealWebSocket implements WebSocket, WebSocketReader.FrameCall
             this.writer = new WebSocketWriter(streams.client, streams.sink, random);
             this.executor = new ScheduledThreadPoolExecutor(1, Builder.threadFactory(name, false));
             if (pingIntervalMillis != 0) {
-                executor.scheduleAtFixedRate(new PingRunnable(), pingIntervalMillis, pingIntervalMillis,
+                executor.scheduleAtFixedRate(
+                        new PingRunnable(),
+                        pingIntervalMillis,
+                        pingIntervalMillis,
                         TimeUnit.MILLISECONDS);
             }
             if (!messageAndCloseQueue.isEmpty()) {
@@ -583,8 +586,10 @@ public final class RealWebSocket implements WebSocket, WebSocketReader.FrameCall
                         this.executor.shutdown();
                     } else {
                         // We're initiating a graceful close. Schedule a cancel task just in case.
-                        cancelFuture = executor.schedule(new CancelRunnable(),
-                                ((Close) messageOrClose).cancelAfterCloseMillis, TimeUnit.MILLISECONDS);
+                        cancelFuture = executor.schedule(
+                                new CancelRunnable(),
+                                ((Close) messageOrClose).cancelAfterCloseMillis,
+                                TimeUnit.MILLISECONDS);
                     }
                 } else if (null == messageOrClose) {
                     return false; // The queue is empty.
@@ -641,8 +646,10 @@ public final class RealWebSocket implements WebSocket, WebSocketReader.FrameCall
         }
 
         if (failedPing != -1) {
-            failWebSocket(new SocketTimeoutException("sent ping but didn't receive pong within " + pingIntervalMillis
-                    + "ms (after " + (failedPing - 1) + " successful ping/pongs)"), null);
+            failWebSocket(
+                    new SocketTimeoutException("sent ping but didn't receive pong within " + pingIntervalMillis
+                            + "ms (after " + (failedPing - 1) + " successful ping/pongs)"),
+                    null);
             return;
         }
 

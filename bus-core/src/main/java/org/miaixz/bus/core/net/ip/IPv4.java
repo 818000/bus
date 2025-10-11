@@ -268,8 +268,8 @@ public class IPv4 {
      * @return The local {@link InetAddress}, or {@code null} if not found.
      */
     public static InetAddress getLocalhostDirectly(final boolean includeSiteLocal) {
-        final LinkedHashSet<InetAddress> localAddressList = NetKit
-                .localAddressList(address -> address instanceof Inet4Address && !address.isLoopbackAddress()
+        final LinkedHashSet<InetAddress> localAddressList = NetKit.localAddressList(
+                address -> address instanceof Inet4Address && !address.isLoopbackAddress()
                         && (includeSiteLocal || !address.isSiteLocalAddress()) && !address.isLinkLocalAddress());
 
         if (CollKit.isNotEmpty(localAddressList)) {
@@ -397,9 +397,10 @@ public class IPv4 {
         final StringBuilder sb = StringKit.builder(15);
         for (long ip = ipFrom, end = ipTo + 1; ip < end; ip++) {
             sb.setLength(0);
-            ips.add(sb.append((int) (ip >> 24) & 0xFF).append(Symbol.C_DOT).append((int) (ip >> 16) & 0xFF)
-                    .append(Symbol.C_DOT).append((int) (ip >> 8) & 0xFF).append(Symbol.C_DOT).append((int) ip & 0xFF)
-                    .toString());
+            ips.add(
+                    sb.append((int) (ip >> 24) & 0xFF).append(Symbol.C_DOT).append((int) (ip >> 16) & 0xFF)
+                            .append(Symbol.C_DOT).append((int) (ip >> 8) & 0xFF).append(Symbol.C_DOT)
+                            .append((int) ip & 0xFF).toString());
         }
         return ips;
     }
@@ -495,7 +496,9 @@ public class IPv4 {
      * @return The number of addresses.
      */
     public static int countByMaskBit(final int maskBit, final boolean isAll) {
-        Assert.isTrue(maskBit >= IPV4_MASK_BIT_VALID_MIN && maskBit <= IPV4_MASK_BIT_MAX, "Unsupported mask bit: {}",
+        Assert.isTrue(
+                maskBit >= IPV4_MASK_BIT_VALID_MIN && maskBit <= IPV4_MASK_BIT_MAX,
+                "Unsupported mask bit: {}",
                 maskBit);
         if (maskBit == IPV4_MASK_BIT_MAX && !isAll) {
             return 0;
@@ -633,11 +636,11 @@ public class IPv4 {
      */
     public static int getPartOfIp(final long ip, final int position) {
         return switch (position) {
-        case 1 -> (int) (ip >> 24) & 0xFF;
-        case 2 -> (int) (ip >> 16) & 0xFF;
-        case 3 -> (int) (ip >> 8) & 0xFF;
-        case 4 -> (int) ip & 0xFF;
-        default -> throw new IllegalArgumentException("Illegal position of ip Long: " + position);
+            case 1 -> (int) (ip >> 24) & 0xFF;
+            case 2 -> (int) (ip >> 16) & 0xFF;
+            case 3 -> (int) (ip >> 8) & 0xFF;
+            case 4 -> (int) ip & 0xFF;
+            default -> throw new IllegalArgumentException("Illegal position of ip Long: " + position);
         };
     }
 

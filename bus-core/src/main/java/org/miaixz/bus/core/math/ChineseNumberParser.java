@@ -98,8 +98,11 @@ public class ChineseNumberParser {
             for (int i = dotIndex + 1; i < length; i++) {
                 // The number of decimal places depends on the actual number of digits.
                 // result = result + (numberChar / 10^(i-dotIndex))
-                result = result.add(MathKit.div(chineseToNumber(chinese.charAt(i)), BigDecimal.TEN.pow(i - dotIndex),
-                        (length - dotIndex + 1)));
+                result = result.add(
+                        MathKit.div(
+                                chineseToNumber(chinese.charAt(i)),
+                                BigDecimal.TEN.pow(i - dotIndex),
+                                (length - dotIndex + 1)));
             }
         }
 

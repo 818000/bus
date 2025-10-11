@@ -221,8 +221,8 @@ public class Formatter {
     /**
      * HTTP header date and time format {@link FormatBuilder}: EEE, dd MMM yyyy HH:mm:ss GMT
      */
-    public static final FormatBuilder HTTP_DATETIME_FORMAT_GMT = FormatBuilder.getInstance(Fields.HTTP_DATETIME,
-            TimeZone.getTimeZone("GMT"), Locale.US);
+    public static final FormatBuilder HTTP_DATETIME_FORMAT_GMT = FormatBuilder
+            .getInstance(Fields.HTTP_DATETIME, TimeZone.getTimeZone("GMT"), Locale.US);
     /**
      * HTTP header date and time format {@link FormatBuilder}: EEE, dd MMM yyyy HH:mm:ss z
      */
@@ -492,7 +492,10 @@ public class Formatter {
      * @param lenient  Whether to use lenient parsing.
      * @return A new {@link SimpleDateFormat} instance.
      */
-    public static SimpleDateFormat newSimpleFormat(final String pattern, Locale locale, final TimeZone timeZone,
+    public static SimpleDateFormat newSimpleFormat(
+            final String pattern,
+            Locale locale,
+            final TimeZone timeZone,
             final boolean lenient) {
         if (null == locale) {
             locale = Locale.getDefault(Locale.Category.FORMAT);

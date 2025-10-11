@@ -91,7 +91,9 @@ public class IterateSpliterator<T> extends Spliterators.AbstractSpliterator<T> {
      * @param <T>     the type of elements returned by this Spliterator
      * @return a new {@code IterateSpliterator} instance
      */
-    public static <T> IterateSpliterator<T> of(final T seed, final Predicate<? super T> hasNext,
+    public static <T> IterateSpliterator<T> of(
+            final T seed,
+            final Predicate<? super T> hasNext,
             final UnaryOperator<T> next) {
         return new IterateSpliterator<>(seed, hasNext, next);
     }

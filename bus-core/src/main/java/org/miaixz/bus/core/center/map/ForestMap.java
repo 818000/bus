@@ -95,8 +95,11 @@ public interface ForestMap<K, V> extends Map<K, TreeEntry<K, V>> {
      * @param parentKeyGenerator A function to extract the parent's key from a node's value object.
      * @param ignoreNullNode     If {@code true}, entries where the key or parent key is {@code null} will be skipped.
      */
-    default <C extends Collection<V>> void putAllNode(final C values, final Function<V, K> keyGenerator,
-            final Function<V, K> parentKeyGenerator, final boolean ignoreNullNode) {
+    default <C extends Collection<V>> void putAllNode(
+            final C values,
+            final Function<V, K> keyGenerator,
+            final Function<V, K> parentKeyGenerator,
+            final boolean ignoreNullNode) {
         if (CollKit.isEmpty(values)) {
             return;
         }

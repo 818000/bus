@@ -174,7 +174,9 @@ public class TypeKit {
      * @param typeVarAssigns An optional map of type variable assignments.
      * @return `true` if assignable.
      */
-    private static boolean isAssignable(final Type type, final Type toType,
+    private static boolean isAssignable(
+            final Type type,
+            final Type toType,
             final Map<TypeVariable<?>, Type> typeVarAssigns) {
         if (null == toType || toType instanceof Class<?>) {
             return isAssignable(type, (Class<?>) toType);
@@ -243,7 +245,9 @@ public class TypeKit {
      * @param typeVarAssigns      A map of type variable assignments.
      * @return `true` if assignable.
      */
-    private static boolean isAssignable(final Type type, final java.lang.reflect.ParameterizedType toParameterizedType,
+    private static boolean isAssignable(
+            final Type type,
+            final java.lang.reflect.ParameterizedType toParameterizedType,
             final Map<TypeVariable<?>, Type> typeVarAssigns) {
         if (null == type) {
             return true;
@@ -264,7 +268,9 @@ public class TypeKit {
         if (fromTypeVarAssigns.isEmpty()) {
             return true;
         }
-        final Map<TypeVariable<?>, Type> toTypeVarAssigns = getTypeArguments(toParameterizedType, toClass,
+        final Map<TypeVariable<?>, Type> toTypeVarAssigns = getTypeArguments(
+                toParameterizedType,
+                toClass,
                 typeVarAssigns);
 
         for (final TypeVariable<?> var : toTypeVarAssigns.keySet()) {
@@ -529,7 +535,9 @@ public class TypeKit {
      * @param subtypeVarAssigns A map of type variable assignments.
      * @return A map of type parameters.
      */
-    public static Map<TypeVariable<?>, Type> getTypeArguments(final Type type, final Class<?> toClass,
+    public static Map<TypeVariable<?>, Type> getTypeArguments(
+            final Type type,
+            final Class<?> toClass,
             final Map<TypeVariable<?>, Type> subtypeVarAssigns) {
         if (type instanceof Class<?>) {
             return getTypeArguments((Class<?>) type, toClass, subtypeVarAssigns);
@@ -538,8 +546,10 @@ public class TypeKit {
             return getTypeArguments((java.lang.reflect.ParameterizedType) type, toClass, subtypeVarAssigns);
         }
         if (type instanceof GenericArrayType) {
-            return getTypeArguments(((GenericArrayType) type).getGenericComponentType(),
-                    toClass.isArray() ? toClass.getComponentType() : toClass, subtypeVarAssigns);
+            return getTypeArguments(
+                    ((GenericArrayType) type).getGenericComponentType(),
+                    toClass.isArray() ? toClass.getComponentType() : toClass,
+                    subtypeVarAssigns);
         }
         if (type instanceof WildcardType) {
             for (final Type bound : getImplicitUpperBounds((WildcardType) type)) {
@@ -569,7 +579,9 @@ public class TypeKit {
      * @param subtypeVarAssigns A map of type variable assignments.
      * @return A map of type parameters.
      */
-    public static Map<TypeVariable<?>, Type> getTypeArguments(Class<?> cls, final Class<?> toClass,
+    public static Map<TypeVariable<?>, Type> getTypeArguments(
+            Class<?> cls,
+            final Class<?> toClass,
             final Map<TypeVariable<?>, Type> subtypeVarAssigns) {
         if (!isAssignable(cls, toClass)) {
             return null;
@@ -597,7 +609,8 @@ public class TypeKit {
      * @return A map of type parameters.
      */
     public static Map<TypeVariable<?>, Type> getTypeArguments(
-            final java.lang.reflect.ParameterizedType parameterizedType, final Class<?> toClass,
+            final java.lang.reflect.ParameterizedType parameterizedType,
+            final Class<?> toClass,
             final Map<TypeVariable<?>, Type> subtypeVarAssigns) {
         final Class<?> cls = getRawType(parameterizedType);
         if (!isAssignable(cls, toClass)) {
@@ -607,7 +620,9 @@ public class TypeKit {
         Map<TypeVariable<?>, Type> typeVarAssigns;
         if (ownerType instanceof java.lang.reflect.ParameterizedType) {
             final java.lang.reflect.ParameterizedType parameterizedOwnerType = (java.lang.reflect.ParameterizedType) ownerType;
-            typeVarAssigns = getTypeArguments(parameterizedOwnerType, getRawType(parameterizedOwnerType),
+            typeVarAssigns = getTypeArguments(
+                    parameterizedOwnerType,
+                    getRawType(parameterizedOwnerType),
                     subtypeVarAssigns);
         } else {
             typeVarAssigns = null == subtypeVarAssigns ? new HashMap<>() : new HashMap<>(subtypeVarAssigns);
@@ -616,8 +631,8 @@ public class TypeKit {
         final TypeVariable<?>[] typeParams = cls.getTypeParameters();
         for (int i = 0; i < typeParams.length; i++) {
             final Type typeArg = typeArgs[i];
-            typeVarAssigns.put(typeParams[i],
-                    typeVarAssigns.containsKey(typeArg) ? typeVarAssigns.get(typeArg) : typeArg);
+            typeVarAssigns
+                    .put(typeParams[i], typeVarAssigns.containsKey(typeArg) ? typeVarAssigns.get(typeArg) : typeArg);
         }
         if (toClass.equals(cls)) {
             return typeVarAssigns;
@@ -888,7 +903,8 @@ public class TypeKit {
      * @param typeVarAssigns The map of assignments.
      * @return The resolved type.
      */
-    private static Type unrollVariableAssignments(TypeVariable<?> var,
+    private static Type unrollVariableAssignments(
+            TypeVariable<?> var,
             final Map<TypeVariable<?>, Type> typeVarAssigns) {
         Type result;
         do {

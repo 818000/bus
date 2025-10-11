@@ -372,7 +372,9 @@ public class DateTime extends Date {
      * @param lenient whether parsing should be lenient
      * @return the parsed {@link java.util.Calendar}
      */
-    private static java.util.Calendar parse(final CharSequence date, final PositionDateParser parser,
+    private static java.util.Calendar parse(
+            final CharSequence date,
+            final PositionDateParser parser,
             final boolean lenient) {
         final java.util.Calendar calendar = Calendar.parse(date, lenient, parser);
         calendar.setFirstDayOfWeek(Week.MONDAY.getCode());
@@ -810,7 +812,11 @@ public class DateTime extends Date {
      * @param includeEnd   Whether the end date is inclusive.
      * @return {@code true} if the date is within the specified range.
      */
-    public boolean isIn(final Date date, final Date beginDate, final Date endDate, final boolean includeBegin,
+    public boolean isIn(
+            final Date date,
+            final Date beginDate,
+            final Date endDate,
+            final boolean includeBegin,
             final boolean includeEnd) {
         if (date == null || beginDate == null || endDate == null) {
             throw new IllegalArgumentException("Dates cannot be null");

@@ -135,7 +135,12 @@ public class CityHash implements Hash32<byte[]>, Hash64<byte[]>, Hash128<byte[]>
      * @param b The second seed.
      * @return A 128-bit hash value.
      */
-    private static No128 weakHashLen32WithSeeds(final long w, final long x, final long y, final long z, long a,
+    private static No128 weakHashLen32WithSeeds(
+            final long w,
+            final long x,
+            final long y,
+            final long z,
+            long a,
             long b) {
         a += w;
         b = Long.rotateRight(b + a + z, 21);
@@ -156,8 +161,13 @@ public class CityHash implements Hash32<byte[]>, Hash64<byte[]>, Hash128<byte[]>
      * @return A 128-bit hash value.
      */
     private static No128 weakHashLen32WithSeeds(final byte[] byteArray, final int start, final long a, final long b) {
-        return weakHashLen32WithSeeds(fetch64(byteArray, start), fetch64(byteArray, start + 8),
-                fetch64(byteArray, start + 16), fetch64(byteArray, start + 24), a, b);
+        return weakHashLen32WithSeeds(
+                fetch64(byteArray, start),
+                fetch64(byteArray, start + 8),
+                fetch64(byteArray, start + 16),
+                fetch64(byteArray, start + 24),
+                a,
+                b);
     }
 
     /**
@@ -295,7 +305,8 @@ public class CityHash implements Hash32<byte[]>, Hash64<byte[]>, Hash128<byte[]>
             pos += 64;
             len -= 64;
         } while (len != 0);
-        return hashLen16(hashLen16(v.getLeastSigBits(), w.getLeastSigBits()) + shiftMix(y) * k1 + z,
+        return hashLen16(
+                hashLen16(v.getLeastSigBits(), w.getLeastSigBits()) + shiftMix(y) * k1 + z,
                 hashLen16(v.getMostSigBits(), w.getMostSigBits()) + x);
     }
 
@@ -513,8 +524,10 @@ public class CityHash implements Hash32<byte[]>, Hash64<byte[]>, Hash128<byte[]>
         final long b = fetch64(byteArray, 8);
         final long c = fetch64(byteArray, len - 8) * mul;
         final long d = fetch64(byteArray, len - 16) * k2;
-        return hashLen16(Long.rotateRight(a + b, 43) + Long.rotateRight(c, 30) + d,
-                a + Long.rotateRight(b + k2, 18) + c, mul);
+        return hashLen16(
+                Long.rotateRight(a + b, 43) + Long.rotateRight(c, 30) + d,
+                a + Long.rotateRight(b + k2, 18) + c,
+                mul);
     }
 
     /**
