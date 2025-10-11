@@ -37,7 +37,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
- * 链路跟踪
+ * Represents tracing information for a request, extending authorization details.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -53,54 +53,54 @@ public class Tracer extends Authorize {
     private static final long serialVersionUID = 2852291120377L;
 
     /**
-     * 当前请求ID
+     * The unique ID for the current request.
      */
     @Transient
     protected String x_request_id;
     /**
-     * 当前主链ID
+     * The main trace ID for the entire request chain.
      */
     @Transient
     protected String x_trace_id;
 
     /**
-     * 调用者ID
+     * The ID of the calling service or component.
      */
     @Transient
     protected String x_span_id;
 
     /**
-     * 被调用者ID
+     * The ID of the service or component being called.
      */
     @Transient
     protected String x_child_id;
 
     /**
-     * 本地IP
+     * The local IP address of the service.
      */
     @Transient
     protected String x_local_ip;
 
     /**
-     * 远程IP
+     * The remote IP address of the client making the request.
      */
     @Transient
     protected String x_remote_ip;
 
     /**
-     * 请求者渠道类型: 1-WEB, 2-APP, 3-钉钉，4-微信小程序，5-其他；
+     * The channel type of the requester. e.g., 1-WEB, 2-APP, 3-DingTalk, 4-WeChat Mini Program, 5-Other.
      */
     @Transient
     protected String x_remote_channel;
 
     /**
-     * 请求者终端类型: 1-PC, 2-Android, 3-iPhone, 4-iPad, 5-WinPhone, 6-HarmonyOS，7-其他
+     * The terminal type of the requester. e.g., 1-PC, 2-Android, 3-iPhone, 4-iPad, 5-WinPhone, 6-HarmonyOS, 7-Other.
      */
     @Transient
     protected String x_remote_terminal;
 
     /**
-     * 请求者浏览器信息: APP 原生则传系统版本
+     * The browser information of the requester. For native apps, this should be the operating system version.
      */
     @Transient
     protected String x_remote_browser;
