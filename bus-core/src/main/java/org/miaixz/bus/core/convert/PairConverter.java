@@ -75,11 +75,8 @@ public class PairConverter extends ConverterWithRoot implements Serializable {
      */
     private static Map<CharSequence, CharSequence> strToMap(final CharSequence text) {
         // data:value data=value data,value
-        final int index = StringKit.indexOf(
-                text,
-                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA,
-                0,
-                text.length());
+        final int index = StringKit.indexOf(text,
+                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA, 0, text.length());
 
         if (index > -1) {
             return MapKit.of(text.subSequence(0, index), text.subSequence(index + 1, text.length()));
@@ -119,8 +116,7 @@ public class PairConverter extends ConverterWithRoot implements Serializable {
             right = map.get("right");
         }
 
-        return Pair.of(
-                TypeKit.isUnknown(keyType) ? left : converter.convert(keyType, left),
+        return Pair.of(TypeKit.isUnknown(keyType) ? left : converter.convert(keyType, left),
                 TypeKit.isUnknown(valueType) ? right : converter.convert(valueType, right));
     }
 
