@@ -28,7 +28,6 @@
 package org.miaixz.bus.auth.nimble.wechat.ee;
 
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.auth.Builder;
@@ -71,18 +70,16 @@ public class WeChatEeQrcodeProvider extends AbstractWeChatEeProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl(complex.authorize()).queryParam("login_type", context.getLoginType())
-                        // When login_type is CorpApp/Service Provider developed app, fill in Enterprise CorpID; when
-                        // third-party login, fill in Login Authorization SuiteID
-                        .queryParam("appid", context.getClientId())
-                        // Enterprise self-built application/service provider developed app AgentID, filled when
-                        // login_type=CorpApp
-                        .queryParam("agentid", context.getUnionId())
-                        .queryParam("redirect_uri", context.getRedirectUri()).queryParam("state", getRealState(state))
-                        .queryParam("lang", context.getLang()).build().concat("#wechat_redirect"))
-                .build();
+    public String authorize(String state) {
+        return Builder.fromUrl(complex.authorize()).queryParam("login_type", context.getLoginType())
+                // When login_type is CorpApp/Service Provider developed app, fill in Enterprise CorpID; when
+                // third-party login, fill in Login Authorization SuiteID
+                .queryParam("appid", context.getAppKey())
+                // Enterprise self-built application/service provider developed app AgentID, filled when
+                // login_type=CorpApp
+                .queryParam("agentid", context.getUnionId()).queryParam("redirect_uri", context.getRedirectUri())
+                .queryParam("state", getRealState(state)).queryParam("lang", context.getLang()).build()
+                .concat("#wechat_redirect");
     }
 
     /**
@@ -93,10 +90,10 @@ public class WeChatEeQrcodeProvider extends AbstractWeChatEeProvider {
      * @throws AuthorizedException if the agent ID is empty for "CorpApp" login type
      */
     @Override
-    protected void validate(Context context) {
-        super.validate(context);
+    protected void check(Context context) {
+        super.check(context);
         if ("CorpApp".equals(context.getLoginType()) && StringKit.isEmpty(context.getUnionId())) {
-            throw new AuthorizedException(ErrorCode._110014.getKey(), this.complex);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_WECHAT_AGENT_ID.getKey(), this.complex);
         }
     }
 

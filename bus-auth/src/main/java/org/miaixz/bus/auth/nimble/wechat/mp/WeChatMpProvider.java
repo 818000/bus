@@ -27,7 +27,7 @@
 */
 package org.miaixz.bus.auth.nimble.wechat.mp;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Consts;
@@ -82,40 +82,34 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
      * @return all information
      */
     @Override
-    public Message token(Callback callback) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(this.getToken(tokenUrl(callback.getCode())))
-                .build();
+    public AuthToken getAccessToken(Callback callback) {
+        return this.getToken(accessTokenUrl(callback.getCode()));
     }
 
     /**
      * Retrieves user information from WeChat Official Account's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String openId = authorization.getOpenId();
-        String scope = authorization.getScope();
+    public Material getUserInfo(AuthToken authToken) {
+        String openId = authToken.getOpenId();
+        String scope = authToken.getScope();
         if (!StringKit.isEmpty(scope) && !scope.contains("snsapi_userinfo")) {
             Map<String, Object> tokenMap = new HashMap<>();
-            tokenMap.put("access_token", authorization.getToken());
-            tokenMap.put("refresh_token", authorization.getRefresh());
-            tokenMap.put("expires_in", authorization.getExpireIn());
-            tokenMap.put("openid", authorization.getOpenId());
-            tokenMap.put("scope", authorization.getScope());
-            tokenMap.put("is_snapshotuser", authorization.isSnapshotUser() ? 1 : 0);
-
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(tokenMap)).uuid(openId)
-                                    .snapshotUser(authorization.isSnapshotUser()).token(authorization)
-                                    .source(complex.toString()).build())
-                    .build();
+            tokenMap.put("access_token", authToken.getAccessToken());
+            tokenMap.put("refresh_token", authToken.getRefreshToken());
+            tokenMap.put("expires_in", authToken.getExpireIn());
+            tokenMap.put("openid", authToken.getOpenId());
+            tokenMap.put("scope", authToken.getScope());
+            tokenMap.put("is_snapshotuser", authToken.isSnapshotUser() ? 1 : 0);
+            return Material.builder().rawJson(JsonKit.toJsonString(tokenMap)).uuid(openId)
+                    .snapshotUser(authToken.isSnapshotUser()).token(authToken).source(complex.toString()).build();
         }
 
-        String response = doGetUserInfo(authorization);
+        String response = doGetUserInfo(authToken);
         try {
             Map<String, Object> object = JsonKit.toPojo(response, Map.class);
             if (object == null) {
@@ -131,20 +125,16 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
 
             String unionId = (String) object.get("unionid");
             if (unionId != null) {
-                authorization.setUnionId(unionId);
+                authToken.setUnionId(unionId);
             }
 
             String nickname = (String) object.get("nickname");
             String headimgurl = (String) object.get("headimgurl");
             String sex = (String) object.get("sex");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(object)).username(nickname)
-                                    .nickname(nickname).avatar(headimgurl).location(location).uuid(openId)
-                                    .snapshotUser(authorization.isSnapshotUser()).gender(getWechatRealGender(sex))
-                                    .token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).username(nickname).nickname(nickname)
+                    .avatar(headimgurl).location(location).uuid(openId).snapshotUser(authToken.isSnapshotUser())
+                    .gender(getWechatRealGender(sex)).token(authToken).source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -153,13 +143,13 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      */
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(this.getToken(refreshUrl(authorization.getRefresh()))).build();
+                .data(this.getToken(refreshTokenUrl(authToken.getRefreshToken()))).build();
     }
 
     /**
@@ -179,34 +169,34 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
     /**
      * Retrieves the token, applicable for both obtaining access tokens and refreshing tokens.
      *
-     * @param tokenUrl the actual URL to request the token from
-     * @return the {@link Authorization} object
+     * @param accessTokenUrl the actual URL to request the token from
+     * @return the {@link AuthToken} object
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
-    private Authorization getToken(String tokenUrl) {
-        String response = Httpx.get(tokenUrl);
+    private AuthToken getToken(String accessTokenUrl) {
+        String response = Httpx.get(accessTokenUrl);
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse token response: empty response");
             }
 
-            this.checkResponse(object);
+            this.checkResponse(accessTokenObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String refresh = (String) object.get("refresh_token");
-            Object expiresInObj = object.get("expires_in");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String openId = (String) object.get("openid");
-            String scope = (String) object.get("scope");
-            Object snapshotUserObj = object.get("is_snapshotuser");
+            String openId = (String) accessTokenObject.get("openid");
+            String scope = (String) accessTokenObject.get("scope");
+            Object snapshotUserObj = accessTokenObject.get("is_snapshotuser");
             boolean snapshotUser = snapshotUserObj instanceof Number && ((Number) snapshotUserObj).intValue() == 1;
 
-            return Authorization.builder().token(token).refresh(refresh).expireIn(expiresIn).openId(openId).scope(scope)
-                    .snapshotUser(snapshotUser).build();
+            return AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).expireIn(expiresIn)
+                    .openId(openId).scope(scope).snapshotUser(snapshotUser).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse token response: " + e.getMessage());
         }
@@ -220,17 +210,12 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Builder.fromUrl(complex.authorize()).queryParam("appid", context.getClientId())
-                                .queryParam("redirect_uri", UrlEncoder.encodeAll(context.getRedirectUri()))
-                                .queryParam("response_type", "code")
-                                .queryParam(
-                                        "scope",
-                                        this.getScopes(Symbol.COMMA, false, this.getScopes(WechatMpScope.values())))
-                                .queryParam("state", getRealState(state).concat("#wechat_redirect")).build())
-                .build();
+    public String authorize(String state) {
+        return Builder.fromUrl(complex.authorize()).queryParam("appid", context.getAppKey())
+                .queryParam("redirect_uri", UrlEncoder.encodeAll(context.getRedirectUri()))
+                .queryParam("response_type", "code")
+                .queryParam("scope", this.getScopes(Symbol.COMMA, false, this.getDefaultScopes(WechatMpScope.values())))
+                .queryParam("state", getRealState(state).concat("#wechat_redirect")).build();
     }
 
     /**
@@ -240,33 +225,34 @@ public class WeChatMpProvider extends AbstractWeChatProvider {
      * @return the URL to obtain the access token
      */
     @Override
-    protected String tokenUrl(String code) {
-        return Builder.fromUrl(this.complex.token()).queryParam("code", code).queryParam("appid", context.getClientId())
-                .queryParam("secret", context.getClientSecret()).queryParam("grant_type", "authorization_code").build();
+    protected String accessTokenUrl(String code) {
+        return Builder.fromUrl(this.complex.accessToken()).queryParam("code", code)
+                .queryParam("appid", context.getAppKey()).queryParam("secret", context.getAppSecret())
+                .queryParam("grant_type", "authorization_code").build();
     }
 
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authorization.getToken())
-                .queryParam("openid", authorization.getOpenId()).queryParam("lang", "zh_CN").build();
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authToken.getAccessToken())
+                .queryParam("openid", authToken.getOpenId()).queryParam("lang", "zh_CN").build();
     }
 
     /**
      * Returns the URL to refresh the access token.
      *
-     * @param refresh the refresh token returned by the getToken method
+     * @param refreshToken the refresh token returned by the getAccessToken method
      * @return the URL to refresh the access token
      */
     @Override
-    protected String refreshUrl(String refresh) {
-        return Builder.fromUrl(this.complex.refresh()).queryParam("appid", context.getClientId())
-                .queryParam("refresh_token", refresh).queryParam("grant_type", "refresh_token").build();
+    protected String refreshTokenUrl(String refreshToken) {
+        return Builder.fromUrl(this.complex.refresh()).queryParam("appid", context.getAppKey())
+                .queryParam("refresh_token", refreshToken).queryParam("grant_type", "refresh_token").build();
     }
 
 }

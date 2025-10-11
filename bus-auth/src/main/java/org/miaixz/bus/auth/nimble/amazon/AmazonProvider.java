@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
@@ -86,10 +86,10 @@ public class AmazonProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
+    public String authorize(String state) {
         String realState = getRealState(state);
-        Builder builder = Builder.fromUrl(this.complex.authorize()).queryParam("client_id", context.getClientId())
-                .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getScopes(AmazonScope.values())))
+        Builder builder = Builder.fromUrl(this.complex.authorize()).queryParam("client_id", context.getAppKey())
+                .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getDefaultScopes(AmazonScope.values())))
                 .queryParam("redirect_uri", context.getRedirectUri()).queryParam("response_type", "code")
                 .queryParam("state", realState);
 
@@ -104,7 +104,7 @@ public class AmazonProvider extends AbstractProvider {
             this.cache.write(cacheKey, codeVerifier, TimeUnit.MINUTES.toMillis(10));
         }
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(builder.build()).build();
+        return builder.build();
     }
 
     /**
@@ -112,39 +112,38 @@ public class AmazonProvider extends AbstractProvider {
      * https://developer.amazon.com/zh/docs/login-with-amazon/authorization-code-grant.html#access-token-request
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> form = new HashMap<>(9);
         form.put("grant_type", "authorization_code");
         form.put("code", callback.getCode());
         form.put("redirect_uri", context.getRedirectUri());
-        form.put("client_id", context.getClientId());
-        form.put("client_secret", context.getClientSecret());
+        form.put("client_id", context.getAppKey());
+        form.put("client_secret", context.getAppSecret());
 
         if (context.isPkce()) {
             String cacheKey = this.complex.getName().concat(":code_verifier:").concat(callback.getState());
             String codeVerifier = String.valueOf(this.cache.read(cacheKey));
             form.put("code_verifier", codeVerifier);
         }
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(this.getToken(form, this.complex.token()))
-                .build();
+        return getToken(form, this.complex.accessToken());
     }
 
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      */
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
         form.put("grant_type", "refresh_token");
-        form.put("refresh_token", authorization.getRefresh());
-        form.put("client_id", context.getClientId());
-        form.put("client_secret", context.getClientSecret());
+        form.put("refresh_token", authToken.getRefreshToken());
+        form.put("client_id", context.getAppKey());
+        form.put("client_secret", context.getAppSecret());
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(getToken(form, this.complex.refresh()))
                 .build();
     }
@@ -154,33 +153,33 @@ public class AmazonProvider extends AbstractProvider {
      *
      * @param param a map of parameters for the token request
      * @param url   the URL to request the token from
-     * @return the {@link Authorization} containing token details
+     * @return the {@link AuthToken} containing token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
-    private Authorization getToken(Map<String, String> param, String url) {
+    private AuthToken getToken(Map<String, String> param, String url) {
         Map<String, String> header = new HashMap<>();
         header.put(HTTP.HOST, "api.amazon.com");
         header.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED + ";charset=UTF-8");
 
         String response = Httpx.post(url, param, header);
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> jsonObject = JsonKit.toPojo(response, Map.class);
+            if (jsonObject == null) {
                 throw new AuthorizedException("Failed to parse JSON response: empty response");
             }
-            this.checkResponse(object);
+            this.checkResponse(jsonObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) jsonObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String tokenType = (String) object.get("token_type");
-            Object expiresInObj = object.get("expires_in");
+            String tokenType = (String) jsonObject.get("token_type");
+            Object expiresInObj = jsonObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String refresh = (String) object.get("refresh_token");
+            String refreshToken = (String) jsonObject.get("refresh_token");
 
-            return Authorization.builder().token(token).token_type(tokenType).expireIn(expiresIn).refresh(refresh)
-                    .build();
+            return AuthToken.builder().accessToken(accessToken).tokenType(tokenType).expireIn(expiresIn)
+                    .refreshToken(refreshToken).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse token response: " + e.getMessage());
         }
@@ -203,38 +202,35 @@ public class AmazonProvider extends AbstractProvider {
      * Retrieves user information from Amazon's user info endpoint. Reference:
      * https://developer.amazon.com/zh/docs/login-with-amazon/obtain-customer-profile.html#call-profile-endpoint
      *
-     * @param authorization the token information
+     * @param authToken the token information
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String token = authorization.getToken();
-        this.checkToken(token);
+    public Material getUserInfo(AuthToken authToken) {
+        String accessToken = authToken.getAccessToken();
+        this.checkToken(accessToken);
         Map<String, String> header = new HashMap<>();
         header.put(HTTP.HOST, "api.amazon.com");
-        header.put(HTTP.AUTHORIZATION, "bearer " + token);
+        header.put(HTTP.AUTHORIZATION, "bearer " + accessToken);
 
         String userInfo = Httpx.get(this.complex.userinfo(), new HashMap<>(0), header);
         try {
-            Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
-            if (object == null) {
+            Map<String, Object> jsonObject = JsonKit.toPojo(userInfo, Map.class);
+            if (jsonObject == null) {
                 throw new AuthorizedException("Failed to parse user info response: empty response");
             }
-            this.checkResponse(object);
+            this.checkResponse(jsonObject);
 
-            String userId = (String) object.get("user_id");
+            String userId = (String) jsonObject.get("user_id");
             if (userId == null) {
                 throw new AuthorizedException("Missing user_id in response");
             }
-            String name = (String) object.get("name");
-            String email = (String) object.get("email");
+            String name = (String) jsonObject.get("name");
+            String email = (String) jsonObject.get("email");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(userId).username(name)
-                                    .nickname(name).email(email).gender(Gender.UNKNOWN).source(complex.toString())
-                                    .token(authorization).build())
+            return Material.builder().rawJson(JsonKit.toJsonString(jsonObject)).uuid(userId).username(name)
+                    .nickname(name).email(email).gender(Gender.UNKNOWN).source(complex.toString()).token(authToken)
                     .build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
@@ -244,20 +240,20 @@ public class AmazonProvider extends AbstractProvider {
     /**
      * Checks the validity of the access token by calling Amazon's token info endpoint.
      *
-     * @param token the access token to check
+     * @param accessToken the access token to check
      * @throws AuthorizedException if the token is invalid or an error occurs during validation
      */
-    private void checkToken(String token) {
+    private void checkToken(String accessToken) {
         String tokenInfo = Httpx
-                .get("https://api.amazon.com/auth/o2/tokeninfo?access_token=" + UrlEncoder.encodeAll(token));
+                .get("https://api.amazon.com/auth/o2/tokeninfo?access_token=" + UrlEncoder.encodeAll(accessToken));
         try {
             Map<String, Object> jsonObject = JsonKit.toPojo(tokenInfo, Map.class);
             if (jsonObject == null) {
                 throw new AuthorizedException("Failed to parse token info response: empty response");
             }
             String aud = (String) jsonObject.get("aud");
-            if (!context.getClientId().equals(aud)) {
-                throw new AuthorizedException(ErrorCode._100100.getKey());
+            if (!context.getAppKey().equals(aud)) {
+                throw new AuthorizedException(ErrorCode.ILLEGAL_TOKEN.getKey());
             }
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse token info response: " + e.getMessage());
@@ -267,13 +263,13 @@ public class AmazonProvider extends AbstractProvider {
     /**
      * Constructs the user information URL.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the user information URL
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("user_id", authorization.getUserId())
-                .queryParam("screen_name", authorization.getScreenName()).queryParam("include_entities", true).build();
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("user_id", authToken.getUserId())
+                .queryParam("screen_name", authToken.getScreenName()).queryParam("include_entities", true).build();
     }
 
 }

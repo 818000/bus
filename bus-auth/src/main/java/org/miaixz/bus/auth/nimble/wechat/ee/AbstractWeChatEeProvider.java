@@ -27,9 +27,8 @@
 */
 package org.miaixz.bus.auth.nimble.wechat.ee;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
@@ -80,45 +79,43 @@ public abstract class AbstractWeChatEeProvider extends AbstractWeChatProvider {
      * Retrieves the access token from WeChat Enterprise's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
-        String response = doPostToken(tokenUrl(null));
+    public AuthToken getAccessToken(Callback callback) {
+        String response = doGetAuthorizationCode(accessTokenUrl(null));
         Map<String, Object> object = this.checkResponse(response);
 
-        String token = (String) object.get("access_token");
-        if (token == null) {
+        String accessToken = (String) object.get("access_token");
+        if (accessToken == null) {
             throw new AuthorizedException("Missing access_token in response");
         }
         Object expiresInObj = object.get("expires_in");
         int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(Authorization.builder().token(token).expireIn(expiresIn).code(callback.getCode()).build())
-                .build();
+        return AuthToken.builder().accessToken(accessToken).expireIn(expiresIn).code(callback.getCode()).build();
     }
 
     /**
      * Retrieves user information from WeChat Enterprise's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String response = doGetUserInfo(authorization);
+    public Material getUserInfo(AuthToken authToken) {
+        String response = doGetUserInfo(authToken);
         Map<String, Object> object = this.checkResponse(response);
 
         // Returns OpenId or other, both indicate non-current enterprise users, not supported
         if (!object.containsKey("userid")) {
-            throw new AuthorizedException(ErrorCode._110004.getKey(), complex);
+            throw new AuthorizedException(ErrorCode.UNIDENTIFIED_PLATFORM.getKey(), complex);
         }
         String userId = (String) object.get("userid");
         String userTicket = (String) object.get("user_ticket");
-        Map<String, Object> data = getUserDetail(authorization.getToken(), userId, userTicket);
+        Map<String, Object> data = getUserDetail(authToken.getAccessToken(), userId, userTicket);
 
         String name = (String) data.get("name");
         String alias = (String) data.get("alias");
@@ -127,11 +124,9 @@ public abstract class AbstractWeChatEeProvider extends AbstractWeChatProvider {
         String email = (String) data.get("email");
         String gender = (String) data.get("gender");
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Material.builder().rawJson(JsonKit.toJsonString(data)).username(name).nickname(alias).avatar(avatar)
-                        .location(address).email(email).uuid(userId).gender(getWechatRealGender(gender))
-                        .token(authorization).source(complex.toString()).build())
-                .build();
+        return Material.builder().rawJson(JsonKit.toJsonString(data)).username(name).nickname(alias).avatar(avatar)
+                .location(address).email(email).uuid(userId).gender(getWechatRealGender(gender)).token(authToken)
+                .source(complex.toString()).build();
     }
 
     /**
@@ -165,51 +160,51 @@ public abstract class AbstractWeChatEeProvider extends AbstractWeChatProvider {
      * @return the URL to obtain the access token
      */
     @Override
-    public String tokenUrl(String code) {
-        return Builder.fromUrl(this.complex.token()).queryParam("corpid", context.getClientId())
-                .queryParam("corpsecret", context.getClientSecret()).build();
+    public String accessTokenUrl(String code) {
+        return Builder.fromUrl(this.complex.accessToken()).queryParam("corpid", context.getAppKey())
+                .queryParam("corpsecret", context.getAppSecret()).build();
     }
 
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    public String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authorization.getToken())
-                .queryParam("code", authorization.getCode()).build();
+    public String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authToken.getAccessToken())
+                .queryParam("code", authToken.getCode()).build();
     }
 
     /**
      * Retrieves user details.
      *
-     * @param token      the access token
-     * @param userId     the user ID within the enterprise
-     * @param userTicket the user ticket, used to obtain user information or sensitive information
+     * @param accessToken the access token
+     * @param userId      the user ID within the enterprise
+     * @param userTicket  the user ticket, used to obtain user information or sensitive information
      * @return a map containing user details
      */
-    private Map<String, Object> getUserDetail(String token, String userId, String userTicket) {
+    private Map<String, Object> getUserDetail(String accessToken, String userId, String userTicket) {
         // User basic information
         String userInfoUrl = Builder.fromUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
-                .queryParam("access_token", token).queryParam("userid", userId).build();
-        String response = Httpx.get(userInfoUrl);
-        Map<String, Object> object = checkResponse(response);
+                .queryParam("access_token", accessToken).queryParam("userid", userId).build();
+        String userInfoResponse = Httpx.get(userInfoUrl);
+        Map<String, Object> userInfo = checkResponse(userInfoResponse);
 
         // User sensitive information
         if (StringKit.isNotEmpty(userTicket)) {
             String userDetailUrl = Builder.fromUrl("https://qyapi.weixin.qq.com/cgi-bin/auth/getuserdetail")
-                    .queryParam("access_token", token).build();
+                    .queryParam("access_token", accessToken).build();
             Map<String, Object> param = new HashMap<>();
             param.put("user_ticket", userTicket);
             String userDetailResponse = Httpx
                     .post(userDetailUrl, JsonKit.toJsonString(param), MediaType.APPLICATION_JSON);
             Map<String, Object> userDetail = checkResponse(userDetailResponse);
 
-            object.putAll(userDetail);
+            userInfo.putAll(userDetail);
         }
-        return object;
+        return userInfo;
     }
 
 }

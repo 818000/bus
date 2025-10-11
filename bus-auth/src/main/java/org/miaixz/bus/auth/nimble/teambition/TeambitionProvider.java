@@ -27,7 +27,7 @@
 */
 package org.miaixz.bus.auth.nimble.teambition;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Gender;
@@ -75,83 +75,77 @@ public class TeambitionProvider extends AbstractProvider {
      * Retrieves the access token from Teambition's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("client_id", context.getClientId());
-        form.put("client_secret", context.getClientSecret());
+        form.put("client_id", context.getAppKey());
+        form.put("client_secret", context.getAppSecret());
         form.put("code", callback.getCode());
         form.put("grant_type", "code");
 
-        String response = Httpx.post(this.complex.token(), form);
-        Map<String, Object> object = JsonKit.toPojo(response, Map.class);
+        String response = Httpx.post(this.complex.accessToken(), form);
+        Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
 
-        this.checkResponse(object);
+        this.checkResponse(accessTokenObject);
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Authorization.builder().token((String) object.get("access_token"))
-                                .refresh((String) object.get("refresh_token")).build())
-                .build();
+        return AuthToken.builder().accessToken((String) accessTokenObject.get("access_token"))
+                .refreshToken((String) accessTokenObject.get("refresh_token")).build();
     }
 
     /**
      * Retrieves user information from Teambition's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String token = authorization.getToken();
+    public Material getUserInfo(AuthToken authToken) {
+        String accessToken = authToken.getAccessToken();
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "OAuth2 " + token);
+        header.put("Authorization", "OAuth2 " + accessToken);
 
         String response = Httpx.get(this.complex.userinfo(), null, header);
         Map<String, Object> object = JsonKit.toPojo(response, Map.class);
 
         this.checkResponse(object);
 
-        authorization.setUid((String) object.get("_id"));
+        authToken.setUid((String) object.get("_id"));
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Material.builder().rawJson(JsonKit.toJsonString(object)).uuid((String) object.get("_id"))
-                                .username((String) object.get("name")).nickname((String) object.get("name"))
-                                .avatar((String) object.get("avatarUrl")).blog((String) object.get("website"))
-                                .location((String) object.get("location")).email((String) object.get("email"))
-                                .gender(Gender.UNKNOWN).token(authorization).source(complex.toString()).build())
-                .build();
+        return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid((String) object.get("_id"))
+                .username((String) object.get("name")).nickname((String) object.get("name"))
+                .avatar((String) object.get("avatarUrl")).blog((String) object.get("website"))
+                .location((String) object.get("location")).email((String) object.get("email")).gender(Gender.UNKNOWN)
+                .token(authToken).source(complex.toString()).build();
     }
 
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      * @throws AuthorizedException if parsing the response fails or an error occurs during token refresh
      */
     @Override
-    public Message refresh(Authorization authorization) {
-        String uid = authorization.getUid();
-        String refresh = authorization.getRefresh();
+    public Message refresh(AuthToken authToken) {
+        String uid = authToken.getUid();
+        String refreshToken = authToken.getRefreshToken();
 
         Map<String, String> form = new HashMap<>(4);
         form.put("_userId", uid);
-        form.put("refresh_token", refresh);
+        form.put("refresh_token", refreshToken);
         String response = Httpx.post(this.complex.refresh(), form);
-        Map<String, Object> object = JsonKit.toPojo(response, Map.class);
+        Map<String, Object> refreshTokenObject = JsonKit.toPojo(response, Map.class);
 
-        this.checkResponse(object);
+        this.checkResponse(refreshTokenObject);
 
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
                 .data(
-                        Authorization.builder().token((String) object.get("access_token"))
-                                .refresh((String) object.get("refresh_token")).build())
+                        AuthToken.builder().accessToken((String) refreshTokenObject.get("access_token"))
+                                .refreshToken((String) refreshTokenObject.get("refresh_token")).build())
                 .build();
     }
 

@@ -27,9 +27,7 @@
 */
 package org.miaixz.bus.auth.nimble.wechat.ee;
 
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.net.url.UrlEncoder;
 import org.miaixz.bus.auth.Builder;
@@ -71,18 +69,15 @@ public class WeChatEeWebProvider extends AbstractWeChatEeProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Builder.fromUrl(complex.authorize()).queryParam("appid", context.getClientId())
-                                .queryParam("agentid", context.getUnionId())
-                                .queryParam("redirect_uri", UrlEncoder.encodeAll(context.getRedirectUri()))
-                                .queryParam("response_type", "code")
-                                .queryParam(
-                                        "scope",
-                                        this.getScopes(Symbol.COMMA, false, this.getScopes(WeChatEeWebScope.values())))
-                                .queryParam("state", getRealState(state).concat("#wechat_redirect")).build())
-                .build();
+    public String authorize(String state) {
+        return Builder.fromUrl(complex.authorize()).queryParam("appid", context.getAppKey())
+                .queryParam("agentid", context.getUnionId())
+                .queryParam("redirect_uri", UrlEncoder.encodeAll(context.getRedirectUri()))
+                .queryParam("response_type", "code")
+                .queryParam(
+                        "scope",
+                        this.getScopes(Symbol.COMMA, false, this.getDefaultScopes(WeChatEeWebScope.values())))
+                .queryParam("state", getRealState(state).concat("#wechat_redirect")).build();
     }
 
 }

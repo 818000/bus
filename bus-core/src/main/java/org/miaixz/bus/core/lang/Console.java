@@ -58,7 +58,8 @@ public class Console {
      * @param object The object to print.
      */
     public static void log(final Object object) {
-        if (object instanceof Throwable e) {
+        if (object instanceof Throwable) {
+            final Throwable e = (Throwable) object;
             log(e, e.getMessage());
         } else {
             log(Symbol.DELIM, object);
@@ -481,7 +482,9 @@ public class Console {
                 }
                 sb.append(SPACE);
                 final int maxLength = columnCharNumber.get(i);
-                sb.append(String.valueOf(SPACE).repeat(Math.max(0, (maxLength - length + (sbcCount / 2)))));
+                for (int j = 0; j < (maxLength - length + (sbcCount / 2)); j++) {
+                    sb.append(SPACE);
+                }
                 sb.append(COLUMN_LINE);
             }
         }

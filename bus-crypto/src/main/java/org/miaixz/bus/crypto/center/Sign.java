@@ -337,16 +337,17 @@ public class Sign extends Asymmetric<Sign> {
         // If the certificate is of type X509Certificate,
         // we should check whether it has a Key Usage
         // extension marked as critical.
-        if (certificate instanceof X509Certificate cert) {
+        if (certificate instanceof X509Certificate) {
             // Check whether the cert has a key usage extension
             // marked as a critical extension.
             // The OID for KeyUsage extension is 2.5.29.15.
+            final X509Certificate cert = (X509Certificate) certificate;
             final Set<String> critSet = cert.getCriticalExtensionOIDs();
 
             if (CollKit.isNotEmpty(critSet) && critSet.contains("2.5.29.15")) {
                 final boolean[] keyUsageInfo = cert.getKeyUsage();
                 // keyUsageInfo[0] is for digitalSignature.
-                if ((keyUsageInfo != null) && (!keyUsageInfo[0])) {
+                if ((keyUsageInfo != null) && (keyUsageInfo[0] == false)) {
                     throw new CryptoException("Wrong key usage");
                 }
             }

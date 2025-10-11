@@ -519,10 +519,11 @@ public class JschSftp extends AbstractFtp {
      * @return This {@code JschSftp} instance.
      * @throws InternalException if an SftpException occurs.
      */
-    public JschSftp put(final String srcFilePath, String destPath, final SftpProgressMonitor monitor, final Mode mode) {
-        if (StringKit.isEmpty(destPath)) {
-            destPath = pwd();
-        }
+    public JschSftp put(
+            final String srcFilePath,
+            final String destPath,
+            final SftpProgressMonitor monitor,
+            final Mode mode) {
         try {
             getClient().put(srcFilePath, destPath, monitor, mode.ordinal());
         } catch (final SftpException e) {
@@ -543,12 +544,9 @@ public class JschSftp extends AbstractFtp {
      */
     public JschSftp put(
             final InputStream srcStream,
-            String destPath,
+            final String destPath,
             final SftpProgressMonitor monitor,
             final Mode mode) {
-        if (StringKit.isEmpty(destPath)) {
-            destPath = pwd();
-        }
         try {
             getClient().put(srcStream, destPath, monitor, mode.ordinal());
         } catch (final SftpException e) {
@@ -558,8 +556,8 @@ public class JschSftp extends AbstractFtp {
     }
 
     @Override
-    public void download(final String remotePath, final File destFile) {
-        get(remotePath, FileKit.getAbsolutePath(destFile));
+    public void download(final String src, final File destFile) {
+        get(src, FileKit.getAbsolutePath(destFile));
     }
 
     /**
@@ -573,22 +571,33 @@ public class JschSftp extends AbstractFtp {
     }
 
     @Override
-    public void recursiveDownloadFolder(final String remotePath, final File targetDir) {
-        String fileName;
-        String srcFile;
-        File destFile;
-        for (final LsEntry item : lsEntries(remotePath)) {
-            fileName = item.getFilename();
-            srcFile = StringKit.format("{}/{}", remotePath, fileName);
-            destFile = FileKit.file(targetDir, fileName);
+    public void recursiveDownloadFolder(String sourceDir, File targetDir) throws InternalException {
+        sourceDir = sourceDir.replaceAll("/+$", "");
 
-            if (!item.getAttrs().isDir()) {
-                if (!FileKit.exists(destFile) || (item.getAttrs().getMTime() > (destFile.lastModified() / 1000))) {
-                    download(srcFile, destFile);
-                }
+        List<LsEntry> entries = lsEntries(sourceDir);
+        if (entries == null || entries.isEmpty()) {
+            return;
+        }
+
+        if (!targetDir.exists() && !targetDir.mkdirs()) {
+            throw new InternalException("Failed to create target directory: " + targetDir.getAbsolutePath());
+        }
+
+        for (LsEntry item : entries) {
+            String fileName = item.getFilename();
+            if (fileName.equals(".") || fileName.equals("..")) {
+                continue;
+            }
+
+            String srcPath = sourceDir + "/" + fileName;
+            File destFile = new File(targetDir, fileName);
+
+            if (item.getAttrs().isDir()) {
+                recursiveDownloadFolder(srcPath, destFile);
             } else {
-                FileKit.mkdir(destFile);
-                recursiveDownloadFolder(srcFile, destFile);
+                if (!destFile.exists() || item.getAttrs().getMTime() * 1000L > destFile.lastModified()) {
+                    download(srcPath, destFile);
+                }
             }
         }
     }

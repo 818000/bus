@@ -31,10 +31,7 @@ import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.vortex.Provider;
 
 /**
- * An implementation of {@link Provider} for serializing objects into JSON strings.
- * <p>
- * This class acts as a bridge between the gateway's format abstraction and the centralized {@link JsonKit} utility. It
- * ensures that all JSON serialization within the gateway is performed consistently.
+ * JSON serialization provider, implementing the conversion of objects to JSON strings.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -42,16 +39,14 @@ import org.miaixz.bus.vortex.Provider;
 public class JsonProvider implements Provider {
 
     /**
-     * Serializes the given Java object into its JSON string representation.
-     * <p>
-     * This implementation delegates the serialization directly to {@link JsonKit#toJsonString(Object)}.
+     * Serializes an object into a JSON string.
      *
-     * @param bean The object to be serialized.
+     * @param object The object to be serialized.
      * @return The serialized JSON string.
      */
     @Override
-    public String serialize(Object bean) {
-        return JsonKit.toJsonString(bean);
+    public String serialize(Object object) {
+        return JsonKit.toJsonString(object);
     }
 
 }

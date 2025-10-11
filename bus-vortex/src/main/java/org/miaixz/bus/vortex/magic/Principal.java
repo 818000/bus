@@ -27,24 +27,20 @@
 */
 package org.miaixz.bus.vortex.magic;
 
+import lombok.experimental.SuperBuilder;
+import org.miaixz.bus.vortex.Assets;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
-import org.miaixz.bus.core.basic.normal.Consts;
-import org.miaixz.bus.vortex.Context;
-import org.miaixz.bus.vortex.provider.AuthorizeProvider;
 
 /**
- * Represents a unified security principal, encapsulating the credential to be validated by an
- * {@link AuthorizeProvider}.
- * <p>
- * This class acts as a standard data transfer object for passing different types of credentials (e.g., bearer tokens,
- * API keys) along with their context to the authorization service. It allows the core authorization logic to be
- * agnostic of the specific credential type.
+ * Represents an authentication token and its associated context. This class encapsulates all necessary information for
+ * authorizing and processing a request, including the token string, the source channel, related resource
+ * configurations, and transient runtime data like tenant ID and API key.
  *
- * @author Kimi Liu
+ * @author Justubborn
  * @since Java 17+
  */
 @Getter
@@ -55,112 +51,33 @@ import org.miaixz.bus.vortex.provider.AuthorizeProvider;
 public class Principal {
 
     /**
-     * The type of the credential being presented.
-     * <ul>
-     * <li>{@link Consts#ONE} (1): Represents a bearer token (e.g., JWT, Opaque Token).</li>
-     * <li>{@link Consts#TWO} (2): Represents a static API Key.</li>
-     * </ul>
-     * This type is used by the {@link AuthorizeProvider} to dispatch to the correct validation logic.
+     * The identifier for the tenant in a multi-tenant architecture. This field is marked as {@code transient} to
+     * prevent it from being included in serialization, as it's typically used for runtime request routing and context,
+     * not for persistent state.
+     */
+    protected String id;
+
+    /**
+     * The type of principal: 1 for token, 2 for API key.
      */
     protected Integer type;
 
     /**
-     * Raw authentication credential value.
-     * <p>
-     * Contains the actual credential string based on {@code type}:
-     * <ul>
-     * <li><b>Type 1 (Token):</b> Complete bearer token including prefix
-     *
-     * <pre>
-     * Authorization: Bearer eyJhbGciOiJSUzI1NiJ9...
-     * </pre>
-     *
-     * </li>
-     * <li><b>Type 2 (API Key):</b> Static API secret
-     *
-     * <pre>
-     * X-API-Key: sk_live_51ABC123xyz...
-     * </pre>
-     *
-     * </li>
-     * </ul>
-     * <p>
-     * <b>Security Requirements:</b>
-     * <ul>
-     * <li><b>Storage:</b> Encrypt at rest using strong encryption (AES-256)</li>
-     * <li><b>Logging:</b> Mask or truncate in logs (show first/last 4 chars only)</li>
-     * <li><b>Transmission:</b> Always use TLS 1.2+ with strong ciphers</li>
-     * <li><b>Memory:</b> Clear from memory after use (overwrite with zeros)</li>
-     * </ul>
-     * <p>
-     * <b>Validation:</b> Must not be null or empty. Length and format validated by type-specific validators.
+     * The value of the principal, which can be either a token or an API key, depending on the {@code type}.
      */
     protected String value;
 
     /**
-     * Source channel identifier.
-     * <p>
-     * Identifies the originating client platform or integration channel:
-     * <ul>
-     * <li>Mobile applications (iOS, Android)</li>
-     * <li>Web applications (SPA, traditional web)</li>
-     * <li>Server-to-server integrations</li>
-     * <li>Third-party platforms (WeChat, DingTalk, Slack)</li>
-     * <li>IoT devices and embedded systems</li>
-     * </ul>
-     * <p>
-     * Enables channel-specific policies:
-     * <ul>
-     * <li>Differentiated rate limiting and quotas</li>
-     * <li>Platform-specific feature flags</li>
-     * <li>Client version compatibility checks</li>
-     * <li>Analytics and usage tracking</li>
-     * <li>A/B testing and canary deployments</li>
-     * </ul>
-     * <p>
-     * <b>Immutable:</b> Final field set during authentication, cannot be modified during request lifecycle.
-     * <p>
-     * <b>Typical Values:</b> 1=Web, 2=iOS, 3=Android, 4=Server, 5=ThirdParty, etc.
+     * An integer identifier for the source channel of the request. This can be used to differentiate between various
+     * clients or platforms, such as a mobile app, web application, or third-party integrations (e.g., WeChat,
+     * DingTalk). It is a required, immutable field.
      */
-    protected final Integer channel;
+    protected Integer channel;
 
     /**
-     * Request context information.
-     * <p>
-     * Contains runtime request context data populated during the authentication and request processing pipeline:
-     * <ul>
-     * <li><b>Request Metadata:</b> Request ID, timestamps, IP address, user agent</li>
-     * <li><b>Session Data:</b> Session attributes, temporary state</li>
-     * <li><b>Routing Information:</b> Target service, route parameters, query params</li>
-     * <li><b>Processing Context:</b> Middleware execution state, correlation IDs</li>
-     * <li><b>Business Context:</b> Tenant-specific configuration, feature flags</li>
-     * </ul>
-     * <p>
-     * <b>Population Timing:</b>
-     * <ul>
-     * <li>Pre-authentication: Initial request metadata capture</li>
-     * <li>Authentication: Token validation results and user context</li>
-     * <li>Authorization: Permission checks and policy decisions</li>
-     * <li>Routing: Service discovery and load balancing context</li>
-     * </ul>
-     * <p>
-     * <b>Usage Scenarios:</b>
-     * <ul>
-     * <li>Request tracing and distributed logging</li>
-     * <li>Cross-service context propagation</li>
-     * <li>Dynamic routing and service mesh integration</li>
-     * <li>Middleware chain execution context</li>
-     * <li>Request/response transformation</li>
-     * </ul>
-     * <p>
-     * <b>Immutable:</b> Final field established during request lifecycle initialization.
-     * <p>
-     * <b>Thread Safety:</b> Designed for single request processing; should not be shared across threads.
-     * <p>
-     * <b>Performance Note:</b> Context should be lightweight; avoid storing large payloads or complex objects.
-     *
-     * @see Context Request context structure and lifecycle
+     * Contains configuration and information about the resources or "assets" associated with this token. This could
+     * include permissions, rate limits, or other service-specific settings. It is a required, immutable field.
      */
-    protected final Context context;
+    protected Assets assets;
 
 }

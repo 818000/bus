@@ -48,7 +48,11 @@ public interface SensitiveProcessor {
      */
     default String process(final FoundWord foundWord) {
         final int length = foundWord.getFoundWord().length();
-        return Symbol.STAR.repeat(length);
+        final StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(Symbol.STAR);
+        }
+        return sb.toString();
     }
 
 }

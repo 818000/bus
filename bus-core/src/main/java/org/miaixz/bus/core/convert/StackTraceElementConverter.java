@@ -46,7 +46,9 @@ public class StackTraceElementConverter extends AbstractConverter {
 
     @Override
     protected StackTraceElement convertInternal(final Class<?> targetClass, final Object value) {
-        if (value instanceof Map<?, ?> map) {
+        if (value instanceof Map) {
+            final Map<?, ?> map = (Map<?, ?>) value;
+
             final String declaringClass = MapKit.getString(map, "className");
             final String methodName = MapKit.getString(map, "methodName");
             final String fileName = MapKit.getString(map, "fileName");

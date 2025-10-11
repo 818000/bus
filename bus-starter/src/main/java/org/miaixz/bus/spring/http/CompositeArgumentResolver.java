@@ -39,7 +39,6 @@ import org.miaixz.bus.core.xyz.MapKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.core.xyz.UrlKit;
 import org.miaixz.bus.extra.json.JsonKit;
-import org.miaixz.bus.validate.magic.annotation.Valid;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.WebDataBinder;
@@ -161,8 +160,7 @@ public class CompositeArgumentResolver implements HandlerMethodArgumentResolver 
             });
         }
 
-        if (mpvs.isEmpty() && !methodParameter.hasParameterAnnotation(ModelAttribute.class)
-                && methodParameter.hasParameterAnnotation(Valid.class)) {
+        if (mpvs.isEmpty() && !methodParameter.hasParameterAnnotation(ModelAttribute.class)) {
             throw new ValidateException(ErrorCode._100116);
         }
 

@@ -369,7 +369,7 @@ public class RuntimeKit {
                     break;
             }
         }
-        if (!cache.isEmpty()) {
+        if (cache.length() > 0) {
             cmds.add(cache.toString());
         }
         return cmds.toArray(new String[0]);

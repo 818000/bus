@@ -101,7 +101,7 @@ public class StringRepeater {
         }
 
         final int count = this.countOrLength;
-        if (count <= 0 || text.isEmpty()) {
+        if (count <= 0 || text.length() == 0) {
             return Normal.EMPTY;
         }
         if (count == 1) {

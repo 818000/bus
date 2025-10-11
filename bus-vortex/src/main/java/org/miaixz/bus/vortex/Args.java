@@ -33,16 +33,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
- * A central repository for constants defining the gateway's public API contract and for binding configuration
- * properties.
- * <p>
- * This class holds constants for request parameter names, HTTP header names, and URI path prefixes that form the
- * "language" of the gateway. It also contains nested static classes that serve as models for type-safe configuration
- * binding from application properties (e.g., YAML or .properties files) using {@code @ConfigurationProperties}.
+ * Server configuration class, used to store and manage server-related configuration information.
  *
- * @author Kimi Liu
- * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
- * @see org.miaixz.bus.vortex.strategy.RequestStrategy
+ * @author Justubborn
  * @since Java 17+
  */
 @Getter
@@ -52,150 +45,113 @@ import lombok.experimental.SuperBuilder;
 public class Args {
 
     /**
-     * The mandatory parameter name for the logical API method to be invoked (e.g., "user.getProfile").
-     * 
-     * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
+     * The parameter name for the request method, used to identify the request handling method.
      */
     public static final String METHOD = "method";
     /**
-     * The parameter name for specifying the desired response format (e.g., "json", "xml").
-     * 
-     * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
+     * The parameter name for formatted data, used to specify the response data format.
      */
     public static final String FORMAT = "format";
     /**
-     * The parameter name for specifying the version of the requested API method (e.g., "v1", "1.0.0").
-     * 
-     * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
+     * The parameter name for version information, used to specify the API version.
      */
     public static final String VERSION = "v";
     /**
-     * The parameter name for the request signature, used for validation and to indicate encryption status.
-     * 
-     * @see org.miaixz.bus.vortex.strategy.CipherStrategy
+     * The parameter name for signature information, used to verify the request signature.
      */
     public static final String SIGN = "sign";
     /**
-     * The HTTP header name for the bearer access token (e.g., JWT).
-     * 
-     * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
+     * The authorization header, storing the access token.
      */
     public static final String X_ACCESS_TOKEN = "X-Access-Token";
     /**
-     * The HTTP header name for identifying the client channel (e.g., "web", "app", "mobile").
-     * 
-     * @see org.miaixz.bus.vortex.strategy.AuthorizeStrategy
+     * The access source header, identifying the channel source of the request.
      */
     public static final String X_REMOTE_CHANNEL = "x_remote_channel";
 
     /**
-     * The base URI path for standard RESTful API requests.
-     * 
-     * @see org.miaixz.bus.vortex.strategy.RequestStrategy
-     */
-    public static final String REST_PATH_PREFIX = "/router/rest";
-
-    /**
-     * The base URI path for requests to the MCP (Miaixz Communication Protocol) hub.
-     * 
-     * @see org.miaixz.bus.vortex.strategy.RequestStrategy
-     */
-    public static final String MCP_PATH_PREFIX = "/router/mcp";
-
-    /**
-     * The base URI path for requests to be forwarded to a Message Queue.
-     * 
-     * @see org.miaixz.bus.vortex.strategy.RequestStrategy
-     */
-    public static final String MQ_PATH_PREFIX = "/router/mq";
-
-    /**
-     * A configuration properties model for encryption settings, typically bound from application properties under a
-     * prefix like {@code vortex.encrypt}.
+     * Encryption configuration class, defining encryption-related parameters.
      */
     @Getter
     @Setter
     public static class Encrypt {
 
         /**
-         * Whether response encryption is enabled.
+         * Indicates whether encryption is enabled.
          */
         private boolean enabled;
 
         /**
-         * The secret key used for encryption.
+         * The encryption key.
          */
         private String key;
 
         /**
-         * The type of encryption algorithm (e.g., "AES").
+         * The type of encryption algorithm.
          */
         private String type;
 
         /**
-         * The initialization vector or offset for the encryption algorithm, if applicable.
+         * The encryption offset (if applicable).
          */
         private String offset;
     }
 
     /**
-     * A configuration properties model for decryption settings, typically bound from application properties under a
-     * prefix like {@code vortex.decrypt}.
+     * Decryption configuration class, defining decryption-related parameters.
      */
     @Getter
     @Setter
     public static class Decrypt {
 
         /**
-         * Whether request decryption is enabled.
+         * Indicates whether decryption is enabled.
          */
         private boolean enabled;
 
         /**
-         * The secret key used for decryption.
+         * The decryption key.
          */
         private String key;
 
         /**
-         * The type of decryption algorithm (e.g., "AES").
+         * The type of decryption algorithm.
          */
         private String type;
 
         /**
-         * The initialization vector or offset for the decryption algorithm, if applicable.
+         * The decryption offset (if applicable).
          */
         private String offset;
     }
 
     /**
-     * A configuration properties model for rate limiting settings, typically bound from application properties under a
-     * prefix like {@code vortex.limit}.
+     * Rate limiting configuration class, defining traffic limiting-related parameters.
      */
     @Getter
     @Setter
     public static class Limit {
 
         /**
-         * Whether rate limiting is globally enabled.
+         * Indicates whether rate limiting is enabled.
          */
         private boolean enabled;
     }
 
     /**
-     * A configuration properties model for general security settings, typically bound from application properties under
-     * a prefix like {@code vortex.security}.
+     * Security configuration class, defining security-related parameters.
      */
     @Getter
     @Setter
     public static class Security {
 
         /**
-         * Whether general security features are enabled.
+         * Indicates whether security mechanisms are enabled.
          */
         private boolean enabled;
 
         /**
-         * Whether to enable mock mode, which might bypass certain security checks for testing or debugging purposes.
+         * Indicates whether mock mode is enabled (for testing or debugging).
          */
         private boolean mock;
     }

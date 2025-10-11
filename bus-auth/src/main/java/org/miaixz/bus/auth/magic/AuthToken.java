@@ -47,12 +47,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Authorization implements Serializable {
+public class AuthToken implements Serializable {
 
     /**
      * The access token issued by the authorization server.
      */
-    private String token;
+    private String accessToken;
     /**
      * The lifetime in seconds of the access token.
      */
@@ -60,11 +60,11 @@ public class Authorization implements Serializable {
     /**
      * The refresh token, which can be used to obtain new access tokens.
      */
-    private String refresh;
+    private String refreshToken;
     /**
      * The lifetime in seconds of the refresh token.
      */
-    private int refreshExpireIn;
+    private int refreshTokenExpireIn;
     /**
      * User ID, typically from the third-party platform.
      */
@@ -73,7 +73,10 @@ public class Authorization implements Serializable {
      * Open ID, typically from the third-party platform.
      */
     private String openId;
-
+    /**
+     * Access code, sometimes used interchangeably with accessToken or as a separate authorization code.
+     */
+    private String accessCode;
     /**
      * Union ID, a unique identifier across multiple applications of the same platform (e.g., WeChat).
      */
@@ -86,7 +89,7 @@ public class Authorization implements Serializable {
     /**
      * Google-specific additional property: type of the token issued.
      */
-    private String token_type;
+    private String tokenType;
     /**
      * Google-specific additional property: ID Token, a JSON Web Token (JWT) that contains claims about the
      * authentication of an end-user.

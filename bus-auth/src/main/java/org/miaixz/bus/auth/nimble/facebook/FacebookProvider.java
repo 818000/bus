@@ -27,9 +27,8 @@
 */
 package org.miaixz.bus.auth.nimble.facebook;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.lang.Gender;
 import org.miaixz.bus.core.lang.Symbol;
@@ -77,30 +76,28 @@ public class FacebookProvider extends AbstractProvider {
      * Retrieves the access token from Facebook's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
-        String response = doGetToken(callback.getCode());
+    public AuthToken getAccessToken(Callback callback) {
+        String response = doPostAuthorizationCode(callback.getCode());
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
-            this.checkResponse(object);
+            this.checkResponse(accessTokenObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            Object expiresInObj = object.get("expires_in");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String tokenType = (String) object.get("token_type");
+            String tokenType = (String) accessTokenObject.get("token_type");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(Authorization.builder().token(token).expireIn(expiresIn).token_type(tokenType).build())
-                    .build();
+            return AuthToken.builder().accessToken(accessToken).expireIn(expiresIn).tokenType(tokenType).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -109,13 +106,13 @@ public class FacebookProvider extends AbstractProvider {
     /**
      * Retrieves user information from Facebook's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String userInfo = doGetUserInfo(authorization);
+    public Material getUserInfo(AuthToken authToken) {
+        String userInfo = doGetUserInfo(authToken);
         try {
             Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
             if (object == null) {
@@ -133,11 +130,9 @@ public class FacebookProvider extends AbstractProvider {
             String email = (String) object.get("email");
             String gender = (String) object.get("gender");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                    Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(name).nickname(name)
-                            .blog(link).avatar(getUserPicture(object)).location(locale).email(email)
-                            .gender(Gender.of(gender)).token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(name).nickname(name)
+                    .blog(link).avatar(getUserPicture(object)).location(locale).email(email).gender(Gender.of(gender))
+                    .token(authToken).source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -151,23 +146,23 @@ public class FacebookProvider extends AbstractProvider {
      * @throws AuthorizedException if the redirect URI is invalid
      */
     @Override
-    protected void validate(Context context) {
-        super.validate(context);
+    protected void check(Context context) {
+        super.check(context);
         // Facebook's redirect uri must use the HTTPS protocol
         if (Registry.FACEBOOK == this.complex && !Protocol.isHttps(this.context.getRedirectUri())) {
-            throw new AuthorizedException(ErrorCode._110005.getKey(), this.complex);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_REDIRECT_URI.getKey(), this.complex);
         }
     }
 
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authorization.getToken())
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authToken.getAccessToken())
                 .queryParam("fields", "id,name,birthday,gender,hometown,email,devices,picture.width(400),link").build();
     }
 
@@ -179,13 +174,9 @@ public class FacebookProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl((String) super.build(state).getData())
-                        .queryParam(
-                                "scope",
-                                this.getScopes(Symbol.COMMA, false, this.getScopes(FacebookScope.values())))
-                        .build())
+    public String authorize(String state) {
+        return Builder.fromUrl(super.authorize(state))
+                .queryParam("scope", this.getScopes(Symbol.COMMA, false, this.getDefaultScopes(FacebookScope.values())))
                 .build();
     }
 

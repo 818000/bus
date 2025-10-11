@@ -40,12 +40,11 @@ import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
 import org.miaixz.bus.auth.cache.AuthCache;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -92,11 +91,9 @@ public class AppleProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl((String) super.build(state).getData()).queryParam("response_mode", "form_post")
-                        .queryParam("scope", this.getScopes(Symbol.SPACE, false, getScopes(AppleScope.values())))
-                        .build())
+    public String authorize(String state) {
+        return Builder.fromUrl(super.authorize(state)).queryParam("response_mode", "form_post")
+                .queryParam("scope", this.getScopes(Symbol.SPACE, false, getDefaultScopes(AppleScope.values())))
                 .build();
     }
 
@@ -104,35 +101,35 @@ public class AppleProvider extends AbstractProvider {
      * Retrieves the access token from Apple's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or an error is returned by Apple
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         if (!StringKit.isEmpty(callback.getError())) {
             throw new AuthorizedException(callback.getError());
         }
-        this.context.setClientSecret(this.getToken());
+        this.context.setAppSecret(this.getToken());
         // If it fails, an AuthorizedException will be thrown
-        String response = doPostToken(callback.getCode());
+        String response = doPostAuthorizationCode(callback.getCode());
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            Object expiresInObj = object.get("expires_in");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String refresh = (String) object.get("refresh_token");
-            String tokenType = (String) object.get("token_type");
-            String idToken = (String) object.get("id_token");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
+            String tokenType = (String) accessTokenObject.get("token_type");
+            String idToken = (String) accessTokenObject.get("id_token");
 
-            Authorization.AuthorizationBuilder builder = Authorization.builder().token(token).expireIn(expiresIn)
-                    .refresh(refresh).token_type(tokenType).idToken(idToken);
+            AuthToken.AuthTokenBuilder builder = AuthToken.builder().accessToken(accessToken).expireIn(expiresIn)
+                    .refreshToken(refreshToken).tokenType(tokenType).idToken(idToken);
 
             if (!StringKit.isEmpty(callback.getUser())) {
                 try {
@@ -151,9 +148,7 @@ public class AppleProvider extends AbstractProvider {
                     // Ignore parsing errors for user information, continue to return token
                 }
             }
-
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(builder.build()).build();
-
+            return builder.build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -162,14 +157,14 @@ public class AppleProvider extends AbstractProvider {
     /**
      * Retrieves user information from Apple's ID token payload.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization, containing the ID token
+     * @param authToken the {@link AuthToken} obtained after successful authorization, containing the ID token
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the ID token payload fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Base64.Decoder urlDecoder = Base64.getUrlDecoder();
-        String[] idToken = authorization.getIdToken().split("\\.");
+        String[] idToken = authToken.getIdToken().split("\\.");
         String payload = new String(urlDecoder.decode(idToken[1]));
         try {
             Map<String, Object> object = JsonKit.toPojo(payload, Map.class);
@@ -183,12 +178,8 @@ public class AppleProvider extends AbstractProvider {
             }
             String email = (String) object.get("email");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(sub).email(email)
-                                    .username(authorization.getUsername()).token(authorization)
-                                    .source(this.complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(sub).email(email)
+                    .username(authToken.getUsername()).token(authToken).source(this.complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse id_token payload: " + e.getMessage());
         }
@@ -202,19 +193,19 @@ public class AppleProvider extends AbstractProvider {
      * @throws AuthorizedException if any required configuration field is empty
      */
     @Override
-    protected void validate(Context context) {
-        super.validate(context);
-        if (StringKit.isEmpty(context.getClientId())) {
-            throw new AuthorizedException(ErrorCode._110012.getKey(), this.complex);
+    protected void check(Context context) {
+        super.check(context);
+        if (StringKit.isEmpty(context.getAppKey())) {
+            throw new AuthorizedException(ErrorCode.ILLEGAL_CLIENT_ID.getKey(), this.complex);
         }
-        if (StringKit.isEmpty(context.getClientSecret())) {
-            throw new AuthorizedException(ErrorCode._110013.getKey(), this.complex);
+        if (StringKit.isEmpty(context.getAppSecret())) {
+            throw new AuthorizedException(ErrorCode.ILLEGAL_CLIENT_SECRET.getKey(), this.complex);
         }
         if (StringKit.isEmpty(context.getKid())) {
-            throw new AuthorizedException(ErrorCode._110010.getKey(), this.complex);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_KID.getKey(), this.complex);
         }
         if (StringKit.isEmpty(context.getTeamId())) {
-            throw new AuthorizedException(ErrorCode._110011.getKey(), this.complex);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_TEAM_ID.getKey(), this.complex);
         }
     }
 
@@ -246,7 +237,7 @@ public class AppleProvider extends AbstractProvider {
         if (this.privateKey == null) {
             synchronized (this) {
                 if (this.privateKey == null) {
-                    try (PEMParser pemParser = new PEMParser(new StringReader(this.context.getClientSecret()))) {
+                    try (PEMParser pemParser = new PEMParser(new StringReader(this.context.getAppSecret()))) {
                         JcaPEMKeyConverter pemKeyConverter = new JcaPEMKeyConverter();
                         PrivateKeyInfo keyInfo = (PrivateKeyInfo) pemParser.readObject();
                         this.privateKey = pemKeyConverter.getPrivateKey(keyInfo);

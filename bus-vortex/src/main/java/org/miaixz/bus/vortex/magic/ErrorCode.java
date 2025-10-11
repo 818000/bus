@@ -31,10 +31,7 @@ import org.miaixz.bus.core.basic.normal.ErrorRegistry;
 import org.miaixz.bus.core.basic.normal.Errors;
 
 /**
- * Defines the set of specific error codes for the Vortex gateway module.
- * <p>
- * This class extends a base error code class and registers all gateway-specific errors. The error codes in this module
- * are typically in the 116xxx range.
+ * Gateway error codes: 116xxx
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -42,42 +39,23 @@ import org.miaixz.bus.core.basic.normal.Errors;
 public class ErrorCode extends org.miaixz.bus.core.basic.normal.ErrorCode {
 
     /**
-     * Error code: 116000 - Service not responding.
-     * <p>
-     * Indicates a general failure when communicating with a downstream service, often due to timeouts or network issues
-     * after multiple retries.
+     * Service not responding.
      */
     public static final Errors _116000 = ErrorRegistry.builder().key("116000").value("Service not responding").build();
 
     /**
-     * Error code: 116001 - Role exception.
-     * <p>
-     * Indicates that the authenticated user does not have the required role or permission to access a resource.
+     * Role exception.
      */
     public static final Errors _116001 = ErrorRegistry.builder().key("116001").value("Role exception").build();
 
     /**
-     * Error code: 116002 - Invalid ApiKey.
-     * <p>
-     * Indicates that the provided API Key is not valid, not found, or has been disabled.
+     * Invalid ApiKey.
      */
     public static final Errors _116002 = ErrorRegistry.builder().key("116002").value("Invalid ApiKey").build();
 
     /**
-     * Error code: 116003 - ApiKey expired.
-     * <p>
-     * Indicates that the provided API Key is valid but has passed its expiration date.
+     * ApiKey expired.
      */
     public static final Errors _116003 = ErrorRegistry.builder().key("116003").value("ApiKey expired").build();
-
-    /**
-     * Error code: 116004 - Request body is too large.
-     * <p>
-     * Indicates that the size of the incoming request body exceeds the configured limit for that request type.
-     * 
-     * @see org.miaixz.bus.vortex.strategy.RequestStrategy
-     */
-    public static final Errors _116004 = ErrorRegistry.builder().key("116004").value("Request body is too large")
-            .build();
 
 }

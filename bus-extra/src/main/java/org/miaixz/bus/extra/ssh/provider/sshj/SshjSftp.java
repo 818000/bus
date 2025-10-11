@@ -186,12 +186,12 @@ public class SshjSftp extends AbstractFtp {
 
     @Override
     public boolean cd(final String directory) {
-        final String newPath = getPath(directory);
+        String newPath = getPath(directory);
         try {
             sftp.ls(newPath);
             this.workingDir = newPath;
             return true;
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new InternalException(e);
         }
     }
@@ -202,7 +202,7 @@ public class SshjSftp extends AbstractFtp {
     }
 
     @Override
-    public boolean rename(final String oldPath, final String newPath) {
+    public boolean rename(String oldPath, String newPath) {
         try {
             sftp.rename(oldPath, newPath);
             return containsFile(newPath);
@@ -272,27 +272,25 @@ public class SshjSftp extends AbstractFtp {
     }
 
     @Override
-    public void download(final String destPath, final File outFile) {
+    public void download(final String path, final File outFile) {
         try {
-            sftp.get(getPath(destPath), new FileSystemFile(outFile));
+            sftp.get(getPath(path), new FileSystemFile(outFile));
         } catch (final IOException e) {
             throw new InternalException(e);
         }
     }
 
     @Override
-    public void recursiveDownloadFolder(final String destPath, final File targetDir) {
-        if (!targetDir.exists()) {
+    public void recursiveDownloadFolder(final String sourceDir, final File targetDir) {
+        if (!targetDir.exists() || !targetDir.isDirectory()) {
             if (!targetDir.mkdirs()) {
                 throw new InternalException("Failed to create directory " + targetDir.getAbsolutePath());
             }
-        } else if (!targetDir.isDirectory()) {
-            throw new InternalException("Target is not a directory!");
         }
 
-        final List<String> files = ls(getPath(destPath));
-        if (CollKit.isNotEmpty(files)) {
-            files.forEach(file -> download(destPath + Symbol.SLASH + file, FileKit.file(targetDir, file)));
+        List<String> files = ls(getPath(sourceDir));
+        if (files != null && !files.isEmpty()) {
+            files.forEach(file -> download(sourceDir + Symbol.SLASH + file, FileKit.file(targetDir, file)));
         }
     }
 
@@ -383,7 +381,7 @@ public class SshjSftp extends AbstractFtp {
         if (StringKit.isBlank(this.workingDir)) {
             try {
                 this.workingDir = sftp.canonicalize(Normal.EMPTY);
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 throw new InternalException(e);
             }
         }

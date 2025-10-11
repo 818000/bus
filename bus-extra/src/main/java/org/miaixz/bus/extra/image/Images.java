@@ -836,10 +836,13 @@ public class Images implements Flushable, Serializable {
      * @return The image type as an integer.
      */
     private int getTypeInt() {
-        return switch (this.targetImageType) {
-            case ImageKit.IMAGE_TYPE_PNG -> BufferedImage.TYPE_INT_ARGB;
-            default -> BufferedImage.TYPE_INT_RGB;
-        };
+        switch (this.targetImageType) {
+            case ImageKit.IMAGE_TYPE_PNG:
+                return BufferedImage.TYPE_INT_ARGB;
+
+            default:
+                return BufferedImage.TYPE_INT_RGB;
+        }
     }
 
     /**

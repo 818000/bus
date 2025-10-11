@@ -96,33 +96,33 @@ public class BaseEntity extends Tracer {
      * A random number, used to prevent duplicate submissions or as a unique identifier.
      */
     @Transient
-    protected String nonce;
+    protected transient String nonce;
 
     /**
      * Search parameters, used to store query conditions.
      */
     @Transient
-    protected String params;
+    protected transient String params;
 
     /**
      * Page number for pagination.
      */
-    @NotBlank
     @Transient
-    protected Integer pageNo;
+    @NotBlank
+    protected transient Integer pageNo;
 
     /**
      * Page size for pagination.
      */
-    @NotBlank
     @Transient
-    protected Integer pageSize;
+    @NotBlank
+    protected transient Integer pageSize;
 
     /**
      * Sorting order, can be "asc" (ascending) or "desc" (descending).
      */
     @Transient
-    protected String orderBy;
+    protected transient String orderBy;
 
     /**
      * Resets numeric string fields to null to prevent database insertion errors. If a numeric string property's value

@@ -119,7 +119,7 @@ public interface ConditionMapper<T, E> {
      */
     @Lang(Caching.class)
     @SelectProvider(type = ConditionProvider.class, method = "selectByCondition")
-    T selectOneByCondition(E condition);
+    Optional<T> selectOneByCondition(E condition);
 
     /**
      * Counts the number of records matching the given {@link Condition}.

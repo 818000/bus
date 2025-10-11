@@ -25,27 +25,40 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.cron.crontab;
+package org.miaixz.bus.vortex.provider;
 
-import org.miaixz.bus.cron.Configure;
-import org.miaixz.bus.cron.Repertoire;
+import org.miaixz.bus.core.lang.exception.LicenseException;
 
 /**
- * Task table factory class.
- *
- * @author Kimi Liu
- * @since Java 17+
+ * License validation provider interface.
+ * <p>
+ * Defines the core functionality for validating license effectiveness. Implementations of this interface should contain
+ * specific license validation logic, such as checking validity period, bound hardware information, domain names, etc.
+ * </p>
  */
-public class CrontabFactory {
+public interface LicenseProvider {
 
     /**
-     * Creates a task table.
+     * Executes the license validation operation.
+     * <p>
+     * <b>Implementation Contract:</b>
+     * <ul>
+     * <li>If the license is valid for the given principal, this method should return normally without any
+     * operation.</li>
+     * <li>If the license is invalid (e.g., expired, principal mismatch, signature error, etc.), this method should
+     * throw {@link LicenseException} or another runtime exception to interrupt the operation.</li>
+     * </ul>
      *
-     * @param config The cron task configuration.
-     * @return The task table.
+     * @param principal The entity identifier used for license validation, e.g., a domain name (e.g., "example.com:443")
+     *                  or a company name (e.g., "Acme Corporation").
+     * @return {@code true} if the license is valid, {@code false} otherwise. The default implementation returns
+     *         {@code true}.
+     * @throws LicenseException If license validation fails.
      */
-    public static Repertoire create(Configure config) {
-        return config.isUseTriggerQueue() ? new TriggerCrontab() : new MatchCrontab();
+    default boolean validate(String principal) {
+        // The default implementation is empty, allowing license checks to be disabled in some environments.
+        // Specific validation logic should be provided by the implementing class.
+        return true;
     }
 
 }

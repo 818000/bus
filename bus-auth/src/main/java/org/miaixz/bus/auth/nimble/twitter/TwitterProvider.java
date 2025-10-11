@@ -35,13 +35,11 @@ import java.util.TreeMap;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.codec.binary.Base64;
 import org.miaixz.bus.core.lang.Algorithm;
 import org.miaixz.bus.core.lang.Charset;
@@ -136,11 +134,9 @@ public class TwitterProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        Authorization token = this.getRequestToken();
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl(this.complex.authorize()).queryParam("oauth_token", token.getOauthToken()).build())
-                .build();
+    public String authorize(String state) {
+        AuthToken token = this.getRequestToken();
+        return Builder.fromUrl(this.complex.authorize()).queryParam("oauth_token", token.getOauthToken()).build();
     }
 
     /**
@@ -149,12 +145,12 @@ public class TwitterProvider extends AbstractProvider {
      *
      * @return the request token object
      */
-    public Authorization getRequestToken() {
+    public AuthToken getRequestToken() {
         String baseUrl = "https://api.twitter.com/oauth/request_token";
 
         Map<String, String> form = buildOauthParams();
         form.put("oauth_callback", context.getRedirectUri());
-        form.put("oauth_signature", sign(form, "POST", baseUrl, context.getClientSecret(), null));
+        form.put("oauth_signature", sign(form, "POST", baseUrl, context.getAppSecret(), null));
 
         Map<String, String> header = new HashMap<>();
         header.put("Authorization", buildHeader(form));
@@ -163,8 +159,7 @@ public class TwitterProvider extends AbstractProvider {
 
         Map<String, String> res = Builder.parseStringToMap(requestToken);
 
-        return Authorization.builder().oauthToken(res.get("oauth_token"))
-                .oauthTokenSecret(res.get("oauth_token_secret"))
+        return AuthToken.builder().oauthToken(res.get("oauth_token")).oauthTokenSecret(res.get("oauth_token_secret"))
                 .oauthCallbackConfirmed(Boolean.valueOf(res.get("oauth_callback_confirmed"))).build();
     }
 
@@ -176,13 +171,13 @@ public class TwitterProvider extends AbstractProvider {
      * @return the access token object
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> headerMap = buildOauthParams();
         headerMap.put("oauth_token", callback.getOauth_token());
         headerMap.put("oauth_verifier", callback.getOauth_verifier());
         headerMap.put(
                 "oauth_signature",
-                sign(headerMap, "POST", this.complex.token(), context.getClientSecret(), callback.getOauth_token()));
+                sign(headerMap, "POST", this.complex.accessToken(), context.getAppSecret(), callback.getOauth_token()));
 
         Map<String, String> header = new HashMap<>();
         header.put("Authorization", buildHeader(headerMap));
@@ -190,28 +185,26 @@ public class TwitterProvider extends AbstractProvider {
 
         Map<String, String> form = new HashMap<>(3);
         form.put("oauth_verifier", callback.getOauth_verifier());
-        String response = Httpx.post(this.complex.token(), form, header);
+        String response = Httpx.post(this.complex.accessToken(), form, header);
 
         Map<String, String> requestToken = Builder.parseStringToMap(response);
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Authorization.builder().oauthToken(requestToken.get("oauth_token"))
-                        .oauthTokenSecret(requestToken.get("oauth_token_secret")).userId(requestToken.get("user_id"))
-                        .screenName(requestToken.get("screen_name")).build())
-                .build();
+        return AuthToken.builder().oauthToken(requestToken.get("oauth_token"))
+                .oauthTokenSecret(requestToken.get("oauth_token_secret")).userId(requestToken.get("user_id"))
+                .screenName(requestToken.get("screen_name")).build();
     }
 
     /**
      * Retrieves user information.
      *
-     * @param authorization the access token
+     * @param authToken the access token
      * @return the user information object
      * @throws IllegalArgumentException if parsing user information fails
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Map<String, String> form = buildOauthParams();
-        form.put("oauth_token", authorization.getOauthToken());
+        form.put("oauth_token", authToken.getOauthToken());
 
         Map<String, String> params = new HashMap<>(form);
         params.put("include_entities", Boolean.toString(true));
@@ -219,16 +212,11 @@ public class TwitterProvider extends AbstractProvider {
 
         form.put(
                 "oauth_signature",
-                sign(
-                        params,
-                        "GET",
-                        this.complex.userinfo(),
-                        context.getClientSecret(),
-                        authorization.getOauthTokenSecret()));
+                sign(params, "GET", this.complex.userinfo(), context.getAppSecret(), authToken.getOauthTokenSecret()));
 
         Map<String, String> header = new HashMap<>();
         header.put("Authorization", buildHeader(form));
-        String response = Httpx.get(userInfoUrl(authorization), null, header);
+        String response = Httpx.get(userInfoUrl(authToken), null, header);
 
         // Parse JSON response using JsonKit
         Map<String, Object> userInfo = JsonKit.toPojo(response, Map.class);
@@ -242,14 +230,12 @@ public class TwitterProvider extends AbstractProvider {
         String rawJson = JsonKit.toJsonString(userInfo);
 
         // Build user information object
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Material.builder().rawJson(rawJson).uuid((String) userInfo.get("id_str"))
-                        .username((String) userInfo.get("screen_name")).nickname((String) userInfo.get("name"))
-                        .remark((String) userInfo.get("description"))
-                        .avatar((String) userInfo.get("profile_image_url_https")).blog((String) userInfo.get("url"))
-                        .location((String) userInfo.get("location")).avatar((String) userInfo.get("profile_image_url"))
-                        .email((String) userInfo.get("email")).source(complex.getName()).token(authorization).build())
-                .build();
+        return Material.builder().rawJson(rawJson).uuid((String) userInfo.get("id_str"))
+                .username((String) userInfo.get("screen_name")).nickname((String) userInfo.get("name"))
+                .remark((String) userInfo.get("description")).avatar((String) userInfo.get("profile_image_url_https"))
+                .blog((String) userInfo.get("url")).location((String) userInfo.get("location"))
+                .avatar((String) userInfo.get("profile_image_url")).email((String) userInfo.get("email"))
+                .source(complex.getName()).token(authToken).build();
     }
 
     /**
@@ -259,7 +245,7 @@ public class TwitterProvider extends AbstractProvider {
      */
     private Map<String, String> buildOauthParams() {
         Map<String, String> params = new HashMap<>(12);
-        params.put("oauth_consumer_key", context.getClientId());
+        params.put("oauth_consumer_key", context.getAppKey());
         params.put("oauth_nonce", generateNonce(32));
         params.put("oauth_signature_method", "HMAC-SHA1");
         params.put("oauth_timestamp", String.valueOf(System.currentTimeMillis() / 1000));
@@ -287,11 +273,11 @@ public class TwitterProvider extends AbstractProvider {
     /**
      * Constructs the user information URL.
      *
-     * @param authorization the access token
+     * @param authToken the access token
      * @return the user information URL
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
+    protected String userInfoUrl(AuthToken authToken) {
         return Builder.fromUrl(this.complex.userinfo()).queryParam("include_entities", true)
                 .queryParam("include_email", true).build();
     }

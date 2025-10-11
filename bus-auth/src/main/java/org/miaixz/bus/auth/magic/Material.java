@@ -98,7 +98,7 @@ public class Material implements Serializable {
     /**
      * User's authorization token information.
      */
-    private Authorization token;
+    private AuthToken token;
     /**
      * Raw user information returned by the third-party platform.
      */

@@ -740,7 +740,8 @@ public class MethodKit {
         if (null == declaringClass) {
             declaringClass = executable.getDeclaringClass();
         }
-        if (executable instanceof Method method) {
+        if (executable instanceof Method) {
+            final Method method = (Method) executable;
             return MethodType.methodType(method.getReturnType(), declaringClass, method.getParameterTypes());
         } else {
             final Constructor<?> constructor = (Constructor<?>) executable;

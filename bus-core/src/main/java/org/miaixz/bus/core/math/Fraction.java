@@ -716,13 +716,14 @@ public final class Fraction extends Number implements Comparable<Fraction> {
     }
 
     @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
+    public boolean equals(final Object obj) {
+        if (obj == this) {
             return true;
         }
-        if (!(object instanceof Fraction other)) {
+        if (!(obj instanceof Fraction)) {
             return false;
         }
+        final Fraction other = (Fraction) obj;
         return getNumerator() == other.getNumerator() && getDenominator() == other.getDenominator();
     }
 

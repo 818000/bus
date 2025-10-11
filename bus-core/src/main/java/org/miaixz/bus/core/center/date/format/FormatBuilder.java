@@ -496,9 +496,10 @@ public class FormatBuilder extends Format implements PositionDateParser, FormatP
      */
     @Override
     public boolean equals(final Object object) {
-        if (!(object instanceof FormatBuilder other)) {
+        if (!(object instanceof FormatBuilder)) {
             return false;
         }
+        final FormatBuilder other = (FormatBuilder) object;
         return printer.equals(other.printer);
     }
 

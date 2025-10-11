@@ -27,7 +27,7 @@
 */
 package org.miaixz.bus.auth.nimble.microsoft;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Charset;
@@ -83,46 +83,45 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
      * Retrieves the access token from Microsoft's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      */
     @Override
-    public Message token(Callback callback) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(getToken(tokenUrl(callback.getCode())))
-                .build();
+    public AuthToken getAccessToken(Callback callback) {
+        return getToken(accessTokenUrl(callback.getCode()));
     }
 
     /**
      * Retrieves the token, applicable for both obtaining access tokens and refreshing tokens.
      *
-     * @param tokenUrl the actual URL to request the token from
-     * @return the {@link Authorization} object
+     * @param accessTokenUrl the actual URL to request the token from
+     * @return the {@link AuthToken} object
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
-    private Authorization getToken(String tokenUrl) {
+    private AuthToken getToken(String accessTokenUrl) {
         Map<String, String> form = new HashMap<>();
-        UrlDecoder.decodeMap(tokenUrl, Charset.DEFAULT_UTF_8).forEach(form::put);
+        UrlDecoder.decodeMap(accessTokenUrl, Charset.DEFAULT_UTF_8).forEach(form::put);
 
-        String response = Httpx.post(tokenUrl, form);
+        String response = Httpx.post(accessTokenUrl, form);
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
 
-            this.checkResponse(object);
+            this.checkResponse(accessTokenObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            Object expiresInObj = object.get("expires_in");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String scope = (String) object.get("scope");
-            String tokenType = (String) object.get("token_type");
-            String refresh = (String) object.get("refresh_token");
+            String scope = (String) accessTokenObject.get("scope");
+            String tokenType = (String) accessTokenObject.get("token_type");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
 
-            return Authorization.builder().token(token).expireIn(expiresIn).scope(scope).token_type(tokenType)
-                    .refresh(refresh).build();
+            return AuthToken.builder().accessToken(accessToken).expireIn(expiresIn).scope(scope).tokenType(tokenType)
+                    .refreshToken(refreshToken).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -144,16 +143,16 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
     /**
      * Retrieves user information from Microsoft's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", authorization.getToken_type() + Symbol.SPACE + authorization.getToken());
+        header.put("Authorization", authToken.getTokenType() + Symbol.SPACE + authToken.getAccessToken());
 
-        String userInfo = Httpx.get(userInfoUrl(authorization), null, header);
+        String userInfo = Httpx.get(userInfoUrl(authToken), null, header);
         try {
             Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
             if (object == null) {
@@ -171,11 +170,9 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
             String officeLocation = (String) object.get("officeLocation");
             String mail = (String) object.get("mail");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                    Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(userPrincipalName)
-                            .nickname(displayName).location(officeLocation).email(mail).gender(Gender.UNKNOWN)
-                            .token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(userPrincipalName)
+                    .nickname(displayName).location(officeLocation).email(mail).gender(Gender.UNKNOWN).token(authToken)
+                    .source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -184,13 +181,13 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      */
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(getToken(refreshUrl(authorization.getRefresh()))).build();
+                .data(getToken(refreshTokenUrl(authToken.getRefreshToken()))).build();
     }
 
     /**
@@ -201,18 +198,15 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
+    public String authorize(String state) {
         // Compatible with Microsoft Entra ID login (formerly Microsoft AAD)
         String tenantId = StringKit.isEmpty(context.getUnionId()) ? "common" : context.getUnionId();
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl(String.format(complex.authorize(), tenantId)).queryParam("response_type", "code")
-                        .queryParam("client_id", context.getClientId())
-                        .queryParam("redirect_uri", context.getRedirectUri()).queryParam("state", getRealState(state))
-                        .queryParam("response_mode", "query")
-                        .queryParam(
-                                "scope",
-                                this.getScopes(Symbol.SPACE, false, this.getScopes(MicrosoftScope.values())))
-                        .build())
+        return Builder.fromUrl(String.format(complex.authorize(), tenantId)).queryParam("response_type", "code")
+                .queryParam("client_id", context.getAppKey()).queryParam("redirect_uri", context.getRedirectUri())
+                .queryParam("state", getRealState(state)).queryParam("response_mode", "query")
+                .queryParam(
+                        "scope",
+                        this.getScopes(Symbol.SPACE, false, this.getDefaultScopes(MicrosoftScope.values())))
                 .build();
     }
 
@@ -223,39 +217,43 @@ public abstract class AbstractMicrosoftProvider extends AbstractProvider {
      * @return the URL to obtain the access token
      */
     @Override
-    protected String tokenUrl(String code) {
+    protected String accessTokenUrl(String code) {
         String tenantId = StringKit.isEmpty(context.getUnionId()) ? "common" : context.getUnionId();
-        return Builder.fromUrl(String.format(this.complex.token(), tenantId)).queryParam("code", code)
-                .queryParam("client_id", context.getClientId()).queryParam("client_secret", context.getClientSecret())
+        return Builder.fromUrl(String.format(this.complex.accessToken(), tenantId)).queryParam("code", code)
+                .queryParam("client_id", context.getAppKey()).queryParam("client_secret", context.getAppSecret())
                 .queryParam("grant_type", "authorization_code")
-                .queryParam("scope", this.getScopes(Symbol.SPACE, false, this.getScopes(MicrosoftScope.values())))
+                .queryParam(
+                        "scope",
+                        this.getScopes(Symbol.SPACE, false, this.getDefaultScopes(MicrosoftScope.values())))
                 .queryParam("redirect_uri", context.getRedirectUri()).build();
     }
 
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
+    protected String userInfoUrl(AuthToken authToken) {
         return Builder.fromUrl(this.complex.userinfo()).build();
     }
 
     /**
      * Returns the URL to refresh the access token.
      *
-     * @param refresh the user's refresh token
+     * @param refreshToken the user's refresh token
      * @return the URL to refresh the access token
      */
     @Override
-    protected String refreshUrl(String refresh) {
+    protected String refreshTokenUrl(String refreshToken) {
         String tenantId = StringKit.isEmpty(context.getUnionId()) ? "common" : context.getUnionId();
         return Builder.fromUrl(String.format(this.complex.refresh(), tenantId))
-                .queryParam("client_id", context.getClientId()).queryParam("client_secret", context.getClientSecret())
-                .queryParam("refresh_token", refresh).queryParam("grant_type", "refresh_token")
-                .queryParam("scope", this.getScopes(Symbol.SPACE, false, this.getScopes(MicrosoftScope.values())))
+                .queryParam("client_id", context.getAppKey()).queryParam("client_secret", context.getAppSecret())
+                .queryParam("refresh_token", refreshToken).queryParam("grant_type", "refresh_token")
+                .queryParam(
+                        "scope",
+                        this.getScopes(Symbol.SPACE, false, this.getDefaultScopes(MicrosoftScope.values())))
                 .queryParam("redirect_uri", context.getRedirectUri()).build();
     }
 

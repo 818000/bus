@@ -4327,7 +4327,7 @@ public class CharsBacker extends CharsValidator {
             final Function<String, R> mapping) {
         if (null == text) {
             return ListKit.zero();
-        } else if (text.isEmpty() && ignoreEmpty) {
+        } else if (0 == text.length() && ignoreEmpty) {
             return ListKit.zero();
         }
         Assert.notEmpty(separator, "Separator must be not empty!");

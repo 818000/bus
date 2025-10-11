@@ -27,7 +27,7 @@
 */
 package org.miaixz.bus.auth.nimble.line;
 
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Errors;
@@ -80,40 +80,37 @@ public class LineProvider extends AbstractProvider {
      * Retrieves the access token from LINE's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
         params.put("code", callback.getCode());
         params.put("redirect_uri", context.getRedirectUri());
-        params.put("client_id", context.getClientId());
-        params.put("client_secret", context.getClientSecret());
-        String response = Httpx.post(this.complex.token(), params);
+        params.put("client_id", context.getAppKey());
+        params.put("client_secret", context.getAppSecret());
+        String response = Httpx.post(this.complex.accessToken(), params);
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String refresh = (String) object.get("refresh_token");
-            Object expiresInObj = object.get("expires_in");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String idToken = (String) object.get("id_token");
-            String scope = (String) object.get("scope");
-            String tokenType = (String) object.get("token_type");
+            String idToken = (String) accessTokenObject.get("id_token");
+            String scope = (String) accessTokenObject.get("scope");
+            String tokenType = (String) accessTokenObject.get("token_type");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Authorization.builder().token(token).refresh(refresh).expireIn(expiresIn).idToken(idToken)
-                                    .scope(scope).token_type(tokenType).build())
-                    .build();
+            return AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).expireIn(expiresIn)
+                    .idToken(idToken).scope(scope).tokenType(tokenType).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -122,15 +119,15 @@ public class LineProvider extends AbstractProvider {
     /**
      * Retrieves user information from LINE's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Map<String, String> header = new HashMap<>();
         header.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-        header.put("Authorization", "Bearer ".concat(authorization.getToken()));
+        header.put("Authorization", "Bearer ".concat(authToken.getAccessToken()));
 
         String userInfo = Httpx.get(this.complex.userinfo(), null, header);
         try {
@@ -147,12 +144,9 @@ public class LineProvider extends AbstractProvider {
             String pictureUrl = (String) object.get("pictureUrl");
             String statusMessage = (String) object.get("statusMessage");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(userId).username(displayName)
-                                    .nickname(displayName).avatar(pictureUrl).remark(statusMessage)
-                                    .gender(Gender.UNKNOWN).token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(userId).username(displayName)
+                    .nickname(displayName).avatar(pictureUrl).remark(statusMessage).gender(Gender.UNKNOWN)
+                    .token(authToken).source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -161,16 +155,16 @@ public class LineProvider extends AbstractProvider {
     /**
      * Revokes the authorization for the given access token.
      *
-     * @param authorization the token information to revoke
+     * @param authToken the token information to revoke
      * @return a {@link Message} indicating the result of the revocation
      * @throws AuthorizedException if parsing the response fails or an error occurs during revocation
      */
     @Override
-    public Message revoke(Authorization authorization) {
+    public Message revoke(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(5);
-        form.put("access_token", authorization.getToken());
-        form.put("client_id", context.getClientId());
-        form.put("client_secret", context.getClientSecret());
+        form.put("access_token", authToken.getAccessToken());
+        form.put("client_id", context.getAppKey());
+        form.put("client_secret", context.getAppSecret());
         String userInfo = Httpx.post(this.complex.revoke(), form);
         try {
             Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
@@ -190,39 +184,39 @@ public class LineProvider extends AbstractProvider {
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      * @throws AuthorizedException if parsing the response fails or an error occurs during token refresh
      */
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>();
         form.put("grant_type", "refresh_token");
-        form.put("refresh_token", authorization.getRefresh());
-        form.put("client_id", context.getClientId());
-        form.put("client_secret", context.getClientSecret());
-        String response = Httpx.post(this.complex.token(), form);
+        form.put("refresh_token", authToken.getRefreshToken());
+        form.put("client_id", context.getAppKey());
+        form.put("client_secret", context.getAppSecret());
+        String response = Httpx.post(this.complex.accessToken(), form);
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse refresh token response: empty response");
             }
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in refresh response");
             }
-            String refresh = (String) object.get("refresh_token");
-            Object expiresInObj = object.get("expires_in");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String idToken = (String) object.get("id_token");
-            String scope = (String) object.get("scope");
-            String tokenType = (String) object.get("token_type");
+            String idToken = (String) accessTokenObject.get("id_token");
+            String scope = (String) accessTokenObject.get("scope");
+            String tokenType = (String) accessTokenObject.get("token_type");
 
             return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
                     .data(
-                            Authorization.builder().token(token).refresh(refresh).expireIn(expiresIn).idToken(idToken)
-                                    .scope(scope).token_type(tokenType).build())
+                            AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).expireIn(expiresIn)
+                                    .idToken(idToken).scope(scope).tokenType(tokenType).build())
                     .build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse refresh token response: " + e.getMessage());
@@ -232,12 +226,12 @@ public class LineProvider extends AbstractProvider {
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("user", authorization.getUid()).build();
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("user", authToken.getUid()).build();
     }
 
     /**
@@ -248,11 +242,9 @@ public class LineProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl((String) super.build(state).getData()).queryParam("nonce", state)
-                        .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getScopes(LineScope.values())))
-                        .build())
+    public String authorize(String state) {
+        return Builder.fromUrl(super.authorize(state)).queryParam("nonce", state)
+                .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getDefaultScopes(LineScope.values())))
                 .build();
     }
 

@@ -30,10 +30,8 @@ package org.miaixz.bus.auth.nimble.proginn;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.miaixz.bus.auth.magic.Authorization;
-import org.miaixz.bus.auth.magic.ErrorCode;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Gender;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
@@ -77,50 +75,42 @@ public class ProginnProvider extends AbstractProvider {
      * Retrieves the access token from Proginn's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> params = new HashMap<>();
         params.put("code", callback.getCode());
-        params.put("client_id", context.getClientId());
-        params.put("client_secret", context.getClientSecret());
+        params.put("client_id", context.getAppKey());
+        params.put("client_secret", context.getAppSecret());
         params.put("grant_type", "authorization_code");
         params.put("redirect_uri", context.getRedirectUri());
-        String response = Httpx.post(this.complex.token(), params);
-        Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-        this.checkResponse(object);
-
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Authorization.builder().token((String) object.get("access_token"))
-                                .refresh((String) object.get("refresh_token")).uid((String) object.get("uid"))
-                                .token_type((String) object.get("token_type"))
-                                .expireIn(((Number) object.get("expires_in")).intValue()).build())
-                .build();
+        String response = Httpx.post(this.complex.accessToken(), params);
+        Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+        this.checkResponse(accessTokenObject);
+        return AuthToken.builder().accessToken((String) accessTokenObject.get("access_token"))
+                .refreshToken((String) accessTokenObject.get("refresh_token"))
+                .uid((String) accessTokenObject.get("uid")).tokenType((String) accessTokenObject.get("token_type"))
+                .expireIn(((Number) accessTokenObject.get("expires_in")).intValue()).build();
     }
 
     /**
      * Retrieves user information from Proginn's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String userInfo = doGetUserInfo(authorization);
+    public Material getUserInfo(AuthToken authToken) {
+        String userInfo = doGetUserInfo(authToken);
         Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
         this.checkResponse(object);
-
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Material.builder().rawJson(JsonKit.toJsonString(object)).uuid((String) object.get("uid"))
-                                .username((String) object.get("nickname")).nickname((String) object.get("nickname"))
-                                .avatar((String) object.get("avatar")).email((String) object.get("email"))
-                                .gender(Gender.UNKNOWN).token(authorization).source(complex.toString()).build())
-                .build();
+        return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid((String) object.get("uid"))
+                .username((String) object.get("nickname")).nickname((String) object.get("nickname"))
+                .avatar((String) object.get("avatar")).email((String) object.get("email")).gender(Gender.UNKNOWN)
+                .token(authToken).source(complex.toString()).build();
     }
 
     /**
@@ -143,11 +133,9 @@ public class ProginnProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl((String) super.build(state).getData())
-                        .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getScopes(ProginnScope.values())))
-                        .build())
+    public String authorize(String state) {
+        return Builder.fromUrl(super.authorize(state))
+                .queryParam("scope", this.getScopes(Symbol.SPACE, true, this.getDefaultScopes(ProginnScope.values())))
                 .build();
     }
 

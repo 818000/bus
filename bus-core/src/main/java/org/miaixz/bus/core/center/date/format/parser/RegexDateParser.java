@@ -427,49 +427,34 @@ public class RegexDateParser implements DateParser, Serializable {
      * @throws DateException if parsing a group fails.
      */
     private void parse(final Matcher matcher, final DateBuilder dateBuilder) throws DateException {
-        // Pure number format
         final String number = PatternKit.group(matcher, "number");
         if (StringKit.isNotEmpty(number)) {
             parseNumberDate(number, dateBuilder);
             return;
         }
-
-        // Millisecond timestamp
         final String millisecond = PatternKit.group(matcher, "millisecond");
         if (StringKit.isNotEmpty(millisecond)) {
             dateBuilder.setMillisecond(parseLong(millisecond));
             return;
         }
 
-        // year
-        Optional.ofNullable(PatternKit.group(matcher, "year"))
-                .ifPresent((year) -> dateBuilder.setYear(parseYear(year)));
-        // dayOrMonth, dd/mm or mm/dd
+        Optional.ofNullable(PatternKit.group(matcher, "year")).ifPresent(year -> dateBuilder.setYear(parseYear(year)));
         Optional.ofNullable(PatternKit.group(matcher, "dayOrMonth"))
-                .ifPresent((dayOrMonth) -> parseDayOrMonth(dayOrMonth, dateBuilder, preferMonthFirst));
-        // month
+                .ifPresent(dayOrMonth -> parseDayOrMonth(dayOrMonth, dateBuilder, preferMonthFirst));
         Optional.ofNullable(PatternKit.group(matcher, "month"))
-                .ifPresent((month) -> dateBuilder.setMonth(parseMonth(month)));
-        // week
-        Optional.ofNullable(PatternKit.group(matcher, "week"))
-                .ifPresent((week) -> dateBuilder.setWeek(parseWeek(week)));
-        // day
+                .ifPresent(month -> dateBuilder.setMonth(parseMonth(month)));
+        Optional.ofNullable(PatternKit.group(matcher, "week")).ifPresent(week -> dateBuilder.setWeek(parseWeek(week)));
         Optional.ofNullable(PatternKit.group(matcher, "day"))
-                .ifPresent((day) -> dateBuilder.setDay(parseNumberLimit(day, 1, 31)));
-        // hour
+                .ifPresent(day -> dateBuilder.setDay(parseNumberLimit(day, 1, 31)));
         Optional.ofNullable(PatternKit.group(matcher, "hour"))
-                .ifPresent((hour) -> dateBuilder.setHour(parseNumberLimit(hour, 0, 23)));
-        // minute
+                .ifPresent(hour -> dateBuilder.setHour(parseNumberLimit(hour, 0, 23)));
         Optional.ofNullable(PatternKit.group(matcher, "minute"))
-                .ifPresent((minute) -> dateBuilder.setMinute(parseNumberLimit(minute, 0, 59)));
-        // second
+                .ifPresent(minute -> dateBuilder.setMinute(parseNumberLimit(minute, 0, 59)));
         Optional.ofNullable(PatternKit.group(matcher, "second"))
-                .ifPresent((second) -> dateBuilder.setSecond(parseNumberLimit(second, 0, 59)));
-        // ns
-        Optional.ofNullable(PatternKit.group(matcher, "ns"))
-                .ifPresent((ns) -> dateBuilder.setNanosecond(parseNano(ns)));
-        // am or pm
-        Optional.ofNullable(PatternKit.group(matcher, "m")).ifPresent((m) -> {
+                .ifPresent(second -> dateBuilder.setSecond(parseNumberLimit(second, 0, 59)));
+        Optional.ofNullable(PatternKit.group(matcher, "nanosecond"))
+                .ifPresent(ns -> dateBuilder.setNanosecond(parseNano(ns)));
+        Optional.ofNullable(PatternKit.group(matcher, "m")).ifPresent(m -> {
             if (CharKit.equals('p', m.charAt(0), true)) {
                 dateBuilder.setPm(true);
             } else {
@@ -477,23 +462,17 @@ public class RegexDateParser implements DateParser, Serializable {
             }
         });
 
-        // zero zone offset
-        Optional.ofNullable(PatternKit.group(matcher, "zero")).ifPresent((zero) -> {
+        Optional.ofNullable(PatternKit.group(matcher, "zero")).ifPresent(zero -> {
             dateBuilder.setFlag(true);
             dateBuilder.setZoneOffset(0);
         });
 
-        // zone (including timezone name, timezone offset, etc., comprehensive parsing)
-        Optional.ofNullable(PatternKit.group(matcher, "zone"))
-                .ifPresent((zoneOffset) -> parseZone(zoneOffset, dateBuilder));
-
-        // zone offset
-        Optional.ofNullable(PatternKit.group(matcher, "zoneOffset")).ifPresent((zoneOffset) -> {
+        Optional.ofNullable(PatternKit.group(matcher, "zone")).ifPresent(zone -> parseZone(zone, dateBuilder));
+        Optional.ofNullable(PatternKit.group(matcher, "zoneOffset")).ifPresent(zoneOffset -> {
             dateBuilder.setFlag(true);
             dateBuilder.setZoneOffset(parseZoneOffset(zoneOffset));
         });
 
-        // unix timestamp, may have NS
         Optional.ofNullable(PatternKit.group(matcher, "unixsecond"))
                 .ifPresent((unixsecond) -> dateBuilder.setUnixsecond(parseLong(unixsecond)));
     }

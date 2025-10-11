@@ -54,8 +54,9 @@ public interface Complex {
 
     /**
      * Retrieves protocol-specific endpoint configurations. The content of the configuration is defined according to the
-     * protocol type, for example: - OAuth2: Contains endpoint URLs such as AUTHORIZE, TOKEN, USERINFO. - SAML: Contains
-     * ssoEndpoint, metadataUrl, etc. - LDAP: Usually returns an empty map, using {@link Context} for configuration.
+     * protocol type, for example: - OAuth2: Contains endpoint URLs such as AUTHORIZE, ACCESSTOKEN, USERINFO. - SAML:
+     * Contains ssoEndpoint, metadataUrl, etc. - LDAP: Usually returns an empty map, using {@link Context} for
+     * configuration.
      *
      * @return a map of configuration key-value pairs, an empty map by default
      */
@@ -77,8 +78,8 @@ public interface Complex {
      *
      * @return the access token endpoint URL
      */
-    default String token() {
-        return this.endpoint().get(Endpoint.TOKEN);
+    default String accessToken() {
+        return this.endpoint().get(Endpoint.ACCESS_TOKEN);
     }
 
     /**

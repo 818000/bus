@@ -47,7 +47,7 @@ public class ErrorCode {
     /**
      * Common: Request was successful.
      */
-    public static final Errors _SUCCESS = ErrorRegistry.builder().key(Symbol.ZERO).value("Success").build();
+    public static final Errors _SUCCESS = ErrorRegistry.builder().key(Symbol.ZERO).value("Successful").build();
 
     /**
      * Common: System is busy, please try again later.
@@ -59,19 +59,13 @@ public class ErrorCode {
      * Common: Request is too frequent, please try again later.
      */
     public static final Errors _LIMITER = ErrorRegistry.builder().key("-2")
-            .value("Request frequency too high, please wait and try again later").build();
+            .value("Request is too frequent, please try again later").build();
 
     /**
      * Common: Illegal request, please try again later.
      */
     public static final Errors _BLOCKED = ErrorRegistry.builder().key("-3")
-            .value("Illegal or blocked request, please check parameters and try again").build();
-
-    /**
-     * Common: An unknown error has occurred, please try again later.
-     */
-    public static final Errors _UNKNOWN = ErrorRegistry.builder().key("-4")
-            .value("An unknown error has occurred, please try again later").build();
+            .value("Illegal request, please try again later").build();
 
     /**
      * Request: Invalid token.
@@ -162,12 +156,6 @@ public class ErrorCode {
      * Request: Invalid ApiKey.
      */
     public static final Errors _100117 = ErrorRegistry.builder().key("100117").value("Invalid ApiKey").build();
-
-    /**
-     * Request: Invalid verification code.
-     */
-    public static final Errors _100118 = ErrorRegistry.builder().key("100118").value("Invalid verification code")
-            .build();
 
     /**
      * Request: Please use GET request.
@@ -416,12 +404,6 @@ public class ErrorCode {
      * License: Incorrect license information.
      */
     public static final Errors _100529 = ErrorRegistry.builder().key("100529").value("Incorrect license information")
-            .build();
-
-    /**
-     * Request body is too large.
-     */
-    public static final Errors _100530 = ErrorRegistry.builder().key("100530").value("Request body is too large")
             .build();
 
     /**

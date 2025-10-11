@@ -57,7 +57,7 @@ public abstract class ConditionHandler extends SqlParserHandler implements Mappe
      * The mode for appending conditional expressions (defaults to appending at the end, only for UPDATE, DELETE,
      * SELECT).
      */
-    private EnumValue.Append append = EnumValue.Append.LAST;
+    private EnumValue.AppendMode appendMode = EnumValue.AppendMode.LAST;
 
     /**
      * Processes the body of a SELECT statement, applying the specified condition segment.
@@ -444,7 +444,7 @@ public abstract class ConditionHandler extends SqlParserHandler implements Mappe
      * @return the complete appended expression (for WHERE or ON clauses)
      */
     protected Expression appendExpression(Expression expression, Expression injectExpression) {
-        if (EnumValue.Append.LAST == append || append == null) {
+        if (EnumValue.AppendMode.LAST == appendMode || appendMode == null) {
             return new AndExpression(expression, injectExpression);
         } else {
             return new AndExpression(injectExpression, expression);

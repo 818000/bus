@@ -100,7 +100,8 @@ public class SetKit {
         if (null == iterable) {
             return of(isLinked);
         }
-        if (iterable instanceof Collection<T> collection) {
+        if (iterable instanceof Collection) {
+            final Collection<T> collection = (Collection<T>) iterable;
             return isLinked ? new LinkedHashSet<>(collection) : new HashSet<>(collection);
         }
         return of(isLinked, iterable.iterator());

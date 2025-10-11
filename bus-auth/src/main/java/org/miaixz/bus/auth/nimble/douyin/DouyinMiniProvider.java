@@ -32,13 +32,11 @@ import java.util.Map;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
@@ -78,24 +76,23 @@ public class DouyinMiniProvider extends AbstractProvider {
      * documentation. Uses the authorization code to obtain the openId, unionId, and session_key.
      *
      * @param callback the callback object containing the authorization code and anonymous code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if the response indicates an error or is missing required token information
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         // See https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/login/auth.code2Session.html
         // documentation
         // Use the code to get the corresponding openId, unionId, etc.
-        String response = Httpx.get(tokenUrl(callback.getCode(), callback.getAnonymous_code()));
-        Map<String, Object> object = JsonKit.toPojo(response, Map.class);
+        String response = Httpx.get(accessTokenUrl(callback.getCode(), callback.getAnonymous_code()));
 
-        this.checkResponse(object);
+        Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+        checkResponse(accessTokenObject);
 
         // Assemble the result
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Authorization.builder().openId((String) object.get("openid")).unionId((String) object.get("unionid"))
-                        .token((String) object.get("session_key")).build())
-                .build();
+        return AuthToken.builder().openId((String) accessTokenObject.get("openid"))
+                .unionId((String) accessTokenObject.get("unionid"))
+                .accessToken((String) accessTokenObject.get("session_key")).build();
     }
 
     /**
@@ -104,18 +101,16 @@ public class DouyinMiniProvider extends AbstractProvider {
      * Note: If user information is required, it needs to be passed to the backend after the Mini Program calls a
      * function.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         // See https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserProfile.html
         // documentation
         // If user information is required, it needs to be passed to the backend after the Mini Program calls a function
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Material.builder().username(Normal.EMPTY).nickname(Normal.EMPTY).avatar(Normal.EMPTY)
-                        .uuid(authorization.getOpenId()).token(authorization).source(complex.toString()).build())
-                .build();
+        return Material.builder().username(Normal.EMPTY).nickname(Normal.EMPTY).avatar(Normal.EMPTY)
+                .uuid(authToken.getOpenId()).token(authToken).source(complex.toString()).build();
     }
 
     /**
@@ -125,21 +120,21 @@ public class DouyinMiniProvider extends AbstractProvider {
      * @param anonymousCode the anonymous code for anonymous login
      * @return the access token URL
      */
-    private String tokenUrl(String code, String anonymousCode) {
-        return Builder.fromUrl(this.complex.token()).queryParam("appid", this.context.getClientId())
-                .queryParam("secret", this.context.getClientSecret()).queryParam("code", code)
+    private String accessTokenUrl(String code, String anonymousCode) {
+        return Builder.fromUrl(this.complex.accessToken()).queryParam("appid", this.context.getAppKey())
+                .queryParam("secret", this.context.getAppSecret()).queryParam("code", code)
                 .queryParam("anonymous_code", anonymousCode).build();
     }
 
     /**
      * Retrieves the token, applicable for both obtaining access tokens and refreshing tokens.
      *
-     * @param tokenUrl the actual URL to request the token from
-     * @return the {@link Authorization} object
+     * @param accessTokenUrl the actual URL to request the token from
+     * @return the {@link AuthToken} object
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
-    private Authorization getToken(String tokenUrl) {
-        String response = Httpx.get(tokenUrl);
+    private AuthToken getToken(String accessTokenUrl) {
+        String response = Httpx.get(accessTokenUrl);
         try {
             Map<String, Object> object = JsonKit.toPojo(response, Map.class);
             if (object == null) {
@@ -147,27 +142,27 @@ public class DouyinMiniProvider extends AbstractProvider {
             }
             this.checkResponse(object);
 
-            object = (Map<String, Object>) object.get(Consts.DATA);
-            if (object == null) {
+            Map<String, Object> dataObj = (Map<String, Object>) object.get(Consts.DATA);
+            if (dataObj == null) {
                 throw new AuthorizedException("Missing data field in token response");
             }
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) dataObj.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String openId = (String) object.get("anonymousOpenid");
-            Object expiresInObj = object.get("expires_in");
-            String unionId = object.get("unionId").toString();
+            String openId = (String) dataObj.get("anonymousOpenid");
+            Object expiresInObj = dataObj.get("expires_in");
+            String unionId = dataObj.get("unionId").toString();
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String refresh = (String) object.get("refresh_token");
-            Object refreshExpiresInObj = object.get("refresh_expires_in");
+            String refreshToken = (String) dataObj.get("refresh_token");
+            Object refreshExpiresInObj = dataObj.get("refresh_expires_in");
             int refreshExpiresIn = refreshExpiresInObj instanceof Number ? ((Number) refreshExpiresInObj).intValue()
                     : 0;
-            String scope = (String) object.get("scope");
+            String scope = (String) dataObj.get("scope");
 
-            return Authorization.builder().token(token).openId(openId).expireIn(expiresIn).unionId(unionId)
-                    .refresh(refresh).refreshExpireIn(refreshExpiresIn).scope(scope).build();
+            return AuthToken.builder().accessToken(accessToken).openId(openId).expireIn(expiresIn).unionId(unionId)
+                    .refreshToken(refreshToken).refreshTokenExpireIn(refreshExpiresIn).scope(scope).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse token response: " + e.getMessage());
         }

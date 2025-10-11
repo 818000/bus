@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
@@ -82,11 +82,11 @@ public class VKProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
+    public String authorize(String state) {
         String realState = getRealState(state);
 
-        Builder builder = Builder.fromUrl((String) super.build(state).getData())
-                .queryParam("scope", this.getScopes(" ", false, this.getScopes(VKScope.values())));
+        Builder builder = Builder.fromUrl(super.authorize(state))
+                .queryParam("scope", this.getScopes(" ", false, this.getDefaultScopes(VKScope.values())));
         if (this.context.isPkce()) {
             String cacheKey = this.complex.getName().concat(":code_verifier:").concat(realState);
             String codeVerifier = Builder.codeVerifier();
@@ -97,8 +97,7 @@ public class VKProvider extends AbstractProvider {
             // Cache codeVerifier for ten minutes
             this.cache.write(cacheKey, codeVerifier, TimeUnit.MINUTES.toMillis(10));
         }
-
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(builder.build()).build();
+        return builder.build();
     }
 
     /**
@@ -108,7 +107,7 @@ public class VKProvider extends AbstractProvider {
      * @return the access token object
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         // Use the authorization code to get the access_token
         String response = doPostAuthorizationCode(callback);
         Map<String, String> object = JsonKit.toMap(response);
@@ -116,25 +115,21 @@ public class VKProvider extends AbstractProvider {
         this.checkResponse(object);
 
         // Return token
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Authorization.builder().idToken(object.get("id_token")).token(object.get("access_token"))
-                                .refresh(object.get("refresh_token")).token_type(object.get("token_type"))
-                                .scope(object.get("scope")).deviceId(callback.getDevice_id())
-                                .userId(object.get("user_id")).build())
-                .build();
+        return AuthToken.builder().idToken(object.get("id_token")).accessToken(object.get("access_token"))
+                .refreshToken(object.get("refresh_token")).tokenType(object.get("token_type"))
+                .scope(object.get("scope")).deviceId(callback.getDevice_id()).userId(object.get("user_id")).build();
     }
 
     /**
      * Retrieves user information.
      *
-     * @param authorization the access token
+     * @param authToken the access token
      * @return the user information object
      * @throws IllegalArgumentException if parsing user information fails
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String body = doGetUserInfo(authorization);
+    public Material getUserInfo(AuthToken authToken) {
+        String body = doGetUserInfo(authToken);
         Map<String, String> object = JsonKit.toMap(body);
 
         // Validate the response result
@@ -144,23 +139,20 @@ public class VKProvider extends AbstractProvider {
         Map<String, String> userObj = JsonKit.toMap(object.get("user"));
 
         // Extract user information
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Material.builder().uuid(userObj.get("user_id")).username(userObj.get("first_name"))
-                                .nickname(userObj.get("first_name") + " " + userObj.get("last_name"))
-                                .avatar(userObj.get("avatar")).email(userObj.get("email")).token(authorization)
-                                .rawJson(JsonKit.toJsonString(userObj)).source(this.complex.toString()).build())
-                .build();
+        return Material.builder().uuid(userObj.get("user_id")).username(userObj.get("first_name"))
+                .nickname(userObj.get("first_name") + " " + userObj.get("last_name")).avatar(userObj.get("avatar"))
+                .email(userObj.get("email")).token(authToken).rawJson(JsonKit.toJsonString(userObj))
+                .source(this.complex.toString()).build();
     }
 
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
         form.put("grant_type", "refresh_token");
-        form.put("refresh_token", authorization.getRefresh());
+        form.put("refresh_token", authToken.getRefreshToken());
         form.put("state", ID.objectId());
-        form.put("device_id", authorization.getDeviceId());
-        form.put("client_id", this.context.getClientId());
+        form.put("device_id", authToken.getDeviceId());
+        form.put("client_id", this.context.getAppKey());
         form.put("ip", "10.10.10.10");
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(getToken(form, this.complex.refresh()))
                 .build();
@@ -168,8 +160,8 @@ public class VKProvider extends AbstractProvider {
     }
 
     @Override
-    public Message revoke(Authorization authorization) {
-        String response = doPostRevoke(authorization);
+    public Message revoke(AuthToken authToken) {
+        String response = doPostRevoke(authToken);
         Map<String, String> object = JsonKit.toMap(response);
         this.checkResponse(object);
         // Return 1 indicates successful authorization cancellation, otherwise failed
@@ -188,7 +180,7 @@ public class VKProvider extends AbstractProvider {
         Map<String, String> form = new HashMap<>(7);
         form.put("grant_type", "authorization_code");
         form.put("redirect_uri", this.context.getRedirectUri());
-        form.put("client_id", this.context.getClientId());
+        form.put("client_id", this.context.getAppKey());
         form.put("code", callback.getCode());
         form.put("state", callback.getState());
         form.put("device_id", callback.getDevice_id());
@@ -199,7 +191,7 @@ public class VKProvider extends AbstractProvider {
             form.put("code_verifier", codeVerifier);
         }
 
-        return Httpx.post(this.complex.token(), form, this.buildHeader());
+        return Httpx.post(this.complex.accessToken(), form, this.buildHeader());
     }
 
     /**
@@ -207,27 +199,27 @@ public class VKProvider extends AbstractProvider {
      *
      * @param param a map of parameters for the token request
      * @param url   the URL to request the token from
-     * @return the {@link Authorization} containing token details
+     * @return the {@link AuthToken} containing token details
      */
-    private Authorization getToken(Map<String, String> param, String url) {
+    private AuthToken getToken(Map<String, String> param, String url) {
         String response = Httpx.post(url, param, this.buildHeader());
         Map<String, String> object = JsonKit.toMap(response);
         this.checkResponse(object);
-        return Authorization.builder().token(object.get("access_token")).token_type(object.get("token_type"))
-                .expireIn(Integer.parseInt(object.get("expires_in"))).refresh(object.get("refresh_token"))
+        return AuthToken.builder().accessToken(object.get("access_token")).tokenType(object.get("token_type"))
+                .expireIn(Integer.parseInt(object.get("expires_in"))).refreshToken(object.get("refresh_token"))
                 .deviceId(param.get("device_id")).build();
     }
 
     /**
      * Performs a POST request to obtain user information.
      *
-     * @param authorization the access token
+     * @param authToken the access token
      * @return the obtained response body
      */
-    protected String doGetUserInfo(Authorization authorization) {
+    protected String doGetUserInfo(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("access_token", authorization.getToken());
-        form.put("client_id", this.context.getClientId());
+        form.put("access_token", authToken.getAccessToken());
+        form.put("client_id", this.context.getAppKey());
         return Httpx.post(this.complex.userinfo(), form, this.buildHeader());
     }
 
@@ -260,13 +252,13 @@ public class VKProvider extends AbstractProvider {
     /**
      * Performs a POST request to revoke OAuth2 authorization.
      *
-     * @param authorization the access token
+     * @param authToken the access token
      * @return the response content
      */
-    protected String doPostRevoke(Authorization authorization) {
+    protected String doPostRevoke(AuthToken authToken) {
         Map<String, String> form = new HashMap<>(7);
-        form.put("access_token", authorization.getToken());
-        form.put("client_id", this.context.getClientId());
+        form.put("access_token", authToken.getAccessToken());
+        form.put("client_id", this.context.getAppKey());
 
         return Httpx.post(this.complex.revoke(), form, this.buildHeader());
     }

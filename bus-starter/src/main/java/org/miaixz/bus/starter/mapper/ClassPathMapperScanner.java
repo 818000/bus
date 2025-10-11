@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
@@ -175,9 +176,8 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
             String beanClassName = definition.getBeanClassName();
             // The mapper interface is the original class of the bean, but the actual bean class is MapperFactoryBean.
-            // definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);
+            definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);
             definition.setBeanClass(this.mapperFactoryBean.getClass());
-            definition.getPropertyValues().add("mapperInterface", beanClassName);
 
             // Set the generic Mapper builder if specified.
             if (StringKit.hasText(this.mapperBuilderBeanName)) {
@@ -212,10 +212,12 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
                 explicitFactoryUsed = true;
             }
 
-            // If no explicit factory was configured, explicitly wire to the default 'sqlSessionFactory' bean.
-            // This is the most robust solution for AOT compatibility.
             if (!explicitFactoryUsed) {
-                definition.getPropertyValues().add("sqlSessionFactory", new RuntimeBeanReference("sqlSessionFactory"));
+                Logger.debug(
+                        "Enabling component by type for MapperFactoryBean with name '{}' and class '{}'",
+                        holder.getBeanName(),
+                        definition.getBeanClassName());
+                definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
             }
         }
     }

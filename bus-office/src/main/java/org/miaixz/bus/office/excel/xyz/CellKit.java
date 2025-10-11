@@ -578,7 +578,7 @@ public class CellKit {
         }
         final StringBuilder colName = StringKit.builder();
         do {
-            if (!colName.isEmpty()) {
+            if (colName.length() > 0) {
                 index--;
             }
             final int remainder = index % 26;

@@ -27,16 +27,14 @@
 */
 package org.miaixz.bus.auth.nimble.oschina;
 
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Gender;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
@@ -74,31 +72,30 @@ public class OschinaProvider extends AbstractProvider {
      * Retrieves the access token from OSChina's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
-        String response = doGetToken(callback.getCode());
+    public AuthToken getAccessToken(Callback callback) {
+        String response = doPostAuthorizationCode(callback.getCode());
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
 
-            this.checkResponse(object);
+            this.checkResponse(accessTokenObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            String refresh = (String) object.get("refresh_token");
-            String uid = (String) object.get("uid");
-            Object expiresInObj = object.get("expires_in");
+            String refreshToken = (String) accessTokenObject.get("refresh_token");
+            String uid = (String) accessTokenObject.get("uid");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(Authorization.builder().token(token).refresh(refresh).uid(uid).expireIn(expiresIn).build())
+            return AuthToken.builder().accessToken(accessToken).refreshToken(refreshToken).uid(uid).expireIn(expiresIn)
                     .build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
@@ -108,13 +105,13 @@ public class OschinaProvider extends AbstractProvider {
     /**
      * Retrieves user information from OSChina's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
-        String response = doGetUserInfo(authorization);
+    public Material getUserInfo(AuthToken authToken) {
+        String response = doGetUserInfo(authToken);
         try {
             Map<String, Object> object = JsonKit.toPojo(response, Map.class);
             if (object == null) {
@@ -134,11 +131,9 @@ public class OschinaProvider extends AbstractProvider {
             String gender = (String) object.get("gender");
             String email = (String) object.get("email");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                    Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(name).nickname(name)
-                            .avatar(avatar).blog(url).location(location).gender(Gender.of(gender)).email(email)
-                            .token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(id).username(name).nickname(name)
+                    .avatar(avatar).blog(url).location(location).gender(Gender.of(gender)).email(email).token(authToken)
+                    .source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -151,9 +146,9 @@ public class OschinaProvider extends AbstractProvider {
      * @return the URL to obtain the access token
      */
     @Override
-    protected String tokenUrl(String code) {
-        return Builder.fromUrl(this.complex.token()).queryParam("code", code)
-                .queryParam("client_id", context.getClientId()).queryParam("client_secret", context.getClientSecret())
+    protected String accessTokenUrl(String code) {
+        return Builder.fromUrl(this.complex.accessToken()).queryParam("code", code)
+                .queryParam("client_id", context.getAppKey()).queryParam("client_secret", context.getAppSecret())
                 .queryParam("grant_type", "authorization_code").queryParam("redirect_uri", context.getRedirectUri())
                 .queryParam("dataType", "json").build();
     }
@@ -161,12 +156,12 @@ public class OschinaProvider extends AbstractProvider {
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authorization.getToken())
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authToken.getAccessToken())
                 .queryParam("dataType", "json").build();
     }
 

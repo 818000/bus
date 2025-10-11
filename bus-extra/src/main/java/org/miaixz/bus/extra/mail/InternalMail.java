@@ -39,8 +39,6 @@ import org.miaixz.bus.core.xyz.ArrayKit;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeUtility;
-import org.miaixz.bus.core.xyz.ObjectKit;
-import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * An internal utility class for mail-related operations, such as parsing addresses and encoding text. This class is not
@@ -60,9 +58,6 @@ public class InternalMail {
      * @return An array of {@link InternetAddress} objects.
      */
     public static InternetAddress[] parseAddressFromStrs(final String[] addrStrs, final Charset charset) {
-        if (ArrayKit.isEmpty(addrStrs)) {
-            return new InternetAddress[0];
-        }
         final List<InternetAddress> resultList = new ArrayList<>(addrStrs.length);
         InternetAddress[] addrs;
         for (final String text : addrStrs) {
@@ -104,9 +99,6 @@ public class InternalMail {
      * @throws InternalException if parsing fails.
      */
     public static InternetAddress[] parseAddress(final String address, final Charset charset) {
-        if (StringKit.isBlank(address)) {
-            return new InternetAddress[0];
-        }
         final InternetAddress[] addresses;
         try {
             addresses = InternetAddress.parse(address);
@@ -115,7 +107,7 @@ public class InternalMail {
         }
         // Encode personal names
         if (ArrayKit.isNotEmpty(addresses)) {
-            final String charsetStr = ObjectKit.apply(charset, Charset::name);
+            final String charsetStr = null == charset ? null : charset.name();
             for (final InternetAddress internetAddress : addresses) {
                 try {
                     internetAddress.setPersonal(internetAddress.getPersonal(), charsetStr);
@@ -137,12 +129,10 @@ public class InternalMail {
      * @return The encoded string.
      */
     public static String encodeText(final String text, final Charset charset) {
-        if (StringKit.isNotBlank(text)) {
-            try {
-                return MimeUtility.encodeText(text, charset.name(), null);
-            } catch (final UnsupportedEncodingException e) {
-                // Ignore and return the original string if encoding fails
-            }
+        try {
+            return MimeUtility.encodeText(text, charset.name(), null);
+        } catch (final UnsupportedEncodingException e) {
+            // Ignore and return the original string if encoding fails
         }
         return text;
     }

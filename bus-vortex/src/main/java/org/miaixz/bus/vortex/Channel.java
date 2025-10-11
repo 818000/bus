@@ -34,10 +34,12 @@ import lombok.NoArgsConstructor;
 import java.util.Arrays;
 
 /**
- * Enumerates the possible source channels of a request, allowing for channel-specific logic and authorization.
+ * Enumerates different request channels, defining various request sources and their attributes.
  * <p>
- * This enum is used by the {@link org.miaixz.bus.vortex.strategy.AuthorizeStrategy} to identify the client type (e.g.,
- * Web, App) and can be used to apply different validation rules or business logic based on the request's origin.
+ * This enum class identifies the source channel of a request (e.g., WEB, APP, DingTalk, WeChat) and associates a string
+ * value and a token type with each channel. Each enum value initializes its properties through the constructor and
+ * provides a static method {@link #get(String)} to retrieve the corresponding enum instance based on its string value.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -48,49 +50,54 @@ import java.util.Arrays;
 public enum Channel {
 
     /**
-     * Indicates a request initiated from a standard web browser or web page.
+     * WEB request, indicating a request initiated via a browser or web page.
      */
     WEB("1", 0),
 
     /**
-     * Indicates a request initiated from a native mobile application (iOS, Android).
+     * APP request, indicating a request initiated via a mobile application.
      */
     APP("2", 1),
 
     /**
-     * Indicates a request initiated from the DingTalk platform (e.g., a mini-app or bot).
+     * DingTalk request, indicating a request initiated via the DingTalk platform.
      */
     DINGTALK("3", 1),
 
     /**
-     * Indicates a request initiated from the WeChat platform (e.g., a mini-program or official account).
+     * WeChat request, indicating a request initiated via the WeChat platform.
      */
     WECHAT("4", 1),
 
     /**
-     * A fallback value for requests from an unknown or unspecified channel.
+     * Other request, indicating a request that cannot be categorized into a specific channel, serving as a default
+     * fallback.
      */
     OTHER("5", 0);
 
     /**
-     * The raw string value representing the channel, typically sent in a request header like {@code x_remote_channel}.
+     * The string value of the channel, used to uniquely identify the channel.
      */
     private String value;
 
     /**
-     * A type identifier used to select different token handling or authorization logic for this channel. For example, a
-     * value of {@code 1} might signify a channel that uses a specific type of OAuth token.
+     * The token type, used to distinguish token handling methods for different channels.
+     * <p>
+     * A value of 0 indicates no special token handling is required, while a value of 1 indicates specific token
+     * handling logic is needed.
+     * </p>
      */
     private Integer type;
 
     /**
-     * Safely retrieves a {@code Channel} enum instance from its string representation.
+     * Retrieves the corresponding channel enum instance based on the channel value.
      * <p>
-     * This method searches for a matching enum constant by its {@code value}. If no match is found, it returns
-     * {@link #OTHER} as a safe default, preventing null pointer exceptions.
+     * This method searches for a matching enum instance using the given string value. If no matching channel is found,
+     * it returns {@link #OTHER} as the default value.
+     * </p>
      *
-     * @param value The string value of the channel (e.g., "1", "2").
-     * @return The corresponding {@link Channel} instance, or {@link #OTHER} if the value is invalid or null.
+     * @param value The string value of the channel.
+     * @return The matching {@link Channel} enum instance, or {@link #OTHER} if no match is found.
      */
     public static Channel get(String value) {
         return Arrays.stream(Channel.values()).filter(c -> c.getValue().equals(value)).findFirst()

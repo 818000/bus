@@ -28,25 +28,17 @@
 package org.miaixz.bus.vortex.magic;
 
 import com.google.common.util.concurrent.RateLimiter;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.miaixz.bus.core.lang.exception.ValidateException;
 
 /**
- * A rate limiter that encapsulates Google Guava's {@link RateLimiter} to provide a non-blocking, fail-fast mechanism
- * suitable for a reactive environment.
- * <p>
- * This class implements the token bucket algorithm. It is designed to be used within the gateway's strategy chain to
- * enforce rate limits on APIs. Instead of blocking the calling thread when no tokens are available, its
- * {@link #acquire()} method throws an exception, allowing the request to be rejected quickly with a "Too Many Requests"
- * error.
+ * Rate limiter class, implementing request rate limiting based on the token bucket algorithm.
  *
- * @author Kimi Liu
- * @see com.google.common.util.concurrent.RateLimiter
- * @see org.miaixz.bus.vortex.strategy.LimitStrategy
+ * @author Justubborn
  * @since Java 17+
  */
 @Getter
@@ -57,35 +49,42 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
 public class Limiter {
 
     /**
-     * The IP address of the request source. Used for creating per-IP limiters.
+     * The IP address of the request source.
      */
     private String ip;
 
     /**
-     * The name of the API method being limited.
+     * The name of the request method.
      */
     private String method;
 
     /**
-     * The version of the API method being limited.
+     * The version number of the request.
      */
     private String version;
 
     /**
-     * The rate at which tokens are generated per second (requests per second).
+     * The token generation rate of the token bucket (tokens generated per second).
      */
     private int tokenCount;
 
     /**
-     * The underlying Guava RateLimiter instance. It is volatile and lazily initialized to ensure thread safety.
+     * The {@link RateLimiter} instance, implementing rate limiting using Google Guava's RateLimiter.
      */
     private volatile RateLimiter rateLimiter;
 
     /**
-     * Lazily initializes and retrieves the underlying {@link RateLimiter} instance using thread-safe double-checked
-     * locking.
+     * Initializes the token bucket, setting the token generation rate. Uses {@code synchronized} to ensure thread
+     * safety during initialization.
+     */
+    public synchronized void initRateLimiter() {
+        rateLimiter = RateLimiter.create(tokenCount);
+    }
+
+    /**
+     * Retrieves the {@link RateLimiter} instance, using double-checked locking to ensure thread safety.
      *
-     * @return The singleton {@link RateLimiter} instance for this limiter configuration.
+     * @return The {@link RateLimiter} instance.
      */
     public RateLimiter fetchRateLimiter() {
         if (null == rateLimiter) {
@@ -99,17 +98,12 @@ public class Limiter {
     }
 
     /**
-     * Attempts to acquire a permit from the rate limiter in a non-blocking manner.
-     * <p>
-     * This method uses {@code tryAcquire()}, which returns immediately. If no permit is available, it does not wait.
-     * Instead, it throws a {@link ValidateException}, signaling that the request has been rate-limited.
+     * Attempts to acquire a token, blocking until successful.
      *
-     * @throws ValidateException with error code {@link ErrorCode#_100505} if no permit is available.
+     * @return The waiting time (in seconds) to acquire the token.
      */
-    public void acquire() {
-        if (!fetchRateLimiter().tryAcquire()) {
-            throw new ValidateException(ErrorCode._100505);
-        }
+    public double acquire() {
+        return fetchRateLimiter().acquire();
     }
 
 }

@@ -27,18 +27,19 @@
 */
 package org.miaixz.bus.cron;
 
+import org.miaixz.bus.core.center.map.TripleTable;
+import org.miaixz.bus.core.lang.exception.CrontabException;
+import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.cron.crontab.CronCrontab;
+import org.miaixz.bus.cron.crontab.Crontab;
+import org.miaixz.bus.cron.pattern.CronPattern;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.miaixz.bus.core.center.map.TripletTable;
-import org.miaixz.bus.core.lang.exception.CrontabException;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.cron.crontab.Crontab;
-import org.miaixz.bus.cron.pattern.CronPattern;
 
 /**
  * Task table for cron jobs. This class holds a mapping between task IDs, cron patterns, and the tasks themselves. The
@@ -48,7 +49,7 @@ import org.miaixz.bus.cron.pattern.CronPattern;
  * @author Kimi Liu
  * @since Java 17+
  */
-public abstract class Repertoire implements Serializable {
+public class Repertoire implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2852287269608L;
@@ -56,16 +57,9 @@ public abstract class Repertoire implements Serializable {
     /**
      * Default initial capacity for the task table.
      */
-    public static final int DEFAULT_CAPACITY = 256;
-    /**
-     * Read-write lock to ensure thread safety
-     */
-    public final ReadWriteLock lock;
-    /**
-     * Task table with one-to-one mapping of ID, pattern, and task. Uses TripleTable for storage to facilitate fast
-     * lookup and updates
-     */
-    public final TripletTable<String, CronPattern, Crontab> table;
+    public static final int DEFAULT_CAPACITY = 10;
+    private final ReadWriteLock lock;
+    private final TripleTable<String, CronPattern, Crontab> table;
 
     /**
      * Constructs a new Repertoire with the default capacity.
@@ -75,149 +69,23 @@ public abstract class Repertoire implements Serializable {
     }
 
     /**
-     * Constructor
+     * Constructs a new Repertoire with the specified initial capacity.
      *
-     * @param initialCapacity Capacity, i.e., the estimated maximum number of tasks
+     * @param initialCapacity The initial capacity, representing the estimated maximum number of tasks.
      */
     public Repertoire(final int initialCapacity) {
         lock = new ReentrantReadWriteLock();
-        this.table = new TripletTable<>(initialCapacity);
+        this.table = new TripleTable<>(initialCapacity);
     }
 
     /**
-     * Size of the task table, i.e., the number of added tasks
+     * Adds a new task to the table.
      *
-     * @return Size of the task table, i.e., the number of added tasks
-     */
-    public int size() {
-        return this.table.size();
-    }
-
-    /**
-     * Whether the task table is empty
-     *
-     * @return true if empty
-     */
-    public boolean isEmpty() {
-        return size() < 1;
-    }
-
-    /**
-     * Gets all IDs, returns an immutable list, i.e., the list cannot be modified
-     *
-     * @return List of IDs
-     */
-    public List<String> getIds() {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return this.table.getLefts();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets all scheduled tasks, returns an immutable list, i.e., the list cannot be modified
-     *
-     * @return List of scheduled tasks
-     */
-    public List<Crontab> getTasks() {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return this.table.getRights();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets the {@link Crontab} at the specified position
-     *
-     * @param index Position
-     * @return {@link Crontab}
-     */
-    public Crontab getTask(final int index) {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return this.table.getRight(index);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets the {@link Crontab} with the specified ID
-     *
-     * @param id ID
-     * @return {@link Crontab}
-     */
-    public Crontab getTask(final String id) {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return table.getRightByLeft(id);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets all cron patterns, returns an immutable list, i.e., the list cannot be modified
-     *
-     * @return List of cron patterns
-     */
-    public List<CronPattern> getPatterns() {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return this.table.getMiddles();
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets the {@link CronPattern} with the specified ID
-     *
-     * @param id ID
-     * @return {@link CronPattern}
-     */
-    public CronPattern getPattern(final String id) {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return table.getMiddleByLeft(id);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Gets the {@link CronPattern} at the specified position
-     *
-     * @param index Position
-     * @return {@link CronPattern}
-     */
-    public CronPattern getPattern(final int index) {
-        final Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            return table.getMiddle(index);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    /**
-     * Adds a new Task
-     *
-     * @param id      ID
-     * @param pattern {@link CronPattern}
-     * @param crontab {@link Crontab}
-     * @return this
+     * @param id      The task ID.
+     * @param pattern The {@link CronPattern}.
+     * @param crontab The {@link Crontab} task.
+     * @return this {@link Repertoire} instance.
+     * @throws CrontabException if the ID already exists.
      */
     public Repertoire add(final String id, final CronPattern pattern, final Crontab crontab) {
         final Lock writeLock = lock.writeLock();
@@ -234,10 +102,55 @@ public abstract class Repertoire implements Serializable {
     }
 
     /**
-     * Removes a Task
+     * Gets an unmodifiable list of all task IDs.
      *
-     * @param id ID of the Task
-     * @return Whether the removal was successful, {@code false} means no task with the corresponding ID was found
+     * @return The list of task IDs.
+     */
+    public List<String> getIds() {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return this.table.getLefts();
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Gets an unmodifiable list of all cron patterns.
+     *
+     * @return The list of cron patterns.
+     */
+    public List<CronPattern> getPatterns() {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return this.table.getMiddles();
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Gets an unmodifiable list of all tasks.
+     *
+     * @return The list of tasks.
+     */
+    public List<Crontab> getTasks() {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return this.table.getRights();
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Removes a task by its ID.
+     *
+     * @param id The ID of the task to remove.
+     * @return {@code true} if the task was successfully removed, {@code false} if no task with the given ID was found.
      */
     public boolean remove(final String id) {
         final Lock writeLock = lock.writeLock();
@@ -255,11 +168,11 @@ public abstract class Repertoire implements Serializable {
     }
 
     /**
-     * Updates the cron pattern of a specific Task
+     * Updates the cron pattern for a specific task.
      *
-     * @param id      ID of the Task
-     * @param pattern New cron pattern
-     * @return Whether the update was successful, returns false if the pattern corresponding to the ID does not exist
+     * @param id      The ID of the task.
+     * @param pattern The new cron pattern.
+     * @return {@code true} if the update was successful, {@code false} if no task with the given ID was found.
      */
     public boolean updatePattern(final String id, final CronPattern pattern) {
         final Lock writeLock = lock.writeLock();
@@ -274,6 +187,104 @@ public abstract class Repertoire implements Serializable {
             writeLock.unlock();
         }
         return false;
+    }
+
+    /**
+     * Gets the {@link Crontab} at the specified index.
+     *
+     * @param index The index.
+     * @return The {@link Crontab} at the given index.
+     */
+    public Crontab getTask(final int index) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return this.table.getRight(index);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Gets the {@link Crontab} for the specified ID.
+     *
+     * @param id The task ID.
+     * @return The {@link Crontab}, or {@code null} if not found.
+     */
+    public Crontab getTask(final String id) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return table.getRightByLeft(id);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Gets the {@link CronPattern} for the specified ID.
+     *
+     * @param id The task ID.
+     * @return The {@link CronPattern}, or {@code null} if not found.
+     */
+    public CronPattern getPattern(final String id) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return table.getMiddleByLeft(id);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Gets the {@link CronPattern} at the specified index.
+     *
+     * @param index The index.
+     * @return The {@link CronPattern} at the given index.
+     */
+    public CronPattern getPattern(final int index) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return table.getMiddle(index);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Returns the number of tasks in the table.
+     *
+     * @return The number of scheduled tasks.
+     */
+    public int size() {
+        return this.table.size();
+    }
+
+    /**
+     * Checks if the task table is empty.
+     *
+     * @return {@code true} if the table is empty, {@code false} otherwise.
+     */
+    public boolean isEmpty() {
+        return size() < 1;
+    }
+
+    /**
+     * Executes all tasks that match the given time. This method acquires a read lock.
+     *
+     * @param scheduler The {@link Scheduler}.
+     * @param millis    The current time in milliseconds.
+     */
+    public void executeTaskIfMatch(final Scheduler scheduler, final long millis) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            executeTaskIfMatchInternal(scheduler, millis);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     @Override
@@ -292,12 +303,19 @@ public abstract class Repertoire implements Serializable {
     }
 
     /**
-     * Matches tasks based on the given timestamp, and if a match is successful, executes the corresponding Task using
-     * the scheduler
+     * Internal method to execute matching tasks without acquiring a lock. The caller is responsible for locking.
      *
-     * @param scheduler Scheduler
-     * @param millis    Timestamp
+     * @param scheduler The {@link Scheduler}.
+     * @param millis    The current time in milliseconds.
      */
-    public abstract void execute(final Scheduler scheduler, final long millis);
+    protected void executeTaskIfMatchInternal(final Scheduler scheduler, final long millis) {
+        final int size = size();
+        for (int i = 0; i < size; i++) {
+            if (this.table.getMiddle(i).match(scheduler.config.timezone, millis, scheduler.config.matchSecond)) {
+                scheduler.manager.spawnExecutor(
+                        new CronCrontab(this.table.getLeft(i), this.table.getMiddle(i), this.table.getRight(i)));
+            }
+        }
+    }
 
 }

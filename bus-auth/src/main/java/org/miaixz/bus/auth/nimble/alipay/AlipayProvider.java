@@ -34,7 +34,7 @@ import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Checker;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
 import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
@@ -91,11 +91,11 @@ public class AlipayProvider extends AbstractProvider {
         Checker.check(context, Registry.ALIPAY);
 
         if (!StringKit.isNotEmpty(context.getUnionId())) {
-            throw new AuthorizedException(ErrorCode._110002.getKey(), Registry.ALIPAY);
+            throw new AuthorizedException(ErrorCode.PARAMETER_INCOMPLETE.getKey(), Registry.ALIPAY);
         }
 
         if (Protocol.isLocalHost(context.getRedirectUri())) {
-            throw new AuthorizedException(ErrorCode._110005.getKey(), Registry.ALIPAY);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_REDIRECT_URI.getKey(), Registry.ALIPAY);
         }
     }
 
@@ -106,9 +106,9 @@ public class AlipayProvider extends AbstractProvider {
      * @throws AuthorizedException if the authorization code is empty
      */
     @Override
-    protected void validate(Callback callback) {
+    protected void check(Callback callback) {
         if (StringKit.isEmpty(callback.getAuth_code())) {
-            throw new AuthorizedException(ErrorCode._110007.getKey(), complex);
+            throw new AuthorizedException(ErrorCode.ILLEGAL_CODE.getKey(), complex);
         }
     }
 
@@ -116,13 +116,13 @@ public class AlipayProvider extends AbstractProvider {
      * Retrieves the access token from Alipay's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
+    public AuthToken getAccessToken(Callback callback) {
         Map<String, String> params = new HashMap<>();
-        params.put("app_id", context.getClientId());
+        params.put("app_id", context.getAppKey());
         params.put("method", "alipay.system.auth.token");
         params.put("charset", Charset.DEFAULT_UTF_8);
         params.put("sign_type", "RSA2");
@@ -140,33 +140,30 @@ public class AlipayProvider extends AbstractProvider {
                     (String) ((Map<String, Object>) tokenResponse.get("error_response")).get("sub_msg"));
         }
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Authorization.builder().token((String) tokenResponse.get("access_token"))
-                                .uid((String) tokenResponse.get("user_id"))
-                                .expireIn(Integer.parseInt((String) tokenResponse.get("expires_in")))
-                                .refresh((String) tokenResponse.get("refresh_token")).build())
-                .build();
+        return AuthToken.builder().accessToken((String) tokenResponse.get("access_token"))
+                .uid((String) tokenResponse.get("user_id"))
+                .expireIn(Integer.parseInt((String) tokenResponse.get("expires_in")))
+                .refreshToken((String) tokenResponse.get("refresh_token")).build();
     }
 
     /**
      * Refreshes the access token (renews its validity).
      *
-     * @param authorization the token information returned after successful login
+     * @param authToken the token information returned after successful login
      * @return a {@link Message} containing the refreshed token information
      * @throws AuthorizedException if parsing the response fails or an error occurs during token refresh
      */
     @Override
-    public Message refresh(Authorization authorization) {
+    public Message refresh(AuthToken authToken) {
         Map<String, String> params = new HashMap<>();
-        params.put("app_id", context.getClientId());
+        params.put("app_id", context.getAppKey());
         params.put("method", "alipay.system.auth.token");
         params.put("charset", Charset.DEFAULT_UTF_8);
         params.put("sign_type", "RSA2");
         params.put("timestamp", String.valueOf(System.currentTimeMillis()));
         params.put("version", "1.0");
         params.put("grant_type", "refresh_token");
-        params.put("refresh_token", authorization.getRefresh());
+        params.put("refresh_token", authToken.getRefreshToken());
 
         String response = Httpx.post(GATEWAY, params);
         Map<String, Object> json = JsonKit.toMap(response);
@@ -179,30 +176,30 @@ public class AlipayProvider extends AbstractProvider {
 
         return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
                 .data(
-                        Authorization.builder().token((String) tokenResponse.get("access_token"))
+                        AuthToken.builder().accessToken((String) tokenResponse.get("access_token"))
                                 .uid((String) tokenResponse.get("user_id"))
                                 .expireIn(Integer.parseInt((String) tokenResponse.get("expires_in")))
-                                .refresh((String) tokenResponse.get("refresh_token")).build())
+                                .refreshToken((String) tokenResponse.get("refresh_token")).build())
                 .build();
     }
 
     /**
      * Retrieves user information from Alipay's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Map<String, String> params = new HashMap<>();
-        params.put("app_id", context.getClientId());
+        params.put("app_id", context.getAppKey());
         params.put("method", "alipay.user.info.share");
         params.put("charset", Charset.DEFAULT_UTF_8);
         params.put("sign_type", "RSA2");
         params.put("timestamp", String.valueOf(System.currentTimeMillis()));
         params.put("version", "1.0");
-        params.put("auth_token", authorization.getToken());
+        params.put("auth_token", authToken.getAccessToken());
 
         String response = Httpx.post(GATEWAY, params);
         Map<String, Object> json = JsonKit.toMap(response);
@@ -218,17 +215,14 @@ public class AlipayProvider extends AbstractProvider {
         String location = String
                 .format("%s %s", StringKit.isEmpty(province) ? "" : province, StringKit.isEmpty(city) ? "" : city);
 
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Material.builder().rawJson(JsonKit.toJsonString(userResponse))
-                        .uuid((String) userResponse.get("user_id"))
-                        .username(
-                                StringKit.isEmpty((String) userResponse.get("user_name"))
-                                        ? (String) userResponse.get("nick_name")
-                                        : (String) userResponse.get("user_name"))
-                        .nickname((String) userResponse.get("nick_name")).avatar((String) userResponse.get("avatar"))
-                        .location(location).gender(Gender.of((String) userResponse.get("gender"))).token(authorization)
-                        .source(complex.toString()).build())
-                .build();
+        return Material.builder().rawJson(JsonKit.toJsonString(userResponse)).uuid((String) userResponse.get("user_id"))
+                .username(
+                        StringKit.isEmpty((String) userResponse.get("user_name"))
+                                ? (String) userResponse.get("nick_name")
+                                : (String) userResponse.get("user_name"))
+                .nickname((String) userResponse.get("nick_name")).avatar((String) userResponse.get("avatar"))
+                .location(location).gender(Gender.of((String) userResponse.get("gender"))).token(authToken)
+                .source(complex.toString()).build();
     }
 
     /**
@@ -239,13 +233,10 @@ public class AlipayProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                .data(
-                        Builder.fromUrl(this.complex.authorize()).queryParam("app_id", context.getClientId())
-                                .queryParam("scope", "auth_user").queryParam("redirect_uri", context.getRedirectUri())
-                                .queryParam("state", getRealState(state)).build())
-                .build();
+    public String authorize(String state) {
+        return Builder.fromUrl(this.complex.authorize()).queryParam("app_id", context.getAppKey())
+                .queryParam("scope", "auth_user").queryParam("redirect_uri", context.getRedirectUri())
+                .queryParam("state", getRealState(state)).build();
     }
 
 }

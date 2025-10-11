@@ -27,93 +27,58 @@
 */
 package org.miaixz.bus.vortex;
 
-import java.util.Collection;
-
 /**
- * A generic contract for an in-memory registry that stores and manages objects of type {@code T}.
- * <p>
- * This interface defines the basic CRUD (Create, Read, Update, Delete) operations for a thread-safe, key-value based
- * registry. Concrete implementations, like {@link org.miaixz.bus.vortex.registry.AbstractRegistry}, provide the
- * underlying storage mechanism.
+ * Generic registry interface for managing and operating key-value pair data (e.g., routes, rate limiting
+ * configurations).
  *
- * @param <T> The type of objects to be stored in the registry.
- * @author Kimi Liu
+ * @param <T> The type of value stored in the registry.
+ * @author Justubborn
  * @since Java 17+
  */
 public interface Registry<T> {
 
     /**
-     * A hook for subclasses to perform initialization logic, typically called after the registry is constructed or
-     * refreshed.
+     * Initializes the registry, loading initial data or configurations.
      */
-    default void init() {
-
-    }
+    void init();
 
     /**
-     * Registers an item in the registry using a key derived from the item itself by the registry's key generation
-     * strategy.
+     * Adds a key-value pair to the registry.
      *
-     * @param item The item to register.
+     * @param key The unique identifier key.
+     * @param reg The object to be registered.
+     * @return {@code true} if the addition was successful, {@code false} otherwise.
      */
-    void register(T item);
+    boolean add(String key, T reg);
 
     /**
-     * Registers an item in the registry with a specific key.
+     * Removes a record with the specified key from the registry.
      *
-     * @param key  The unique key to associate with the item.
-     * @param item The item to register.
+     * @param key The unique identifier key.
+     * @return {@code true} if the removal was successful, {@code false} otherwise.
      */
-    void register(String key, T item);
+    boolean remove(String key);
 
     /**
-     * Removes an item from the registry using its key.
+     * Modifies a key-value pair in the registry.
      *
-     * @param key The key of the item to remove.
+     * @param key The unique identifier key.
+     * @param reg The new value.
+     * @return {@code true} if the modification was successful, {@code false} otherwise.
      */
-    void destroy(String key);
+    boolean amend(String key, T reg);
 
     /**
-     * Removes an item from the registry using a key derived from the item itself.
-     *
-     * @param item The item to remove.
-     */
-    void destroy(T item);
-
-    /**
-     * Updates an item in the registry using a key derived from the item itself. If the item does not exist, it will be
-     * registered.
-     *
-     * @param item The item to update.
-     */
-    void update(T item);
-
-    /**
-     * Updates an item in the registry for a specific key. If the key does not exist, a new entry will be created.
-     *
-     * @param key  The key of the item to update.
-     * @param item The new item.
-     */
-    void update(String key, T item);
-
-    /**
-     * Clears all items from the registry and re-initializes it by calling {@link #init()}.
+     * Refreshes the registry, reloading data or clearing and reinitializing.
      */
     void refresh();
 
     /**
-     * Retrieves an item from the registry by its key.
+     * Retrieves the value corresponding to the specified key.
      *
-     * @param key The key of the item to retrieve.
-     * @return The item associated with the key, or {@code null} if not found.
+     * @param id The unique identifier key.
+     * @return The corresponding value, or {@code null} if not found.
      */
-    T get(String key);
-
-    /**
-     * Retrieves a collection of all items currently in the registry.
-     *
-     * @return An unmodifiable {@link Collection} of all registered items.
-     */
-    Collection<T> getAll();
+    T get(String id);
 
 }

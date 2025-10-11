@@ -33,13 +33,11 @@ import java.util.Map;
 import org.miaixz.bus.auth.Builder;
 import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.Authorization;
+import org.miaixz.bus.auth.magic.AuthToken;
 import org.miaixz.bus.auth.magic.Callback;
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Material;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
 import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Gender;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.AuthorizedException;
@@ -77,35 +75,35 @@ public class GoogleProvider extends AbstractProvider {
      * Retrieves the access token from Google's authorization server.
      *
      * @param callback the callback object containing the authorization code
-     * @return the {@link Authorization} containing access token details
+     * @return the {@link AuthToken} containing access token details
      * @throws AuthorizedException if parsing the response fails or required token information is missing
      */
     @Override
-    public Message token(Callback callback) {
-        String response = doPostToken(callback.getCode());
+    public AuthToken getAccessToken(Callback callback) {
+        String response = doPostAuthorizationCode(callback.getCode());
         try {
-            Map<String, Object> object = JsonKit.toPojo(response, Map.class);
-            if (object == null) {
+            Map<String, Object> accessTokenObject = JsonKit.toPojo(response, Map.class);
+            if (accessTokenObject == null) {
                 throw new AuthorizedException("Failed to parse access token response: empty response");
             }
-            this.checkResponse(object);
+            this.checkResponse(accessTokenObject);
 
-            String token = (String) object.get("access_token");
-            if (token == null) {
+            String accessToken = (String) accessTokenObject.get("access_token");
+            if (accessToken == null) {
                 throw new AuthorizedException("Missing access_token in response");
             }
-            Object expiresInObj = object.get("expires_in");
+            Object expiresInObj = accessTokenObject.get("expires_in");
             int expiresIn = expiresInObj instanceof Number ? ((Number) expiresInObj).intValue() : 0;
-            String scope = (String) object.get("scope");
-            String tokenType = (String) object.get("token_type");
-            String idToken = (String) object.get("id_token");
-            String refresh_token = (String) object.get("refresh_token");
-            int refresh_token_expires_in = (int) object.get("refresh_token_expires_in");
+            String scope = (String) accessTokenObject.get("scope");
+            String tokenType = (String) accessTokenObject.get("token_type");
+            String idToken = (String) accessTokenObject.get("id_token");
+            String refresh_token = (String) accessTokenObject.get("refresh_token");
+            int refresh_token_expires_in = (int) accessTokenObject.get("refresh_token_expires_in");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                    Authorization.builder().token(token).expireIn(expiresIn).scope(scope).token_type(tokenType)
-                            .refresh(refresh_token).refreshExpireIn(refresh_token_expires_in).idToken(idToken).build())
+            return AuthToken.builder().accessToken(accessToken).expireIn(expiresIn).scope(scope).tokenType(tokenType)
+                    .refreshToken(refresh_token).refreshTokenExpireIn(refresh_token_expires_in).idToken(idToken)
                     .build();
+
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse access token response: " + e.getMessage());
         }
@@ -114,15 +112,15 @@ public class GoogleProvider extends AbstractProvider {
     /**
      * Retrieves user information from Google's user info endpoint.
      *
-     * @param authorization the {@link Authorization} obtained after successful authorization
+     * @param authToken the {@link AuthToken} obtained after successful authorization
      * @return {@link Material} containing the user's information
      * @throws AuthorizedException if parsing the response fails or required user information is missing
      */
     @Override
-    public Message userInfo(Authorization authorization) {
+    public Material getUserInfo(AuthToken authToken) {
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Bearer " + authorization.getToken());
-        String userInfo = Httpx.post(userInfoUrl(authorization), null, header);
+        header.put("Authorization", "Bearer " + authToken.getAccessToken());
+        String userInfo = Httpx.post(userInfoUrl(authToken), null, header);
         try {
             Map<String, Object> object = JsonKit.toPojo(userInfo, Map.class);
             if (object == null) {
@@ -139,12 +137,9 @@ public class GoogleProvider extends AbstractProvider {
             String name = (String) object.get("name");
             String locale = (String) object.get("locale");
 
-            return Message.builder().errcode(ErrorCode._SUCCESS.getKey())
-                    .data(
-                            Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(sub).username(email)
-                                    .avatar(picture).nickname(name).location(locale).email(email).gender(Gender.UNKNOWN)
-                                    .token(authorization).source(complex.toString()).build())
-                    .build();
+            return Material.builder().rawJson(JsonKit.toJsonString(object)).uuid(sub).username(email).avatar(picture)
+                    .nickname(name).location(locale).email(email).gender(Gender.UNKNOWN).token(authToken)
+                    .source(complex.toString()).build();
         } catch (Exception e) {
             throw new AuthorizedException("Failed to parse user info response: " + e.getMessage());
         }
@@ -158,23 +153,21 @@ public class GoogleProvider extends AbstractProvider {
      * @return the authorization URL
      */
     @Override
-    public Message build(String state) {
-        return Message.builder().errcode(ErrorCode._SUCCESS.getKey()).data(
-                Builder.fromUrl((String) super.build(state).getData()).queryParam("access_type", "offline")
-                        .queryParam("scope", this.getScopes(Symbol.SPACE, false, this.getScopes(GoogleScope.values())))
-                        .queryParam("prompt", "select_account").build())
-                .build();
+    public String authorize(String state) {
+        return Builder.fromUrl(super.authorize(state)).queryParam("access_type", "offline")
+                .queryParam("scope", this.getScopes(Symbol.SPACE, false, this.getDefaultScopes(GoogleScope.values())))
+                .queryParam("prompt", "select_account").build();
     }
 
     /**
      * Returns the URL to obtain user information.
      *
-     * @param authorization the user's authorization token
+     * @param authToken the user's authorization token
      * @return the URL to obtain user information
      */
     @Override
-    protected String userInfoUrl(Authorization authorization) {
-        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authorization.getToken()).build();
+    protected String userInfoUrl(AuthToken authToken) {
+        return Builder.fromUrl(this.complex.userinfo()).queryParam("access_token", authToken.getAccessToken()).build();
     }
 
     /**
