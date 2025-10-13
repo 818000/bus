@@ -25,10 +25,7 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-/**
- *
- * 
- * @author Kimi Liu
- * @since Java 17+
- */
-package org.miaixz.bus.vortex.support.http;
+package org.miaixz.bus.vortex.support;
+
+public class ProService {
+}
