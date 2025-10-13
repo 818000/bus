@@ -293,7 +293,10 @@ public class FormatBuilder extends Format implements PositionDateParser, FormatP
      * @param locale    The locale.
      * @return A {@code FormatBuilder} instance.
      */
-    public static FormatBuilder getDateTimeInstance(final int dateStyle, final int timeStyle, final TimeZone timeZone,
+    public static FormatBuilder getDateTimeInstance(
+            final int dateStyle,
+            final int timeStyle,
+            final TimeZone timeZone,
             final Locale locale) {
         return CACHE.getDateTimeInstance(dateStyle, timeStyle, timeZone, locale);
     }

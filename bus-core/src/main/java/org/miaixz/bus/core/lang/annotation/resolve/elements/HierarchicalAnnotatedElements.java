@@ -132,7 +132,8 @@ public class HierarchicalAnnotatedElements implements AnnotatedElement, Iterable
      *                       element will be ignored.
      * @return A {@code HierarchicalAnnotatedElements} instance.
      */
-    public static HierarchicalAnnotatedElements of(final AnnotatedElement element,
+    public static HierarchicalAnnotatedElements of(
+            final AnnotatedElement element,
             final BiFunction<Set<AnnotatedElement>, AnnotatedElement, AnnotatedElement> elementFactory) {
         return element instanceof HierarchicalAnnotatedElements ? (HierarchicalAnnotatedElements) element
                 : new HierarchicalAnnotatedElements(element, elementFactory);
@@ -369,7 +370,10 @@ public class HierarchicalAnnotatedElements implements AnnotatedElement, Iterable
      * @param isMethod {@code true} if scanning for methods, {@code false} if scanning for classes.
      * @param source   The original {@link AnnotatedElement} (either a Class or a Method) that initiated the scan.
      */
-    private void scanHierarchy(final Set<AnnotatedElement> mappings, Class<?> type, final boolean isMethod,
+    private void scanHierarchy(
+            final Set<AnnotatedElement> mappings,
+            Class<?> type,
+            final boolean isMethod,
             final AnnotatedElement source) {
         final Method methodSource = isMethod ? (Method) source : null;
         final Deque<Class<?>> deque = new LinkedList<>();

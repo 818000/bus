@@ -133,7 +133,9 @@ public class SinglePlaceholderString extends StringTemplate {
                 if (delimIndex > 1 && template.charAt(delimIndex - 2) == escape) {
                     // There is another escape character before the escape character, like: "//{", the placeholder is
                     // still valid
-                    addLiteralSegment(lastIsLiteralSegment, segments,
+                    addLiteralSegment(
+                            lastIsLiteralSegment,
+                            segments,
                             template.substring(handledPosition, delimIndex - 1));
                     segments.add(singlePlaceholderSegment);
                     lastIsLiteralSegment = false;
@@ -141,7 +143,9 @@ public class SinglePlaceholderString extends StringTemplate {
                 } else {
                     // The placeholder is escaped, like: "/{", the current character is not a real placeholder, but part
                     // of a normal string
-                    addLiteralSegment(lastIsLiteralSegment, segments,
+                    addLiteralSegment(
+                            lastIsLiteralSegment,
+                            segments,
                             template.substring(handledPosition, delimIndex - 1) + placeholder.charAt(0));
                     lastIsLiteralSegment = true;
                     handledPosition = delimIndex + 1;

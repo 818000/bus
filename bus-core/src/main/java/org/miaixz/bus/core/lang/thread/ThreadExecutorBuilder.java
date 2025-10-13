@@ -83,8 +83,13 @@ public class ThreadExecutorBuilder {
      *                        task, for example, when its maximum capacity and queue capacity are reached.
      * @return A new {@link Executor} instance configured with the specified parameters.
      */
-    public static Executor newLimitedFastThread(final int corePoolSize, final int maximumPoolSize,
-            final long keepAliveTime, final TimeUnit unit, final BlockingQueue<Runnable> workQueue, final String prefix,
+    public static Executor newLimitedFastThread(
+            final int corePoolSize,
+            final int maximumPoolSize,
+            final long keepAliveTime,
+            final TimeUnit unit,
+            final BlockingQueue<Runnable> workQueue,
+            final String prefix,
             final RejectedExecutionHandler handler) {
         return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 new NamedThreadFactory(prefix), handler);

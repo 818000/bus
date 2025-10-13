@@ -25,16 +25,14 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex.support;
-
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+package org.miaixz.bus.vortex.support.http;
 
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.annotation.NonNull;
 import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.vortex.*;
+import org.miaixz.bus.vortex.Assets;
+import org.miaixz.bus.vortex.Context;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -49,23 +47,18 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientRequest;
-import reactor.util.annotation.NonNull;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * HTTP strategy router, responsible for routing requests to HTTP services.
- * <p>
- * This class implements the {@link Router} interface to handle HTTP requests. It uses {@link WebClient} to forward
- * incoming requests to target HTTP services, managing request headers, body, and response processing.
- *
- *
- * @author Kimi Liu
- * @since Java 17+
+ * HTTP 请求的实际执行器。 封装了所有使用 WebClient 与下游服务交互的逻辑。
  */
-public class HttpRequestRouter implements Router {
+public class HttpService {
 
     /**
      * Pre-defined {@link ExchangeStrategies} instance for WebClient configuration.
@@ -98,8 +91,7 @@ public class HttpRequestRouter implements Router {
      * @return {@link Mono<ServerResponse>} containing the response from the target service.
      */
     @NonNull
-    @Override
-    public Mono<ServerResponse> route(ServerRequest request, Context context, Assets assets) {
+    public Mono<ServerResponse> execute(ServerRequest request, Context context, Assets assets) {
         // Get request method and path for logging
         String method = request.methodName();
         String path = request.path();

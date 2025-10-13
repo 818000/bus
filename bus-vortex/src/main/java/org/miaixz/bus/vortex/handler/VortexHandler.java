@@ -27,21 +27,25 @@
 */
 package org.miaixz.bus.vortex.handler;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.vortex.*;
+import org.miaixz.bus.vortex.Assets;
+import org.miaixz.bus.vortex.Context;
+import org.miaixz.bus.vortex.Handler;
+import org.miaixz.bus.vortex.Router;
 import org.miaixz.bus.vortex.magic.ErrorCode;
-import org.miaixz.bus.vortex.support.HttpRequestRouter;
-import org.miaixz.bus.vortex.support.MqRequestRouter;
-import org.miaixz.bus.vortex.support.McpRequestRouter;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 
@@ -65,7 +69,7 @@ public class VortexHandler {
      * protocols. {@code ConcurrentHashMap} is used to ensure thread safety.
      * </p>
      */
-    private final Map<String, Router> strategies = new ConcurrentHashMap<>();
+    private final Map<String, Router> routers;
 
     /**
      * The default router strategy, used when a specific strategy is not provided or found.
@@ -88,13 +92,12 @@ public class VortexHandler {
      * Constructs a {@code VortexHandler}, initializing the strategy map and the interceptor list.
      *
      * @param handlers A list of asynchronous interceptor instances, used to handle various stages of a request.
+     * @param routers  A list of asynchronous interceptor instances, used to handle various stages of a request.
      * @throws NullPointerException If handlers or the default strategy is null.
      */
-    public VortexHandler(List<Handler> handlers) {
-        strategies.put(Protocol.HTTP.name, new HttpRequestRouter());
-        strategies.put(Protocol.MQ.name, new MqRequestRouter());
-        strategies.put(Protocol.MCP.name, new McpRequestRouter());
-        defaultRouter = strategies.get(Protocol.HTTP.name);
+    public VortexHandler(List<Handler> handlers, Map<String, Router> routers) {
+        this.routers = routers;
+        this.defaultRouter = routers.get(Protocol.HTTP.name);
         Objects.requireNonNull(defaultRouter, "Default strategy cannot be null");
         // If handlers is empty, use the default AccessHandler
         this.handlers = handlers.isEmpty() ? List.of(new AccessHandler())
@@ -152,7 +155,7 @@ public class VortexHandler {
                 default -> Protocol.HTTP.name();
             };
 
-            Router router = strategies.getOrDefault(mode, defaultRouter);
+            Router router = routers.getOrDefault(mode, defaultRouter);
             Logger.info(
                     "==>    Handler: [N/A] [{}] [{}] [ROUTER_SELECT] - Using route strategy: {}",
                     method,
@@ -185,10 +188,9 @@ public class VortexHandler {
                                     method,
                                     path,
                                     error.getMessage());
-                            return Mono.whenDelayError(
-                                    handlers.stream().map(
-                                            handler -> handler.afterCompletion(exchange, router, null, null, error))
-                                            .collect(Collectors.toList()))
+                            // Sequentially run afterCompletion for all handlers before re-throwing the error
+                            return Flux.fromIterable(handlers)
+                                    .concatMap(handler -> handler.afterCompletion(exchange, router, null, null, error))
                                     .then(Mono.error(error));
                         });
             });
@@ -204,11 +206,11 @@ public class VortexHandler {
     }
 
     /**
-     * Executes the pre-processing logic of all interceptors.
+     * Executes the pre-processing logic of all interceptors sequentially.
      * <p>
-     * This method calls the {@code preHandle} method of all interceptors in parallel and collects their results. It
-     * returns {@code true} only if all interceptors return {@code true}, indicating that all pre-processing steps have
-     * passed.
+     * This method calls the {@code preHandle} method of all interceptors in a sequential chain. If any interceptor
+     * returns {@code false}, the chain is immediately terminated, and the method returns {@code Mono<Boolean>} with a
+     * value of {@code false}, effectively "short-circuiting" the execution.
      * </p>
      *
      * @param exchange The {@link ServerWebExchange} object, containing request and response context information.
@@ -217,39 +219,33 @@ public class VortexHandler {
      *         interceptor blocked the request ({@code false}).
      */
     private Mono<Boolean> executePreHandle(ServerWebExchange exchange, Router router) {
-        return Mono.zip(
-                handlers.stream().map(handler -> handler.preHandle(exchange, router, null))
-                        .collect(Collectors.toList()),
-                results -> results.length > 0 && Arrays.stream(results).allMatch(Boolean.class::cast));
+        return Flux.fromIterable(handlers).concatMap(handler -> handler.preHandle(exchange, router, null))
+                .all(result -> result);
     }
 
     /**
-     * Executes the post-processing logic of all interceptors.
+     * Executes the post-processing logic of all interceptors sequentially.
      * <p>
-     * This method calls the {@code postHandle} and {@code afterCompletion} methods of all interceptors in parallel. The
-     * {@code postHandle} method is executed before the response is sent to the client, and the {@code afterCompletion}
-     * method is executed after the request has been fully processed.
+     * This method first calls the {@code postHandle} method of all interceptors in sequence. After that completes, it
+     * calls the {@code afterCompletion} method of all interceptors, also in sequence.
      * </p>
      *
      * @param exchange The {@link ServerWebExchange} object, containing request and response context information.
      * @param router   The routing strategy, used to determine how to route the request.
      * @param response The {@link ServerResponse} object, containing the response status, headers, and body.
-     * @return {@code Mono<ServerResponse>} The processed response, which may have been modified by the interceptors.
+     * @return {@code Mono<ServerResponse>} The original response, after all interceptors have been processed.
      */
     private Mono<ServerResponse> executePostHandlers(
             ServerWebExchange exchange,
             Router router,
             ServerResponse response) {
-        return Mono
-                .whenDelayError(
-                        handlers.stream().map(handler -> handler.postHandle(exchange, router, null, response))
-                                .collect(Collectors.toList()))
-                .thenReturn(response).flatMap(
-                        res -> Mono.whenDelayError(
-                                handlers.stream()
-                                        .map(handler -> handler.afterCompletion(exchange, router, null, res, null))
-                                        .collect(Collectors.toList()))
-                                .thenReturn(res));
+        Mono<Void> postHandleChain = Flux.fromIterable(handlers)
+                .concatMap(handler -> handler.postHandle(exchange, router, null, response)).then();
+
+        Mono<Void> afterCompletionChain = Flux.fromIterable(handlers)
+                .concatMap(handler -> handler.afterCompletion(exchange, router, null, response, null)).then();
+
+        return postHandleChain.then(afterCompletionChain).thenReturn(response);
     }
 
 }

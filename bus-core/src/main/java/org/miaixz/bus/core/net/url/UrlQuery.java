@@ -100,7 +100,9 @@ public class UrlQuery {
      * @param autoRemovePath If {@code true}, automatically removes the path part before the first '?'.
      * @return A new {@link UrlQuery} instance.
      */
-    public static UrlQuery of(final String query, final java.nio.charset.Charset charset,
+    public static UrlQuery of(
+            final String query,
+            final java.nio.charset.Charset charset,
             final boolean autoRemovePath) {
         return of(query, charset, autoRemovePath, null);
     }
@@ -114,7 +116,10 @@ public class UrlQuery {
      * @param encodeMode     The encoding mode for the query parameters.
      * @return A new {@link UrlQuery} instance.
      */
-    public static UrlQuery of(final String query, final java.nio.charset.Charset charset, final boolean autoRemovePath,
+    public static UrlQuery of(
+            final String query,
+            final java.nio.charset.Charset charset,
+            final boolean autoRemovePath,
             final EncodeMode encodeMode) {
         return of(encodeMode).parse(query, charset, autoRemovePath);
     }
@@ -298,14 +303,14 @@ public class UrlQuery {
      */
     public String build(final java.nio.charset.Charset charset) {
         switch (this.encodeMode) {
-        case FORM_URL_ENCODED:
-            return build(ALL, ALL, charset);
+            case FORM_URL_ENCODED:
+                return build(ALL, ALL, charset);
 
-        case STRICT:
-            return build(RFC3986.QUERY_PARAM_NAME_STRICT, RFC3986.QUERY_PARAM_VALUE_STRICT, charset);
+            case STRICT:
+                return build(RFC3986.QUERY_PARAM_NAME_STRICT, RFC3986.QUERY_PARAM_VALUE_STRICT, charset);
 
-        default:
-            return build(RFC3986.QUERY_PARAM_NAME, RFC3986.QUERY_PARAM_VALUE, charset);
+            default:
+                return build(RFC3986.QUERY_PARAM_NAME, RFC3986.QUERY_PARAM_VALUE, charset);
         }
     }
 
@@ -322,7 +327,9 @@ public class UrlQuery {
      * @param charset    The charset for encoding; if {@code null}, no encoding is performed.
      * @return The URL query string.
      */
-    public String build(final PercentCodec keyCoder, final PercentCodec valueCoder,
+    public String build(
+            final PercentCodec keyCoder,
+            final PercentCodec valueCoder,
             final java.nio.charset.Charset charset) {
         if (MapKit.isEmpty(this.query)) {
             return Normal.EMPTY;
@@ -363,22 +370,22 @@ public class UrlQuery {
         for (i = 0; i < len; i++) {
             c = query.charAt(i);
             switch (c) {
-            case Symbol.C_EQUAL: // Delimiter between key and value
-                if (null == name) {
-                    name = query.substring(pos, i);
-                    pos = i + 1;
-                }
-                break;
+                case Symbol.C_EQUAL: // Delimiter between key and value
+                    if (null == name) {
+                        name = query.substring(pos, i);
+                        pos = i + 1;
+                    }
+                    break;
 
-            case Symbol.C_AND: // Delimiter between key-value pairs
-                addParam(name, query.substring(pos, i), charset);
-                name = null;
-                if (i + 4 < len && "amp;".equals(query.substring(i + 1, i + 5))) {
-                    // Unescape "&amp;" to "&"
-                    i += 4;
-                }
-                pos = i + 1;
-                break;
+                case Symbol.C_AND: // Delimiter between key-value pairs
+                    addParam(name, query.substring(pos, i), charset);
+                    name = null;
+                    if (i + 4 < len && "amp;".equals(query.substring(i + 1, i + 5))) {
+                        // Unescape "&amp;" to "&"
+                        i += 4;
+                    }
+                    pos = i + 1;
+                    break;
             }
         }
 

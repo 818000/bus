@@ -25,16 +25,19 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex.filter;
+package org.miaixz.bus.vortex.strategy;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.miaixz.bus.core.basic.entity.Authorize;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.core.basic.normal.Errors;
 import org.miaixz.bus.core.bean.copier.CopyOptions;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.xyz.BeanKit;
@@ -52,24 +55,19 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilterChain;
 
 import reactor.core.publisher.Mono;
 
 /**
- * Access authorization filter responsible for verifying the legality of requests, including method, token, and
- * application ID.
- * <p>
- * This filter is a crucial part of the request processing chain. It validates the legality of requests by checking the
- * request method, version, token (if required), and application ID. The filter ensures that only legitimate requests
- * are allowed to proceed by verifying the HTTP method, token, and application ID against the configured asset
- * information.
+ * A filter strategy for access authorization. This strategy verifies the legality of requests by checking the method,
+ * token, and application ID. It is designed to work on traditional REST requests that contain method and version
+ * parameters.
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 17+
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 2)
-public class AuthorizeFilter extends AbstractFilter {
+@Order(Ordered.HIGHEST_PRECEDENCE + 3)
+public class AuthorizeStrategy extends AbstractStrategy {
 
     /**
      * The authorization provider, used for handling token validation and authorization logic.
@@ -95,7 +93,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param provider The authorization provider, used for handling token validation and authorization logic.
      * @param registry The assets registry, used for storing and retrieving API asset information.
      */
-    public AuthorizeFilter(AuthorizeProvider provider, AssetsRegistry registry) {
+    public AuthorizeStrategy(AuthorizeProvider provider, AssetsRegistry registry) {
         this.provider = provider;
         this.registry = registry;
     }
@@ -122,7 +120,7 @@ public class AuthorizeFilter extends AbstractFilter {
      *         execution if all validations pass.
      */
     @Override
-    protected Mono<Void> doFilter(ServerWebExchange exchange, WebFilterChain chain, Context context) {
+    protected Mono<Void> apply(ServerWebExchange exchange, StrategyChain chain, Context context) {
         // Get the request parameter map from the context
         Map<String, String> params = getRequestMap(context);
 
@@ -152,11 +150,14 @@ public class AuthorizeFilter extends AbstractFilter {
         // Set asset information into the context
         context.setAssets(assets);
 
+        // Populates IP-related parameters into the request context.
+        this.populate(exchange, context);
+
         // Log successful validation
         Logger.info("==>     Filter: Method: {}, Version: {} validated successfully", method, version);
 
         // Continue with the filter chain
-        return chain.filter(exchange);
+        return chain.apply(exchange);
     }
 
     /**
@@ -305,6 +306,57 @@ public class AuthorizeFilter extends AbstractFilter {
     }
 
     /**
+     * Populates IP-related parameters into the request context.
+     * <p>
+     * This method extracts the client's IP address and adds it to the request context. The IP address is determined in
+     * the following order of precedence:
+     * <ol>
+     * <li>Checks the "x_remote_ip" request header.</li>
+     * <li>If absent, checks the "X-Forwarded-For" request header to handle cases with proxies.</li>
+     * <li>If still absent, falls back to the request's remote address.</li>
+     * </ol>
+     * Additionally, it retrieves the request's authority (host and port) and adds it to the context. If the authority
+     * cannot be determined, a default value is used to ensure continued processing without throwing an exception.
+     *
+     * @param exchange ServerWebExchange object containing request and response information.
+     * @param context  Request context where IP address and authority information will be stored.
+     */
+    protected void populate(ServerWebExchange exchange, Context context) {
+        // Extract the client's IP address
+        String clientIp = Optional.ofNullable(exchange.getRequest().getHeaders().getFirst("x_request_ip")).orElseGet(
+                () -> Optional.ofNullable(exchange.getRequest().getHeaders().getFirst("X-Forwarded-For")).orElseGet(
+                        () -> exchange.getRequest().getRemoteAddress() != null
+                                ? exchange.getRequest().getRemoteAddress().getAddress().getHostAddress()
+                                : "unknown"));
+
+        // Add the client IP to the context
+        context.getRequestMap().put("x_request_ipv4", clientIp);
+
+        // Get the domain name and port (authority)
+        Optional<String> authorityOptional = getOriginalAuthority(exchange.getRequest());
+
+        String unknown = Normal.UNKNOWN + Symbol.COLON + Symbol.ZERO;
+        // Use a default authority if none is found to prevent exceptions and ensure smooth processing
+        String domain = authorityOptional.orElse(unknown);
+
+        // Log a warning if the authority could not be determined
+        if (unknown.equals(domain)) {
+            Logger.warn(
+                    "==> Filter: Unable to determine the request domain (host:port). Using default value: {}",
+                    domain);
+        }
+
+        // Add the authority to the request context
+        context.getRequestMap().put("x_request_domain", domain);
+
+        // Purges parameters reserved for internal gateway use.
+        context.getRequestMap().remove(Args.METHOD);
+        context.getRequestMap().remove(Args.FORMAT);
+        context.getRequestMap().remove(Args.VERSION);
+        context.getRequestMap().remove(Args.SIGN);
+    }
+
+    /**
      * Populates the authorize result into the request context.
      * <p>
      * Extracts user information from the authorization result and adds it to the request parameters.
@@ -313,7 +365,7 @@ public class AuthorizeFilter extends AbstractFilter {
      * @param auth    The authorization result
      * @param context The request context
      */
-    private void populate(Authorize auth, Context context) {
+    protected void populate(Authorize auth, Context context) {
         Map<String, Object> authMap = new HashMap<>();
         BeanKit.beanToMap(auth, authMap, CopyOptions.of().setTransientSupport(false).setIgnoreCase(true));
 

@@ -186,7 +186,8 @@ public class CharsBacker extends CharsValidator {
      *         supplier.
      * @see ObjectKit#defaultIfNull(Object, Supplier)
      */
-    public static <T extends CharSequence> T defaultIfNull(final T source,
+    public static <T extends CharSequence> T defaultIfNull(
+            final T source,
             final Supplier<? extends T> defaultSupplier) {
         return ObjectKit.defaultIfNull(source, defaultSupplier);
     }
@@ -204,8 +205,10 @@ public class CharsBacker extends CharsValidator {
      *         supplier.
      * @see ObjectKit#defaultIfNull(Object, Function, Supplier)
      */
-    public static <T extends CharSequence, R> R defaultIfNull(final T source,
-            final Function<? super T, ? extends R> handler, final Supplier<? extends R> defaultSupplier) {
+    public static <T extends CharSequence, R> R defaultIfNull(
+            final T source,
+            final Function<? super T, ? extends R> handler,
+            final Supplier<? extends R> defaultSupplier) {
         return ObjectKit.defaultIfNull(source, handler, defaultSupplier);
     }
 
@@ -254,7 +257,9 @@ public class CharsBacker extends CharsValidator {
      * @param defaultSupplier The supplier for the default value when the text is empty.
      * @return The result of the handler if the text is not empty, otherwise the default value from the supplier.
      */
-    public static <T extends CharSequence, V> V defaultIfEmpty(final T text, final Function<T, V> handler,
+    public static <T extends CharSequence, V> V defaultIfEmpty(
+            final T text,
+            final Function<T, V> handler,
             final Supplier<? extends V> defaultSupplier) {
         return isEmpty(text) ? defaultSupplier.get() : handler.apply(text);
     }
@@ -294,7 +299,9 @@ public class CharsBacker extends CharsValidator {
      * @return The result of the handler if the text is not blank, otherwise the default value from the supplier.
      * @throws NullPointerException if {@code defaultValueSupplier} is {@code null}.
      */
-    public static <T extends CharSequence, V> V defaultIfBlank(final T text, final Function<T, V> handler,
+    public static <T extends CharSequence, V> V defaultIfBlank(
+            final T text,
+            final Function<T, V> handler,
             final Supplier<? extends V> defaultSupplier) {
         if (isBlank(text)) {
             return defaultSupplier.get();
@@ -445,7 +452,9 @@ public class CharsBacker extends CharsValidator {
      *                  {@code false} to keep.
      * @return The string with specified characters removed, or {@code null} if the original string was {@code null}.
      */
-    public static String trim(final CharSequence text, final StringTrimer.TrimMode mode,
+    public static String trim(
+            final CharSequence text,
+            final StringTrimer.TrimMode mode,
             final Predicate<Character> predicate) {
         return new StringTrimer(mode, predicate).apply(text);
     }
@@ -568,7 +577,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEquals Whether to ignore the case where the string and prefix are equal.
      * @return {@code true} if the string starts with the prefix (and optionally not equal), {@code false} otherwise.
      */
-    public static boolean startWith(final CharSequence text, final CharSequence prefix, final boolean ignoreCase,
+    public static boolean startWith(
+            final CharSequence text,
+            final CharSequence prefix,
+            final boolean ignoreCase,
             final boolean ignoreEquals) {
         return new OffsetMatcher(ignoreCase, ignoreEquals, true).test(text, prefix);
     }
@@ -674,7 +686,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEquals Whether to ignore the case where the string and suffix are equal.
      * @return {@code true} if the string ends with the suffix (and optionally not equal), {@code false} otherwise.
      */
-    public static boolean endWith(final CharSequence text, final CharSequence suffix, final boolean ignoreCase,
+    public static boolean endWith(
+            final CharSequence text,
+            final CharSequence suffix,
+            final boolean ignoreCase,
             final boolean ignoreEquals) {
         return new OffsetMatcher(ignoreCase, ignoreEquals, false).test(text, suffix);
     }
@@ -926,7 +941,10 @@ public class CharsBacker extends CharsValidator {
      *                {@code text.length()}.
      * @return The index of the first matching character, or -1 if not found.
      */
-    public static int indexOf(final CharSequence text, final Predicate<Character> matcher, final int start,
+    public static int indexOf(
+            final CharSequence text,
+            final Predicate<Character> matcher,
+            final int start,
             final int end) {
         if (isEmpty(text)) {
             return Normal.__1;
@@ -994,7 +1012,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase Whether to ignore case during comparison.
      * @return The index of the first occurrence of the string, or -1 if not found.
      */
-    public static int indexOf(final CharSequence text, final CharSequence args, final int from,
+    public static int indexOf(
+            final CharSequence text,
+            final CharSequence args,
+            final int from,
             final boolean ignoreCase) {
         if (isEmpty(text) || isEmpty(args)) {
             if (equals(text, args)) {
@@ -1040,7 +1061,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase Whether to ignore case during comparison.
      * @return The index of the last occurrence of the string, or -1 if not found.
      */
-    public static int lastIndexOf(final CharSequence text, final CharSequence args, final int from,
+    public static int lastIndexOf(
+            final CharSequence text,
+            final CharSequence args,
+            final int from,
             final boolean ignoreCase) {
         if (isEmpty(text) || isEmpty(args)) {
             if (equals(text, args)) {
@@ -1385,7 +1409,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase Whether to ignore case during comparison.
      * @return The processed string.
      */
-    public static String strip(final CharSequence text, final CharSequence prefix, final CharSequence suffix,
+    public static String strip(
+            final CharSequence text,
+            final CharSequence prefix,
+            final CharSequence suffix,
             final boolean ignoreCase) {
         if (isEmpty(text)) {
             return toStringOrNull(text);
@@ -1424,7 +1451,9 @@ public class CharsBacker extends CharsValidator {
      * @param suffix The suffix to strip.
      * @return The processed string.
      */
-    public static String stripIgnoreCase(final CharSequence text, final CharSequence prefix,
+    public static String stripIgnoreCase(
+            final CharSequence text,
+            final CharSequence prefix,
             final CharSequence suffix) {
         return strip(text, prefix, suffix, true);
     }
@@ -1725,7 +1754,9 @@ public class CharsBacker extends CharsValidator {
      * @param isLastSeparator Whether to find the last occurrence of the separator (if multiple exist).
      * @return The substring before the separator.
      */
-    public static String subBefore(final CharSequence text, final CharSequence separator,
+    public static String subBefore(
+            final CharSequence text,
+            final CharSequence separator,
             final boolean isLastSeparator) {
         if (isEmpty(text) || separator == null) {
             return null == text ? null : text.toString();
@@ -1803,7 +1834,9 @@ public class CharsBacker extends CharsValidator {
      * @param isLastSeparator Whether to find the last occurrence of the separator (if multiple exist).
      * @return The substring after the separator.
      */
-    public static String subAfter(final CharSequence text, final CharSequence separator,
+    public static String subAfter(
+            final CharSequence text,
+            final CharSequence separator,
             final boolean isLastSeparator) {
         if (isEmpty(text)) {
             return null == text ? null : Normal.EMPTY;
@@ -1933,7 +1966,9 @@ public class CharsBacker extends CharsValidator {
      * @param suffix The ending marker string.
      * @return An array of extracted substrings. Returns an empty array if no matches or invalid input.
      */
-    public static String[] subBetweenAll(final CharSequence text, final CharSequence prefix,
+    public static String[] subBetweenAll(
+            final CharSequence text,
+            final CharSequence prefix,
             final CharSequence suffix) {
         if (hasEmpty(text, prefix, suffix) ||
         // If the starting string is not contained, there is certainly no substring.
@@ -2209,7 +2244,10 @@ public class CharsBacker extends CharsValidator {
      * @return {@code true} if the substrings are equal, {@code false} otherwise.
      * @see String#regionMatches(boolean, int, String, int, int)
      */
-    public static boolean isSubEquals(final CharSequence text1, final int offset1, final CharSequence text2,
+    public static boolean isSubEquals(
+            final CharSequence text1,
+            final int offset1,
+            final CharSequence text2,
             final boolean ignoreCase) {
         return isSubEquals(text1, offset1, text2, 0, text2.length(), ignoreCase);
     }
@@ -2227,8 +2265,13 @@ public class CharsBacker extends CharsValidator {
      * @return {@code true} if the substrings are equal, {@code false} otherwise.
      * @see String#regionMatches(boolean, int, String, int, int)
      */
-    public static boolean isSubEquals(final CharSequence text1, final int offset1, final CharSequence text2,
-            final int offset2, final int length, final boolean ignoreCase) {
+    public static boolean isSubEquals(
+            final CharSequence text1,
+            final int offset1,
+            final CharSequence text2,
+            final int offset2,
+            final int length,
+            final boolean ignoreCase) {
         if (null == text1 || null == text2) {
             return false;
         }
@@ -2383,7 +2426,9 @@ public class CharsBacker extends CharsValidator {
      * @param strs   Multiple strings to wrap.
      * @return An array of wrapped strings.
      */
-    public static String[] wrapAllIfMissing(final CharSequence prefix, final CharSequence suffix,
+    public static String[] wrapAllIfMissing(
+            final CharSequence prefix,
+            final CharSequence suffix,
             final CharSequence... strs) {
         final String[] results = new String[strs.length];
         for (int i = 0; i < strs.length; i++) {
@@ -2966,7 +3011,9 @@ public class CharsBacker extends CharsValidator {
      *                 appended.
      * @return The string with the suffix appended if missing, otherwise the original string.
      */
-    public static String appendIfMissing(final CharSequence text, final CharSequence suffix,
+    public static String appendIfMissing(
+            final CharSequence text,
+            final CharSequence suffix,
             final CharSequence... suffixes) {
         return appendIfMissing(text, suffix, false, suffixes);
     }
@@ -2981,7 +3028,9 @@ public class CharsBacker extends CharsValidator {
      *                 appended.
      * @return The string with the suffix appended if missing, otherwise the original string.
      */
-    public static String appendIfMissingIgnoreCase(final CharSequence text, final CharSequence suffix,
+    public static String appendIfMissingIgnoreCase(
+            final CharSequence text,
+            final CharSequence suffix,
             final CharSequence... suffixes) {
         return appendIfMissing(text, suffix, true, suffixes);
     }
@@ -2997,7 +3046,10 @@ public class CharsBacker extends CharsValidator {
      *                     appended.
      * @return The string with the suffix appended if missing, otherwise the original string.
      */
-    public static String appendIfMissing(final CharSequence text, final CharSequence suffix, final boolean ignoreCase,
+    public static String appendIfMissing(
+            final CharSequence text,
+            final CharSequence suffix,
+            final boolean ignoreCase,
             final CharSequence... testSuffixes) {
         if (text == null || isEmpty(suffix) || endWith(text, suffix, ignoreCase)) {
             return toStringOrNull(text);
@@ -3022,7 +3074,9 @@ public class CharsBacker extends CharsValidator {
      *                 prepended.
      * @return The string with the prefix prepended if missing, otherwise the original string.
      */
-    public static String prependIfMissing(final CharSequence text, final CharSequence prefix,
+    public static String prependIfMissing(
+            final CharSequence text,
+            final CharSequence prefix,
             final CharSequence... prefixes) {
         return prependIfMissing(text, prefix, false, prefixes);
     }
@@ -3037,7 +3091,9 @@ public class CharsBacker extends CharsValidator {
      *                 prepended.
      * @return The string with the prefix prepended if missing, otherwise the original string.
      */
-    public static String prependIfMissingIgnoreCase(final CharSequence text, final CharSequence prefix,
+    public static String prependIfMissingIgnoreCase(
+            final CharSequence text,
+            final CharSequence prefix,
             final CharSequence... prefixes) {
         return prependIfMissing(text, prefix, true, prefixes);
     }
@@ -3053,7 +3109,10 @@ public class CharsBacker extends CharsValidator {
      *                   prepended.
      * @return The string with the prefix prepended if missing, otherwise the original string.
      */
-    public static String prependIfMissing(final CharSequence text, final CharSequence prefix, final boolean ignoreCase,
+    public static String prependIfMissing(
+            final CharSequence text,
+            final CharSequence prefix,
+            final boolean ignoreCase,
             final CharSequence... prefixes) {
         if (text == null || isEmpty(prefix) || startWith(text, prefix, ignoreCase)) {
             return toStringOrNull(text);
@@ -3077,8 +3136,11 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase  Whether to ignore case during the search.
      * @return The string with the first occurrence replaced.
      */
-    public static String replaceFirst(final CharSequence text, final CharSequence searchStr,
-            final CharSequence replacedStr, final boolean ignoreCase) {
+    public static String replaceFirst(
+            final CharSequence text,
+            final CharSequence searchStr,
+            final CharSequence replacedStr,
+            final boolean ignoreCase) {
         if (isEmpty(text)) {
             return toStringOrNull(text);
         }
@@ -3098,8 +3160,11 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase  Whether to ignore case during the search.
      * @return The string with the last occurrence replaced.
      */
-    public static String replaceLast(final CharSequence text, final CharSequence searchStr,
-            final CharSequence replacedStr, final boolean ignoreCase) {
+    public static String replaceLast(
+            final CharSequence text,
+            final CharSequence searchStr,
+            final CharSequence replacedStr,
+            final boolean ignoreCase) {
         if (isEmpty(text)) {
             return toStringOrNull(text);
         }
@@ -3118,7 +3183,9 @@ public class CharsBacker extends CharsValidator {
      * @param replacement The replacement string.
      * @return The string with all occurrences replaced (case-insensitive).
      */
-    public static String replaceIgnoreCase(final CharSequence text, final CharSequence searchStr,
+    public static String replaceIgnoreCase(
+            final CharSequence text,
+            final CharSequence searchStr,
             final CharSequence replacement) {
         return replace(text, 0, searchStr, replacement, true);
     }
@@ -3131,7 +3198,9 @@ public class CharsBacker extends CharsValidator {
      * @param replacement The replacement string.
      * @return The string with all occurrences replaced.
      */
-    public static String replace(final CharSequence text, final CharSequence searchStr,
+    public static String replace(
+            final CharSequence text,
+            final CharSequence searchStr,
             final CharSequence replacement) {
         return replace(text, 0, searchStr, replacement, false);
     }
@@ -3145,7 +3214,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase  Whether to ignore case during the search.
      * @return The string with all occurrences replaced.
      */
-    public static String replace(final CharSequence text, final CharSequence searchStr, final CharSequence replacement,
+    public static String replace(
+            final CharSequence text,
+            final CharSequence searchStr,
+            final CharSequence replacement,
             final boolean ignoreCase) {
         return replace(text, 0, searchStr, replacement, ignoreCase);
     }
@@ -3161,8 +3233,12 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase  Whether to ignore case during the search.
      * @return The string with all occurrences replaced.
      */
-    public static String replace(final CharSequence text, final int fromIndex, final CharSequence searchStr,
-            final CharSequence replacement, final boolean ignoreCase) {
+    public static String replace(
+            final CharSequence text,
+            final int fromIndex,
+            final CharSequence searchStr,
+            final CharSequence replacement,
+            final boolean ignoreCase) {
         if (isEmpty(text) || isEmpty(searchStr)) {
             return toStringOrNull(text);
         }
@@ -3180,7 +3256,10 @@ public class CharsBacker extends CharsValidator {
      * @param replacedChar The character to replace with.
      * @return The string with the specified range replaced.
      */
-    public static String replaceByCodePoint(final CharSequence text, final int beginInclude, final int endExclude,
+    public static String replaceByCodePoint(
+            final CharSequence text,
+            final int beginInclude,
+            final int endExclude,
             final char replacedChar) {
         return new CharRangeReplacer(beginInclude, endExclude, replacedChar, true).apply(text);
     }
@@ -3195,7 +3274,10 @@ public class CharsBacker extends CharsValidator {
      * @param replacedStr  The string to replace with.
      * @return The string with the specified range replaced.
      */
-    public static String replaceByCodePoint(final CharSequence text, final int beginInclude, final int endExclude,
+    public static String replaceByCodePoint(
+            final CharSequence text,
+            final int beginInclude,
+            final int endExclude,
             final CharSequence replacedStr) {
         return new StringRangeReplacer(beginInclude, endExclude, replacedStr, true).apply(text);
     }
@@ -3216,7 +3298,9 @@ public class CharsBacker extends CharsValidator {
      * @return The string with replacements applied.
      * @see PatternKit#replaceAll(CharSequence, java.util.regex.Pattern, FunctionX)
      */
-    public static String replace(final CharSequence text, final java.util.regex.Pattern pattern,
+    public static String replace(
+            final CharSequence text,
+            final java.util.regex.Pattern pattern,
             final FunctionX<Matcher, String> replaceFun) {
         return PatternKit.replaceAll(text, pattern, replaceFun);
     }
@@ -3230,7 +3314,9 @@ public class CharsBacker extends CharsValidator {
      * @return The string with replacements applied.
      * @see PatternKit#replaceAll(CharSequence, String, FunctionX)
      */
-    public static String replace(final CharSequence text, final String regex,
+    public static String replace(
+            final CharSequence text,
+            final String regex,
             final FunctionX<Matcher, String> replaceFun) {
         return PatternKit.replaceAll(text, regex, replaceFun);
     }
@@ -3402,7 +3488,9 @@ public class CharsBacker extends CharsValidator {
      * @param appendDots     Whether to append an ellipsis ("...") after truncation.
      * @return The truncated string.
      */
-    public static String limitByteLengthUtf8(final CharSequence text, final int maxBytesLength,
+    public static String limitByteLengthUtf8(
+            final CharSequence text,
+            final int maxBytesLength,
             final boolean appendDots) {
         return limitByteLength(text, Charset.UTF_8, maxBytesLength, 4, appendDots);
     }
@@ -3421,8 +3509,12 @@ public class CharsBacker extends CharsValidator {
      * @param appendDots     Whether to append an ellipsis ("...") after truncation.
      * @return The truncated string.
      */
-    public static String limitByteLength(final CharSequence text, final java.nio.charset.Charset charset,
-            final int maxBytesLength, final int factor, final boolean appendDots) {
+    public static String limitByteLength(
+            final CharSequence text,
+            final java.nio.charset.Charset charset,
+            final int maxBytesLength,
+            final int factor,
+            final boolean appendDots) {
         // Character count * quick calculation factor <= maximum byte count
         if (text == null || text.length() * factor <= maxBytesLength) {
             return toStringOrNull(text);
@@ -3852,17 +3944,17 @@ public class CharsBacker extends CharsValidator {
 
         // Special lengths
         switch (maxLength) {
-        case 1:
-            return String.valueOf(text.charAt(0));
+            case 1:
+                return String.valueOf(text.charAt(0));
 
-        case 2:
-            return text.charAt(0) + ".";
+            case 2:
+                return text.charAt(0) + ".";
 
-        case 3:
-            return text.charAt(0) + "." + text.charAt(strLength - 1);
+            case 3:
+                return text.charAt(0) + "." + text.charAt(strLength - 1);
 
-        case 4:
-            return text.charAt(0) + ".." + text.charAt(strLength - 1);
+            case 4:
+                return text.charAt(0) + ".." + text.charAt(strLength - 1);
         }
 
         final int suffixLength = (maxLength - 3) / 2;
@@ -4159,7 +4251,10 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEmpty Whether to ignore empty strings after splitting.
      * @return A list of split strings.
      */
-    public static List<String> split(final CharSequence text, final CharSequence separator, final boolean isTrim,
+    public static List<String> split(
+            final CharSequence text,
+            final CharSequence separator,
+            final boolean isTrim,
             final boolean ignoreEmpty) {
         return split(text, separator, Normal.__1, isTrim, ignoreEmpty, false);
     }
@@ -4175,8 +4270,12 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEmpty Whether to ignore empty strings after splitting.
      * @return A list of split strings.
      */
-    public static List<String> split(final CharSequence text, final CharSequence separator, final int limit,
-            final boolean isTrim, final boolean ignoreEmpty) {
+    public static List<String> split(
+            final CharSequence text,
+            final CharSequence separator,
+            final int limit,
+            final boolean isTrim,
+            final boolean ignoreEmpty) {
         return split(text, separator, limit, isTrim, ignoreEmpty, false);
     }
 
@@ -4193,8 +4292,13 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreCase  Whether to ignore case when searching for the separator.
      * @return A list of split strings.
      */
-    public static List<String> split(final CharSequence text, final CharSequence separator, final int limit,
-            final boolean isTrim, final boolean ignoreEmpty, final boolean ignoreCase) {
+    public static List<String> split(
+            final CharSequence text,
+            final CharSequence separator,
+            final int limit,
+            final boolean isTrim,
+            final boolean ignoreEmpty,
+            final boolean ignoreCase) {
         return split(text, separator, limit, ignoreEmpty, ignoreCase, trimFunc(isTrim));
     }
 
@@ -4214,8 +4318,13 @@ public class CharsBacker extends CharsValidator {
      * @return A list of mapped objects.
      * @throws IllegalArgumentException if the separator is empty.
      */
-    public static <R> List<R> split(final CharSequence text, final CharSequence separator, final int limit,
-            final boolean ignoreEmpty, final boolean ignoreCase, final Function<String, R> mapping) {
+    public static <R> List<R> split(
+            final CharSequence text,
+            final CharSequence separator,
+            final int limit,
+            final boolean ignoreEmpty,
+            final boolean ignoreCase,
+            final Function<String, R> mapping) {
         if (null == text) {
             return ListKit.zero();
         } else if (0 == text.length() && ignoreEmpty) {
@@ -4318,11 +4427,18 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEmpty    Whether to ignore empty strings after splitting.
      * @return A list of split strings.
      */
-    public static List<String> splitByRegex(final CharSequence text, final String separatorRegex, final int limit,
-            final boolean isTrim, final boolean ignoreEmpty) {
-        return splitByRegex(text,
+    public static List<String> splitByRegex(
+            final CharSequence text,
+            final String separatorRegex,
+            final int limit,
+            final boolean isTrim,
+            final boolean ignoreEmpty) {
+        return splitByRegex(
+                text,
                 // If the given string or regex is empty, no need to parse the pattern.
-                (isEmpty(text) || isEmpty(separatorRegex)) ? null : Pattern.get(separatorRegex), limit, isTrim,
+                (isEmpty(text) || isEmpty(separatorRegex)) ? null : Pattern.get(separatorRegex),
+                limit,
+                isTrim,
                 ignoreEmpty);
     }
 
@@ -4342,8 +4458,12 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEmpty      Whether to ignore empty strings after splitting.
      * @return A list of split strings.
      */
-    public static List<String> splitByRegex(final CharSequence text, final java.util.regex.Pattern separatorPattern,
-            final int limit, final boolean isTrim, final boolean ignoreEmpty) {
+    public static List<String> splitByRegex(
+            final CharSequence text,
+            final java.util.regex.Pattern separatorPattern,
+            final int limit,
+            final boolean isTrim,
+            final boolean ignoreEmpty) {
         if (null == text) {
             return ListKit.zero();
         }
@@ -4372,8 +4492,12 @@ public class CharsBacker extends CharsValidator {
      * @param ignoreEmpty      Whether to ignore empty strings after splitting.
      * @return An array of split strings.
      */
-    public static String[] splitByRegexToArray(final CharSequence text, final java.util.regex.Pattern separatorPattern,
-            final int limit, final boolean isTrim, final boolean ignoreEmpty) {
+    public static String[] splitByRegexToArray(
+            final CharSequence text,
+            final java.util.regex.Pattern separatorPattern,
+            final int limit,
+            final boolean isTrim,
+            final boolean ignoreEmpty) {
         return splitByRegex(text, separatorPattern, limit, isTrim, ignoreEmpty).toArray(new String[0]);
     }
 

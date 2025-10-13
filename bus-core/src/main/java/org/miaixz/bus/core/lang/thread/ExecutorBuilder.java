@@ -117,13 +117,14 @@ public class ExecutorBuilder implements Builder<ThreadPoolExecutor> {
         final long keepAliveTime = builder.keepAliveTime;
         final BlockingQueue<Runnable> workQueue;
         // If corePoolSize is 0, use SynchronousQueue to avoid infinite blocking.
-        workQueue = Objects.requireNonNullElseGet(builder.workQueue,
+        workQueue = Objects.requireNonNullElseGet(
+                builder.workQueue,
                 () -> (corePoolSize <= 0) ? new SynchronousQueue<>()
                         : new LinkedBlockingQueue<>(DEFAULT_QUEUE_CAPACITY));
         final ThreadFactory threadFactory = (null != builder.threadFactory) ? builder.threadFactory
                 : Executors.defaultThreadFactory();
-        final RejectedExecutionHandler handler = ObjectKit.defaultIfNull(builder.handler,
-                RejectPolicy.ABORT.getValue());
+        final RejectedExecutionHandler handler = ObjectKit
+                .defaultIfNull(builder.handler, RejectPolicy.ABORT.getValue());
 
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime,
                 TimeUnit.NANOSECONDS, workQueue, threadFactory, handler);

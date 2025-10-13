@@ -109,7 +109,9 @@ public class CollKit extends CollectionStream {
      *                   are ignored.
      * @return A new {@link List} with distinct elements.
      */
-    public static <T, K> List<T> distinct(final Collection<T> collection, final Function<T, K> key,
+    public static <T, K> List<T> distinct(
+            final Collection<T> collection,
+            final Function<T, K> key,
             final boolean override) {
         if (isEmpty(collection)) {
             return new ArrayList<>();
@@ -402,7 +404,9 @@ public class CollKit extends CollectionStream {
      * @return The joined string.
      * @see IteratorKit#join(Iterator, CharSequence, Function)
      */
-    public static <T> String join(final Iterable<T> iterable, final CharSequence conjunction,
+    public static <T> String join(
+            final Iterable<T> iterable,
+            final CharSequence conjunction,
             final Function<T, ? extends CharSequence> func) {
         return IteratorKit.join(IteratorKit.getIter(iterable), conjunction, func);
     }
@@ -433,7 +437,10 @@ public class CollKit extends CollectionStream {
      * @param suffix      The suffix for each element.
      * @return The joined string.
      */
-    public static <T> String join(final Iterable<T> iterable, final CharSequence conjunction, final String prefix,
+    public static <T> String join(
+            final Iterable<T> iterable,
+            final CharSequence conjunction,
+            final String prefix,
             final String suffix) {
         if (null == iterable) {
             return null;
@@ -791,7 +798,9 @@ public class CollKit extends CollectionStream {
      * @param predicate        The predicate to determine removal.
      * @return The `resultCollection`.
      */
-    public static <T extends Collection<E>, E> T removeWithAddIf(final T targetCollection, final T resultCollection,
+    public static <T extends Collection<E>, E> T removeWithAddIf(
+            final T targetCollection,
+            final T resultCollection,
             final Predicate<? super E> predicate) {
         Objects.requireNonNull(predicate);
         final Iterator<E> each = targetCollection.iterator();
@@ -814,7 +823,8 @@ public class CollKit extends CollectionStream {
      * @param predicate        The predicate to determine removal.
      * @return A new `List` of the removed elements.
      */
-    public static <T extends Collection<E>, E> List<E> removeWithAddIf(final T targetCollection,
+    public static <T extends Collection<E>, E> List<E> removeWithAddIf(
+            final T targetCollection,
             final Predicate<? super E> predicate) {
         final List<E> removed = new ArrayList<>();
         removeWithAddIf(targetCollection, removed, predicate);
@@ -845,7 +855,9 @@ public class CollKit extends CollectionStream {
      * @param ignoreNull If true, ignores `null` values both before and after mapping.
      * @return A new `List` of mapped elements.
      */
-    public static <T, R> List<R> map(final Iterable<T> collection, final Function<? super T, ? extends R> mapper,
+    public static <T, R> List<R> map(
+            final Iterable<T> collection,
+            final Function<? super T, ? extends R> mapper,
             final boolean ignoreNull) {
         if (ignoreNull) {
             return StreamKit.of(collection).filter(Objects::nonNull).map(mapper).filter(Objects::nonNull)
@@ -873,7 +885,9 @@ public class CollKit extends CollectionStream {
      * @param ignoreNull If true, ignores `null` property values.
      * @return A list of the property values.
      */
-    public static List<Object> getFieldValues(final Iterable<?> collection, final String fieldName,
+    public static List<Object> getFieldValues(
+            final Iterable<?> collection,
+            final String fieldName,
             final boolean ignoreNull) {
         return map(collection, bean -> {
             if (bean instanceof Map) {
@@ -894,7 +908,9 @@ public class CollKit extends CollectionStream {
      * @param elementType The target class of the elements.
      * @return A list of the property values.
      */
-    public static <T> List<T> getFieldValues(final Iterable<?> collection, final String fieldName,
+    public static <T> List<T> getFieldValues(
+            final Iterable<?> collection,
+            final String fieldName,
             final Class<T> elementType) {
         final Collection<Object> fieldValues = getFieldValues(collection, fieldName);
         return Convert.toList(elementType, fieldValues);
@@ -925,7 +941,9 @@ public class CollKit extends CollectionStream {
      * @param fieldNameForValue The property name for the map value.
      * @return A `Map` created from the properties.
      */
-    public static <K, V> Map<K, V> fieldValueAsMap(final Iterable<?> iterable, final String fieldNameForKey,
+    public static <K, V> Map<K, V> fieldValueAsMap(
+            final Iterable<?> iterable,
+            final String fieldNameForKey,
             final String fieldNameForValue) {
         return IteratorKit.fieldValueAsMap(IteratorKit.getIter(iterable), fieldNameForKey, fieldNameForValue);
     }
@@ -1096,10 +1114,13 @@ public class CollKit extends CollectionStream {
      * @param isOrder   If true, returns a `LinkedHashMap`.
      * @return The resulting map.
      */
-    public static Map<String, String> zip(final String keys, final String values, final String delimiter,
+    public static Map<String, String> zip(
+            final String keys,
+            final String values,
+            final String delimiter,
             final boolean isOrder) {
-        return ArrayKit.zip(CharsBacker.splitToArray(keys, delimiter), CharsBacker.splitToArray(values, delimiter),
-                isOrder);
+        return ArrayKit
+                .zip(CharsBacker.splitToArray(keys, delimiter), CharsBacker.splitToArray(values, delimiter), isOrder);
     }
 
     /**
@@ -1238,7 +1259,10 @@ public class CollKit extends CollectionStream {
      * @param converter   A custom converter.
      * @return The modified collection.
      */
-    public static <T> Collection<T> addAll(final Collection<T> collection, final Object value, Type elementType,
+    public static <T> Collection<T> addAll(
+            final Collection<T> collection,
+            final Object value,
+            Type elementType,
             final Converter converter) {
         if (null == collection || null == value) {
             return collection;
@@ -1495,7 +1519,8 @@ public class CollKit extends CollectionStream {
      * @param comparator      The entry comparator.
      * @return A sorted `LinkedHashMap`.
      */
-    public static <K, V> LinkedHashMap<K, V> sortToMap(final Collection<Map.Entry<K, V>> entryCollection,
+    public static <K, V> LinkedHashMap<K, V> sortToMap(
+            final Collection<Map.Entry<K, V>> entryCollection,
             final Comparator<Map.Entry<K, V>> comparator) {
         final List<Map.Entry<K, V>> list = new LinkedList<>(entryCollection);
         list.sort(comparator);
@@ -1515,7 +1540,8 @@ public class CollKit extends CollectionStream {
      * @param comparator The entry comparator.
      * @return A sorted `LinkedHashMap`.
      */
-    public static <K, V> LinkedHashMap<K, V> sortByEntry(final Map<K, V> map,
+    public static <K, V> LinkedHashMap<K, V> sortByEntry(
+            final Map<K, V> map,
             final Comparator<Map.Entry<K, V>> comparator) {
         return sortToMap(map.entrySet(), comparator);
     }
@@ -1834,7 +1860,8 @@ public class CollKit extends CollectionStream {
      * @param function   The transformation function.
      * @return A new collection with transformed elements.
      */
-    public static <F, T> Collection<T> trans(final Collection<F> collection,
+    public static <F, T> Collection<T> trans(
+            final Collection<F> collection,
             final Function<? super F, ? extends T> function) {
         return new TransCollection<>(collection, function);
     }
@@ -1850,8 +1877,11 @@ public class CollKit extends CollectionStream {
      * @param keyGenerate The function to generate the lookup key from an element.
      * @param biConsumer  The consumer to update the element with the looked-up value.
      */
-    public static <E, K, V> void setValueByMap(final Iterable<E> iterable, final Map<K, V> map,
-            final Function<E, K> keyGenerate, final BiConsumer<E, V> biConsumer) {
+    public static <E, K, V> void setValueByMap(
+            final Iterable<E> iterable,
+            final Map<K, V> map,
+            final Function<E, K> keyGenerate,
+            final BiConsumer<E, V> biConsumer) {
         iterable.forEach(
                 x -> Optional.ofNullable(map.get(keyGenerate.apply(x))).ifPresent(y -> biConsumer.accept(x, y)));
     }

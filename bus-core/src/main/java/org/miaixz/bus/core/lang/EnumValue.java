@@ -860,9 +860,23 @@ public interface EnumValue<E extends EnumValue<E>> extends Enumers {
          * example: Integer.class => int.class. This map is initialized directly using a factory method, making it
          * immutable and thread-safe by construction.
          */
-        private static final BiMap<Class<?>, Class<?>> PRIMITIVE_MAP = new BiMap<>(Map.of(Boolean.class, boolean.class,
-                Byte.class, byte.class, Character.class, char.class, Double.class, double.class, Float.class,
-                float.class, Integer.class, int.class, Long.class, long.class, Short.class, short.class));
+        private static final BiMap<Class<?>, Class<?>> PRIMITIVE_MAP = new BiMap<>(Map.of(
+                Boolean.class,
+                boolean.class,
+                Byte.class,
+                byte.class,
+                Character.class,
+                char.class,
+                Double.class,
+                double.class,
+                Float.class,
+                float.class,
+                Integer.class,
+                int.class,
+                Long.class,
+                long.class,
+                Short.class,
+                short.class));
 
         /**
          * Converts a primitive class to its corresponding wrapper class. If the provided class is not a primitive type,

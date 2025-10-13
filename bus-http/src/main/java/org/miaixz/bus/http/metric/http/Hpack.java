@@ -227,7 +227,11 @@ public class Hpack {
                     headerCount--;
                     entriesToEvict++;
                 }
-                System.arraycopy(dynamicTable, nextHeaderIndex + 1, dynamicTable, nextHeaderIndex + 1 + entriesToEvict,
+                System.arraycopy(
+                        dynamicTable,
+                        nextHeaderIndex + 1,
+                        dynamicTable,
+                        nextHeaderIndex + 1 + entriesToEvict,
                         headerCount);
                 nextHeaderIndex += entriesToEvict;
             }
@@ -511,7 +515,11 @@ public class Hpack {
                     headerCount--;
                     entriesToEvict++;
                 }
-                System.arraycopy(dynamicTable, nextHeaderIndex + 1, dynamicTable, nextHeaderIndex + 1 + entriesToEvict,
+                System.arraycopy(
+                        dynamicTable,
+                        nextHeaderIndex + 1,
+                        dynamicTable,
+                        nextHeaderIndex + 1 + entriesToEvict,
                         headerCount);
                 Arrays.fill(dynamicTable, nextHeaderIndex + 1, nextHeaderIndex + 1 + entriesToEvict, null);
                 nextHeaderIndex += entriesToEvict;

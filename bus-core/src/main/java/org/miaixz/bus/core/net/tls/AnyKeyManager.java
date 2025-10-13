@@ -94,8 +94,11 @@ public class AnyKeyManager {
      * @return A {@link KeyManagerFactory}.
      * @throws CryptoException if an error occurs during initialization.
      */
-    public static KeyManagerFactory getKeyManagerFactory(final KeyStore keyStore, final char[] password,
-            final String algorithm, final Provider provider) {
+    public static KeyManagerFactory getKeyManagerFactory(
+            final KeyStore keyStore,
+            final char[] password,
+            final String algorithm,
+            final Provider provider) {
         final KeyManagerFactory keyManagerFactory = getKeyManagerFactory(algorithm, provider);
         try {
             keyManagerFactory.init(keyStore, password);
@@ -125,7 +128,10 @@ public class AnyKeyManager {
      * @param provider  The algorithm provider, or {@code null} to use the default JDK provider.
      * @return A list of {@link KeyManager}s.
      */
-    public static KeyManager[] getKeyManagers(final KeyStore keyStore, final char[] password, final String algorithm,
+    public static KeyManager[] getKeyManagers(
+            final KeyStore keyStore,
+            final char[] password,
+            final String algorithm,
             final Provider provider) {
         return getKeyManagerFactory(keyStore, password, algorithm, provider).getKeyManagers();
     }

@@ -64,7 +64,8 @@ public interface TransformableWrappedStream<T, S extends TransformableWrappedStr
      * @param <R>    the type of elements in the resulting stream after zipping
      * @return a new {@link EasyStream} containing the combined elements
      */
-    default <U, R> EasyStream<R> zip(final Iterable<U> other,
+    default <U, R> EasyStream<R> zip(
+            final Iterable<U> other,
             final BiFunction<? super T, ? super U, ? extends R> zipper) {
         Objects.requireNonNull(zipper);
         final Map<Integer, T> idxIdentityMap = mapIdx((e, idx) -> MapKit.entry(idx, e))

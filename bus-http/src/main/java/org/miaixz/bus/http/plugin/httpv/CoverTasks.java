@@ -180,7 +180,10 @@ public class CoverTasks {
          * @param result     The successful result.
          * @param onIo       If {@code true}, the callback is executed on the I/O thread pool.
          */
-        public void executeOnResponse(CoverHttp<?> task, Callback<CoverResult> onResponse, CoverResult result,
+        public void executeOnResponse(
+                CoverHttp<?> task,
+                Callback<CoverResult> onResponse,
+                CoverResult result,
                 boolean onIo) {
             if (null != responseListener) {
                 if (responseListener.listen(task, result) && null != onResponse) {
@@ -200,7 +203,10 @@ public class CoverTasks {
          * @param onIo        If {@code true}, the callback is executed on the I/O thread pool.
          * @return {@code true} if an exception handler (either global or specific) was invoked.
          */
-        public boolean executeOnException(CoverHttp<?> task, Callback<IOException> onException, IOException error,
+        public boolean executeOnException(
+                CoverHttp<?> task,
+                Callback<IOException> onException,
+                IOException error,
                 boolean onIo) {
             if (null != exceptionListener) {
                 if (exceptionListener.listen(task, error) && null != onException) {
@@ -222,8 +228,11 @@ public class CoverTasks {
          * @param state      The final state of the task.
          * @param onIo       If {@code true}, the callback is executed on the I/O thread pool.
          */
-        public void executeOnComplete(CoverHttp<?> task, Callback<CoverResult.State> onComplete,
-                CoverResult.State state, boolean onIo) {
+        public void executeOnComplete(
+                CoverHttp<?> task,
+                Callback<CoverResult.State> onComplete,
+                CoverResult.State state,
+                boolean onIo) {
             if (null != completeListener) {
                 if (completeListener.listen(task, state) && null != onComplete) {
                     execute(() -> onComplete.on(state), onIo);

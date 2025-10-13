@@ -98,8 +98,16 @@ public enum FileMagicNumber {
 
         @Override
         public boolean match(final byte[] bytes) {
-            final boolean b = ArrayKit.startWith(bytes, (byte) 0x89, (byte) 0x50, (byte) 0x4e, (byte) 0x47, (byte) 0x0d,
-                    (byte) 0x0a, (byte) 0x1a, (byte) 0x0a);
+            final boolean b = ArrayKit.startWith(
+                    bytes,
+                    (byte) 0x89,
+                    (byte) 0x50,
+                    (byte) 0x4e,
+                    (byte) 0x47,
+                    (byte) 0x0d,
+                    (byte) 0x0a,
+                    (byte) 0x1a,
+                    (byte) 0x0a);
 
             if (b) {
                 int i = 8;
@@ -247,8 +255,18 @@ public enum FileMagicNumber {
 
         @Override
         public boolean match(final byte[] bytes) {
-            return ArrayKit.startWith(bytes, (byte) 0x67, (byte) 0x69, (byte) 0x6d, (byte) 0x70, (byte) 0x20,
-                    (byte) 0x78, (byte) 0x63, (byte) 0x66, (byte) 0x20, (byte) 0x76);
+            return ArrayKit.startWith(
+                    bytes,
+                    (byte) 0x67,
+                    (byte) 0x69,
+                    (byte) 0x6d,
+                    (byte) 0x70,
+                    (byte) 0x20,
+                    (byte) 0x78,
+                    (byte) 0x63,
+                    (byte) 0x66,
+                    (byte) 0x20,
+                    (byte) 0x76);
         }
     },
 
@@ -364,10 +382,22 @@ public enum FileMagicNumber {
 
         @Override
         public boolean match(final byte[] bytes) {
-            return ArrayKit.startWith(bytes, (byte) 0x23, (byte) 0x21, (byte) 0x41, (byte) 0x4d, (byte) 0x52,
-                    (byte) 0x0A)
-                    || ArrayKit.startWith(bytes, (byte) 0x23, (byte) 0x21, (byte) 0x41, (byte) 0x4d, (byte) 0x52,
-                            (byte) 0x5F, (byte) 0x4d, (byte) 0x43, (byte) 0x31, (byte) 0x2e, (byte) 0x30, (byte) 0x0a);
+            return ArrayKit
+                    .startWith(bytes, (byte) 0x23, (byte) 0x21, (byte) 0x41, (byte) 0x4d, (byte) 0x52, (byte) 0x0A)
+                    || ArrayKit.startWith(
+                            bytes,
+                            (byte) 0x23,
+                            (byte) 0x21,
+                            (byte) 0x41,
+                            (byte) 0x4d,
+                            (byte) 0x52,
+                            (byte) 0x5F,
+                            (byte) 0x4d,
+                            (byte) 0x43,
+                            (byte) 0x31,
+                            (byte) 0x2e,
+                            (byte) 0x30,
+                            (byte) 0x0a);
         }
     },
     /**
@@ -1142,8 +1172,16 @@ public enum FileMagicNumber {
 
         @Override
         public boolean match(final byte[] bytes) {
-            return ArrayKit.startWith(bytes, (byte) 0x00, (byte) 0x61, (byte) 0x73, (byte) 0x6D, (byte) 0x01,
-                    (byte) 0x00, (byte) 0x00, (byte) 0x00);
+            return ArrayKit.startWith(
+                    bytes,
+                    (byte) 0x00,
+                    (byte) 0x61,
+                    (byte) 0x73,
+                    (byte) 0x6D,
+                    (byte) 0x01,
+                    (byte) 0x00,
+                    (byte) 0x00,
+                    (byte) 0x00);
         }
     },
     /**

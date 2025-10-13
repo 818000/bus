@@ -361,7 +361,9 @@ public class VirtualPath implements Path {
      * Virtual paths do not support watch services, so this method throws an {@link UnsupportedOperationException}.
      */
     @Override
-    public WatchKey register(final WatchService watcher, final WatchEvent.Kind<?>[] events,
+    public WatchKey register(
+            final WatchService watcher,
+            final WatchEvent.Kind<?>[] events,
             final WatchEvent.Modifier... modifiers) throws IOException {
         throw new UnsupportedOperationException("VirtualPath does not support watch service");
     }

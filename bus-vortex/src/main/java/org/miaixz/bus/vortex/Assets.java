@@ -30,11 +30,10 @@ package org.miaixz.bus.vortex;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Represents an API definition or asset within the Vortex module. This class holds various properties defining an API
@@ -59,6 +58,10 @@ public class Assets {
      */
     private String name;
     /**
+     * The icon of the asset.
+     */
+    private String icon;
+    /**
      * The host address of the server.
      */
     private String host;
@@ -75,11 +78,11 @@ public class Assets {
      */
     private String url;
     /**
-     * The HTTP method (e.g., GET, POST).
+     * The method Key.
      */
     private String method;
     /**
-     * The routing mode: 1.HTTP, 2.MQ, 3.MCP.
+     * The routing mode: 1.HTTP, 2.MQ, 3.SSE, 4.STDIO ,5.OPENAPI, 6.STREAMABLE-HTTP.
      */
     private Integer mode;
     /**
@@ -87,7 +90,7 @@ public class Assets {
      */
     private Integer type;
     /**
-     * Authorization setting: 0. No validation, 1. Validation required.
+     * Authorization setting: 0. No validation, 1. required.
      */
     private Integer token;
     /**
@@ -98,6 +101,26 @@ public class Assets {
      * The scope of applicability.
      */
     private Integer scope;
+    /**
+     * The scope of applicability.
+     */
+    private Integer retries;
+    /**
+     * The scope of applicability.
+     */
+    private Integer balance;
+    /**
+     * The weight of applicability.
+     */
+    private Integer weight;
+    /**
+     * The scope of applicability.
+     */
+    private String args;
+    /**
+     * The scope of applicability.
+     */
+    private String command;
     /**
      * Exception rules for firewall.
      */
@@ -110,7 +133,6 @@ public class Assets {
      * A description of the asset.
      */
     private String description;
-
     /**
      * The timeout duration in milliseconds for requests. Default is 10000 milliseconds.
      */

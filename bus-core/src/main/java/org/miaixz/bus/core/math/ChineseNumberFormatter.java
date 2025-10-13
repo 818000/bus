@@ -242,7 +242,10 @@ public class ChineseNumberFormatter {
         if (0 == amount) {
             return this.moneyMode ? "零" + unitName + "整" : String.valueOf(DIGITS[0]);
         }
-        Assert.checkBetween(amount, -99_9999_9999_9999.99, 99_9999_9999_9999.99,
+        Assert.checkBetween(
+                amount,
+                -99_9999_9999_9999.99,
+                99_9999_9999_9999.99,
                 "Number is out of range: (-99999999999999.99 ~ 99999999999999.99)");
 
         final StringBuilder chineseStr = new StringBuilder();
@@ -396,8 +399,10 @@ public class ChineseNumberFormatter {
                 }
                 lastIsZero = true;
             } else {
-                chineseStr.insert(0, singleNumberToChinese(digit, this.useTraditional)
-                        + ChineseNumberParser.getUnitName(i, this.useTraditional));
+                chineseStr.insert(
+                        0,
+                        singleNumberToChinese(digit, this.useTraditional)
+                                + ChineseNumberParser.getUnitName(i, this.useTraditional));
                 lastIsZero = false;
             }
             temp /= 10;

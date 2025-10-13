@@ -28,23 +28,24 @@
 package org.miaixz.bus.starter.vortex;
 
 import java.util.List;
+import java.util.Map;
 
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.net.PORT;
 import org.miaixz.bus.vortex.Filter;
 import org.miaixz.bus.vortex.Handler;
+import org.miaixz.bus.vortex.Router;
 import org.miaixz.bus.vortex.Vortex;
-import org.miaixz.bus.vortex.filter.*;
-import org.miaixz.bus.vortex.handler.AccessHandler;
 import org.miaixz.bus.vortex.handler.ErrorsHandler;
 import org.miaixz.bus.vortex.handler.VortexHandler;
-import org.miaixz.bus.vortex.provider.AuthorizeProvider;
-import org.miaixz.bus.vortex.provider.LicenseProvider;
-import org.miaixz.bus.vortex.registry.AssetsRegistry;
-import org.miaixz.bus.vortex.registry.LimiterRegistry;
+import org.miaixz.bus.vortex.support.HttpRouter;
+import org.miaixz.bus.vortex.support.McpRouter;
+import org.miaixz.bus.vortex.support.MqRouter;
+import org.miaixz.bus.vortex.support.http.HttpService;
+import org.miaixz.bus.vortex.support.mcp.McpService;
+import org.miaixz.bus.vortex.support.mq.MqService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
@@ -59,7 +60,7 @@ import jakarta.annotation.Resource;
 import reactor.netty.http.server.HttpServer;
 
 /**
- * Auto-configuration class for the Vortex gateway, responsible for setting up WebFlux routing, filters, and handlers.
+ * Auto-configuration for the Vortex gateway, based on a strategy pattern for filters.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -83,78 +84,28 @@ public class VortexConfiguration {
     private List<Handler> handlers;
 
     /**
-     * Configures the license filter.
-     *
-     * @param provider The provider for license validation.
-     * @return A {@link LicenseFilter} instance.
+     * A thread-safe map of strategies, storing strategy implementations indexed by protocol name.
+     * <p>
+     * This map allows dynamic selection of routing strategies based on the protocol, supporting HTTP, MQ, and MCP
+     * protocols. {@code ConcurrentHashMap} is used to ensure thread safety.
+     * </p>
      */
-    @Bean
-    public Filter licenseFilter(LicenseProvider provider) {
-        return new LicenseFilter(provider);
+    @Resource
+    private Map<String, Router> routers;
+
+    @Bean(name = "http")
+    public Router http(HttpService service) {
+        return new HttpRouter(service);
     }
 
-    /**
-     * Configures the primary filter.
-     *
-     * @return A {@link PrimaryFilter} instance.
-     */
-    @Bean
-    public Filter primaryFilter() {
-        return new PrimaryFilter();
+    @Bean(name = "mq")
+    public Router mq(MqService service) {
+        return new MqRouter(service);
     }
 
-    /**
-     * Configures the format filter.
-     *
-     * @return A {@link FormatFilter} instance.
-     */
-    @Bean
-    public Filter formatFilter() {
-        return new FormatFilter();
-    }
-
-    /**
-     * Creates the security cipher filter for encryption and decryption. This bean is created when either decryption or
-     * encryption is enabled.
-     *
-     * @return A {@link CipherFilter} instance.
-     */
-    @Bean
-    public Filter cipherFilter() {
-        return new CipherFilter(this.properties.getDecrypt(), this.properties.getEncrypt());
-    }
-
-    /**
-     * Configures the authorization filter.
-     *
-     * @param provider The authorization provider.
-     * @param registry The assets registry.
-     * @return An {@link AuthorizeFilter} instance.
-     */
-    @Bean
-    public Filter authorizeFilter(AuthorizeProvider provider, AssetsRegistry registry) {
-        return new AuthorizeFilter(provider, registry);
-    }
-
-    /**
-     * Configures the rate-limiting filter, enabled based on properties.
-     *
-     * @param registry The limiter registry.
-     * @return A {@link LimitFilter} instance if enabled, otherwise {@code null}.
-     */
-    @Bean
-    public Filter limitFilter(LimiterRegistry registry) {
-        return this.properties.getLimit().isEnabled() ? new LimitFilter(registry) : null;
-    }
-
-    /**
-     * Creates the access handler for pre-processing business logic.
-     *
-     * @return An {@link AccessHandler} instance.
-     */
-    @Bean
-    public Handler accessHandler() {
-        return new AccessHandler();
+    @Bean(name = "mcp")
+    public Router mcp(McpService service) {
+        return new McpRouter(service);
     }
 
     /**
@@ -165,13 +116,11 @@ public class VortexConfiguration {
     @Bean(initMethod = "init", destroyMethod = "destroy")
     public Vortex vortex() {
         // Create the main Vortex handler with all injected Handler instances.
-        VortexHandler vortexHandler = new VortexHandler(handlers);
+        VortexHandler vortexHandler = new VortexHandler(handlers, routers);
 
         // Configure the router to handle requests at the specified path.
-        RouterFunction<ServerResponse> routerFunction = RouterFunctions.route(
-                RequestPredicates.path(this.properties.getPath()).and(
-                        RequestPredicates.accept(MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON)),
-                vortexHandler::handle);
+        RouterFunction<ServerResponse> routerFunction = RouterFunctions
+                .route(RequestPredicates.path(this.properties.getPath() + "/**"), vortexHandler::handle);
 
         // Configure codecs, setting the maximum in-memory size.
         ServerCodecConfigurer configurer = ServerCodecConfigurer.create();
