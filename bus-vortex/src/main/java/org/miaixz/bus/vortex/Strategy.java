@@ -27,25 +27,53 @@
 */
 package org.miaixz.bus.vortex;
 
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
+import org.miaixz.bus.vortex.strategy.StrategyChain;
+import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
 
 /**
- * A routing interface that defines the basic behavior for request routing.
+ * Defines a single, reusable step in the request processing pipeline, following the Chain of Responsibility pattern.
+ * <p>
+ * Each {@code Strategy} encapsulates a specific cross-cutting concern, such as request parsing, decryption,
+ * authorization, or rate limiting. Implementations of this interface should be stateless and thread-safe, as they are
+ * treated as singletons and reused for concurrent requests.
+ * <p>
+ * The state for a specific request is held in the {@link Context} object, which must be accessed from the Reactor
+ * context. Implementations are composed into a dynamic chain by the
+ * {@link org.miaixz.bus.vortex.strategy.StrategyFactory} and executed by the
+ * {@link org.miaixz.bus.vortex.filter.PrimaryFilter}.
  *
  * @author Kimi Liu
+ * @see StrategyChain
+ * @see Context
+ * @see org.miaixz.bus.vortex.filter.PrimaryFilter
  * @since Java 17+
  */
-public interface Router {
+public interface Strategy {
 
     /**
-     * Routes the request to the target service.
+     * Applies the strategy's logic to the given request and delegates to the next strategy in the chain.
+     * <p>
+     * An implementation of this method should perform its specific task. To access the request-specific state, it must
+     * retrieve the {@link Context} object from the Reactor context, like so:
+     * 
+     * <pre>{@code
+     * return Mono.deferContextual(contextView -> {
+     *     Context context = contextView.get(Context.class);
+     *     // ... perform logic using the context ...
+     *     return chain.apply(exchange);
+     * });
+     * }</pre>
+     * 
+     * After completing its work, the strategy **must** call {@code chain.apply(exchange)} to delegate control to the
+     * next strategy in the chain. Failure to do so will halt the request processing.
      *
-     * @param request The current `ServerRequest` object.
-     * @return A {@code Mono<ServerResponse>} representing the asynchronous response.
+     * @param exchange The current server exchange, which can be mutated by the strategy (e.g., by decorating the
+     *                 request or response).
+     * @param chain    The next link in the strategy chain, which must be invoked to continue processing.
+     * @return A {@code Mono<Void>} that signals the completion of this strategy's execution.
      */
-    Mono<ServerResponse> route(ServerRequest request);
+    Mono<Void> apply(ServerWebExchange exchange, StrategyChain chain);
 
 }
