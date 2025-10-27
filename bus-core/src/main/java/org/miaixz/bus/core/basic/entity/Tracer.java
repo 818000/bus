@@ -37,7 +37,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents tracing information for a request, extending authorization details.
+ * Represents tracing information for a request, extending authorization details. This class captures metadata related
+ * to request tracing, such as unique identifiers, IP addresses, and client information, to facilitate tracking and
+ * debugging of requests across distributed systems.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -53,56 +55,61 @@ public class Tracer extends Authorize {
     private static final long serialVersionUID = 2852291120377L;
 
     /**
-     * The unique ID for the current request.
+     * Unique identifier for the current request. This ID is used to track a specific request within the system.
      */
     @Transient
     protected String x_request_id;
+
     /**
-     * The main trace ID for the entire request chain.
+     * Main trace ID for the entire request chain. This ID links all related requests across services in a distributed
+     * trace.
      */
     @Transient
     protected String x_trace_id;
 
     /**
-     * The ID of the calling service or component.
+     * Identifier for the calling service or component. Represents the span of the current service in the request chain.
      */
     @Transient
     protected String x_span_id;
 
     /**
-     * The ID of the service or component being called.
+     * Identifier for the service or component being called. Tracks the child span in the request chain for hierarchical
+     * tracing.
      */
     @Transient
     protected String x_child_id;
 
     /**
-     * The local IP address of the service.
+     * Local IPv6 address of the service handling the request. Used to identify the server processing the request.
      */
     @Transient
-    protected String x_local_ip;
+    protected String x_request_ipv6;
 
     /**
-     * The remote IP address of the client making the request.
+     * Remote IPv4 address of the client making the request. Identifies the client's network origin.
      */
     @Transient
-    protected String x_remote_ip;
+    protected String x_request_ipv4;
 
     /**
-     * The channel type of the requester. e.g., 1-WEB, 2-APP, 3-DingTalk, 4-WeChat Mini Program, 5-Other.
+     * Domain name associated with the client's request. Provides additional context about the client's origin.
      */
     @Transient
-    protected String x_remote_channel;
+    protected String x_request_domain;
 
     /**
-     * The terminal type of the requester. e.g., 1-PC, 2-Android, 3-iPhone, 4-iPad, 5-WinPhone, 6-HarmonyOS, 7-Other.
+     * Channel type of the requester. Indicates the platform used to make the request, such as: 1 - Web, 2 - Mobile App,
+     * 3 - DingTalk, 4 - WeChat Mini Program, 5 - Other.
      */
     @Transient
-    protected String x_remote_terminal;
+    protected String x_request_channel;
 
     /**
-     * The browser information of the requester. For native apps, this should be the operating system version.
+     * Terminal type of the requester. Specifies the device type used by the client, such as: 1 - PC, 2 - Android, 3 -
+     * iPhone, 4 - iPad, 5 - Windows Phone, 6 - HarmonyOS, 7 - Other.
      */
     @Transient
-    protected String x_remote_browser;
+    protected String x_request_terminal;
 
 }

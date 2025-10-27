@@ -141,7 +141,9 @@ public class UrlDecoder implements Serializable {
      * @param isPlusToSpace If {@code true}, converts the plus sign ({@code +}) to a space.
      * @return The decoded string.
      */
-    public static String decode(final String text, final java.nio.charset.Charset charset,
+    public static String decode(
+            final String text,
+            final java.nio.charset.Charset charset,
             final boolean isPlusToSpace) {
         if (null == charset) {
             return text;
@@ -252,8 +254,12 @@ public class UrlDecoder implements Serializable {
      * @param isPlusToSpace If {@code true}, converts the plus sign ({@code +}) to a space.
      * @return The decoded substring.
      */
-    private static String decodeSub(final String text, final int begin, final int end,
-            final java.nio.charset.Charset charset, final boolean isPlusToSpace) {
+    private static String decodeSub(
+            final String text,
+            final int begin,
+            final int end,
+            final java.nio.charset.Charset charset,
+            final boolean isPlusToSpace) {
         return new String(decode(text.substring(begin, end).getBytes(Charset.ISO_8859_1), isPlusToSpace), charset);
     }
 

@@ -105,7 +105,9 @@ public abstract class HierarchyIterator<T> implements Iterator<T> {
      * @param filter         A predicate to filter elements. Non-matching elements and their children will be skipped.
      * @return A new breadth-first iterator.
      */
-    public static <T> HierarchyIterator<T> breadthFirst(final T root, final Function<T, Collection<T>> nextDiscoverer,
+    public static <T> HierarchyIterator<T> breadthFirst(
+            final T root,
+            final Function<T, Collection<T>> nextDiscoverer,
             final Predicate<T> filter) {
         return new BreadthFirst<>(root, nextDiscoverer, filter);
     }
@@ -131,7 +133,9 @@ public abstract class HierarchyIterator<T> implements Iterator<T> {
      * @param filter         A predicate to filter elements. Non-matching elements and their children will be skipped.
      * @return A new depth-first iterator.
      */
-    public static <T> HierarchyIterator<T> depthFirst(final T root, final Function<T, Collection<T>> nextDiscoverer,
+    public static <T> HierarchyIterator<T> depthFirst(
+            final T root,
+            final Function<T, Collection<T>> nextDiscoverer,
             final Predicate<T> filter) {
         return new DepthFirst<>(root, nextDiscoverer, filter);
     }

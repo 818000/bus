@@ -271,7 +271,9 @@ public class ExceptionKit {
      * @param replaceCharToStrMap A map for character replacements.
      * @return The stack trace as a string.
      */
-    public static String stacktraceToString(final Throwable throwable, int limit,
+    public static String stacktraceToString(
+            final Throwable throwable,
+            int limit,
             final Map<Character, String> replaceCharToStrMap) {
         final FastByteArrayOutputStream baos = new FastByteArrayOutputStream();
         throwable.printStackTrace(new PrintStream(baos));
@@ -342,7 +344,8 @@ public class ExceptionKit {
      * @param exceptionClass The exception class to check for.
      * @return `true` if found.
      */
-    public static boolean isFromOrSuppressedThrowable(final Throwable throwable,
+    public static boolean isFromOrSuppressedThrowable(
+            final Throwable throwable,
             final Class<? extends Throwable> exceptionClass) {
         return convertFromOrSuppressedThrowable(throwable, exceptionClass, true) != null;
     }
@@ -355,8 +358,10 @@ public class ExceptionKit {
      * @param checkCause     Whether to check the cause chain.
      * @return `true` if found.
      */
-    public static boolean isFromOrSuppressedThrowable(final Throwable throwable,
-            final Class<? extends Throwable> exceptionClass, final boolean checkCause) {
+    public static boolean isFromOrSuppressedThrowable(
+            final Throwable throwable,
+            final Class<? extends Throwable> exceptionClass,
+            final boolean checkCause) {
         return convertFromOrSuppressedThrowable(throwable, exceptionClass, checkCause) != null;
     }
 
@@ -368,7 +373,8 @@ public class ExceptionKit {
      * @param exceptionClass The exception class to find.
      * @return The matching throwable, or `null`.
      */
-    public static <T extends Throwable> T convertFromOrSuppressedThrowable(final Throwable throwable,
+    public static <T extends Throwable> T convertFromOrSuppressedThrowable(
+            final Throwable throwable,
             final Class<T> exceptionClass) {
         return convertFromOrSuppressedThrowable(throwable, exceptionClass, true);
     }
@@ -382,8 +388,10 @@ public class ExceptionKit {
      * @param checkCause     Whether to check the cause chain.
      * @return The matching throwable, or `null`.
      */
-    public static <T extends Throwable> T convertFromOrSuppressedThrowable(final Throwable throwable,
-            final Class<T> exceptionClass, final boolean checkCause) {
+    public static <T extends Throwable> T convertFromOrSuppressedThrowable(
+            final Throwable throwable,
+            final Class<T> exceptionClass,
+            final boolean checkCause) {
         if (throwable == null || exceptionClass == null) {
             return null;
         }

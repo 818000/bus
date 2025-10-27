@@ -324,7 +324,9 @@ public class Calendar extends Calculate {
      * @param truncate {@code true} to truncate milliseconds to 0, {@code false} otherwise.
      * @return The modified {@link java.util.Calendar} object.
      */
-    public static java.util.Calendar ceiling(final java.util.Calendar calendar, final Various various,
+    public static java.util.Calendar ceiling(
+            final java.util.Calendar calendar,
+            final Various various,
             final boolean truncate) {
         return Modifier.modify(calendar, various.getValue(), Modify.CEILING, truncate);
     }
@@ -444,7 +446,9 @@ public class Calendar extends Calculate {
      * @param truncate          {@code true} to truncate milliseconds to 0, {@code false} otherwise.
      * @return The modified {@link java.util.Calendar} object.
      */
-    public static java.util.Calendar endOfWeek(final java.util.Calendar calendar, final boolean isSundayAsLastDay,
+    public static java.util.Calendar endOfWeek(
+            final java.util.Calendar calendar,
+            final boolean isSundayAsLastDay,
             final boolean truncate) {
         calendar.setFirstDayOfWeek(isSundayAsLastDay ? java.util.Calendar.MONDAY : java.util.Calendar.SUNDAY);
         // WEEK_OF_MONTH is the upper bound field (exclusive), the actual adjustment is DAY_OF_MONTH
@@ -720,7 +724,9 @@ public class Calendar extends Calculate {
      * @throws IllegalArgumentException if the date string or pattern array is null.
      * @throws DateException            if no suitable date pattern is found.
      */
-    public static java.util.Calendar parseByPatterns(final CharSequence text, final Locale locale,
+    public static java.util.Calendar parseByPatterns(
+            final CharSequence text,
+            final Locale locale,
             final String... parsePatterns) throws DateException {
         return parseByPatterns(text, locale, true, parsePatterns);
     }
@@ -739,8 +745,11 @@ public class Calendar extends Calculate {
      * @throws DateException            if no suitable date pattern is found.
      * @see java.util.Calendar#isLenient()
      */
-    public static java.util.Calendar parseByPatterns(final CharSequence text, final Locale locale,
-            final boolean lenient, final String... parsePatterns) throws DateException {
+    public static java.util.Calendar parseByPatterns(
+            final CharSequence text,
+            final Locale locale,
+            final boolean lenient,
+            final String... parsePatterns) throws DateException {
         if (text == null || parsePatterns == null) {
             throw new IllegalArgumentException("Date and Patterns must not be null");
         }
@@ -786,7 +795,9 @@ public class Calendar extends Calculate {
      * @return The parsed {@link java.util.Calendar} object, or {@code null} if parsing fails.
      * @throws DateException if parsing fails.
      */
-    public static java.util.Calendar parse(final CharSequence text, final boolean lenient,
+    public static java.util.Calendar parse(
+            final CharSequence text,
+            final boolean lenient,
             final PositionDateParser parser) {
         Assert.notNull(parser, "Parser must be not null!");
         return parser.parseCalendar(text, null, lenient);

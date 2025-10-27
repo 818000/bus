@@ -152,8 +152,10 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
         Objects.requireNonNull(annotation);
         Assert.isFalse(AnnotationMappingProxy.isProxied(annotation), "annotation has been proxied");
         Assert.isFalse(annotation instanceof ResolvedAnnotationMapping, "annotation has been wrapped");
-        Assert.isFalse(Objects.nonNull(source) && Objects.equals(source.annotation, annotation),
-                "source annotation can not same with target [{}]", annotationType());
+        Assert.isFalse(
+                Objects.nonNull(source) && Objects.equals(source.annotation, annotation),
+                "source annotation can not same with target [{}]",
+                annotationType());
         this.annotation = annotation;
         this.attributes = AnnoKit.getAnnotationAttributes(annotation.annotationType());
         this.source = source;
@@ -179,7 +181,8 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
      * @param resolveAnnotationAttribute Whether to resolve annotation attributes (apply aliasing and overriding).
      * @return A new {@code ResolvedAnnotationMapping} instance.
      */
-    public static ResolvedAnnotationMapping create(final Annotation annotation,
+    public static ResolvedAnnotationMapping create(
+            final Annotation annotation,
             final boolean resolveAnnotationAttribute) {
         return create(null, annotation, resolveAnnotationAttribute);
     }
@@ -194,7 +197,9 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
      * @param resolveAnnotationAttribute Whether to resolve annotation attributes (apply aliasing and overriding).
      * @return A new {@code ResolvedAnnotationMapping} instance.
      */
-    public static ResolvedAnnotationMapping create(final ResolvedAnnotationMapping source, final Annotation annotation,
+    public static ResolvedAnnotationMapping create(
+            final ResolvedAnnotationMapping source,
+            final Annotation annotation,
             final boolean resolveAnnotationAttribute) {
         return new ResolvedAnnotationMapping(source, annotation, resolveAnnotationAttribute);
     }
@@ -427,8 +432,11 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
         ResolvedAnnotationMapping sourceMapping = this.source;
         while (Objects.nonNull(sourceMapping)) {
             // Check for circular dependencies.
-            Assert.isFalse(accessed.contains(sourceMapping.annotationType()),
-                    "circular dependency between [{}] and [{}]", annotationType(), sourceMapping.annotationType());
+            Assert.isFalse(
+                    accessed.contains(sourceMapping.annotationType()),
+                    "circular dependency between [{}] and [{}]",
+                    annotationType(),
+                    sourceMapping.annotationType());
             sources.addFirst(sourceMapping);
             accessed.add(sourceMapping.annotationType());
             sourceMapping = sourceMapping.source;
@@ -470,8 +478,11 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
      * @param overwriteAliases {@code true} if aliases of the target attribute should also be overridden, {@code false}
      *                         otherwise.
      */
-    private void overwriteAttribute(final ResolvedAnnotationMapping overwriteMapping, final int overwriteIndex,
-            final int targetIndex, final boolean overwriteAliases) {
+    private void overwriteAttribute(
+            final ResolvedAnnotationMapping overwriteMapping,
+            final int overwriteIndex,
+            final int targetIndex,
+            final boolean overwriteAliases) {
         // If the target attribute has already been overridden, do not override it again.
         if (isOverwrittenAttribute(targetIndex)) {
             return;
@@ -567,16 +578,23 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
     private Method getAliasAttribute(final Method attribute, final Alias attributeAnnotation) {
         // Get the index of the aliased attribute. It must exist in the current annotation.
         final int aliasAttributeIndex = getAttributeIndex(attributeAnnotation.value(), attribute.getReturnType());
-        Assert.isTrue(hasAttribute(aliasAttributeIndex), "can not find alias attribute [{}] in [{}]",
-                attributeAnnotation.value(), this.annotation.annotationType());
+        Assert.isTrue(
+                hasAttribute(aliasAttributeIndex),
+                "can not find alias attribute [{}] in [{}]",
+                attributeAnnotation.value(),
+                this.annotation.annotationType());
 
         // Get the specific aliased attribute. It cannot be the attribute itself.
         final Method aliasAttribute = getAttribute(aliasAttributeIndex);
         Assert.notEquals(aliasAttribute, attribute, "attribute [{}] can not alias for itself", attribute);
 
         // Aliased attributes must have compatible return types.
-        Assert.isAssignable(attribute.getReturnType(), aliasAttribute.getReturnType(),
-                "aliased attributes [{}] and [{}] must have same return type", attribute, aliasAttribute);
+        Assert.isAssignable(
+                attribute.getReturnType(),
+                aliasAttribute.getReturnType(),
+                "aliased attributes [{}] and [{}] must have same return type",
+                attribute,
+                aliasAttribute);
         return aliasAttribute;
     }
 
@@ -678,9 +696,13 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
                 if (hasNotDef) {
                     // If the current attribute also has a non-default value, they must be equal.
                     if (!isDefault) {
-                        Assert.isTrue(Objects.equals(lastValue, undef),
+                        Assert.isTrue(
+                                Objects.equals(lastValue, undef),
                                 "aliased attribute [{}] and [{}] must have same not default value, but is different: [{}] <==> [{}]",
-                                attributes[resolvedIndex], attribute, lastValue, undef);
+                                attributes[resolvedIndex],
+                                attribute,
+                                lastValue,
+                                undef);
                     }
                     // Otherwise, skip and continue to use the previous non-default value.
                     continue;
@@ -697,11 +719,17 @@ public class ResolvedAnnotationMapping implements AnnotationMapping<Annotation> 
 
                 // If this is not the first attribute, no non-default value has been found yet,
                 // and the current value is also a default value, then all default values must be equal.
-                Assert.isTrue(Objects.equals(lastValue, def),
+                Assert.isTrue(
+                        Objects.equals(lastValue, def),
                         "aliased attribute [{}] and [{}] must have same default value, but is different: [{}] <==> [{}]",
-                        attributes[resolvedIndex], attribute, lastValue, def);
+                        attributes[resolvedIndex],
+                        attribute,
+                        lastValue,
+                        def);
             }
-            Assert.isFalse(resolvedIndex == NOT_FOUND_INDEX, "can not resolve aliased attributes from [{}]",
+            Assert.isFalse(
+                    resolvedIndex == NOT_FOUND_INDEX,
+                    "can not resolve aliased attributes from [{}]",
                     annotation);
             return resolvedIndex;
         }

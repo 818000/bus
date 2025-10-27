@@ -130,7 +130,11 @@ public class RabjungDay extends Loops {
      * @param day           The Tibetan day.
      * @return A new {@link RabjungDay} instance.
      */
-    public static RabjungDay fromElementZodiac(int rabByungIndex, RabjungElement element, Zodiac zodiac, int month,
+    public static RabjungDay fromElementZodiac(
+            int rabByungIndex,
+            RabjungElement element,
+            Zodiac zodiac,
+            int month,
             int day) {
         return new RabjungDay(rabByungIndex, element, zodiac, month, day);
     }

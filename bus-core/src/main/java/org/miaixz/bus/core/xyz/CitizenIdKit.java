@@ -82,20 +82,20 @@ public class CitizenIdKit {
 
         final int length = idCard.length();
         switch (length) {
-        case 18: // 18-digit ID
-            return isValidCard18(idCard);
+            case 18: // 18-digit ID
+                return isValidCard18(idCard);
 
-        case 15: // 15-digit ID
-            try {
-                return isValidCard18(CIN.convert15To18(idCard));
-            } catch (final Exception ignore) {
+            case 15: // 15-digit ID
+                try {
+                    return isValidCard18(CIN.convert15To18(idCard));
+                } catch (final Exception ignore) {
+                    return false;
+                }
+            case 10: // 10-digit ID, for Hong Kong, Macau, Taiwan
+                return isValidCard10(idCard);
+
+            default:
                 return false;
-            }
-        case 10: // 10-digit ID, for Hong Kong, Macau, Taiwan
-            return isValidCard10(idCard);
-
-        default:
-            return false;
         }
     }
 

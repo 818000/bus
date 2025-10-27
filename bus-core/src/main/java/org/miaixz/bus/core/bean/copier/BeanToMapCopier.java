@@ -74,8 +74,10 @@ public class BeanToMapCopier extends AbstractCopier<Object, Map> {
         Class<?> actualEditable = source.getClass();
         if (null != copyOptions.editable) {
             // Check if the restricted class is a superclass or interface of the source.
-            Assert.isTrue(copyOptions.editable.isInstance(source),
-                    "Source class [{}] not assignable to Editable class [{}]", actualEditable.getName(),
+            Assert.isTrue(
+                    copyOptions.editable.isInstance(source),
+                    "Source class [{}] not assignable to Editable class [{}]",
+                    actualEditable.getName(),
                     copyOptions.editable.getName());
             actualEditable = copyOptions.editable;
         }

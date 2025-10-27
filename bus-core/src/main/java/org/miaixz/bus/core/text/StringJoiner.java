@@ -260,8 +260,7 @@ public class StringJoiner implements Appendable, Serializable {
             append((Iterator<?>) object);
         } else if (object instanceof Iterable) {
             append(((Iterable<?>) object).iterator());
-        } else if (object instanceof Map.Entry) {
-            final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) object;
+        } else if (object instanceof Map.Entry<?, ?> entry) {
             append(entry.getKey()).append(entry.getValue());
         } else {
             append(Convert.toString(object));
@@ -319,7 +318,8 @@ public class StringJoiner implements Appendable, Serializable {
      * @param toStrFunc A function to convert each element to a string.
      * @return this instance for chaining.
      */
-    public <E> StringJoiner append(final Iterable<E> iterable,
+    public <E> StringJoiner append(
+            final Iterable<E> iterable,
             final Function<? super E, ? extends CharSequence> toStrFunc) {
         return append(IteratorKit.getIter(iterable), toStrFunc);
     }
@@ -332,7 +332,8 @@ public class StringJoiner implements Appendable, Serializable {
      * @param toStrFunc A function to convert each element to a string.
      * @return this instance for chaining.
      */
-    public <E> StringJoiner append(final Iterator<E> iterator,
+    public <E> StringJoiner append(
+            final Iterator<E> iterator,
             final Function<? super E, ? extends CharSequence> toStrFunc) {
         if (null != iterator) {
             while (iterator.hasNext()) {
@@ -351,17 +352,17 @@ public class StringJoiner implements Appendable, Serializable {
     public StringJoiner append(CharSequence csq, final int startInclude, int endExclude) {
         if (null == csq) {
             switch (this.nullMode) {
-            case IGNORE:
-                return this;
+                case IGNORE:
+                    return this;
 
-            case TO_EMPTY:
-                csq = Normal.EMPTY;
-                break;
+                case TO_EMPTY:
+                    csq = Normal.EMPTY;
+                    break;
 
-            case NULL_STRING:
-                csq = Normal.NULL;
-                endExclude = Normal.NULL.length();
-                break;
+                case NULL_STRING:
+                    csq = Normal.NULL;
+                    endExclude = Normal.NULL.length();
+                    break;
             }
         }
         try {
@@ -455,7 +456,7 @@ public class StringJoiner implements Appendable, Serializable {
      */
     private void checkHasContent(final Appendable appendable) {
         if (appendable instanceof CharSequence charSequence) {
-            if (!charSequence.isEmpty() && !StringKit.endWith(charSequence, delimiter)) {
+            if (!charSequence.isEmpty() && StringKit.endWith(charSequence, delimiter)) {
                 this.hasContent = true;
             }
         } else {

@@ -366,7 +366,8 @@ public class MapKit extends MapGets {
                 }
             } else {
                 throw new IllegalArgumentException(StringKit.format(
-                        "Array element {}, '{}', is not type of Map.Entry or Array or Iterable or Iterator", i,
+                        "Array element {}, '{}', is not type of Map.Entry or Array or Iterable or Iterator",
+                        i,
                         object));
             }
         }
@@ -527,7 +528,10 @@ public class MapKit extends MapGets {
      * @param args              Additional parameter strings (e.g., a secret key) to append.
      * @return The joined string.
      */
-    public static <K, V> String join(final Map<K, V> map, final String separator, final String keyValueSeparator,
+    public static <K, V> String join(
+            final Map<K, V> map,
+            final String separator,
+            final String keyValueSeparator,
             final String... args) {
         return join(map, separator, keyValueSeparator, false, args);
     }
@@ -543,8 +547,12 @@ public class MapKit extends MapGets {
      * @param args              Additional parameter strings (e.g., a secret key) to append.
      * @return The signature string.
      */
-    public static String sortJoin(final Map<?, ?> params, final String separator, final String keyValueSeparator,
-            final boolean isIgnoreNull, final String... args) {
+    public static String sortJoin(
+            final Map<?, ?> params,
+            final String separator,
+            final String keyValueSeparator,
+            final boolean isIgnoreNull,
+            final String... args) {
         return join(sort(params), separator, keyValueSeparator, isIgnoreNull, args);
     }
 
@@ -559,8 +567,11 @@ public class MapKit extends MapGets {
      * @param args              Additional parameter strings (e.g., a secret key) to append.
      * @return The joined string.
      */
-    public static <K, V> String joinIgnoreNull(final Map<K, V> map, final String separator,
-            final String keyValueSeparator, final String... args) {
+    public static <K, V> String joinIgnoreNull(
+            final Map<K, V> map,
+            final String separator,
+            final String keyValueSeparator,
+            final String... args) {
         return join(map, separator, keyValueSeparator, true, args);
     }
 
@@ -576,10 +587,18 @@ public class MapKit extends MapGets {
      * @param args              Additional parameter strings (e.g., a secret key) to append.
      * @return The joined string. Returns an empty string if both map and args are empty.
      */
-    public static <K, V> String join(final Map<K, V> map, final String separator, final String keyValueSeparator,
-            final boolean isIgnoreNull, final String... args) {
-        return join(map, separator, keyValueSeparator,
-                (entry) -> !isIgnoreNull || entry.getKey() != null && entry.getValue() != null, args);
+    public static <K, V> String join(
+            final Map<K, V> map,
+            final String separator,
+            final String keyValueSeparator,
+            final boolean isIgnoreNull,
+            final String... args) {
+        return join(
+                map,
+                separator,
+                keyValueSeparator,
+                (entry) -> !isIgnoreNull || entry.getKey() != null && entry.getValue() != null,
+                args);
     }
 
     /**
@@ -595,8 +614,12 @@ public class MapKit extends MapGets {
      * @param args              Additional parameter strings (e.g., a secret key) to append.
      * @return The joined string. Returns an empty string if both map and args are empty.
      */
-    public static <K, V> String join(final Map<K, V> map, final String separator, final String keyValueSeparator,
-            final Predicate<Entry<K, V>> predicate, final String... args) {
+    public static <K, V> String join(
+            final Map<K, V> map,
+            final String separator,
+            final String keyValueSeparator,
+            final Predicate<Entry<K, V>> predicate,
+            final String... args) {
         return MapJoiner.of(separator, keyValueSeparator).append(map, predicate).append(args).toString();
     }
 
@@ -788,7 +811,8 @@ public class MapKit extends MapGets {
      * @param isDesc If {@code true}, values are sorted in descending order; otherwise, ascending order.
      * @return A new {@link LinkedHashMap} with entries sorted by value.
      */
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(final Map<K, V> map,
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(
+            final Map<K, V> map,
             final boolean isDesc) {
         final Map<K, V> result = new LinkedHashMap<>();
         Comparator<Entry<K, V>> entryComparator = Entry.comparingByValue();
@@ -1133,7 +1157,9 @@ public class MapKit extends MapGets {
      * @param <V>       The type of values in the map.
      * @return The populated map.
      */
-    public static <K, V> Map<K, V> putAll(final Map<K, V> resultMap, final Iterable<V> iterable,
+    public static <K, V> Map<K, V> putAll(
+            final Map<K, V> resultMap,
+            final Iterable<V> iterable,
             final Function<V, K> keyMapper) {
         return putAll(resultMap, iterable, keyMapper, Function.identity());
     }
@@ -1150,8 +1176,11 @@ public class MapKit extends MapGets {
      * @param <V>         The type of values in the map.
      * @return The populated map.
      */
-    public static <T, K, V> Map<K, V> putAll(final Map<K, V> resultMap, final Iterable<T> iterable,
-            final Function<T, K> keyMapper, final Function<T, V> valueMapper) {
+    public static <T, K, V> Map<K, V> putAll(
+            final Map<K, V> resultMap,
+            final Iterable<T> iterable,
+            final Function<T, K> keyMapper,
+            final Function<T, V> valueMapper) {
         return putAll(resultMap, IteratorKit.getIter(iterable), keyMapper, valueMapper);
     }
 
@@ -1165,7 +1194,9 @@ public class MapKit extends MapGets {
      * @param <V>       The type of values in the map.
      * @return The populated map.
      */
-    public static <K, V> Map<K, V> putAll(final Map<K, V> resultMap, final Iterator<V> iterator,
+    public static <K, V> Map<K, V> putAll(
+            final Map<K, V> resultMap,
+            final Iterator<V> iterator,
             final Function<V, K> keyMapper) {
         return putAll(resultMap, iterator, keyMapper, Function.identity());
     }
@@ -1182,8 +1213,11 @@ public class MapKit extends MapGets {
      * @param <V>         The type of values in the map.
      * @return The populated map.
      */
-    public static <T, K, V> Map<K, V> putAll(Map<K, V> resultMap, final Iterator<T> iterator,
-            final Function<T, K> keyMapper, final Function<T, V> valueMapper) {
+    public static <T, K, V> Map<K, V> putAll(
+            Map<K, V> resultMap,
+            final Iterator<T> iterator,
+            final Function<T, K> keyMapper,
+            final Function<T, V> valueMapper) {
         if (null == resultMap) {
             resultMap = MapKit.newHashMap();
         }

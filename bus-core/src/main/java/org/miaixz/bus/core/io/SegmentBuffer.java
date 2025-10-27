@@ -156,8 +156,14 @@ public class SegmentBuffer extends AbstractList<ByteString> implements RandomAcc
      * @param indexes          A list mapping sorted {@link ByteString} indices to their original indices.
      * @throws AssertionError if an internal consistency check fails.
      */
-    private static void buildTrieRecursive(long nodeOffset, Buffer node, int byteStringOffset,
-            List<ByteString> byteStrings, int fromIndex, int toIndex, List<Integer> indexes) {
+    private static void buildTrieRecursive(
+            long nodeOffset,
+            Buffer node,
+            int byteStringOffset,
+            List<ByteString> byteStrings,
+            int fromIndex,
+            int toIndex,
+            List<Integer> indexes) {
         if (fromIndex >= toIndex)
             throw new AssertionError();
         for (int i = fromIndex; i < toIndex; i++) {
@@ -215,8 +221,14 @@ public class SegmentBuffer extends AbstractList<ByteString> implements RandomAcc
                 } else {
                     // The result is another node.
                     node.writeInt((int) (-1 * (childNodesOffset + intCount(childNodes))));
-                    buildTrieRecursive(childNodesOffset, childNodes, byteStringOffset + 1, byteStrings, rangeStart,
-                            rangeEnd, indexes);
+                    buildTrieRecursive(
+                            childNodesOffset,
+                            childNodes,
+                            byteStringOffset + 1,
+                            byteStrings,
+                            rangeStart,
+                            rangeEnd,
+                            indexes);
                 }
 
                 rangeStart = rangeEnd;
@@ -254,8 +266,14 @@ public class SegmentBuffer extends AbstractList<ByteString> implements RandomAcc
                 // The result is another node.
                 Buffer childNodes = new Buffer();
                 node.writeInt((int) (-1 * (childNodesOffset + intCount(childNodes))));
-                buildTrieRecursive(childNodesOffset, childNodes, byteStringOffset + scanByteCount, byteStrings,
-                        fromIndex, toIndex, indexes);
+                buildTrieRecursive(
+                        childNodesOffset,
+                        childNodes,
+                        byteStringOffset + scanByteCount,
+                        byteStrings,
+                        fromIndex,
+                        toIndex,
+                        indexes);
                 node.write(childNodes, childNodes.size());
             }
         }

@@ -163,29 +163,29 @@ public class Converter extends Formatter {
             return null;
         }
         switch (unit) {
-        case NANOSECONDS:
-            return ChronoUnit.NANOS;
+            case NANOSECONDS:
+                return ChronoUnit.NANOS;
 
-        case MICROSECONDS:
-            return ChronoUnit.MICROS;
+            case MICROSECONDS:
+                return ChronoUnit.MICROS;
 
-        case MILLISECONDS:
-            return ChronoUnit.MILLIS;
+            case MILLISECONDS:
+                return ChronoUnit.MILLIS;
 
-        case SECONDS:
-            return ChronoUnit.SECONDS;
+            case SECONDS:
+                return ChronoUnit.SECONDS;
 
-        case MINUTES:
-            return ChronoUnit.MINUTES;
+            case MINUTES:
+                return ChronoUnit.MINUTES;
 
-        case HOURS:
-            return ChronoUnit.HOURS;
+            case HOURS:
+                return ChronoUnit.HOURS;
 
-        case DAYS:
-            return ChronoUnit.DAYS;
+            case DAYS:
+                return ChronoUnit.DAYS;
 
-        default:
-            throw new IllegalArgumentException("Unknown TimeUnit constant");
+            default:
+                throw new IllegalArgumentException("Unknown TimeUnit constant");
         }
     }
 
@@ -201,29 +201,29 @@ public class Converter extends Formatter {
             return null;
         }
         switch (unit) {
-        case NANOS:
-            return TimeUnit.NANOSECONDS;
+            case NANOS:
+                return TimeUnit.NANOSECONDS;
 
-        case MICROS:
-            return TimeUnit.MICROSECONDS;
+            case MICROS:
+                return TimeUnit.MICROSECONDS;
 
-        case MILLIS:
-            return TimeUnit.MILLISECONDS;
+            case MILLIS:
+                return TimeUnit.MILLISECONDS;
 
-        case SECONDS:
-            return TimeUnit.SECONDS;
+            case SECONDS:
+                return TimeUnit.SECONDS;
 
-        case MINUTES:
-            return TimeUnit.MINUTES;
+            case MINUTES:
+                return TimeUnit.MINUTES;
 
-        case HOURS:
-            return TimeUnit.HOURS;
+            case HOURS:
+                return TimeUnit.HOURS;
 
-        case DAYS:
-            return TimeUnit.DAYS;
+            case DAYS:
+                return TimeUnit.DAYS;
 
-        default:
-            throw new IllegalArgumentException("ChronoUnit cannot be converted to TimeUnit: " + unit);
+            default:
+                throw new IllegalArgumentException("ChronoUnit cannot be converted to TimeUnit: " + unit);
         }
     }
 
@@ -373,10 +373,14 @@ public class Converter extends Formatter {
             // ignore
         }
 
-        return LocalDateTime.of(get(temporalAccessor, ChronoField.YEAR),
-                get(temporalAccessor, ChronoField.MONTH_OF_YEAR), get(temporalAccessor, ChronoField.DAY_OF_MONTH),
-                get(temporalAccessor, ChronoField.HOUR_OF_DAY), get(temporalAccessor, ChronoField.MINUTE_OF_HOUR),
-                get(temporalAccessor, ChronoField.SECOND_OF_MINUTE), get(temporalAccessor, ChronoField.NANO_OF_SECOND));
+        return LocalDateTime.of(
+                get(temporalAccessor, ChronoField.YEAR),
+                get(temporalAccessor, ChronoField.MONTH_OF_YEAR),
+                get(temporalAccessor, ChronoField.DAY_OF_MONTH),
+                get(temporalAccessor, ChronoField.HOUR_OF_DAY),
+                get(temporalAccessor, ChronoField.MINUTE_OF_HOUR),
+                get(temporalAccessor, ChronoField.SECOND_OF_MINUTE),
+                get(temporalAccessor, ChronoField.NANO_OF_SECOND));
     }
 
     /**
@@ -402,7 +406,9 @@ public class Converter extends Formatter {
             return of(temporalAccessor).toLocalDate();
         }
 
-        return LocalDate.of(get(temporalAccessor, ChronoField.YEAR), get(temporalAccessor, ChronoField.MONTH_OF_YEAR),
+        return LocalDate.of(
+                get(temporalAccessor, ChronoField.YEAR),
+                get(temporalAccessor, ChronoField.MONTH_OF_YEAR),
                 get(temporalAccessor, ChronoField.DAY_OF_MONTH));
     }
 
@@ -431,10 +437,14 @@ public class Converter extends Formatter {
             return ZonedDateTime.of(LocalDate.now(), (LocalTime) temporalAccessor, zoneId);
         }
 
-        return ZonedDateTime.of(get(temporalAccessor, ChronoField.YEAR),
-                get(temporalAccessor, ChronoField.MONTH_OF_YEAR), get(temporalAccessor, ChronoField.DAY_OF_MONTH),
-                get(temporalAccessor, ChronoField.HOUR_OF_DAY), get(temporalAccessor, ChronoField.MINUTE_OF_HOUR),
-                get(temporalAccessor, ChronoField.SECOND_OF_MINUTE), get(temporalAccessor, ChronoField.NANO_OF_SECOND),
+        return ZonedDateTime.of(
+                get(temporalAccessor, ChronoField.YEAR),
+                get(temporalAccessor, ChronoField.MONTH_OF_YEAR),
+                get(temporalAccessor, ChronoField.DAY_OF_MONTH),
+                get(temporalAccessor, ChronoField.HOUR_OF_DAY),
+                get(temporalAccessor, ChronoField.MINUTE_OF_HOUR),
+                get(temporalAccessor, ChronoField.SECOND_OF_MINUTE),
+                get(temporalAccessor, ChronoField.NANO_OF_SECOND),
                 zoneId);
     }
 

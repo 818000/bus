@@ -134,7 +134,10 @@ public class LookupKit {
      * @param argTypes    The parameter types.
      * @return The {@link MethodHandle}, or `null` if not found.
      */
-    public static MethodHandle findMethod(final Class<?> callerClass, final String name, final Class<?> returnType,
+    public static MethodHandle findMethod(
+            final Class<?> callerClass,
+            final String name,
+            final Class<?> returnType,
             final Class<?>... argTypes) {
         return findMethod(callerClass, name, MethodType.methodType(returnType, argTypes));
     }

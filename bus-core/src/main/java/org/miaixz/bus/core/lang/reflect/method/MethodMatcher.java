@@ -283,7 +283,8 @@ public class MethodMatcher {
      *         types.
      * @throws NullPointerException if {@code methodName} or {@code parameterTypes} is {@code null}.
      */
-    public static Predicate<Method> forNameAndParameterTypes(final String methodName,
+    public static Predicate<Method> forNameAndParameterTypes(
+            final String methodName,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(parameterTypes);
@@ -300,7 +301,8 @@ public class MethodMatcher {
      *         parameter types.
      * @throws NullPointerException if {@code methodName} or {@code parameterTypes} is {@code null}.
      */
-    public static Predicate<Method> forNameAndStrictParameterTypes(final String methodName,
+    public static Predicate<Method> forNameAndStrictParameterTypes(
+            final String methodName,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(parameterTypes);
@@ -317,7 +319,8 @@ public class MethodMatcher {
      *         assignable parameter types.
      * @throws NullPointerException if {@code methodName} or {@code parameterTypes} is {@code null}.
      */
-    public static Predicate<Method> forNameIgnoreCaseAndParameterTypes(final String methodName,
+    public static Predicate<Method> forNameIgnoreCaseAndParameterTypes(
+            final String methodName,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(parameterTypes);
@@ -334,7 +337,8 @@ public class MethodMatcher {
      *         strictly matching parameter types.
      * @throws NullPointerException if {@code methodName} or {@code parameterTypes} is {@code null}.
      */
-    public static Predicate<Method> forNameIgnoreCaseAndStrictParameterTypes(final String methodName,
+    public static Predicate<Method> forNameIgnoreCaseAndStrictParameterTypes(
+            final String methodName,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         Objects.requireNonNull(parameterTypes);
@@ -375,7 +379,9 @@ public class MethodMatcher {
      * @return A method predicate that returns {@code true} for methods matching the given signature.
      * @throws NullPointerException if {@code methodName} is {@code null}.
      */
-    public static Predicate<Method> forMethodSignature(final String methodName, final Class<?> returnType,
+    public static Predicate<Method> forMethodSignature(
+            final String methodName,
+            final Class<?> returnType,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         final Predicate<Method> resultMatcher = Objects.isNull(returnType) ? forNoneReturnType()
@@ -401,7 +407,9 @@ public class MethodMatcher {
      * @return A method predicate that returns {@code true} for methods strictly matching the given signature.
      * @throws NullPointerException if {@code methodName} is {@code null}.
      */
-    public static Predicate<Method> forStrictMethodSignature(final String methodName, final Class<?> returnType,
+    public static Predicate<Method> forStrictMethodSignature(
+            final String methodName,
+            final Class<?> returnType,
             final Class<?>... parameterTypes) {
         Objects.requireNonNull(methodName);
         final Predicate<Method> resultMatcher = Objects.isNull(returnType) ? forNoneReturnType()
@@ -608,7 +616,8 @@ public class MethodMatcher {
      *                       {@code ClassKit::isAssignable} or {@code Objects::equals}).
      * @return A method predicate.
      */
-    private static Predicate<Method> mostSpecificStrictParameterTypesMatcher(final Class<?>[] parameterTypes,
+    private static Predicate<Method> mostSpecificStrictParameterTypesMatcher(
+            final Class<?>[] parameterTypes,
             final BiPredicate<Class<?>, Class<?>> typeMatcher) {
         Objects.requireNonNull(parameterTypes);
         // If parameters are empty, match methods with no parameters.

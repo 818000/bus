@@ -53,7 +53,8 @@ public class BoundedOperation {
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
     public static <T extends Comparable<? super T>> BoundedRange<T> unionIfIntersected(
-            final BoundedRange<T> boundedRange, final BoundedRange<T> other) {
+            final BoundedRange<T> boundedRange,
+            final BoundedRange<T> other) {
         Objects.requireNonNull(boundedRange);
         Objects.requireNonNull(other);
         if (isDisjoint(boundedRange, other)) {
@@ -73,7 +74,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the span of both ranges
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> span(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> span(
+            final BoundedRange<T> boundedRange,
             final BoundedRange<T> other) {
         Objects.requireNonNull(boundedRange);
         Objects.requireNonNull(other);
@@ -91,7 +93,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the gap, or {@code null} if the ranges intersect
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> gap(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> gap(
+            final BoundedRange<T> boundedRange,
             final BoundedRange<T> other) {
         Objects.requireNonNull(boundedRange);
         Objects.requireNonNull(other);
@@ -112,7 +115,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the intersection, or {@code null} if there is no intersection
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> intersection(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> intersection(
+            final BoundedRange<T> boundedRange,
             final BoundedRange<T> other) {
         Objects.requireNonNull(boundedRange);
         Objects.requireNonNull(other);
@@ -133,7 +137,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the truncated portion, or the original range if no truncation
      *         occurs
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> subGreatThan(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> subGreatThan(
+            final BoundedRange<T> boundedRange,
             final T min) {
         return Optional.ofNullable(min).filter(boundedRange)
                 .map(t -> new BoundedRange<>(Bound.greaterThan(t), boundedRange.getUpperBound())).orElse(boundedRange);
@@ -149,7 +154,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the truncated portion, or the original range if no truncation
      *         occurs
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> subAtLeast(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> subAtLeast(
+            final BoundedRange<T> boundedRange,
             final T min) {
         return Optional.ofNullable(min).filter(boundedRange)
                 .map(t -> new BoundedRange<>(Bound.atLeast(t), boundedRange.getUpperBound())).orElse(boundedRange);
@@ -165,7 +171,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the truncated portion, or the original range if no truncation
      *         occurs
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> subLessThan(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> subLessThan(
+            final BoundedRange<T> boundedRange,
             final T max) {
         return Optional.ofNullable(max).filter(boundedRange)
                 .map(t -> new BoundedRange<>(boundedRange.getLowerBound(), Bound.lessThan(max))).orElse(boundedRange);
@@ -181,7 +188,8 @@ public class BoundedOperation {
      * @return a new {@code BoundedRange} representing the truncated portion, or the original range if no truncation
      *         occurs
      */
-    public static <T extends Comparable<? super T>> BoundedRange<T> subAtMost(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> BoundedRange<T> subAtMost(
+            final BoundedRange<T> boundedRange,
             final T max) {
         return Optional.ofNullable(max).filter(boundedRange)
                 .map(t -> new BoundedRange<>(boundedRange.getLowerBound(), Bound.atMost(max))).orElse(boundedRange);
@@ -197,7 +205,8 @@ public class BoundedOperation {
      * @return {@code true} if the ranges intersect, {@code false} otherwise
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
-    public static <T extends Comparable<? super T>> boolean isIntersected(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> boolean isIntersected(
+            final BoundedRange<T> boundedRange,
             final BoundedRange<T> other) {
         return !isDisjoint(boundedRange, other);
     }
@@ -212,7 +221,8 @@ public class BoundedOperation {
      * @return {@code true} if the ranges are disjoint, {@code false} otherwise
      * @throws NullPointerException if {@code boundedRange} or {@code other} is {@code null}
      */
-    public static <T extends Comparable<? super T>> boolean isDisjoint(final BoundedRange<T> boundedRange,
+    public static <T extends Comparable<? super T>> boolean isDisjoint(
+            final BoundedRange<T> boundedRange,
             final BoundedRange<T> other) {
         Objects.requireNonNull(boundedRange);
         Objects.requireNonNull(other);

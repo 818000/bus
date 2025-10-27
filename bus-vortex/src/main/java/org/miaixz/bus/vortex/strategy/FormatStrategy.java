@@ -25,89 +25,72 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex.filter;
+package org.miaixz.bus.vortex.strategy;
+
+import java.util.List;
 
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Formats;
+import org.miaixz.bus.vortex.Provider;
 import org.reactivestreams.Publisher;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilterChain;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 /**
- * Response formatting filter that ensures all response data is in JSON format.
+ * A filter strategy for response formatting. This strategy intercepts the response and serializes the body to the
+ * format specified in the request context (e.g., XML).
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 17+
  */
-@Order(Ordered.LOWEST_PRECEDENCE - 2)
-public class FormatFilter extends AbstractFilter {
+@Order(Ordered.HIGHEST_PRECEDENCE + 11)
+public class FormatStrategy extends AbstractStrategy {
 
-    /**
-     * Internal filtering method, executing the response formatting logic.
-     * <p>
-     * This method logs the start of the request. If the request explicitly asks for XML format, it intercepts the
-     * response and ensures it is converted to JSON format before being sent.
-     * </p>
-     *
-     * @param exchange The current {@link ServerWebExchange} object.
-     * @param chain    The filter chain.
-     * @param context  The request context.
-     * @return {@link Mono<Void>} indicating the asynchronous completion of processing.
-     */
     @Override
-    protected Mono<Void> doFilter(ServerWebExchange exchange, WebFilterChain chain, Context context) {
-        Logger.info(
-                "==>     Filter: Request started - Method: {}, Path: {}, Query: {}",
-                exchange.getRequest().getMethod(),
-                exchange.getRequest().getPath().value(),
-                exchange.getRequest().getQueryParams());
+    public Mono<Void> apply(ServerWebExchange exchange, Chain chain) {
+        return Mono.deferContextual(contextView -> {
+            final Context context = contextView.get(Context.class);
+            ServerWebExchange newExchange = exchange;
 
-        // If the request explicitly asks for XML format, convert to JSON
-        if (Formats.XML.equals(context.getFormats())) {
-            Logger.info("==>     Filter: Converting XML request to JSON response");
-            exchange = exchange.mutate().response(process(exchange)).build();
-        }
+            Logger.info(
+                    "==>     Filter: Request started - Method: {}, Path: {}, Query: {}",
+                    exchange.getRequest().getMethod(),
+                    exchange.getRequest().getPath().value(),
+                    exchange.getRequest().getQueryParams());
 
-        return chain.filter(exchange);
+            Logger.info("==>     Filter: Current context format: {}", context.getFormat());
+
+            // If the request asks for XML format, apply the transformation.
+            if (Formats.XML.equals(context.getFormat())) {
+                Logger.info("==>     Filter: Response format is XML, applying XML transformation.");
+                newExchange = exchange.mutate().response(processXml(exchange)).build();
+            }
+
+            return chain.apply(newExchange);
+        });
     }
 
     /**
-     * Creates a response decorator to ensure response data is in JSON format.
+     * Creates a response decorator to serialize the response body to XML.
      * <p>
-     * This method wraps the original response and overrides the method to intercept the response body. It collects all
-     * data buffers, merges them, and then uses the context's specified provider to serialize the message into the
-     * desired format (JSON in this case). The formatted data is then written back to the response.
+     * This method wraps the original response and overrides the write method to intercept the response body. It assumes
+     * the original body is a JSON string, converts it to XML, and sets the Content-Type header to 'application/xml'.
      * </p>
      *
      * @param exchange The {@link ServerWebExchange} object.
      * @return The decorated {@link ServerHttpResponseDecorator}.
      */
-    private ServerHttpResponseDecorator process(ServerWebExchange exchange) {
+    private ServerHttpResponseDecorator processXml(ServerWebExchange exchange) {
         return new ServerHttpResponseDecorator(exchange.getResponse()) {
 
-            /**
-             * Overrides the response writing logic to handle data formatting.
-             * <p>
-             * This method converts the response data stream to a Flux, collects all data buffers, merges them into a
-             * single byte array, and then converts it to a string. It then uses the context's specified provider to
-             * serialize the message. The formatted data is then wrapped into a new data buffer and written to the
-             * response.
-             * </p>
-             *
-             * @param body The response data stream.
-             * @return {@link Mono<Void>} indicating the asynchronous completion of writing.
-             */
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
                 // Convert response data stream to Flux
@@ -118,24 +101,19 @@ public class FormatFilter extends AbstractFilter {
                     // Merge all data buffers
                     byte[] allBytes = merge(dataBuffers);
 
-                    // Get the context
-                    Context context = Context.get(exchange);
-
-                    // Set the response content type to the media type specified in the context
-                    exchange.getResponse().getHeaders().setContentType(context.getFormats().getMediaType());
-
-                    // Convert byte array to string
+                    // Convert byte array to string (assuming original body is UTF-8 string, e.g., JSON)
                     String bodyString = new String(allBytes, Charset.UTF_8);
 
-                    // Serialize the message using the provider specified in the context
-                    String formatBody = context.getFormats().getProvider().serialize(bodyString);
+                    // Explicitly use XML provider and media type
+                    Provider xmlProvider = Formats.XML.getProvider();
+                    String xmlBody = xmlProvider.serialize(bodyString);
+                    getDelegate().getHeaders().setContentType(Formats.XML.getMediaType());
 
                     // Log TRACE (if enabled)
-                    Logger.trace("==>     Filter: Response formatted: {}", formatBody);
+                    Logger.trace("==>     Filter: Response formatted to XML: {}", xmlBody);
 
                     // Wrap the formatted data into a new data buffer
-                    DataBufferFactory bufferFactory = bufferFactory();
-                    DataBuffer formattedBuffer = bufferFactory.wrap(formatBody.getBytes(Charset.UTF_8));
+                    DataBuffer formattedBuffer = bufferFactory().wrap(xmlBody.getBytes(Charset.UTF_8));
 
                     // Write the formatted response
                     return super.writeWith(Mono.just(formattedBuffer));

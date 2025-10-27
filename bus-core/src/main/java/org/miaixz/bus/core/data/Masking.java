@@ -306,8 +306,11 @@ public class Masking {
      * @param replacement The replacement content.
      * @return The custom masking rule.
      */
-    public static TextMaskingRule createCustomRule(final String name, final String pattern,
-            final EnumValue.Masking masking, final String replacement) {
+    public static TextMaskingRule createCustomRule(
+            final String name,
+            final String pattern,
+            final EnumValue.Masking masking,
+            final String replacement) {
         return new TextMaskingRule(name, pattern, masking, replacement);
     }
 
@@ -321,8 +324,12 @@ public class Masking {
      * @param maskChar      The masking character.
      * @return The partial masking rule.
      */
-    public static TextMaskingRule createPartialMaskRule(final String name, final String pattern, final int preserveLeft,
-            final int preserveRight, final char maskChar) {
+    public static TextMaskingRule createPartialMaskRule(
+            final String name,
+            final String pattern,
+            final int preserveLeft,
+            final int preserveRight,
+            final char maskChar) {
         return new TextMaskingRule(name, pattern, preserveLeft, preserveRight, maskChar);
     }
 
@@ -342,12 +349,14 @@ public class Masking {
                         .setPreserveLeft(1).setPreserveRight(0).setMaskChar('*'));
 
         // URL masking rule
-        processor.addRule(new TextMaskingRule("URL", "https?://[\\w.-]+(?:/[\\w.-]*)*", EnumValue.Masking.REPLACE,
-                "[URL Hidden]"));
+        processor.addRule(
+                new TextMaskingRule("URL", "https?://[\\w.-]+(?:/[\\w.-]*)*", EnumValue.Masking.REPLACE,
+                        "[URL Hidden]"));
 
         // Sensitive word masking rule (example)
-        processor.addRule(new TextMaskingRule("Sensitive Word", "(Confidential|Top Secret|Internal|Secret|Proprietary)",
-                EnumValue.Masking.FULL, "***").setMaskChar('*'));
+        processor.addRule(
+                new TextMaskingRule("Sensitive Word", "(Confidential|Top Secret|Internal|Secret|Proprietary)",
+                        EnumValue.Masking.FULL, "***").setMaskChar('*'));
 
         return processor;
     }

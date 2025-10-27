@@ -1277,7 +1277,11 @@ public class ArrayValidator {
      * @return {@code true} if the specified regions match, {@code false} otherwise.
      * @throws IndexOutOfBoundsException If the specified offsets and length exceed the bounds of either array.
      */
-    public static boolean regionMatches(final byte[] array1, final int offset1, final byte[] array2, final int offset2,
+    public static boolean regionMatches(
+            final byte[] array1,
+            final int offset1,
+            final byte[] array2,
+            final int offset2,
             final int length) {
         if (array1.length < offset1 + length) {
             throw new IndexOutOfBoundsException("[byte1] length must be >= [offset1 + length]");

@@ -116,8 +116,8 @@ public class MethodInvoker implements Invoker {
      *     }
      * }
      *
-     * Duck duck = (Duck) Proxy.newProxyInstance(ClassKit.getClassLoader(), new Class[] { Duck.class },
-     *         MethodInvoker::invoke);
+     * Duck duck = (Duck) Proxy
+     *         .newProxyInstance(ClassKit.getClassLoader(), new Class[] { Duck.class }, MethodInvoker::invoke);
      * </pre>
      *
      * @param <T>    The return type of the method.
@@ -147,8 +147,8 @@ public class MethodInvoker implements Invoker {
      *     }
      * }
      *
-     * Duck duck = (Duck) Proxy.newProxyInstance(MethodInvoker.getClassLoader(), new Class[] { Duck.class },
-     *         MethodInvoker::invoke);
+     * Duck duck = (Duck) Proxy
+     *         .newProxyInstance(MethodInvoker.getClassLoader(), new Class[] { Duck.class }, MethodInvoker::invoke);
      * </pre>
      *
      * @param <T>    The return type of the method.
@@ -324,8 +324,10 @@ public class MethodInvoker implements Invoker {
     private void checkArgs(final Object[] args) {
         final Class<?>[] paramTypeClasses = this.paramTypeClasses;
         if (null != args) {
-            Assert.isTrue(args.length == paramTypeClasses.length,
-                    "Params length [{}] is not fit for param length [{}] of method !", args.length,
+            Assert.isTrue(
+                    args.length == paramTypeClasses.length,
+                    "Params length [{}] is not fit for param length [{}] of method !",
+                    args.length,
                     paramTypeClasses.length);
             Class<?> type;
             for (int i = 0; i < args.length; i++) {

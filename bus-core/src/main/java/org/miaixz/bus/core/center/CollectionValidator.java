@@ -131,7 +131,9 @@ public class CollectionValidator {
      * @param defaultSupplier A supplier that provides a default collection if the input is empty.
      * @return The result of the handler function or the value from the default supplier.
      */
-    public static <T extends Collection<E>, E> T defaultIfEmpty(final T collection, final Function<T, T> handler,
+    public static <T extends Collection<E>, E> T defaultIfEmpty(
+            final T collection,
+            final Function<T, T> handler,
             final Supplier<? extends T> defaultSupplier) {
         return isEmpty(collection) ? defaultSupplier.get() : handler.apply(collection);
     }

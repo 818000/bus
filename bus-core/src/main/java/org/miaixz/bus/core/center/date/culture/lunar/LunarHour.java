@@ -275,8 +275,8 @@ public class LunarHour extends Loops {
         if (hour >= 23) {
             d = d.next(1);
         }
-        return SixtyCycle
-                .fromName(HeavenStem.fromIndex(d.getHeavenStem().getIndex() % 5 * 2 + earthBranchIndex).getName()
+        return SixtyCycle.fromName(
+                HeavenStem.fromIndex(d.getHeavenStem().getIndex() % 5 * 2 + earthBranchIndex).getName()
                         + EarthBranch.fromIndex(earthBranchIndex).getName());
     }
 
@@ -286,8 +286,9 @@ public class LunarHour extends Loops {
      * @return The {@link TwelveStar}.
      */
     public TwelveStar getTwelveStar() {
-        return TwelveStar.fromIndex(getSixtyCycle().getEarthBranch().getIndex()
-                + (8 - getSixtyCycleHour().getDay().getEarthBranch().getIndex() % 6) * 2);
+        return TwelveStar.fromIndex(
+                getSixtyCycle().getEarthBranch().getIndex()
+                        + (8 - getSixtyCycleHour().getDay().getEarthBranch().getIndex() % 6) * 2);
     }
 
     /**

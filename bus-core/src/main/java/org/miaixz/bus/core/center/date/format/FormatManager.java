@@ -64,7 +64,8 @@ public class FormatManager {
 
         // Preset format: seconds timestamp
         registerFormatter(Fields.FORMAT_SECONDS, (date) -> String.valueOf(Math.floorDiv(date.getTime(), 1000L)));
-        registerParser(Fields.FORMAT_SECONDS,
+        registerParser(
+                Fields.FORMAT_SECONDS,
                 (dateStr) -> DateKit.date(Math.multiplyExact(Long.parseLong(dateStr.toString()), 1000L)));
 
         // Preset format: milliseconds timestamp

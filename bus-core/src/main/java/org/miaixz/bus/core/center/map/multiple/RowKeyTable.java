@@ -99,8 +99,8 @@ public class RowKeyTable<R, C, V> extends AbstractTable<R, C, V> {
      */
     public RowKeyTable(final Map<R, Map<C, V>> raw, final Builder<? extends Map<C, V>> columnMapBuilder) {
         this.raw = raw;
-        this.columnBuilder = (Builder<? extends Map<C, V>>) Objects.requireNonNullElseGet(columnMapBuilder,
-                HashMap::new);
+        this.columnBuilder = (Builder<? extends Map<C, V>>) Objects
+                .requireNonNullElseGet(columnMapBuilder, HashMap::new);
     }
 
     /**

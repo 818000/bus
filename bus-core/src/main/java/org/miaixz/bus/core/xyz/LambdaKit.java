@@ -228,7 +228,10 @@ public class LambdaKit {
      * @param <F>         The type of the functional interface.
      * @return An instance of the functional interface.
      */
-    public static <F> F build(final Class<F> lambdaType, final Class<?> clazz, final String methodName,
+    public static <F> F build(
+            final Class<F> lambdaType,
+            final Class<?> clazz,
+            final String methodName,
             final Class<?>... paramsTypes) {
         return LambdaFactory.build(lambdaType, clazz, methodName, paramsTypes);
     }

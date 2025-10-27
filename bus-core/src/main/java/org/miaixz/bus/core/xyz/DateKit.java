@@ -161,7 +161,11 @@ public class DateKit extends Calendar {
      * @param includeEnd   `true` to include the end date in the range.
      * @return `true` if the date is within the specified range.
      */
-    public static boolean isIn(final Date date, final Date beginDate, final Date endDate, final boolean includeBegin,
+    public static boolean isIn(
+            final Date date,
+            final Date beginDate,
+            final Date endDate,
+            final boolean includeBegin,
             final boolean includeEnd) {
         return new DateTime().isIn(date, beginDate, endDate, includeBegin, includeEnd);
     }
@@ -1380,7 +1384,10 @@ public class DateKit extends Calendar {
      * @param <T>   The result type of the function.
      * @return A list of the results.
      */
-    public static <T> List<T> rangeFunc(final Date start, final Date end, final Various unit,
+    public static <T> List<T> rangeFunc(
+            final Date start,
+            final Date end,
+            final Various unit,
             final Function<Date, T> func) {
         if (start == null || end == null || start.after(end)) {
             return Collections.emptyList();
@@ -1400,7 +1407,10 @@ public class DateKit extends Calendar {
      * @param unit     The stepping unit.
      * @param consumer The consumer to apply.
      */
-    public static void rangeConsume(final Date start, final Date end, final Various unit,
+    public static void rangeConsume(
+            final Date start,
+            final Date end,
+            final Various unit,
             final Consumer<Date> consumer) {
         if (start == null || end == null || start.after(end)) {
             return;
@@ -1600,26 +1610,26 @@ public class DateKit extends Calendar {
      */
     public static String getShortName(final TimeUnit unit) {
         switch (unit) {
-        case NANOSECONDS:
-            return "ns";
+            case NANOSECONDS:
+                return "ns";
 
-        case MICROSECONDS:
-            return "μs";
+            case MICROSECONDS:
+                return "μs";
 
-        case MILLISECONDS:
-            return "ms";
+            case MILLISECONDS:
+                return "ms";
 
-        case SECONDS:
-            return "s";
+            case SECONDS:
+                return "s";
 
-        case MINUTES:
-            return "min";
+            case MINUTES:
+                return "min";
 
-        case HOURS:
-            return "h";
+            case HOURS:
+                return "h";
 
-        default:
-            return unit.name().toLowerCase();
+            default:
+                return unit.name().toLowerCase();
         }
     }
 
@@ -1632,7 +1642,10 @@ public class DateKit extends Calendar {
      * @param endTime       The end time of the second interval.
      * @return `true` if the intervals overlap.
      */
-    public static boolean isOverlap(final Date realStartTime, final Date realEndTime, final Date startTime,
+    public static boolean isOverlap(
+            final Date realStartTime,
+            final Date realEndTime,
+            final Date startTime,
             final Date endTime) {
         return realStartTime.compareTo(endTime) <= 0 && startTime.compareTo(realEndTime) <= 0;
     }

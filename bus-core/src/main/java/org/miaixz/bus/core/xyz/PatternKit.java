@@ -55,8 +55,8 @@ public class PatternKit extends RegexValidator {
     /**
      * Keywords in regular expressions that need to be escaped.
      */
-    public static final Set<Character> RE_KEYS = SetKit.of('$', '(', ')', '*', '+', '.', '[', ']', '?', '\\', '^', '{',
-            '}', '|');
+    public static final Set<Character> RE_KEYS = SetKit
+            .of('$', '(', ')', '*', '+', '.', '[', ']', '?', '\\', '^', '{', '}', '|');
 
     /**
      * Gets the matched string for group 0.
@@ -162,7 +162,9 @@ public class PatternKit extends RegexValidator {
      * @param groupName The name of the group.
      * @return The matched string, or `null` if no match.
      */
-    public static String get(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static String get(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final String groupName) {
         if (null == content || null == pattern || null == groupName) {
             return null;
@@ -180,7 +182,9 @@ public class PatternKit extends RegexValidator {
      * @param content  The content to match against.
      * @param consumer The consumer for the `Matcher`.
      */
-    public static void get(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static void get(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final Consumer<Matcher> consumer) {
         if (null == content || null == pattern || null == consumer) {
             return;
@@ -210,7 +214,9 @@ public class PatternKit extends RegexValidator {
      * @param withGroup0 If `true`, includes group 0 (the full match).
      * @return A list of all captured groups.
      */
-    public static List<String> getAllGroups(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static List<String> getAllGroups(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final boolean withGroup0) {
         return getAllGroups(pattern, content, withGroup0, false);
     }
@@ -224,8 +230,11 @@ public class PatternKit extends RegexValidator {
      * @param findAll    If `true`, finds all matches, not just the first one.
      * @return A list of all captured groups.
      */
-    public static List<String> getAllGroups(final java.util.regex.Pattern pattern, final CharSequence content,
-            final boolean withGroup0, final boolean findAll) {
+    public static List<String> getAllGroups(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
+            final boolean withGroup0,
+            final boolean findAll) {
         if (null == content || null == pattern) {
             return null;
         }
@@ -253,7 +262,8 @@ public class PatternKit extends RegexValidator {
      * @param content The content to match against.
      * @return A map of group names to their captured values.
      */
-    public static Map<String, String> getAllGroupNames(final java.util.regex.Pattern pattern,
+    public static Map<String, String> getAllGroupNames(
+            final java.util.regex.Pattern pattern,
             final CharSequence content) {
         if (null == content || null == pattern) {
             return null;
@@ -275,7 +285,9 @@ public class PatternKit extends RegexValidator {
      * @param template The template string, using `$1`, `$2`, etc., for group references.
      * @return The formatted string.
      */
-    public static String extractMulti(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static String extractMulti(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             String template) {
         if (null == content || null == pattern || null == template) {
             return null;
@@ -322,8 +334,10 @@ public class PatternKit extends RegexValidator {
      * @param template      The template string.
      * @return The formatted string.
      */
-    public static String extractMultiAndDelPre(final java.util.regex.Pattern pattern,
-            final Mutable<CharSequence> contentHolder, String template) {
+    public static String extractMultiAndDelPre(
+            final java.util.regex.Pattern pattern,
+            final Mutable<CharSequence> contentHolder,
+            String template) {
         if (null == contentHolder || null == pattern || null == template) {
             return null;
         }
@@ -351,7 +365,9 @@ public class PatternKit extends RegexValidator {
      * @param template      The template string.
      * @return The formatted string.
      */
-    public static String extractMultiAndDelPre(final String regex, final Mutable<CharSequence> contentHolder,
+    public static String extractMultiAndDelPre(
+            final String regex,
+            final Mutable<CharSequence> contentHolder,
             final String template) {
         if (null == contentHolder || null == regex || null == template) {
             return null;
@@ -396,7 +412,9 @@ public class PatternKit extends RegexValidator {
      * @param replacement The replacement string.
      * @return The modified content.
      */
-    public static String replaceFirst(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static String replaceFirst(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final String replacement) {
         if (null == pattern || StringKit.isEmpty(content)) {
             return StringKit.toStringOrNull(content);
@@ -548,8 +566,11 @@ public class PatternKit extends RegexValidator {
      * @param collection The collection to add results to.
      * @return The collection.
      */
-    public static <T extends Collection<String>> T findAll(final String regex, final CharSequence content,
-            final int group, final T collection) {
+    public static <T extends Collection<String>> T findAll(
+            final String regex,
+            final CharSequence content,
+            final int group,
+            final T collection) {
         if (null == regex) {
             return collection;
         }
@@ -587,7 +608,9 @@ public class PatternKit extends RegexValidator {
      * @param group   The group index.
      * @return A list of results.
      */
-    public static List<String> findAll(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static List<String> findAll(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final int group) {
         return findAll(pattern, content, group, new ArrayList<>());
     }
@@ -602,8 +625,11 @@ public class PatternKit extends RegexValidator {
      * @param collection The collection to add results to.
      * @return The collection.
      */
-    public static <T extends Collection<String>> T findAll(final java.util.regex.Pattern pattern,
-            final CharSequence content, final int group, final T collection) {
+    public static <T extends Collection<String>> T findAll(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
+            final int group,
+            final T collection) {
         if (null == pattern || null == content) {
             return null;
         }
@@ -620,7 +646,9 @@ public class PatternKit extends RegexValidator {
      * @param content  The content.
      * @param consumer The consumer for each `Matcher`.
      */
-    public static void findAll(final java.util.regex.Pattern pattern, final CharSequence content,
+    public static void findAll(
+            final java.util.regex.Pattern pattern,
+            final CharSequence content,
             final Consumer<Matcher> consumer) {
         if (null == pattern || null == content) {
             return;
@@ -807,7 +835,9 @@ public class PatternKit extends RegexValidator {
      * @param replacementTemplate The replacement template.
      * @return The modified content.
      */
-    public static String replaceAll(final CharSequence content, final java.util.regex.Pattern pattern,
+    public static String replaceAll(
+            final CharSequence content,
+            final java.util.regex.Pattern pattern,
             String replacementTemplate) {
         if (StringKit.isEmpty(content)) {
             return StringKit.toStringOrNull(content);
@@ -821,9 +851,12 @@ public class PatternKit extends RegexValidator {
         final Matcher matcher = pattern.matcher(content);
         boolean result = matcher.find();
         if (result) {
-            final Set<String> varNums = findAll(Pattern.GROUP_VAR_PATTERN, replacementTemplate, 1,
+            final Set<String> varNums = findAll(
+                    Pattern.GROUP_VAR_PATTERN,
+                    replacementTemplate,
+                    1,
                     new TreeSet<>(LengthCompare.INSTANCE.reversed()));
-            final StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             do {
                 String replacement = replacementTemplate;
                 for (final String var : varNums) {
@@ -848,7 +881,9 @@ public class PatternKit extends RegexValidator {
      * @param replaceFun The function to generate the replacement string.
      * @return The modified text.
      */
-    public static String replaceAll(final CharSequence text, final String regex,
+    public static String replaceAll(
+            final CharSequence text,
+            final String regex,
             final FunctionX<Matcher, String> replaceFun) {
         return replaceAll(text, java.util.regex.Pattern.compile(regex), replaceFun);
     }
@@ -861,7 +896,9 @@ public class PatternKit extends RegexValidator {
      * @param replaceFun The function to generate the replacement string.
      * @return The modified text.
      */
-    public static String replaceAll(final CharSequence text, final java.util.regex.Pattern pattern,
+    public static String replaceAll(
+            final CharSequence text,
+            final java.util.regex.Pattern pattern,
             FunctionX<Matcher, String> replaceFun) {
         if (null == pattern || StringKit.isEmpty(text)) {
             return StringKit.toStringOrNull(text);
@@ -872,7 +909,7 @@ public class PatternKit extends RegexValidator {
         }
 
         final Matcher matcher = pattern.matcher(text);
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         while (matcher.find()) {
             matcher.appendReplacement(buffer, replaceFun.apply(matcher));
         }

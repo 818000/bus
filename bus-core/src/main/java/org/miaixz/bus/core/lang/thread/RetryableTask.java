@@ -120,7 +120,8 @@ public class RetryableTask<T> {
      * @throws IllegalArgumentException if {@code ths} is empty.
      */
     @SafeVarargs
-    public static <T> RetryableTask<T> retryForExceptions(final Supplier<T> sup,
+    public static <T> RetryableTask<T> retryForExceptions(
+            final Supplier<T> sup,
             final Class<? extends Throwable>... ths) {
         Assert.isTrue(ths.length != 0, "exs cannot be empty");
 
@@ -143,7 +144,8 @@ public class RetryableTask<T> {
      * @param predicate The {@link BiPredicate} defining the retry strategy. Returns {@code true} to retry.
      * @return A new {@code RetryableTask} instance configured for predicate-based retries.
      */
-    public static <T> RetryableTask<T> retryForPredicate(final Runnable run,
+    public static <T> RetryableTask<T> retryForPredicate(
+            final Runnable run,
             final BiPredicate<T, Throwable> predicate) {
         return retryForPredicate(() -> {
             run.run();
@@ -160,7 +162,8 @@ public class RetryableTask<T> {
      * @param predicate The {@link BiPredicate} defining the retry strategy. Returns {@code true} to retry.
      * @return A new {@code RetryableTask} instance configured for predicate-based retries.
      */
-    public static <T> RetryableTask<T> retryForPredicate(final Supplier<T> sup,
+    public static <T> RetryableTask<T> retryForPredicate(
+            final Supplier<T> sup,
             final BiPredicate<T, Throwable> predicate) {
         return new RetryableTask<>(sup, predicate);
     }

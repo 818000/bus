@@ -113,7 +113,8 @@ public class MapJoiner {
      *                  appended.
      * @return This {@code MapJoiner} instance for method chaining.
      */
-    public <K, V> MapJoiner append(final Iterator<? extends Map.Entry<K, V>> parts,
+    public <K, V> MapJoiner append(
+            final Iterator<? extends Map.Entry<K, V>> parts,
             final Predicate<Map.Entry<K, V>> predicate) {
         if (null == parts) {
             return this;

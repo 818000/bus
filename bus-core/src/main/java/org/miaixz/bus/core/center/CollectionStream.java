@@ -76,7 +76,9 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the conversion is performed in parallel.
      * @return A map where keys are extracted from elements and values are the elements themselves.
      */
-    public static <V, K> Map<K, V> toIdentityMap(final Collection<V> collection, final FunctionX<V, K> key,
+    public static <V, K> Map<K, V> toIdentityMap(
+            final Collection<V> collection,
+            final FunctionX<V, K> key,
             final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
@@ -97,7 +99,9 @@ public class CollectionStream extends CollectionValidator {
      * @param value      A function to extract the value from an element.
      * @return A map created by applying the key and value functions to each element.
      */
-    public static <E, K, V> Map<K, V> toMap(final Collection<E> collection, final Function<E, K> key,
+    public static <E, K, V> Map<K, V> toMap(
+            final Collection<E> collection,
+            final Function<E, K> key,
             final Function<E, V> value) {
         return toMap(collection, key, value, false);
     }
@@ -117,13 +121,16 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the conversion is performed in parallel.
      * @return A map created by applying the key and value functions to each element.
      */
-    public static <E, K, V> Map<K, V> toMap(final Collection<E> collection, final Function<E, K> key,
-            final Function<E, V> value, final boolean isParallel) {
+    public static <E, K, V> Map<K, V> toMap(
+            final Collection<E> collection,
+            final Function<E, K> key,
+            final Function<E, V> value,
+            final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
         }
-        return StreamKit.of(collection, isParallel).collect(HashMap::new, (m, v) -> m.put(key.apply(v), value.apply(v)),
-                HashMap::putAll);
+        return StreamKit.of(collection, isParallel)
+                .collect(HashMap::new, (m, v) -> m.put(key.apply(v), value.apply(v)), HashMap::putAll);
     }
 
     /**
@@ -154,7 +161,9 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the grouping is performed in parallel.
      * @return A map where elements are grouped by the extracted key.
      */
-    public static <E, K> Map<K, List<E>> groupByKey(final Collection<E> collection, final Function<E, K> key,
+    public static <E, K> Map<K, List<E>> groupByKey(
+            final Collection<E> collection,
+            final Function<E, K> key,
             final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
@@ -175,8 +184,10 @@ public class CollectionStream extends CollectionValidator {
      * @param key2       A function to extract the second-level key.
      * @return A two-level nested map representing the grouped elements.
      */
-    public static <E, K, U> Map<K, Map<U, List<E>>> groupBy2Key(final Collection<E> collection,
-            final Function<E, K> key1, final Function<E, U> key2) {
+    public static <E, K, U> Map<K, Map<U, List<E>>> groupBy2Key(
+            final Collection<E> collection,
+            final Function<E, K> key1,
+            final Function<E, U> key2) {
         return groupBy2Key(collection, key1, key2, false);
     }
 
@@ -195,8 +206,11 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the grouping is performed in parallel.
      * @return A two-level nested map representing the grouped elements.
      */
-    public static <E, K, U> Map<K, Map<U, List<E>>> groupBy2Key(final Collection<E> collection,
-            final Function<E, K> key1, final Function<E, U> key2, final boolean isParallel) {
+    public static <E, K, U> Map<K, Map<U, List<E>>> groupBy2Key(
+            final Collection<E> collection,
+            final Function<E, K> key1,
+            final Function<E, U> key2,
+            final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
         }
@@ -217,7 +231,9 @@ public class CollectionStream extends CollectionValidator {
      * @param key2       A function to extract the second-level key.
      * @return A two-level map where each key pair maps to a single element.
      */
-    public static <E, T, U> Map<T, Map<U, E>> group2Map(final Collection<E> collection, final Function<E, T> key1,
+    public static <E, T, U> Map<T, Map<U, E>> group2Map(
+            final Collection<E> collection,
+            final Function<E, T> key1,
             final Function<E, U> key2) {
         return group2Map(collection, key1, key2, false);
     }
@@ -237,8 +253,11 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the grouping is performed in parallel.
      * @return A two-level map where each key pair maps to a single element.
      */
-    public static <E, T, U> Map<T, Map<U, E>> group2Map(final Collection<E> collection, final Function<E, T> key1,
-            final Function<E, U> key2, final boolean isParallel) {
+    public static <E, T, U> Map<T, Map<U, E>> group2Map(
+            final Collection<E> collection,
+            final Function<E, T> key1,
+            final Function<E, U> key2,
+            final boolean isParallel) {
         if (CollKit.isEmpty(collection) || key1 == null || key2 == null) {
             return MapKit.zero();
         }
@@ -258,7 +277,9 @@ public class CollectionStream extends CollectionValidator {
      * @param value      A function to transform elements into the desired value type.
      * @return A map with grouped keys and lists of transformed values.
      */
-    public static <E, K, V> Map<K, List<V>> groupKeyValue(final Collection<E> collection, final FunctionX<E, K> key,
+    public static <E, K, V> Map<K, List<V>> groupKeyValue(
+            final Collection<E> collection,
+            final FunctionX<E, K> key,
             final FunctionX<E, V> value) {
         return groupKeyValue(collection, key, value, false);
     }
@@ -278,12 +299,17 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the grouping is performed in parallel.
      * @return A map with grouped keys and lists of transformed values.
      */
-    public static <E, K, V> Map<K, List<V>> groupKeyValue(final Collection<E> collection, final FunctionX<E, K> key,
-            final FunctionX<E, V> value, final boolean isParallel) {
+    public static <E, K, V> Map<K, List<V>> groupKeyValue(
+            final Collection<E> collection,
+            final FunctionX<E, K> key,
+            final FunctionX<E, V> value,
+            final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
         }
-        return groupBy(collection, key,
+        return groupBy(
+                collection,
+                key,
                 Collectors.mapping(v -> Optional.ofNullable(v).map(value).orElse(null), Collectors.toList()),
                 isParallel);
     }
@@ -299,7 +325,9 @@ public class CollectionStream extends CollectionValidator {
      * @param downstream The downstream {@link Collector} to apply to elements in each group.
      * @return The resulting grouped map.
      */
-    public static <E, K, D> Map<K, D> groupBy(final Collection<E> collection, final Function<E, K> key,
+    public static <E, K, D> Map<K, D> groupBy(
+            final Collection<E> collection,
+            final Function<E, K> key,
             final Collector<E, ?, D> downstream) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
@@ -321,8 +349,11 @@ public class CollectionStream extends CollectionValidator {
      * @return The resulting grouped map.
      * @see Collectors#groupingBy(Function, Collector)
      */
-    public static <E, K, D> Map<K, D> groupBy(final Collection<E> collection, final Function<E, K> key,
-            final Collector<E, ?, D> downstream, final boolean isParallel) {
+    public static <E, K, D> Map<K, D> groupBy(
+            final Collection<E> collection,
+            final Function<E, K> key,
+            final Collector<E, ?, D> downstream,
+            final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return MapKit.zero();
         }
@@ -357,7 +388,9 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the conversion is performed in parallel.
      * @return A new list containing the transformed elements.
      */
-    public static <E, T> List<T> toList(final Collection<E> collection, final Function<E, T> function,
+    public static <E, T> List<T> toList(
+            final Collection<E> collection,
+            final Function<E, T> function,
             final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return ListKit.zero();
@@ -393,7 +426,9 @@ public class CollectionStream extends CollectionValidator {
      * @param isParallel If {@code true}, the conversion is performed in parallel.
      * @return A new set containing the transformed elements.
      */
-    public static <E, T> Set<T> toSet(final Collection<E> collection, final Function<E, T> function,
+    public static <E, T> Set<T> toSet(
+            final Collection<E> collection,
+            final Function<E, T> function,
             final boolean isParallel) {
         if (CollKit.isEmpty(collection)) {
             return SetKit.zero();

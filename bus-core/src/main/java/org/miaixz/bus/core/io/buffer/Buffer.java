@@ -2355,7 +2355,11 @@ public class Buffer implements BufferSource, BufferSink, Cloneable, ByteChannel 
      * @param bytesLimit  the ending offset in the byte string
      * @return true if the bytes match, false otherwise
      */
-    private boolean rangeEquals(SectionBuffer segment, int segmentPos, ByteString bytes, int bytesOffset,
+    private boolean rangeEquals(
+            SectionBuffer segment,
+            int segmentPos,
+            ByteString bytes,
+            int bytesOffset,
             int bytesLimit) {
         int segmentLimit = segment.limit;
         byte[] data = segment.data;

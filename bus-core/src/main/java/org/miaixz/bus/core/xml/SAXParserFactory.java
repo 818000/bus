@@ -64,7 +64,8 @@ public class SAXParserFactory {
      * @param namespaceAware {@code true} to enable namespace awareness, {@code false} otherwise.
      * @return A new {@link javax.xml.parsers.SAXParserFactory} instance.
      */
-    public static javax.xml.parsers.SAXParserFactory createFactory(final boolean validating,
+    public static javax.xml.parsers.SAXParserFactory createFactory(
+            final boolean validating,
             final boolean namespaceAware) {
         final javax.xml.parsers.SAXParserFactory factory = javax.xml.parsers.SAXParserFactory.newInstance();
         factory.setValidating(validating);
