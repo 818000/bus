@@ -229,7 +229,8 @@ public class WatchMonitor extends Thread implements Closeable, Serializable {
      * @param watcher The {@link Watcher} to which events are dispatched.
      */
     private void doTakeAndWatch(final Watcher watcher) {
-        this.watchService.watch(watcher,
+        this.watchService.watch(
+                watcher,
                 // For file monitoring, ignore events for other files and directories within the monitored directory.
                 watchEvent -> null == file || file.endsWith(watchEvent.context().toString()));
     }

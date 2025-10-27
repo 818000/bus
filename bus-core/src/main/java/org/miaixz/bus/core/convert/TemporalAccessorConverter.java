@@ -117,8 +117,7 @@ public class TemporalAccessorConverter extends AbstractConverter {
         } else if (value instanceof Date) {
             final DateTime dateTime = DateKit.date((Date) value);
             return parseFromInstant(targetClass, dateTime.toInstant(), dateTime.getZoneId());
-        } else if (value instanceof Calendar) {
-            final Calendar calendar = (Calendar) value;
+        } else if (value instanceof Calendar calendar) {
             return parseFromInstant(targetClass, calendar.toInstant(), calendar.getTimeZone().toZoneId());
         } else {
             return parseFromCharSequence(targetClass, convertToString(value));
@@ -173,7 +172,9 @@ public class TemporalAccessorConverter extends AbstractConverter {
      * @param formatter   格式
      * @return {@link TemporalAccessor}
      */
-    private TemporalAccessor parseWithFormat(final Class<?> targetClass, final CharSequence value,
+    private TemporalAccessor parseWithFormat(
+            final Class<?> targetClass,
+            final CharSequence value,
             final DateTimeFormatter formatter) {
         if (LocalDate.class == targetClass) {
             return LocalDate.parse(value, formatter);
@@ -217,7 +218,8 @@ public class TemporalAccessorConverter extends AbstractConverter {
      * @param temporalAccessor TemporalAccessor对象
      * @return java.time中的对象
      */
-    private TemporalAccessor parseFromTemporalAccessor(final Class<?> targetClass,
+    private TemporalAccessor parseFromTemporalAccessor(
+            final Class<?> targetClass,
             final TemporalAccessor temporalAccessor) {
         if (DayOfWeek.class == targetClass) {
             return DayOfWeek.from(temporalAccessor);

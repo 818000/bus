@@ -115,7 +115,8 @@ public class AnnoKit {
      * @param annotationType The type of the annotation to retrieve.
      * @return An array of annotations of the specified type.
      */
-    public static <T> T[] getCombinationAnnotations(final AnnotatedElement annotationEle,
+    public static <T> T[] getCombinationAnnotations(
+            final AnnotatedElement annotationEle,
             final Class<T> annotationType) {
         return getAnnotations(annotationEle, true, annotationType);
     }
@@ -129,9 +130,13 @@ public class AnnoKit {
      * @param annotationType  The type of the annotation to retrieve.
      * @return An array of annotations of the specified type.
      */
-    public static <T> T[] getAnnotations(final AnnotatedElement annotationEle, final boolean isToCombination,
+    public static <T> T[] getAnnotations(
+            final AnnotatedElement annotationEle,
+            final boolean isToCombination,
             final Class<T> annotationType) {
-        final Annotation[] annotations = getAnnotations(annotationEle, isToCombination,
+        final Annotation[] annotations = getAnnotations(
+                annotationEle,
+                isToCombination,
                 (annotation -> null == annotationType || annotationType.isAssignableFrom(annotation.getClass())));
 
         final T[] result = ArrayKit.newArray(annotationType, annotations.length);
@@ -149,7 +154,9 @@ public class AnnoKit {
      * @param predicate       A predicate to filter the annotations.
      * @return An array of annotations.
      */
-    public static Annotation[] getAnnotations(final AnnotatedElement annotationEle, final boolean isToCombination,
+    public static Annotation[] getAnnotations(
+            final AnnotatedElement annotationEle,
+            final boolean isToCombination,
             final Predicate<Annotation> predicate) {
         if (null == annotationEle) {
             return null;
@@ -177,7 +184,8 @@ public class AnnoKit {
      * @param annotationType The type of the annotation to retrieve.
      * @return The annotation object, or {@code null} if not found.
      */
-    public static <A extends Annotation> A getAnnotation(final AnnotatedElement annotationEle,
+    public static <A extends Annotation> A getAnnotation(
+            final AnnotatedElement annotationEle,
             final Class<A> annotationType) {
         return (null == annotationEle) ? null : toCombination(annotationEle).getAnnotation(annotationType);
     }
@@ -210,7 +218,8 @@ public class AnnoKit {
      * @param annotationType The type of the annotation to check for.
      * @return {@code true} if the element contains the specified annotation, {@code false} otherwise.
      */
-    public static boolean hasAnnotation(final AnnotatedElement annotationEle,
+    public static boolean hasAnnotation(
+            final AnnotatedElement annotationEle,
             final Class<? extends Annotation> annotationType) {
         return null != getAnnotation(annotationEle, annotationType);
     }
@@ -224,7 +233,8 @@ public class AnnoKit {
      * @return The default annotation value, or {@code null} if no default value exists.
      * @throws InternalException If an error occurs while invoking the annotation method.
      */
-    public static <T> T getAnnotationValue(final AnnotatedElement annotationEle,
+    public static <T> T getAnnotationValue(
+            final AnnotatedElement annotationEle,
             final Class<? extends Annotation> annotationType) throws InternalException {
         return getAnnotationValue(annotationEle, annotationType, "value");
     }
@@ -239,15 +249,19 @@ public class AnnoKit {
      * @return The attribute value, or {@code null} if the specified attribute does not exist.
      * @throws InternalException If an error occurs while invoking the annotation method.
      */
-    public static <A extends Annotation, R> R getAnnotationValue(final AnnotatedElement annotationEle,
+    public static <A extends Annotation, R> R getAnnotationValue(
+            final AnnotatedElement annotationEle,
             final FunctionX<A, R> propertyName) {
         if (propertyName == null) {
             return null;
         } else {
             final LambdaX lambda = LambdaKit.resolve(propertyName);
             final String instantiatedMethodType = lambda.getLambda().getInstantiatedMethodType();
-            final Class<A> annotationClass = ClassKit.loadClass(StringKit.sub(instantiatedMethodType, 2,
-                    StringKit.indexOf(instantiatedMethodType, Symbol.C_SEMICOLON)));
+            final Class<A> annotationClass = ClassKit.loadClass(
+                    StringKit.sub(
+                            instantiatedMethodType,
+                            2,
+                            StringKit.indexOf(instantiatedMethodType, Symbol.C_SEMICOLON)));
             return getAnnotationValue(annotationEle, annotationClass, lambda.getLambda().getImplMethodName());
         }
     }
@@ -262,8 +276,10 @@ public class AnnoKit {
      * @return The attribute value, or {@code null} if the specified attribute does not exist.
      * @throws InternalException If an error occurs while invoking the annotation method.
      */
-    public static <T> T getAnnotationValue(final AnnotatedElement annotationEle,
-            final Class<? extends Annotation> annotationType, final String propertyName) throws InternalException {
+    public static <T> T getAnnotationValue(
+            final AnnotatedElement annotationEle,
+            final Class<? extends Annotation> annotationType,
+            final String propertyName) throws InternalException {
         final Annotation annotation = getAnnotation(annotationEle, annotationType);
         if (null == annotation) {
             return null;
@@ -284,7 +300,8 @@ public class AnnoKit {
      * @return A map of attribute names to attribute values, or {@code null} if no annotation is found.
      * @throws InternalException If an error occurs while invoking the annotation methods.
      */
-    public static Map<String, Object> getAnnotationValueMap(final AnnotatedElement annotationEle,
+    public static Map<String, Object> getAnnotationValueMap(
+            final AnnotatedElement annotationEle,
             final Class<? extends Annotation> annotationType) throws InternalException {
         final Annotation annotation = getAnnotation(annotationEle, annotationType);
         if (null == annotation) {
@@ -389,8 +406,8 @@ public class AnnoKit {
         else if (invocationHandler instanceof AnnotationMappingProxy) {
             memberAttributeName = BUS_MEMBER_ATTRIBUTE;
         }
-        final Map<String, Object> memberValues = (Map<String, Object>) FieldKit.getFieldValue(invocationHandler,
-                memberAttributeName);
+        final Map<String, Object> memberValues = (Map<String, Object>) FieldKit
+                .getFieldValue(invocationHandler, memberAttributeName);
         memberValues.put(annotationField, value);
     }
 
@@ -402,13 +419,16 @@ public class AnnoKit {
      * @param annotationType The type of the annotation.
      * @return The annotation proxy object, or {@code null} if no annotation is found.
      */
-    public static <T extends Annotation> T getAnnotationAlias(final AnnotatedElement annotationEle,
+    public static <T extends Annotation> T getAnnotationAlias(
+            final AnnotatedElement annotationEle,
             final Class<T> annotationType) {
         final T annotation = getAnnotation(annotationEle, annotationType);
         if (null == annotation) {
             return null;
         }
-        return (T) Proxy.newProxyInstance(annotationType.getClassLoader(), new Class[] { annotationType },
+        return (T) Proxy.newProxyInstance(
+                annotationType.getClassLoader(),
+                new Class[] { annotationType },
                 new AnnotationProxy<>(annotation));
     }
 

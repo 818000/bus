@@ -229,7 +229,8 @@ public interface RepeatableAnnotationCollector {
          * @return A list containing the annotation of the specified type, or an empty list.
          */
         @Override
-        public <T extends Annotation> List<T> getRepeatableAnnotations(final Annotation annotation,
+        public <T extends Annotation> List<T> getRepeatableAnnotations(
+                final Annotation annotation,
                 final Class<T> annotationType) {
             if (Objects.isNull(annotation)) {
                 return Collections.emptyList();
@@ -291,10 +292,13 @@ public interface RepeatableAnnotationCollector {
          * @return A list of repeatable annotations of the specified type contained within the given annotation.
          */
         @Override
-        public <T extends Annotation> List<T> getRepeatableAnnotations(final Annotation annotation,
+        public <T extends Annotation> List<T> getRepeatableAnnotations(
+                final Annotation annotation,
                 final Class<T> annotationType) {
-            final List<Annotation> annotations = find(annotation,
-                    t -> Objects.equals(t.annotationType(), annotationType), false);
+            final List<Annotation> annotations = find(
+                    annotation,
+                    t -> Objects.equals(t.annotationType(), annotationType),
+                    false);
             return annotations.stream().map(annotationType::cast).collect(Collectors.toList());
         }
 
@@ -307,8 +311,10 @@ public interface RepeatableAnnotationCollector {
          *                   only the final (non-container) annotations that satisfy the condition are collected.
          * @return A list of collected annotations.
          */
-        private List<Annotation> find(final Annotation annotation,
-                final java.util.function.Predicate<Annotation> condition, final boolean accumulate) {
+        private List<Annotation> find(
+                final Annotation annotation,
+                final java.util.function.Predicate<Annotation> condition,
+                final boolean accumulate) {
             if (Objects.isNull(annotation)) {
                 return Collections.emptyList();
             }
@@ -408,8 +414,8 @@ public interface RepeatableAnnotationCollector {
          */
         @Override
         protected List<Method> resolveRepeatableMethod(final Annotation annotation) {
-            final Object cache = repeatableMethodCache.computeIfAbsent(annotation.annotationType(),
-                    this::resolveRepeatableMethodFromType);
+            final Object cache = repeatableMethodCache
+                    .computeIfAbsent(annotation.annotationType(), this::resolveRepeatableMethodFromType);
             return (cache == NONE) ? null : Collections.singletonList((Method) cache);
         }
 
@@ -525,8 +531,8 @@ public interface RepeatableAnnotationCollector {
          */
         @Override
         protected List<Method> resolveRepeatableMethod(final Annotation annotation) {
-            final Object cache = repeatableMethodCache.computeIfAbsent(annotation.annotationType(),
-                    this::resolveRepeatableMethodFromType);
+            final Object cache = repeatableMethodCache
+                    .computeIfAbsent(annotation.annotationType(), this::resolveRepeatableMethodFromType);
             return (cache == NONE) ? null : (List<Method>) cache;
         }
 

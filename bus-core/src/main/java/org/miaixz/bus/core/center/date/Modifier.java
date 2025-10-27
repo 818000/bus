@@ -64,7 +64,9 @@ public class Modifier {
      * @param modify    The modification type, including truncate, round, and ceiling.
      * @return The modified {@link java.util.Calendar} object.
      */
-    public static java.util.Calendar modify(final java.util.Calendar calendar, final int dateField,
+    public static java.util.Calendar modify(
+            final java.util.Calendar calendar,
+            final int dateField,
             final Modify modify) {
         return modify(calendar, dateField, modify, false);
     }
@@ -84,27 +86,30 @@ public class Modifier {
      * @param truncate  {@code true} to truncate milliseconds to zero, {@code false} otherwise.
      * @return The modified {@link java.util.Calendar} object.
      */
-    public static java.util.Calendar modify(final java.util.Calendar calendar, final int dateField, final Modify modify,
+    public static java.util.Calendar modify(
+            final java.util.Calendar calendar,
+            final int dateField,
+            final Modify modify,
             final boolean truncate) {
         // Special handling for AM_PM
         if (java.util.Calendar.AM_PM == dateField) {
             final boolean isAM = Calendar.isAM(calendar);
             switch (modify) {
-            case TRUNCATE:
-                calendar.set(java.util.Calendar.HOUR_OF_DAY, isAM ? 0 : 12);
-                break;
+                case TRUNCATE:
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, isAM ? 0 : 12);
+                    break;
 
-            case CEILING:
-                calendar.set(java.util.Calendar.HOUR_OF_DAY, isAM ? 11 : 23);
-                break;
+                case CEILING:
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, isAM ? 11 : 23);
+                    break;
 
-            case ROUND:
-                final int min = isAM ? 0 : 12;
-                final int max = isAM ? 11 : 23;
-                final int href = (max - min) / 2 + 1;
-                final int value = calendar.get(java.util.Calendar.HOUR_OF_DAY);
-                calendar.set(java.util.Calendar.HOUR_OF_DAY, (value < href) ? min : max);
-                break;
+                case ROUND:
+                    final int min = isAM ? 0 : 12;
+                    final int max = isAM ? 11 : 23;
+                    final int href = (max - min) / 2 + 1;
+                    final int value = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+                    calendar.set(java.util.Calendar.HOUR_OF_DAY, (value < href) ? min : max);
+                    break;
             }
             // Process the next level field
             return modify(calendar, dateField + 1, modify, truncate);
@@ -154,27 +159,27 @@ public class Modifier {
         }
 
         switch (modify) {
-        case TRUNCATE:
-            calendar.set(field, Calendar.getBeginValue(calendar, field));
-            break;
+            case TRUNCATE:
+                calendar.set(field, Calendar.getBeginValue(calendar, field));
+                break;
 
-        case CEILING:
-            calendar.set(field, Calendar.getEndValue(calendar, field));
-            break;
+            case CEILING:
+                calendar.set(field, Calendar.getEndValue(calendar, field));
+                break;
 
-        case ROUND:
-            final int min = Calendar.getBeginValue(calendar, field);
-            final int max = Calendar.getEndValue(calendar, field);
-            final int href;
-            if (java.util.Calendar.DAY_OF_WEEK == field) {
-                // Special handling for week, assuming Monday is the first day, the middle is Thursday
-                href = (min + 3) % 7;
-            } else {
-                href = (max - min) / 2 + 1;
-            }
-            final int value = calendar.get(field);
-            calendar.set(field, (value < href) ? min : max);
-            break;
+            case ROUND:
+                final int min = Calendar.getBeginValue(calendar, field);
+                final int max = Calendar.getEndValue(calendar, field);
+                final int href;
+                if (java.util.Calendar.DAY_OF_WEEK == field) {
+                    // Special handling for week, assuming Monday is the first day, the middle is Thursday
+                    href = (min + 3) % 7;
+                } else {
+                    href = (max - min) / 2 + 1;
+                }
+                final int value = calendar.get(field);
+                calendar.set(field, (value < href) ? min : max);
+                break;
         }
     }
 

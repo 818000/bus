@@ -1,34 +1,17 @@
-/*
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
- ~                                                                               ~
- ~ The MIT License (MIT)                                                         ~
- ~                                                                               ~
- ~ Copyright (c) 2015-2025 miaixz.org and other contributors.                    ~
- ~                                                                               ~
- ~ Permission is hereby granted, free of charge, to any person obtaining a copy  ~
- ~ of this software and associated documentation files (the "Software"), to deal ~
- ~ in the Software without restriction, including without limitation the rights  ~
- ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     ~
- ~ copies of the Software, and to permit persons to whom the Software is         ~
- ~ furnished to do so, subject to the following conditions:                      ~
- ~                                                                               ~
- ~ The above copyright notice and this permission notice shall be included in    ~
- ~ all copies or substantial portions of the Software.                           ~
- ~                                                                               ~
- ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    ~
- ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      ~
- ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   ~
- ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER        ~
- ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, ~
- ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     ~
- ~ THE SOFTWARE.                                                                 ~
- ~                                                                               ~
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-*/
 /**
- * Provides various data providers for handling data output and serialization within the Vortex module. This package
- * contains interfaces and implementations for converting objects to different formats, such as JSON and XML, and for
- * managing authorization and licensing logic.
+ * Provides Service Provider Interfaces (SPIs) for delegating business logic to external or pluggable implementations.
+ * <p>
+ * This package follows the Dependency Inversion Principle by defining contracts (interfaces) for services that the core
+ * gateway logic depends on. This allows the gateway's core to remain agnostic of the specific implementation details,
+ * which can be provided by the hosting application and injected via dependency injection.
+ * <ul>
+ * <li>{@link org.miaixz.bus.vortex.provider.AuthorizeProvider}: Defines the contract for authenticating and authorizing
+ * requests.</li>
+ * <li>{@link org.miaixz.bus.vortex.provider.ProcessProvider}: Defines the contract for managing the lifecycle of
+ * external processes.</li>
+ * <li>{@link org.miaixz.bus.vortex.provider.MetricsProvider}: Defines the contract for fetching performance metrics of
+ * processes.</li>
+ * </ul>
  *
  * @author Kimi Liu
  * @since Java 17+

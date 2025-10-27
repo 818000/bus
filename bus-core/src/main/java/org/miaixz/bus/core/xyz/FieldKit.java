@@ -217,7 +217,8 @@ public class FieldKit {
         if (null == object || StringKit.isBlank(fieldName)) {
             return null;
         }
-        return getFieldValue(object,
+        return getFieldValue(
+                object,
                 getField(object instanceof Class ? (Class<?>) object : object.getClass(), fieldName));
     }
 
@@ -382,7 +383,10 @@ public class FieldKit {
      * @param converter The converter to use for type conversion.
      * @throws InternalException if access fails.
      */
-    public static void setFieldValue(final Object object, final Field field, final Object value,
+    public static void setFieldValue(
+            final Object object,
+            final Field field,
+            final Object value,
             final Converter converter) throws InternalException {
         Assert.notNull(field, "Field in [{}] not exist !", object);
 

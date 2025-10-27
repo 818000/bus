@@ -72,8 +72,11 @@ public class EntryConverter extends ConverterWithRoot implements MatcherConverte
      * @return map or null
      */
     private static Map<CharSequence, CharSequence> strToMap(final CharSequence text) {
-        final int index = StringKit.indexOf(text,
-                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA, 0, text.length());
+        final int index = StringKit.indexOf(
+                text,
+                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA,
+                0,
+                text.length());
 
         if (index > -1) {
             return MapKit.of(text.subSequence(0, index), text.subSequence(index + 1, text.length()));
@@ -105,16 +108,14 @@ public class EntryConverter extends ConverterWithRoot implements MatcherConverte
     public Map.Entry<?, ?> convert(final Type targetType, final Type keyType, final Type valueType, final Object value)
             throws ConvertException {
         Map map = null;
-        if (value instanceof Map.Entry) {
-            final Map.Entry entry = (Map.Entry) value;
+        if (value instanceof Map.Entry entry) {
             map = MapKit.of(entry.getKey(), entry.getValue());
         } else if (value instanceof Pair) {
             final Pair entry = (Pair<?, ?>) value;
             map = MapKit.of(entry.getLeft(), entry.getRight());
         } else if (value instanceof Map) {
             map = (Map) value;
-        } else if (value instanceof CharSequence) {
-            final CharSequence text = (CharSequence) value;
+        } else if (value instanceof CharSequence text) {
             map = strToMap(text);
         } else if (BeanKit.isWritableBean(value.getClass())) {
             map = BeanKit.toBeanMap(value);
@@ -158,7 +159,8 @@ public class EntryConverter extends ConverterWithRoot implements MatcherConverte
             value = ((Wrapper) value).getRaw();
         }
 
-        return (Map.Entry<?, ?>) ReflectKit.newInstance(TypeKit.getClass(targetType),
+        return (Map.Entry<?, ?>) ReflectKit.newInstance(
+                TypeKit.getClass(targetType),
                 TypeKit.isUnknown(keyType) ? key : converter.convert(keyType, key),
                 TypeKit.isUnknown(valueType) ? value : converter.convert(valueType, value));
     }

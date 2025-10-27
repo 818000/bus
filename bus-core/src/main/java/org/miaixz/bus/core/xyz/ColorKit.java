@@ -265,7 +265,8 @@ public class ColorKit {
     public static Color randomColor(final Color compareColor, final int minDistance) {
         Color color = randomColor();
         if (null != compareColor && minDistance > 0) {
-            Assert.isTrue(minDistance < maxDistance(compareColor) * 2 / 3,
+            Assert.isTrue(
+                    minDistance < maxDistance(compareColor) * 2 / 3,
                     "minDistance is too large, there are too few remaining colors!");
             while (computeColorDistance(compareColor, color) < minDistance) {
                 color = randomColor();

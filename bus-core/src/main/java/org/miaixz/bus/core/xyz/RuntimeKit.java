@@ -340,36 +340,36 @@ public class RuntimeKit {
         for (int i = 0; i < length; i++) {
             c = cmd.charAt(i);
             switch (c) {
-            case Symbol.C_SINGLE_QUOTE:
-            case Symbol.C_DOUBLE_QUOTES:
-                if (inWrap) {
-                    if (c == stack.peek()) {
-                        stack.pop();
-                        inWrap = false;
+                case Symbol.C_SINGLE_QUOTE:
+                case Symbol.C_DOUBLE_QUOTES:
+                    if (inWrap) {
+                        if (c == stack.peek()) {
+                            stack.pop();
+                            inWrap = false;
+                        }
+                        cache.append(c);
+                    } else {
+                        stack.push(c);
+                        cache.append(c);
+                        inWrap = true;
                     }
-                    cache.append(c);
-                } else {
-                    stack.push(c);
-                    cache.append(c);
-                    inWrap = true;
-                }
-                break;
+                    break;
 
-            case Symbol.C_SPACE:
-                if (inWrap) {
-                    cache.append(c);
-                } else {
-                    cmds.add(cache.toString());
-                    cache.setLength(0);
-                }
-                break;
+                case Symbol.C_SPACE:
+                    if (inWrap) {
+                        cache.append(c);
+                    } else {
+                        cmds.add(cache.toString());
+                        cache.setLength(0);
+                    }
+                    break;
 
-            default:
-                cache.append(c);
-                break;
+                default:
+                    cache.append(c);
+                    break;
             }
         }
-        if (cache.length() > 0) {
+        if (!cache.isEmpty()) {
             cmds.add(cache.toString());
         }
         return cmds.toArray(new String[0]);

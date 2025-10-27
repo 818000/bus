@@ -109,7 +109,8 @@ public class MetaAnnotatedElement<T extends AnnotationMapping<Annotation>> imple
      *         {@link AnnotatedElement}.
      */
     public static <A extends AnnotationMapping<Annotation>> MetaAnnotatedElement<A> create(
-            final AnnotatedElement element, final BiFunction<A, Annotation, A> mappingFactory) {
+            final AnnotatedElement element,
+            final BiFunction<A, Annotation, A> mappingFactory) {
         return new MetaAnnotatedElement<>(element, mappingFactory);
     }
 

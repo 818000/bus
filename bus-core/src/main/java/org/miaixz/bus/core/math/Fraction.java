@@ -562,7 +562,8 @@ public final class Fraction extends Number implements Comparable<Fraction> {
         // make sure we don't overflow unless the result *must* overflow.
         final int d1 = MathKit.gcd(numerator, fraction.denominator);
         final int d2 = MathKit.gcd(fraction.numerator, denominator);
-        return ofReduced(mulAndCheck(numerator / d1, fraction.numerator / d2),
+        return ofReduced(
+                mulAndCheck(numerator / d1, fraction.numerator / d2),
                 mulPosAndCheck(denominator / d2, fraction.denominator / d1));
     }
 
@@ -715,14 +716,13 @@ public final class Fraction extends Number implements Comparable<Fraction> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) {
+    public boolean equals(final Object object) {
+        if (object == this) {
             return true;
         }
-        if (!(obj instanceof Fraction)) {
+        if (!(object instanceof Fraction other)) {
             return false;
         }
-        final Fraction other = (Fraction) obj;
         return getNumerator() == other.getNumerator() && getDenominator() == other.getDenominator();
     }
 

@@ -177,7 +177,9 @@ public class Sensitive {
      * @param isGreedMatch   If {@code true}, performs a greedy match (prefers the longest possible match).
      * @return A list of {@link FoundWord} objects representing all sensitive words found.
      */
-    public static List<FoundWord> getFoundAllSensitive(final String text, final boolean isDensityMatch,
+    public static List<FoundWord> getFoundAllSensitive(
+            final String text,
+            final boolean isDensityMatch,
             final boolean isGreedMatch) {
         return sensitiveTree.matchAllWords(text, -1, isDensityMatch, isGreedMatch);
     }
@@ -202,7 +204,9 @@ public class Sensitive {
      *                           used.
      * @return The text with sensitive words filtered (replaced).
      */
-    public static String sensitiveFilter(final String text, final boolean isGreedMatch,
+    public static String sensitiveFilter(
+            final String text,
+            final boolean isGreedMatch,
             SensitiveProcessor sensitiveProcessor) {
         if (StringKit.isEmpty(text)) {
             return text;

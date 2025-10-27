@@ -78,8 +78,8 @@ public class LambdaFactory {
      * }
      *
      * Function<Something, Long> getIdFunction = LambdaFactory.build(Function.class, Something.class, "getId");
-     * BiConsumer<Something, String> setNameConsumer = LambdaFactory.build(BiConsumer.class, Something.class, "setName",
-     *         String.class);
+     * BiConsumer<Something, String> setNameConsumer = LambdaFactory
+     *         .build(BiConsumer.class, Something.class, "setName", String.class);
      * }</pre>
      *
      * @param functionInterfaceType The functional interface type that accepts the Lambda.
@@ -89,9 +89,14 @@ public class LambdaFactory {
      * @param <F>                   The type of the functional interface.
      * @return An object of the functional interface type that represents the Lambda.
      */
-    public static <F> F build(final Class<F> functionInterfaceType, final Class<?> declaringClass,
-            final String methodName, final Class<?>... paramTypes) {
-        return build(functionInterfaceType, MethodKit.getMethod(declaringClass, methodName, paramTypes),
+    public static <F> F build(
+            final Class<F> functionInterfaceType,
+            final Class<?> declaringClass,
+            final String methodName,
+            final Class<?>... paramTypes) {
+        return build(
+                functionInterfaceType,
+                MethodKit.getMethod(declaringClass, methodName, paramTypes),
                 declaringClass);
     }
 
@@ -119,13 +124,16 @@ public class LambdaFactory {
      *                              defined in a superclass, this is used to specify the subclass.
      * @return An object of the functional interface type that represents the Lambda.
      */
-    public static <F> F build(final Class<F> functionInterfaceType, final Executable executable,
+    public static <F> F build(
+            final Class<F> functionInterfaceType,
+            final Executable executable,
             final Class<?> declaringClass) {
         Assert.notNull(functionInterfaceType);
         Assert.notNull(executable);
 
         final MutableEntry<Class<?>, Executable> cacheKey = new MutableEntry<>(functionInterfaceType, executable);
-        return (F) CACHE.computeIfAbsent(cacheKey,
+        return (F) CACHE.computeIfAbsent(
+                cacheKey,
                 key -> doBuildWithoutCache(functionInterfaceType, executable, declaringClass));
     }
 
@@ -141,7 +149,9 @@ public class LambdaFactory {
      *                       in a superclass, this is used to specify the subclass.
      * @return An object of the functional interface type that represents the Lambda.
      */
-    private static <F> F doBuildWithoutCache(final Class<F> funcType, final Executable executable,
+    private static <F> F doBuildWithoutCache(
+            final Class<F> funcType,
+            final Executable executable,
             final Class<?> declaringClass) {
         ReflectKit.setAccessible(executable);
 
@@ -165,7 +175,10 @@ public class LambdaFactory {
      * @return A {@link CallSite} representing the Lambda function.
      * @throws LambdaConversionException If there is an error during Lambda conversion, such as access permissions.
      */
-    private static CallSite metaFactory(final Class<?> funcType, final Method funcMethod, final Executable executable,
+    private static CallSite metaFactory(
+            final Class<?> funcType,
+            final Method funcMethod,
+            final Executable executable,
             final Class<?> declaringClass) throws LambdaConversionException {
         // Find the context and caller's access permissions
         final MethodHandles.Lookup caller = LookupKit.lookup(executable.getDeclaringClass());
@@ -181,11 +194,22 @@ public class LambdaFactory {
         final MethodHandle implMethodHandle = LookupKit.unreflect(executable);
 
         if (ClassKit.isSerializable(funcType)) {
-            return LambdaMetafactory.altMetafactory(caller, invokeName, invokedType, samMethodType, implMethodHandle,
-                    MethodKit.methodType(executable, declaringClass), LambdaMetafactory.FLAG_SERIALIZABLE);
+            return LambdaMetafactory.altMetafactory(
+                    caller,
+                    invokeName,
+                    invokedType,
+                    samMethodType,
+                    implMethodHandle,
+                    MethodKit.methodType(executable, declaringClass),
+                    LambdaMetafactory.FLAG_SERIALIZABLE);
         }
 
-        return LambdaMetafactory.metafactory(caller, invokeName, invokedType, samMethodType, implMethodHandle,
+        return LambdaMetafactory.metafactory(
+                caller,
+                invokeName,
+                invokedType,
+                samMethodType,
+                implMethodHandle,
                 MethodKit.methodType(executable, declaringClass));
     }
 

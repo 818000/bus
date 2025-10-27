@@ -298,7 +298,8 @@ public class CompareKit {
      * @param <U>          The type of the elements in the order array.
      * @return An indexed comparator.
      */
-    public static <T, U> Comparator<T> comparingIndexed(final Function<? super T, ? extends U> keyExtractor,
+    public static <T, U> Comparator<T> comparingIndexed(
+            final Function<? super T, ? extends U> keyExtractor,
             final U[] objs) {
         return comparingIndexed(keyExtractor, false, objs);
     }
@@ -312,9 +313,12 @@ public class CompareKit {
      * @param <U>          The type of the elements in the order `Iterable`.
      * @return An indexed comparator.
      */
-    public static <T, U> Comparator<T> comparingIndexed(final Function<? super T, ? extends U> keyExtractor,
+    public static <T, U> Comparator<T> comparingIndexed(
+            final Function<? super T, ? extends U> keyExtractor,
             final Iterable<U> objs) {
-        return comparingIndexed(keyExtractor, false,
+        return comparingIndexed(
+                keyExtractor,
+                false,
                 ArrayKit.ofArray(objs, (Class<U>) objs.iterator().next().getClass()));
     }
 
@@ -329,8 +333,10 @@ public class CompareKit {
      * @param <U>          The type of the elements in the order array.
      * @return An indexed comparator.
      */
-    public static <T, U> Comparator<T> comparingIndexed(final Function<? super T, ? extends U> keyExtractor,
-            final boolean atEndIfMiss, final U... objs) {
+    public static <T, U> Comparator<T> comparingIndexed(
+            final Function<? super T, ? extends U> keyExtractor,
+            final boolean atEndIfMiss,
+            final U... objs) {
         Objects.requireNonNull(keyExtractor);
         final IndexedCompare<U> indexedComparator = new IndexedCompare<>(atEndIfMiss, objs);
         return (o1, o2) -> indexedComparator.compare(keyExtractor.apply(o1), keyExtractor.apply(o2));

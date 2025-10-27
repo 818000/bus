@@ -245,7 +245,10 @@ public class AntPathMatcher {
      * @param uriTemplateVariables A map to capture URI template variables.
      * @return {@code true} if the path matches.
      */
-    protected boolean doMatch(final String pattern, final String path, final boolean fullMatch,
+    protected boolean doMatch(
+            final String pattern,
+            final String path,
+            final boolean fullMatch,
             final Map<String, String> uriTemplateVariables) {
         if (path == null || path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
             return false;
@@ -471,7 +474,9 @@ public class AntPathMatcher {
      * @param uriTemplateVariables a map to capture URI template variables
      * @return {@code true} if the string does not match, {@code false} otherwise.
      */
-    private boolean notMatchStrings(final String pattern, final String text,
+    private boolean notMatchStrings(
+            final String pattern,
+            final String text,
             final Map<String, String> uriTemplateVariables) {
         return !getStringMatcher(pattern).matchStrings(text, uriTemplateVariables);
     }

@@ -185,7 +185,8 @@ public class AsyncKit {
      * @param eHandler The exception handler method.
      * @return A list of task results.
      */
-    public static <T> List<T> parallelAllOfGet(final CompletableFuture<T>[] tasks,
+    public static <T> List<T> parallelAllOfGet(
+            final CompletableFuture<T>[] tasks,
             final Function<Exception, T> eHandler) {
         Assert.notEmpty(tasks);
 
@@ -201,7 +202,8 @@ public class AsyncKit {
      * @param eHandler The exception handler method.
      * @return A list of task results.
      */
-    public static <T> List<T> parallelAllOfGet(final List<CompletableFuture<T>> tasks,
+    public static <T> List<T> parallelAllOfGet(
+            final List<CompletableFuture<T>> tasks,
             final Function<Exception, T> eHandler) {
         Assert.notEmpty(tasks);
 
@@ -217,7 +219,9 @@ public class AsyncKit {
      * @param isParallel Whether to execute in parallel using {@link Stream}.
      * @return A list of task results.
      */
-    private static <T> List<T> execute(final List<CompletableFuture<T>> tasks, final Function<Exception, T> eHandler,
+    private static <T> List<T> execute(
+            final List<CompletableFuture<T>> tasks,
+            final Function<Exception, T> eHandler,
             final boolean isParallel) {
         return StreamKit.of(tasks, isParallel).map(e -> {
             try {

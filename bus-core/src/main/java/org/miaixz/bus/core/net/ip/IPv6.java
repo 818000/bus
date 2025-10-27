@@ -166,14 +166,14 @@ public class IPv6 {
      * @return The local {@link InetAddress}, or {@code null} if not found.
      */
     public static InetAddress getLocalhostDirectly() {
-        final LinkedHashSet<InetAddress> localAddressList = NetKit
-                .localAddressList(address -> address instanceof Inet6Address && !address.isLoopbackAddress() // Exclude
-                                                                                                             // loopback
-                                                                                                             // address
-                                                                                                             // (::1)
+        final LinkedHashSet<InetAddress> localAddressList = NetKit.localAddressList(
+                address -> address instanceof Inet6Address && !address.isLoopbackAddress() // Exclude
+                                                                                           // loopback
+                                                                                           // address
+                                                                                           // (::1)
                         && !address.isSiteLocalAddress() // Exclude site-local address (fec0::/10)
                         && !address.isLinkLocalAddress() // Exclude link-local address (fe80::/10)
-                );
+        );
 
         if (CollKit.isNotEmpty(localAddressList)) {
             return CollKit.getFirst(localAddressList);

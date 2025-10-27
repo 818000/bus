@@ -53,8 +53,14 @@ public abstract class AbstractChildLimitProvider implements ChildLimitProvider {
      * @param addSecond Seconds to add.
      * @return A {@link ChildLimitInfo} object containing the calculated Child Limit details.
      */
-    protected ChildLimitInfo next(SolarTime birthTime, int addYear, int addMonth, int addDay, int addHour,
-            int addMinute, int addSecond) {
+    protected ChildLimitInfo next(
+            SolarTime birthTime,
+            int addYear,
+            int addMonth,
+            int addDay,
+            int addHour,
+            int addMinute,
+            int addSecond) {
         int d = birthTime.getDay() + addDay;
         int h = birthTime.getHour() + addHour;
         int mi = birthTime.getMinute() + addMinute;

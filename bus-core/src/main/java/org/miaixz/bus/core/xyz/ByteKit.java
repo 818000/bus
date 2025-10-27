@@ -535,7 +535,9 @@ public class ByteKit {
      * @return The converted number.
      * @throws IllegalArgumentException if the target number type is not supported.
      */
-    public static <T extends Number> T toNumber(final byte[] bytes, final Class<T> targetClass,
+    public static <T extends Number> T toNumber(
+            final byte[] bytes,
+            final Class<T> targetClass,
             final ByteOrder byteOrder) throws IllegalArgumentException {
         final Number number;
         if (Byte.class == targetClass) {

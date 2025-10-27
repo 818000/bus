@@ -557,7 +557,10 @@ public class MathKit extends NumberValidator {
      * @param values       The collection to append to.
      * @return The modified collection.
      */
-    public static Collection<Integer> appendRange(final int startInclude, final int stopInclude, int step,
+    public static Collection<Integer> appendRange(
+            final int startInclude,
+            final int stopInclude,
+            int step,
             final Collection<Integer> values) {
         if (startInclude < stopInclude) {
             step = Math.abs(step);
@@ -965,7 +968,10 @@ public class MathKit extends NumberValidator {
      * @param roundingMode The rounding mode for division.
      * @return The result.
      */
-    public static BigDecimal pow(final BigDecimal number, final int n, final int scale,
+    public static BigDecimal pow(
+            final BigDecimal number,
+            final int n,
+            final int scale,
             final RoundingMode roundingMode) {
         if (n < 0) {
             return BigDecimal.ONE.divide(pow(number, -n), scale, roundingMode);

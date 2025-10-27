@@ -315,18 +315,18 @@ public class CharKit {
      */
     public static boolean isZeroWidthChar(final char c) {
         switch (c) {
-        case '\u200B': // Zero-width space
-        case '\u200C': // Zero-width non-joiner
-        case '\u200D': // Zero-width joiner
-        case '\uFEFF': // Zero-width no-break space (Byte Order Mark)
-        case '\u2060': // Word joiner
-        case '\u2063': // Invisible separator
-        case '\u2064': // Invisible plus
-        case '\u2065': // Invisible separator
-            return true;
+            case '\u200B': // Zero-width space
+            case '\u200C': // Zero-width non-joiner
+            case '\u200D': // Zero-width joiner
+            case '\uFEFF': // Zero-width no-break space (Byte Order Mark)
+            case '\u2060': // Word joiner
+            case '\u2063': // Invisible separator
+            case '\u2064': // Invisible plus
+            case '\u2065': // Invisible separator
+                return true;
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 

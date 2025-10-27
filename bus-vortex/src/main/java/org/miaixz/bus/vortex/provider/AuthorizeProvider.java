@@ -27,30 +27,96 @@
 */
 package org.miaixz.bus.vortex.provider;
 
+import org.miaixz.bus.core.basic.entity.Authorize;
+import org.miaixz.bus.core.basic.entity.Message;
+import org.miaixz.bus.core.basic.normal.Consts;
+import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.xyz.ObjectKit;
+import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.magic.Delegate;
+import org.miaixz.bus.vortex.magic.ErrorCode;
 import org.miaixz.bus.vortex.magic.Principal;
+import org.miaixz.bus.vortex.strategy.AuthorizeStrategy;
 
 /**
- * Access authorization provider interface, defining functionalities related to authorization and authentication.
- * Implementations of this interface are responsible for validating principals (e.g., tokens, API keys) and returning
- * the result of the authorization process.
+ * A Service Provider Interface (SPI) for performing authentication and authorization.
+ * <p>
+ * This interface defines the contract for validating credentials. Implementations of this interface should contain the
+ * actual business logic for checking tokens or API keys against a database, an authentication server, or any other
+ * identity provider. An instance of this provider is injected into the {@link AuthorizeStrategy}.
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 17+
  */
 public interface AuthorizeProvider {
 
     /**
-     * Performs an authorization operation, validating the provided principal and returning the authorization result.
-     * This method should contain the core logic for checking the validity and permissions associated with a principal.
+     * Validates the provided principal and performs the authorization process. This default method acts as a template,
+     * dispatching to the appropriate specific validation method (e.g., {@link #token(Principal)} or
+     * {@link #apiKey(Principal)}) based on the principal's type.
+     * <p>
+     * This method can be overridden to handle custom credential types or more complex dispatching logic.
      *
-     * @param principal The {@link Principal} object containing the necessary information for authentication, such as a
-     *                  token or API key.
-     * @return A {@link Delegate} object representing the authorization result. The default implementation returns an
-     *         empty {@link Delegate} instance, implying no specific authorization logic is applied unless overridden.
+     * @param principal The {@link Principal} object containing the credential to be validated.
+     * @return A {@link Delegate} object encapsulating the authorization result.
+     * @throws ValidateException if the principal is null or empty.
      */
     default Delegate authorize(Principal principal) {
-        return new Delegate();
+        if (ObjectKit.isEmpty(principal)) {
+            Logger.warn("Authorization failed: The principal entity is null or empty.");
+            throw new ValidateException(ErrorCode._100806);
+        }
+
+        // Dispatch based on the credential type using an if-else if chain,
+        // as case labels in a switch must be compile-time constants.
+        if (Consts.ONE.equals(principal.getType())) {
+            return this.token(principal);
+        } else if (Consts.TWO.equals(principal.getType())) {
+            return this.apiKey(principal);
+        } else {
+            Logger.warn(
+                    "==> Provider: Unsupported principal type: {}. Override the 'authorize' method to handle it.",
+                    principal.getType());
+            return Delegate.builder()
+                    .message(
+                            Message.builder().errcode(ErrorCode._100802.getKey())
+                                    .errmsg("Unsupported credential type: " + principal.getType()).build())
+                    .build();
+        }
+    }
+
+    /**
+     * Validates a token-based principal (e.g., JWT, Opaque Token).
+     * <p>
+     * <strong>Warning:</strong> The default implementation of this method provides no security and always returns a
+     * successful result. It is a placeholder and **must be overridden** with actual validation logic, such as JWT
+     * signature verification, introspection against an OAuth2 server, or a database/cache lookup.
+     *
+     * @param principal The {@link Principal} object containing the token.
+     * @return A {@link Delegate} object containing the authorization result.
+     */
+    default Delegate token(Principal principal) {
+        Logger.debug("Executing default `token` method. This provides no security and should be overridden.");
+        return Delegate.builder().message(
+                Message.builder().errcode(ErrorCode._SUCCESS.getKey()).errmsg(ErrorCode._SUCCESS.getValue()).build())
+                .authorize(Authorize.builder().build()).build();
+    }
+
+    /**
+     * Validates an API key-based principal.
+     * <p>
+     * <strong>Warning:</strong> The default implementation of this method provides no security and always returns a
+     * successful result. It is a placeholder and **must be overridden** with actual validation logic, such as looking
+     * up the API key in a database and checking its permissions.
+     *
+     * @param principal The {@link Principal} object containing the API key.
+     * @return A {@link Delegate} object containing the authorization result.
+     */
+    default Delegate apiKey(Principal principal) {
+        Logger.debug("Executing default `apiKey` method. This provides no security and should be overridden.");
+        return Delegate.builder().message(
+                Message.builder().errcode(ErrorCode._SUCCESS.getKey()).errmsg(ErrorCode._SUCCESS.getValue()).build())
+                .authorize(Authorize.builder().build()).build();
     }
 
 }

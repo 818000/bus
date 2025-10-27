@@ -245,7 +245,10 @@ public class FileWriter extends FileWrapper {
      * @return The target file after the write operation.
      * @throws InternalException if an I/O error occurs during writing.
      */
-    public <T> File writeLines(final Iterable<T> list, final LineSeparator lineSeparator, final boolean isAppend,
+    public <T> File writeLines(
+            final Iterable<T> list,
+            final LineSeparator lineSeparator,
+            final boolean isAppend,
             final boolean appendLineSeparator) throws InternalException {
         try (final PrintWriter writer = getPrintWriter(isAppend)) {
             boolean isFirst = true;
@@ -300,7 +303,10 @@ public class FileWriter extends FileWrapper {
      * @return The target file after the write operation.
      * @throws InternalException if an I/O error occurs during writing.
      */
-    public File writeMap(final Map<?, ?> map, final LineSeparator lineSeparator, String kvSeparator,
+    public File writeMap(
+            final Map<?, ?> map,
+            final LineSeparator lineSeparator,
+            String kvSeparator,
             final boolean isAppend) throws InternalException {
         if (null == kvSeparator) {
             kvSeparator = " = ";
