@@ -151,7 +151,9 @@ public class CopyOptions implements Serializable {
      * @param ignoreProperties An array of property names to ignore.
      * @return A new {@code CopyOptions} instance.
      */
-    public static CopyOptions of(final Class<?> editable, final boolean ignoreNullValue,
+    public static CopyOptions of(
+            final Class<?> editable,
+            final boolean ignoreNullValue,
             final String... ignoreProperties) {
         return new CopyOptions(editable, ignoreNullValue, ignoreProperties);
     }

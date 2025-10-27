@@ -308,7 +308,10 @@ public class PropDesc {
      * @param ignoreError If {@code true}, conversion errors and injection errors will be ignored.
      * @return This {@code PropDesc} instance for chaining.
      */
-    public PropDesc setValue(final Object bean, final Object value, final boolean ignoreNull,
+    public PropDesc setValue(
+            final Object bean,
+            final Object value,
+            final boolean ignoreNull,
             final boolean ignoreError) {
         return setValue(bean, value, ignoreNull, ignoreError, true);
     }
@@ -420,7 +423,11 @@ public class PropDesc {
      *                    ignored.
      * @return This {@code PropDesc} instance for chaining.
      */
-    public PropDesc setValue(final Object bean, Object value, final boolean ignoreNull, final boolean ignoreError,
+    public PropDesc setValue(
+            final Object bean,
+            Object value,
+            final boolean ignoreNull,
+            final boolean ignoreError,
             final boolean override) {
         if (null == value && ignoreNull) {
             return this;

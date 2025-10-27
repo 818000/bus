@@ -353,7 +353,10 @@ public class RandomKit {
      * @param roundingMode The rounding mode.
      * @return A random double.
      */
-    public static double randomDouble(final double minInclude, final double maxExclude, final int scale,
+    public static double randomDouble(
+            final double minInclude,
+            final double maxExclude,
+            final int scale,
             final RoundingMode roundingMode) {
         return MathKit.round(randomDouble(minInclude, maxExclude), scale, roundingMode).doubleValue();
     }

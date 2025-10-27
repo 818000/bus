@@ -118,7 +118,9 @@ public class MapServiceLoader<S> extends AbstractServiceLoader<S> {
      * @param classLoader  A custom class loader, or {@code null} to use the current default class loader.
      * @return A new {@code MapServiceLoader} instance.
      */
-    public static <S> MapServiceLoader<S> of(final String pathPrefix, final Class<S> serviceClass,
+    public static <S> MapServiceLoader<S> of(
+            final String pathPrefix,
+            final Class<S> serviceClass,
             final ClassLoader classLoader) {
         return new MapServiceLoader<>(pathPrefix, serviceClass, classLoader, null);
     }
@@ -131,7 +133,11 @@ public class MapServiceLoader<S> extends AbstractServiceLoader<S> {
     @Override
     public void load() {
         final Properties properties = new Properties();
-        ResourceKit.loadAllTo(properties, pathPrefix + serviceClass.getName(), classLoader, charset,
+        ResourceKit.loadAllTo(
+                properties,
+                pathPrefix + serviceClass.getName(),
+                classLoader,
+                charset,
                 // non-override mode
                 false);
         this.serviceProperties = properties;

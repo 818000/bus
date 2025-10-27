@@ -572,8 +572,11 @@ public class UrlKit {
      * @param data     The encoded data.
      * @return The Data URI string.
      */
-    public static String getDataUri(final String mimeType, final java.nio.charset.Charset charset,
-            final String encoding, final String data) {
+    public static String getDataUri(
+            final String mimeType,
+            final java.nio.charset.Charset charset,
+            final String encoding,
+            final String data) {
         final StringBuilder builder = StringKit.builder("data:");
         if (StringKit.isNotBlank(mimeType)) {
             builder.append(mimeType);
@@ -682,7 +685,9 @@ public class UrlKit {
      * @param encodeMode The encoding mode.
      * @return The URL query string.
      */
-    public static String toQuery(final Map<String, ?> paramMap, final java.nio.charset.Charset charset,
+    public static String toQuery(
+            final Map<String, ?> paramMap,
+            final java.nio.charset.Charset charset,
             final UrlQuery.EncodeMode encodeMode) {
         return UrlQuery.of(paramMap, encodeMode).build(charset);
     }
@@ -812,7 +817,8 @@ public class UrlKit {
      * @param charset The character set.
      * @return The parameter Map with list values.
      */
-    public static Map<String, List<String>> decodeQueryList(final String query,
+    public static Map<String, List<String>> decodeQueryList(
+            final String query,
             final java.nio.charset.Charset charset) {
         final Map<CharSequence, CharSequence> queryMap = UrlQuery.of(query, charset).getQueryMap();
         if (MapKit.isEmpty(queryMap)) {

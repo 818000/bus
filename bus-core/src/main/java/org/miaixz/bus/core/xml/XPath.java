@@ -120,7 +120,10 @@ public class XPath {
      * @see <a href="https://www.ibm.com/developerworks/cn/xml/x-nmspccontext/">Using the JAXP NamespaceContext
      *      Interface</a>
      */
-    public static Object getByXPath(final String expression, final Object source, final QName returnType,
+    public static Object getByXPath(
+            final String expression,
+            final Object source,
+            final QName returnType,
             final NamespaceContext nsContext) {
         final javax.xml.xpath.XPath xPath = createXPath();
         if (null != nsContext) {

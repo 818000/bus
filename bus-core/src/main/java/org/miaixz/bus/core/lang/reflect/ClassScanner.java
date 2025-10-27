@@ -165,7 +165,8 @@ public class ClassScanner implements Serializable {
      * @param annotationClass The annotation class to search for.
      * @return A set of classes that are annotated with the specified annotation.
      */
-    public static Set<Class<?>> scanAllPackageByAnnotation(final String packageName,
+    public static Set<Class<?>> scanAllPackageByAnnotation(
+            final String packageName,
             final Class<? extends Annotation> annotationClass) {
         return scanAllPackage(packageName, clazz -> clazz.isAnnotationPresent(annotationClass));
     }
@@ -178,7 +179,8 @@ public class ClassScanner implements Serializable {
      * @param annotationClass The annotation class to search for.
      * @return A set of classes that are annotated with the specified annotation.
      */
-    public static Set<Class<?>> scanPackageByAnnotation(final String packageName,
+    public static Set<Class<?>> scanPackageByAnnotation(
+            final String packageName,
             final Class<? extends Annotation> annotationClass) {
         return scanPackage(packageName, clazz -> clazz.isAnnotationPresent(annotationClass));
     }
@@ -289,13 +291,13 @@ public class ClassScanner implements Serializable {
 
         for (final URL url : ResourceKit.getResourceUrlIter(this.packagePath, this.classLoader)) {
             switch (url.getProtocol()) {
-            case "file":
-                scanFile(new File(UrlDecoder.decode(url.getFile(), this.charset)), null);
-                break;
+                case "file":
+                    scanFile(new File(UrlDecoder.decode(url.getFile(), this.charset)), null);
+                    break;
 
-            case "jar":
-                scanJar(new JarResource(url).getJarFile());
-                break;
+                case "jar":
+                    scanJar(new JarResource(url).getJarFile());
+                    break;
             }
         }
 

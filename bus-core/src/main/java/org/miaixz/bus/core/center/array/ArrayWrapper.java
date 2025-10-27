@@ -348,7 +348,10 @@ public class ArrayWrapper<A, E> implements Wrapper<A>, Iterable<E> {
      * @return This {@code ArrayWrapper} instance.
      * @throws IndexOutOfBoundsException if the index exceeds the {@code indexLimit}.
      */
-    public ArrayWrapper<A, E> setOrPadding(final int index, final E value, final E paddingElement,
+    public ArrayWrapper<A, E> setOrPadding(
+            final int index,
+            final E value,
+            final E paddingElement,
             final int indexLimit) {
         if (index < this.length) {
             Array.set(array, index, value);

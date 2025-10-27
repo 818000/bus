@@ -102,7 +102,8 @@ public class CombinationAnnotatedElement implements AnnotatedElement, Serializab
      *                  returns {@code true} are retained.
      * @return A new {@code CombinationAnnotatedElement} instance.
      */
-    public static CombinationAnnotatedElement of(final AnnotatedElement element,
+    public static CombinationAnnotatedElement of(
+            final AnnotatedElement element,
             final Predicate<Annotation> predicate) {
         return new CombinationAnnotatedElement(element, predicate);
     }

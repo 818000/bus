@@ -230,7 +230,8 @@ public class ClassKit {
      * @return A set of classes.
      * @see ClassScanner#scanPackageByAnnotation(String, Class)
      */
-    public static Set<Class<?>> scanPackageByAnnotation(final String packageName,
+    public static Set<Class<?>> scanPackageByAnnotation(
+            final String packageName,
             final Class<? extends Annotation> annotationClass) {
         return ClassScanner.scanPackageByAnnotation(packageName, annotationClass);
     }
@@ -812,7 +813,9 @@ public class ClassKit {
      * @param filter     A filter to exclude types and their hierarchies.
      * @param terminator A predicate to stop traversal.
      */
-    public static void traverseTypeHierarchyWhile(final Class<?> root, final Predicate<Class<?>> filter,
+    public static void traverseTypeHierarchyWhile(
+            final Class<?> root,
+            final Predicate<Class<?>> filter,
             final Predicate<Class<?>> terminator) {
         EasyStream.iterateHierarchies(root, ClassKit::getNextTypeHierarchies, filter).takeWhile(terminator).exec();
     }
@@ -825,8 +828,11 @@ public class ClassKit {
      * @param consumer    An operation to perform on each visited type.
      * @param includeRoot If true, the root class itself is included in the traversal.
      */
-    public static void traverseTypeHierarchy(final Class<?> root, final Predicate<Class<?>> filter,
-            final Consumer<Class<?>> consumer, final boolean includeRoot) {
+    public static void traverseTypeHierarchy(
+            final Class<?> root,
+            final Predicate<Class<?>> filter,
+            final Consumer<Class<?>> consumer,
+            final boolean includeRoot) {
         Objects.requireNonNull(root);
         Objects.requireNonNull(filter);
         Objects.requireNonNull(consumer);

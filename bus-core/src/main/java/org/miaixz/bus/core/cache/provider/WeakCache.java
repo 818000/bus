@@ -76,7 +76,8 @@ public class WeakCache<K, V> extends TimedCache<K, V> {
         final WeakConcurrentMap<Mutable<K>, CacheObject<K, V>> map = (WeakConcurrentMap<Mutable<K>, CacheObject<K, V>>) this.cacheMap;
         // When a weak key is collected, the key in the listener will be null, so we handle it safely.
         map.setPurgeListener(
-                (key, value) -> listener.onRemove(Optional.ofNullable(key).map(Ref::get).map(Mutable::get).getOrNull(),
+                (key, value) -> listener.onRemove(
+                        Optional.ofNullable(key).map(Ref::get).map(Mutable::get).getOrNull(),
                         Optional.ofNullable(value).map(Ref::get).map(CacheObject::getValue).getOrNull()));
 
         return this;

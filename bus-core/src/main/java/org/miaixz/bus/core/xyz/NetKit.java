@@ -360,7 +360,8 @@ public class NetKit {
      * @return A {@link LinkedHashSet} of filtered {@link InetAddress} objects.
      * @throws InternalException If an error occurs while getting network interfaces.
      */
-    public static LinkedHashSet<InetAddress> localAddressList(final Predicate<NetworkInterface> networkInterfaceFilter,
+    public static LinkedHashSet<InetAddress> localAddressList(
+            final Predicate<NetworkInterface> networkInterfaceFilter,
             final Predicate<InetAddress> addressPredicate) {
         final Enumeration<NetworkInterface> networkInterfaces;
         try {

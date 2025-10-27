@@ -127,7 +127,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return {@code true} if the annotation is present.
      */
-    public static boolean isAnnotated(final AnnotatedElement element,
+    public static boolean isAnnotated(
+            final AnnotatedElement element,
             final Class<? extends Annotation> annotationType) {
         return toHierarchyMetaElement(element, false).isAnnotationPresent(annotationType);
     }
@@ -140,7 +141,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T findAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T findAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyMetaElement(element, false).getAnnotation(annotationType);
     }
@@ -154,7 +156,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of found annotations.
      */
-    public static <T extends Annotation> T[] findAllAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] findAllAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyRepeatableMetaElement(element, false).getAnnotationsByType(annotationType);
     }
@@ -178,7 +181,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The resolved annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T findResolvedAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T findResolvedAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyMetaElement(element, true).getAnnotation(annotationType);
     }
@@ -203,7 +207,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of found and resolved annotations.
      */
-    public static <T extends Annotation> T[] findAllResolvedAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] findAllResolvedAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyRepeatableMetaElement(element, true).getAnnotationsByType(annotationType);
     }
@@ -217,7 +222,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T findDirectlyAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T findDirectlyAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyMetaElement(element, false).getDeclaredAnnotation(annotationType);
     }
@@ -231,7 +237,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of found annotations.
      */
-    public static <T extends Annotation> T[] findAllDirectlyAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] findAllDirectlyAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyRepeatableMetaElement(element, false).getDeclaredAnnotationsByType(annotationType);
     }
@@ -255,7 +262,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The resolved annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T findDirectlyResolvedAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T findDirectlyResolvedAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyMetaElement(element, true).getDeclaredAnnotation(annotationType);
     }
@@ -280,7 +288,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of found and resolved annotations.
      */
-    public static <T extends Annotation> T[] findAllDirectlyResolvedAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] findAllDirectlyResolvedAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toHierarchyRepeatableMetaElement(element, true).getDeclaredAnnotationsByType(annotationType);
     }
@@ -292,7 +301,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return {@code true} if the annotation is present.
      */
-    public static boolean isAnnotationPresent(final AnnotatedElement element,
+    public static boolean isAnnotationPresent(
+            final AnnotatedElement element,
             final Class<? extends Annotation> annotationType) {
         return toMetaElement(element, false).isAnnotationPresent(annotationType);
     }
@@ -305,7 +315,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T getAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T getAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toMetaElement(element, false).getAnnotation(annotationType);
     }
@@ -329,7 +340,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of all found annotations.
      */
-    public static <T extends Annotation> T[] getAllAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] getAllAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toRepeatableMetaElement(element, false).getAnnotationsByType(annotationType);
     }
@@ -343,7 +355,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The resolved annotation instance, or null if not found.
      */
-    public static <T extends Annotation> T getResolvedAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T getResolvedAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toMetaElement(element, true).getAnnotation(annotationType);
     }
@@ -367,7 +380,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of all found and resolved annotations.
      */
-    public static <T extends Annotation> T[] getAllResolvedAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] getAllResolvedAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toRepeatableMetaElement(element, true).getAnnotationsByType(annotationType);
     }
@@ -380,7 +394,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The annotation instance, or null if not directly present.
      */
-    public static <T extends Annotation> T getDirectlyAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T getDirectlyAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toMetaElement(element, false).getDeclaredAnnotation(annotationType);
     }
@@ -393,7 +408,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of all directly present annotations.
      */
-    public static <T extends Annotation> T[] getAllDirectlyAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] getAllDirectlyAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toRepeatableMetaElement(element, false).getDeclaredAnnotationsByType(annotationType);
     }
@@ -416,7 +432,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return The resolved annotation instance, or null if not directly present.
      */
-    public static <T extends Annotation> T getDirectlyResolvedAnnotation(final AnnotatedElement element,
+    public static <T extends Annotation> T getDirectlyResolvedAnnotation(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toMetaElement(element, true).getDeclaredAnnotation(annotationType);
     }
@@ -440,7 +457,8 @@ public class AnnotatedElements {
      * @param annotationType The type of the annotation.
      * @return An array of resolved annotations.
      */
-    public static <T extends Annotation> T[] getAllDirectlyResolvedAnnotations(final AnnotatedElement element,
+    public static <T extends Annotation> T[] getAllDirectlyResolvedAnnotations(
+            final AnnotatedElement element,
             final Class<T> annotationType) {
         return toRepeatableMetaElement(element, true).getDeclaredAnnotationsByType(annotationType);
     }
@@ -471,7 +489,8 @@ public class AnnotatedElements {
      * @param resolved If {@code true}, enables attribute alias and override mechanisms.
      * @return A {@link HierarchicalAnnotatedElements} instance.
      */
-    public static AnnotatedElement toHierarchyRepeatableMetaElement(final AnnotatedElement element,
+    public static AnnotatedElement toHierarchyRepeatableMetaElement(
+            final AnnotatedElement element,
             final boolean resolved) {
         if (Objects.isNull(element)) {
             return emptyElement();
@@ -490,8 +509,8 @@ public class AnnotatedElements {
      * @return A {@link HierarchicalAnnotatedElements} instance.
      */
     public static AnnotatedElement toHierarchyElement(final AnnotatedElement element) {
-        return ObjectKit.defaultIfNull(element, ele -> HierarchicalAnnotatedElements.of(ele, (es, e) -> e),
-                emptyElement());
+        return ObjectKit
+                .defaultIfNull(element, ele -> HierarchicalAnnotatedElements.of(ele, (es, e) -> e), emptyElement());
     }
 
     /**
@@ -502,7 +521,9 @@ public class AnnotatedElements {
      * @return A {@link MetaAnnotatedElement} instance.
      */
     public static AnnotatedElement toMetaElement(final AnnotatedElement element, final boolean resolved) {
-        return ObjectKit.defaultIfNull(element, e -> resolved ? getResolvedMetaElementCache(e) : getMetaElementCache(e),
+        return ObjectKit.defaultIfNull(
+                element,
+                e -> resolved ? getResolvedMetaElementCache(e) : getMetaElementCache(e),
                 emptyElement());
     }
 
@@ -515,7 +536,8 @@ public class AnnotatedElements {
      * @return A {@link RepeatableMetaAnnotatedElement} instance.
      */
     public static AnnotatedElement toRepeatableMetaElement(final AnnotatedElement element, final boolean resolved) {
-        return ObjectKit.defaultIfNull(element,
+        return ObjectKit.defaultIfNull(
+                element,
                 e -> resolved ? getResolvedRepeatableMetaElementCache(e) : getRepeatableMetaElementCache(e),
                 emptyElement());
     }
@@ -529,18 +551,24 @@ public class AnnotatedElements {
      * @param resolved  If {@code true}, enables attribute alias and override mechanisms.
      * @return A new {@link RepeatableMetaAnnotatedElement} instance.
      */
-    public static AnnotatedElement toRepeatableMetaElement(final AnnotatedElement element,
-            RepeatableAnnotationCollector collector, final boolean resolved) {
+    public static AnnotatedElement toRepeatableMetaElement(
+            final AnnotatedElement element,
+            RepeatableAnnotationCollector collector,
+            final boolean resolved) {
         if (Objects.isNull(element)) {
             return emptyElement();
         }
         collector = ObjectKit.defaultIfNull(collector, RepeatableAnnotationCollector.none());
         if (resolved) {
-            return RepeatableMetaAnnotatedElement.create(collector, element,
-                    (source, annotation) -> ResolvedAnnotationMapping.create((ResolvedAnnotationMapping) source,
-                            annotation, true));
+            return RepeatableMetaAnnotatedElement.create(
+                    collector,
+                    element,
+                    (source, annotation) -> ResolvedAnnotationMapping
+                            .create((ResolvedAnnotationMapping) source, annotation, true));
         }
-        return RepeatableMetaAnnotatedElement.create(collector, element,
+        return RepeatableMetaAnnotatedElement.create(
+                collector,
+                element,
                 (source, annotation) -> GenericAnnotationMapping.create(annotation, Objects.isNull(source)));
     }
 
@@ -573,8 +601,11 @@ public class AnnotatedElements {
      */
     public static MetaAnnotatedElement<ResolvedAnnotationMapping> getResolvedMetaElementCache(
             final AnnotatedElement element) {
-        return RESOLVED_ELEMENT_CACHE.computeIfAbsent(element, ele -> MetaAnnotatedElement.create(element,
-                (source, annotation) -> ResolvedAnnotationMapping.create(source, annotation, true)));
+        return RESOLVED_ELEMENT_CACHE.computeIfAbsent(
+                element,
+                ele -> MetaAnnotatedElement.create(
+                        element,
+                        (source, annotation) -> ResolvedAnnotationMapping.create(source, annotation, true)));
     }
 
     /**
@@ -585,8 +616,11 @@ public class AnnotatedElements {
      * @return A {@link MetaAnnotatedElement} instance.
      */
     public static MetaAnnotatedElement<GenericAnnotationMapping> getMetaElementCache(final AnnotatedElement element) {
-        return ELEMENT_CACHE.computeIfAbsent(element, ele -> MetaAnnotatedElement.create(element,
-                (source, annotation) -> GenericAnnotationMapping.create(annotation, Objects.isNull(source))));
+        return ELEMENT_CACHE.computeIfAbsent(
+                element,
+                ele -> MetaAnnotatedElement.create(
+                        element,
+                        (source, annotation) -> GenericAnnotationMapping.create(annotation, Objects.isNull(source))));
     }
 
     /**
@@ -598,8 +632,11 @@ public class AnnotatedElements {
      */
     public static RepeatableMetaAnnotatedElement<ResolvedAnnotationMapping> getResolvedRepeatableMetaElementCache(
             final AnnotatedElement element) {
-        return RESOLVED_REPEATABLE_ELEMENT_CACHE.computeIfAbsent(element, ele -> RepeatableMetaAnnotatedElement
-                .create(element, (source, annotation) -> ResolvedAnnotationMapping.create(source, annotation, true)));
+        return RESOLVED_REPEATABLE_ELEMENT_CACHE.computeIfAbsent(
+                element,
+                ele -> RepeatableMetaAnnotatedElement.create(
+                        element,
+                        (source, annotation) -> ResolvedAnnotationMapping.create(source, annotation, true)));
     }
 
     /**
@@ -611,8 +648,11 @@ public class AnnotatedElements {
      */
     public static RepeatableMetaAnnotatedElement<GenericAnnotationMapping> getRepeatableMetaElementCache(
             final AnnotatedElement element) {
-        return REPEATABLE_ELEMENT_CACHE.computeIfAbsent(element, ele -> RepeatableMetaAnnotatedElement.create(element,
-                (source, annotation) -> GenericAnnotationMapping.create(annotation, Objects.isNull(source))));
+        return REPEATABLE_ELEMENT_CACHE.computeIfAbsent(
+                element,
+                ele -> RepeatableMetaAnnotatedElement.create(
+                        element,
+                        (source, annotation) -> GenericAnnotationMapping.create(annotation, Objects.isNull(source))));
     }
 
     /**

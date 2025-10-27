@@ -75,8 +75,11 @@ public class PairConverter extends ConverterWithRoot implements Serializable {
      */
     private static Map<CharSequence, CharSequence> strToMap(final CharSequence text) {
         // data:value data=value data,value
-        final int index = StringKit.indexOf(text,
-                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA, 0, text.length());
+        final int index = StringKit.indexOf(
+                text,
+                c -> c == Symbol.C_COLON || c == Symbol.C_EQUAL || c == Symbol.C_COMMA,
+                0,
+                text.length());
 
         if (index > -1) {
             return MapKit.of(text.subSequence(0, index), text.subSequence(index + 1, text.length()));
@@ -116,7 +119,8 @@ public class PairConverter extends ConverterWithRoot implements Serializable {
             right = map.get("right");
         }
 
-        return Pair.of(TypeKit.isUnknown(keyType) ? left : converter.convert(keyType, left),
+        return Pair.of(
+                TypeKit.isUnknown(keyType) ? left : converter.convert(keyType, left),
                 TypeKit.isUnknown(valueType) ? right : converter.convert(valueType, right));
     }
 
@@ -131,8 +135,7 @@ public class PairConverter extends ConverterWithRoot implements Serializable {
      */
     public Pair<?, ?> convert(final Type leftType, final Type rightType, final Object value) throws ConvertException {
         Map map = null;
-        if (value instanceof Map.Entry) {
-            final Map.Entry entry = (Map.Entry) value;
+        if (value instanceof Map.Entry entry) {
             map = MapKit.of(entry.getKey(), entry.getValue());
         } else if (value instanceof Pair) {
             final Pair entry = (Pair<?, ?>) value;

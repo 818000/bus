@@ -300,9 +300,10 @@ public class LinkedForestMap<K, V> implements ForestMap<K, V> {
             childNode.getDeclaredParent().removeDeclaredChild(childNode.getKey());
             parentNode.addChild(childNode);
         } else {
-            throw new IllegalArgumentException(
-                    StringKit.format("Node [{}] is already a child of [{}]. Overriding is not allowed.",
-                            childNode.getKey(), childNode.getDeclaredParent().getKey()));
+            throw new IllegalArgumentException(StringKit.format(
+                    "Node [{}] is already a child of [{}]. Overriding is not allowed.",
+                    childNode.getKey(),
+                    childNode.getDeclaredParent().getKey()));
         }
         consumer.accept(parentNode, childNode);
     }
@@ -420,8 +421,10 @@ public class LinkedForestMap<K, V> implements ForestMap<K, V> {
          * @param breakTraverse  A predicate to stop the traversal.
          * @return The last node visited before the traversal was stopped.
          */
-        TreeEntryNode<K, V> traverseParentNodes(final boolean includeCurrent,
-                final Consumer<TreeEntryNode<K, V>> consumer, Predicate<TreeEntryNode<K, V>> breakTraverse) {
+        TreeEntryNode<K, V> traverseParentNodes(
+                final boolean includeCurrent,
+                final Consumer<TreeEntryNode<K, V>> consumer,
+                Predicate<TreeEntryNode<K, V>> breakTraverse) {
             breakTraverse = ObjectKit.defaultIfNull(breakTraverse, n -> false);
             TreeEntryNode<K, V> curr = includeCurrent ? this : this.parent;
             while (ObjectKit.isNotNull(curr)) {
@@ -484,7 +487,8 @@ public class LinkedForestMap<K, V> implements ForestMap<K, V> {
          * @param breakTraverse  A predicate to stop the traversal.
          * @return The last node visited before the traversal was stopped.
          */
-        TreeEntryNode<K, V> traverseChildNodes(final boolean includeCurrent,
+        TreeEntryNode<K, V> traverseChildNodes(
+                final boolean includeCurrent,
                 final BiConsumer<Integer, TreeEntryNode<K, V>> consumer,
                 BiPredicate<Integer, TreeEntryNode<K, V>> breakTraverse) {
             breakTraverse = ObjectKit.defaultIfNull(breakTraverse, (i, n) -> false);
@@ -527,8 +531,11 @@ public class LinkedForestMap<K, V> implements ForestMap<K, V> {
             }
 
             // Check for circular references.
-            traverseParentNodes(true, s -> Assert.notEquals(s.key, child.key,
-                    "Circular reference between [{}] and [{}]!", s.key, this.key), null);
+            traverseParentNodes(
+                    true,
+                    s -> Assert
+                            .notEquals(s.key, child.key, "Circular reference between [{}] and [{}]!", s.key, this.key),
+                    null);
 
             // Update child's properties.
             child.parent = this;

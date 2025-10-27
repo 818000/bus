@@ -126,7 +126,10 @@ public class StreamCopier extends IoCopier<InputStream, OutputStream> {
      * @return The total number of bytes copied.
      * @throws IOException If an I/O error occurs during the copy.
      */
-    private long doCopy(final InputStream source, final OutputStream target, final byte[] buffer,
+    private long doCopy(
+            final InputStream source,
+            final OutputStream target,
+            final byte[] buffer,
             final StreamProgress progress) throws IOException {
         long numToRead = this.count > 0 ? this.count : Long.MAX_VALUE;
         long total = 0;

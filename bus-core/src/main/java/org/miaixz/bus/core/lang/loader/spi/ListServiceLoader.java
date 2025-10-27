@@ -129,7 +129,9 @@ public class ListServiceLoader<S> extends AbstractServiceLoader<S> {
      * @param classLoader  A custom class loader, or {@code null} to use the current default class loader.
      * @return A new {@code ListServiceLoader} instance.
      */
-    public static <S> ListServiceLoader<S> of(final String pathPrefix, final Class<S> serviceClass,
+    public static <S> ListServiceLoader<S> of(
+            final String pathPrefix,
+            final Class<S> serviceClass,
             final ClassLoader classLoader) {
         return new ListServiceLoader<>(pathPrefix, serviceClass, classLoader, null);
     }

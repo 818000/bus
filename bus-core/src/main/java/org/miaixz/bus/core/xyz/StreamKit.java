@@ -210,7 +210,9 @@ public class StreamKit {
      * @param <T>          The element type.
      * @return The joined string, or `null` if the stream is `null`.
      */
-    public static <T> String join(final Stream<T> stream, final CharSequence delimiter,
+    public static <T> String join(
+            final Stream<T> stream,
+            final CharSequence delimiter,
             final Function<T, ? extends CharSequence> toStringFunc) {
         if (null == stream) {
             return null;
@@ -245,7 +247,9 @@ public class StreamKit {
      * @return A stream of all nodes in the hierarchy.
      * @see HierarchyIterator
      */
-    public static <T> Stream<T> iterateHierarchies(final T root, final Function<T, Collection<T>> discoverer,
+    public static <T> Stream<T> iterateHierarchies(
+            final T root,
+            final Function<T, Collection<T>> discoverer,
             final Predicate<T> filter) {
         return ofIter(HierarchyIterator.breadthFirst(root, discoverer, filter));
     }
@@ -365,7 +369,8 @@ public class StreamKit {
      * @param <R>            The element type of the new stream.
      * @return The new stream.
      */
-    private static <T, R> Stream<R> createStatefulNewStream(final Stream<T> source,
+    private static <T, R> Stream<R> createStatefulNewStream(
+            final Stream<T> source,
             final Spliterator<R> newSpliterator) {
         Stream<R> newStream = StreamSupport.stream(newSpliterator, source.isParallel());
         if (source.isParallel()) {

@@ -385,7 +385,9 @@ public class DelegatePath extends SimpleWrapper<Path> implements Path, Resource 
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public WatchKey register(final WatchService watcher, final WatchEvent.Kind<?>[] events,
+    public WatchKey register(
+            final WatchService watcher,
+            final WatchEvent.Kind<?>[] events,
             final WatchEvent.Modifier... modifiers) throws IOException {
         return raw.register(watcher, events, modifiers);
     }
@@ -807,7 +809,9 @@ public class DelegatePath extends SimpleWrapper<Path> implements Path, Resource 
      * @throws InternalException if an I/O error occurs during traversal.
      * @see Files#walkFileTree(Path, Set, int, FileVisitor)
      */
-    public void walkFiles(final Set<FileVisitOption> options, final int maxDepth,
+    public void walkFiles(
+            final Set<FileVisitOption> options,
+            final int maxDepth,
             final FileVisitor<? super Path> visitor) {
         try {
             Files.walkFileTree(this.raw, options, maxDepth, visitor);

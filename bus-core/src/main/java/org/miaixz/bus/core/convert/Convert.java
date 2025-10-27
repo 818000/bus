@@ -544,7 +544,9 @@ public class Convert {
      * @param value          The value to be converted.
      * @return A {@link Collection}.
      */
-    public static Collection<?> toCollection(final Class<?> collectionType, final Class<?> elementType,
+    public static Collection<?> toCollection(
+            final Class<?> collectionType,
+            final Class<?> elementType,
             final Object value) {
         return new CollectionConverter().convert(collectionType, elementType, value);
     }
@@ -612,7 +614,10 @@ public class Convert {
      * @param value     The value to be converted.
      * @return A {@link Map}.
      */
-    public static <K, V> Map<K, V> toMap(final Class<?> mapType, final Class<K> keyType, final Class<V> valueType,
+    public static <K, V> Map<K, V> toMap(
+            final Class<?> mapType,
+            final Class<K> keyType,
+            final Class<V> valueType,
             final Object value) {
         return (Map<K, V>) MapConverter.INSTANCE.convert(mapType, keyType, valueType, value);
     }
@@ -732,7 +737,10 @@ public class Convert {
      * @param quietly      If `true`, returns the default value on failure instead of throwing an exception.
      * @return The converted value.
      */
-    public static <T> T convertWithCheck(final Type type, final Object value, final T defaultValue,
+    public static <T> T convertWithCheck(
+            final Type type,
+            final Object value,
+            final T defaultValue,
             final boolean quietly) {
         final CompositeConverter compositeConverter = CompositeConverter.getInstance();
         try {

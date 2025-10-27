@@ -135,10 +135,11 @@ public class BeanKit {
      * @return A map of field names to field descriptions.
      * @throws BeanException If an error occurs while getting properties.
      */
-    public static Map<String, PropertyDescriptor> getPropertyDescriptorMap(final Class<?> clazz,
+    public static Map<String, PropertyDescriptor> getPropertyDescriptorMap(
+            final Class<?> clazz,
             final boolean ignoreCase) throws BeanException {
-        return BeanCache.INSTANCE.getPropertyDescriptorMap(clazz, ignoreCase,
-                () -> internalGetPropertyDescriptorMap(clazz, ignoreCase));
+        return BeanCache.INSTANCE
+                .getPropertyDescriptorMap(clazz, ignoreCase, () -> internalGetPropertyDescriptorMap(clazz, ignoreCase));
     }
 
     /**
@@ -150,7 +151,8 @@ public class BeanKit {
      * @return A map of field names to field descriptions.
      * @throws BeanException If an error occurs while getting properties.
      */
-    private static Map<String, PropertyDescriptor> internalGetPropertyDescriptorMap(final Class<?> clazz,
+    private static Map<String, PropertyDescriptor> internalGetPropertyDescriptorMap(
+            final Class<?> clazz,
             final boolean ignoreCase) throws BeanException {
         final PropertyDescriptor[] propertyDescriptors = getPropertyDescriptors(clazz);
         final Map<String, PropertyDescriptor> map = ignoreCase
@@ -185,7 +187,9 @@ public class BeanKit {
      * @return The PropertyDescriptor, or {@code null} if not found.
      * @throws BeanException If an error occurs while getting properties.
      */
-    public static PropertyDescriptor getPropertyDescriptor(final Class<?> clazz, final String fieldName,
+    public static PropertyDescriptor getPropertyDescriptor(
+            final Class<?> clazz,
+            final String fieldName,
             final boolean ignoreCase) throws BeanException {
         final Map<String, PropertyDescriptor> map = getPropertyDescriptorMap(clazz, ignoreCase);
         return (null == map) ? null : map.get(fieldName);
@@ -319,7 +323,9 @@ public class BeanKit {
      * @param copyOptions   Copy options, see {@link CopyOptions}.
      * @return The filled Bean.
      */
-    public static <T> T fillBean(final T bean, final ValueProvider<String> valueProvider,
+    public static <T> T fillBean(
+            final T bean,
+            final ValueProvider<String> valueProvider,
             final CopyOptions copyOptions) {
         if (null == valueProvider) {
             return bean;
@@ -387,7 +393,9 @@ public class BeanKit {
      * @param ignoreNullValue   Whether to ignore fields with null values.
      * @return The resulting Map.
      */
-    public static Map<String, Object> beanToMap(final Object bean, final boolean isToUnderlineCase,
+    public static Map<String, Object> beanToMap(
+            final Object bean,
+            final boolean isToUnderlineCase,
             final boolean ignoreNullValue) {
         if (null == bean) {
             return null;
@@ -404,8 +412,11 @@ public class BeanKit {
      * @param ignoreNullValue   Whether to ignore fields with null values.
      * @return The resulting Map.
      */
-    public static Map<String, Object> beanToMap(final Object bean, final Map<String, Object> targetMap,
-            final boolean isToUnderlineCase, final boolean ignoreNullValue) {
+    public static Map<String, Object> beanToMap(
+            final Object bean,
+            final Map<String, Object> targetMap,
+            final boolean isToUnderlineCase,
+            final boolean ignoreNullValue) {
         if (null == bean) {
             return null;
         }
@@ -435,8 +446,11 @@ public class BeanKit {
      *                        returns null, the field is ignored.
      * @return The resulting Map.
      */
-    public static <V> Map<String, V> beanToMap(final Object bean, final Map<String, V> targetMap,
-            final boolean ignoreNullValue, final UnaryOperator<MutableEntry<Object, Object>> keyEditor) {
+    public static <V> Map<String, V> beanToMap(
+            final Object bean,
+            final Map<String, V> targetMap,
+            final boolean ignoreNullValue,
+            final UnaryOperator<MutableEntry<Object, Object>> keyEditor) {
         if (null == bean) {
             return null;
         }
@@ -463,7 +477,9 @@ public class BeanKit {
      * @param copyOptions The copy options.
      * @return The resulting Map.
      */
-    public static <V> Map<String, V> beanToMap(final Object bean, final Map<String, V> targetMap,
+    public static <V> Map<String, V> beanToMap(
+            final Object bean,
+            final Map<String, V> targetMap,
             final CopyOptions copyOptions) {
         if (null == bean) {
             return null;
@@ -560,7 +576,9 @@ public class BeanKit {
      * @param <T>         The Bean type.
      * @return A new List with copied Beans.
      */
-    public static <T> List<T> copyToList(final Collection<?> collection, final Class<T> targetType,
+    public static <T> List<T> copyToList(
+            final Collection<?> collection,
+            final Class<T> targetType,
             final CopyOptions copyOptions) {
         if (null == collection) {
             return null;
@@ -682,8 +700,10 @@ public class BeanKit {
         }
 
         // Equivalent to hasNoneNullField
-        return checkBean(bean, field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
-                && null != FieldKit.getFieldValue(bean, field));
+        return checkBean(
+                bean,
+                field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
+                        && null != FieldKit.getFieldValue(bean, field));
     }
 
     /**
@@ -820,8 +840,10 @@ public class BeanKit {
      * @return {@code true} if it contains {@code null} properties, {@code false} otherwise.
      */
     public static boolean hasNullField(final Object bean, final String... ignoreFieldNames) {
-        return checkBean(bean, field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
-                && null == FieldKit.getFieldValue(bean, field));
+        return checkBean(
+                bean,
+                field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
+                        && null == FieldKit.getFieldValue(bean, field));
     }
 
     /**
@@ -833,8 +855,10 @@ public class BeanKit {
      * @return {@code true} if it contains {@code null} or empty properties, {@code false} otherwise.
      */
     public static boolean hasEmptyField(final Object bean, final String... ignoreFieldNames) {
-        return checkBean(bean, field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
-                && ObjectKit.isEmptyIfString(FieldKit.getFieldValue(bean, field)));
+        return checkBean(
+                bean,
+                field -> (!ArrayKit.contains(ignoreFieldNames, field.getName()))
+                        && ObjectKit.isEmptyIfString(FieldKit.getFieldValue(bean, field)));
     }
 
     /**

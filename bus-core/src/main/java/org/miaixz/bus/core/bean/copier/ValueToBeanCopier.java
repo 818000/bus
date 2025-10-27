@@ -74,8 +74,10 @@ public class ValueToBeanCopier<T> extends AbstractCopier<ValueProvider<String>, 
         Class<?> actualEditable = target.getClass();
         if (null != copyOptions.editable) {
             // Check if the restricted class is a superclass or interface of the target.
-            Assert.isTrue(copyOptions.editable.isInstance(target),
-                    "Target class [{}] not assignable to Editable class [{}]", actualEditable.getName(),
+            Assert.isTrue(
+                    copyOptions.editable.isInstance(target),
+                    "Target class [{}] not assignable to Editable class [{}]",
+                    actualEditable.getName(),
                     copyOptions.editable.getName());
             actualEditable = copyOptions.editable;
         }
@@ -117,7 +119,11 @@ public class ValueToBeanCopier<T> extends AbstractCopier<ValueProvider<String>, 
             }
 
             // Assign to target.
-            propDesc.setValue(this.target, sValue, copyOptions.ignoreNullValue, copyOptions.ignoreError,
+            propDesc.setValue(
+                    this.target,
+                    sValue,
+                    copyOptions.ignoreNullValue,
+                    copyOptions.ignoreError,
                     copyOptions.override);
         });
         return this.target;

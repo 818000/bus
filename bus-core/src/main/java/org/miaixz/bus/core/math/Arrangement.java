@@ -142,7 +142,10 @@ public class Arrangement implements Serializable {
      * @param resultIndex The selection index, starting from 0.
      * @param result      The final result list.
      */
-    private void select(final String[] datas, final String[] resultList, final int resultIndex,
+    private void select(
+            final String[] datas,
+            final String[] resultList,
+            final int resultIndex,
             final List<String[]> result) {
         if (resultIndex >= resultList.length) { // When all elements are selected, add the permutation result.
             if (!result.contains(resultList)) {

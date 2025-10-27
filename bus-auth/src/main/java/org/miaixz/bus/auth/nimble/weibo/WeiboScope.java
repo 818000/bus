@@ -46,45 +46,43 @@ public enum WeiboScope implements AuthorizeScope {
      */
     ALL("all", "Get all permissions", true),
     /**
-     * User's contact email. <a href="http://open.weibo.com/wiki/2/account/profile/email">Interface
-     * documentation</a>.
+     * User's contact email. <a href="http://open.weibo.com/wiki/2/account/profile/email">Interface documentation</a>.
      */
     EMAIL("email",
             "User's contact email, <a href=\"http://open.weibo.com/wiki/2/account/profile/email\">interface documentation</a>",
             false),
     /**
-     * Private message sending interface.
-     * <a href="http://open.weibo.com/wiki/C/2/direct_messages/send">Interface documentation</a>.
+     * Private message sending interface. <a href="http://open.weibo.com/wiki/C/2/direct_messages/send">Interface
+     * documentation</a>.
      */
     DIRECT_MESSAGES_WRITE("direct_messages_write",
             "Private message sending interface, <a href=\"http://open.weibo.com/wiki/C/2/direct_messages/send\">interface documentation</a>",
             false),
     /**
-     * Private message reading interface.
-     * <a href="http://open.weibo.com/wiki/C/2/direct_messages">Interface documentation</a>.
+     * Private message reading interface. <a href="http://open.weibo.com/wiki/C/2/direct_messages">Interface
+     * documentation</a>.
      */
     DIRECT_MESSAGES_READ("direct_messages_read",
             "Private message reading interface, <a href=\"http://open.weibo.com/wiki/C/2/direct_messages\">interface documentation</a>",
             false),
     /**
      * Invitation sending interface.
-     * <a href="http://open.weibo.com/wiki/Messages#.E5.A5.BD.E5.8F.8B.E9.82.80.E8.AF.B7">Interface
-     * documentation</a>.
+     * <a href="http://open.weibo.com/wiki/Messages#.E5.A5.BD.E5.8F.8B.E9.82.80.E8.AF.B7">Interface documentation</a>.
      */
     INVITATION_WRITE("invitation_write",
             "Invitation sending interface, <a href=\"http://open.weibo.com/wiki/Messages#.E5.A5.BD.E5.8F.8B.E9.82.80.E8.AF.B7\">interface documentation</a>",
             false),
     /**
-     * Friend group reading interface group. <a href=
-     * "http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.A5.BD.E5.8F.8B.E5.88.86.E7.BB.84">Interface
+     * Friend group reading interface group.
+     * <a href= "http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.A5.BD.E5.8F.8B.E5.88.86.E7.BB.84">Interface
      * documentation</a>.
      */
     FRIENDSHIPS_GROUPS_READ("friendships_groups_read",
             "Friend group reading interface group, <a href=\"http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.A5.BD.E5.8F.8B.E5.88.86.E7.BB.84\">interface documentation</a>",
             false),
     /**
-     * Friend group writing interface group. <a href=
-     * "http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.A5.BD.E5.8F.8B.E5.88.86.E7.BB.84">Interface
+     * Friend group writing interface group.
+     * <a href= "http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.A5.BD.E5.8F.8B.E5.88.86.E7.BB.84">Interface
      * documentation</a>.
      */
     FRIENDSHIPS_GROUPS_WRITE("friendships_groups_write",
@@ -92,8 +90,7 @@ public enum WeiboScope implements AuthorizeScope {
             false),
     /**
      * Directed Weibo reading interface group.
-     * <a href="http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.BE.AE.E5.8D.9A">Interface
-     * documentation</a>.
+     * <a href="http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.BE.AE.E5.8D.9A">Interface documentation</a>.
      */
     STATUSES_TO_ME_READ("statuses_to_me_read",
             "Directed Weibo reading interface group, <a href=\"http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2#.E5.BE.AE.E5.8D.9A\">interface documentation</a>",

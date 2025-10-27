@@ -293,8 +293,11 @@ public class EnumKit {
      * @param <E>         The enum type.
      * @return The corresponding enum constant, or the default value.
      */
-    public static <E extends Enum<E>, C> E getBy(final Class<E> enumClass, final FunctionX<E, C> condition,
-            final C value, final E defaultEnum) {
+    public static <E extends Enum<E>, C> E getBy(
+            final Class<E> enumClass,
+            final FunctionX<E, C> condition,
+            final C value,
+            final E defaultEnum) {
         if (null == condition) {
             return null;
         }
@@ -322,7 +325,9 @@ public class EnumKit {
      * @param <E>         The enum type.
      * @return The corresponding enum constant, or the default value.
      */
-    public static <E extends Enum<E>> E getBy(final Class<E> enumClass, final Predicate<? super E> predicate,
+    public static <E extends Enum<E>> E getBy(
+            final Class<E> enumClass,
+            final Predicate<? super E> predicate,
             final E defaultEnum) {
         if (null == enumClass || null == predicate) {
             return null;
@@ -341,7 +346,9 @@ public class EnumKit {
      * @param <C>       The type of the conditional field.
      * @return The value of the desired field, or `null` if not found.
      */
-    public static <E extends Enum<E>, F, C> F getFieldBy(final FunctionX<E, F> field, final Function<E, C> condition,
+    public static <E extends Enum<E>, F, C> F getFieldBy(
+            final FunctionX<E, F> field,
+            final Function<E, C> condition,
             final C value) {
         if (null == field || null == condition) {
             return null;
@@ -381,7 +388,8 @@ public class EnumKit {
      * @param fieldName The name of the field.
      * @return A map from enum name to field value.
      */
-    public static <E extends Enum<E>> Map<String, Object> getNameFieldMap(final Class<E> clazz,
+    public static <E extends Enum<E>> Map<String, Object> getNameFieldMap(
+            final Class<E> clazz,
             final String fieldName) {
         if (null == clazz || StringKit.isBlank(fieldName)) {
             return null;

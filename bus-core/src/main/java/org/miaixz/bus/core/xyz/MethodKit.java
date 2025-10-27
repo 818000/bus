@@ -97,7 +97,10 @@ public class MethodKit {
      * @return The `Method` object, or `null` if not found.
      * @throws SecurityException if access is denied.
      */
-    public static Method getPublicMethod(final Class<?> clazz, final boolean ignoreCase, final String methodName,
+    public static Method getPublicMethod(
+            final Class<?> clazz,
+            final boolean ignoreCase,
+            final String methodName,
             final Class<?>... paramTypes) throws SecurityException {
         if (null == clazz || StringKit.isBlank(methodName)) {
             return null;
@@ -131,7 +134,9 @@ public class MethodKit {
      * @return The `Method` object.
      * @throws SecurityException if access is denied.
      */
-    public static Method getMethodIgnoreCase(final Class<?> clazz, final String methodName,
+    public static Method getMethodIgnoreCase(
+            final Class<?> clazz,
+            final String methodName,
             final Class<?>... paramTypes) throws SecurityException {
         return getMethod(clazz, true, methodName, paramTypes);
     }
@@ -160,7 +165,10 @@ public class MethodKit {
      * @return The `Method` object.
      * @throws SecurityException if access is denied.
      */
-    public static Method getMethod(final Class<?> clazz, final boolean ignoreCase, final String methodName,
+    public static Method getMethod(
+            final Class<?> clazz,
+            final boolean ignoreCase,
+            final String methodName,
             final Class<?>... paramTypes) throws SecurityException {
         if (null == clazz || StringKit.isBlank(methodName)) {
             return null;
@@ -178,7 +186,10 @@ public class MethodKit {
      * @return The matching `Method`, or `null` if not found.
      * @throws SecurityException if access is denied.
      */
-    public static Method getMethod(final Method[] methods, final boolean ignoreCase, final String methodName,
+    public static Method getMethod(
+            final Method[] methods,
+            final boolean ignoreCase,
+            final String methodName,
             final Class<?>... paramTypes) throws SecurityException {
         if (ArrayKit.isEmpty(methods) || StringKit.isBlank(methodName)) {
             return null;
@@ -238,8 +249,10 @@ public class MethodKit {
             return null;
         }
 
-        final Method[] methods = getMethods(clazz, (method -> StringKit.equals(methodName, method.getName(), ignoreCase)
-                && (method.getReturnType().isAssignableFrom(method.getReturnType()))));
+        final Method[] methods = getMethods(
+                clazz,
+                (method -> StringKit.equals(methodName, method.getName(), ignoreCase)
+                        && (method.getReturnType().isAssignableFrom(method.getReturnType()))));
 
         return ArrayKit.isEmpty(methods) ? null : methods[0];
     }
@@ -333,7 +346,9 @@ public class MethodKit {
      * @return An array of methods.
      * @throws SecurityException if access is denied.
      */
-    public static Method[] getMethodsDirectly(final Class<?> beanClass, final boolean withSupers,
+    public static Method[] getMethodsDirectly(
+            final Class<?> beanClass,
+            final boolean withSupers,
             final boolean withMethodFromObject) throws SecurityException {
         return MethodReflect.of(Assert.notNull(beanClass)).getMethodsDirectly(withSupers, withMethodFromObject);
     }
@@ -422,14 +437,14 @@ public class MethodKit {
     public static boolean isGetterOrSetter(final Method method, final boolean ignoreCase) {
         final int parameterCount = method.getParameterCount();
         switch (parameterCount) {
-        case 0:
-            return isGetter(method, ignoreCase);
+            case 0:
+                return isGetter(method, ignoreCase);
 
-        case 1:
-            return isSetter(method, ignoreCase);
+            case 1:
+                return isSetter(method, ignoreCase);
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 
@@ -615,7 +630,10 @@ public class MethodKit {
      * @param args        The arguments.
      * @return The result of the invocation.
      */
-    public static <T> T invoke(final String className, final String methodName, final boolean isSingleton,
+    public static <T> T invoke(
+            final String className,
+            final String methodName,
+            final boolean isSingleton,
             final Object... args) {
         final Class<?> clazz = ClassKit.loadClass(className);
         try {
@@ -722,8 +740,7 @@ public class MethodKit {
         if (null == declaringClass) {
             declaringClass = executable.getDeclaringClass();
         }
-        if (executable instanceof Method) {
-            final Method method = (Method) executable;
+        if (executable instanceof Method method) {
             return MethodType.methodType(method.getReturnType(), declaringClass, method.getParameterTypes());
         } else {
             final Constructor<?> constructor = (Constructor<?>) executable;

@@ -83,7 +83,9 @@ public class TimedCache<K, V> extends LockedCache<K, V> {
         this.timeout = timeout;
         // Use NoLock for thread-safe maps, otherwise default to ReentrantLock.
         this.lock = map instanceof ConcurrentMap ? NoLock.INSTANCE : new ReentrantLock();
-        this.cacheMap = Assert.isNotInstanceOf(LinkedHashMap.class, map,
+        this.cacheMap = Assert.isNotInstanceOf(
+                LinkedHashMap.class,
+                map,
                 "LinkedHashMap is not supported for TimedCache due to its structural modification on get().");
     }
 

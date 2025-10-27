@@ -356,7 +356,10 @@ public class BooleanKit {
      * @param nullString  The String to return if the Boolean is {@code null}, may be {@code null}.
      * @return The resulting String.
      */
-    public static String toString(final Boolean bool, final String trueString, final String falseString,
+    public static String toString(
+            final Boolean bool,
+            final String trueString,
+            final String falseString,
             final String nullString) {
         if (bool == null) {
             return nullString;

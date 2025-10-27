@@ -69,8 +69,8 @@ public class RecordBeanDesc extends AbstractBeanDesc {
         // Get all public methods with no parameters, which are typically getters for Record components.
         final Method[] getters = MethodKit.getPublicMethods(beanClass, method -> 0 == method.getParameterCount());
         // Exclude static fields and outer class fields.
-        final Field[] fields = FieldKit.getFields(beanClass,
-                field -> !ModifierKit.isStatic(field) && !FieldKit.isOuterClassField(field));
+        final Field[] fields = FieldKit
+                .getFields(beanClass, field -> !ModifierKit.isStatic(field) && !FieldKit.isOuterClassField(field));
         for (final Field field : fields) {
             for (final Method getter : getters) {
                 if (field.getName().equals(getter.getName())) {

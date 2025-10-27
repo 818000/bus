@@ -124,9 +124,9 @@ public class DatePattern {
      */
     protected static NumberRule selectNumberRule(final int field, final int padding) {
         return switch (padding) {
-        case 1 -> new UnpaddedNumberField(field);
-        case 2 -> new TwoDigitNumberField(field);
-        default -> new PaddedNumberField(field, padding);
+            case 1 -> new UnpaddedNumberField(field);
+            case 2 -> new TwoDigitNumberField(field);
+            default -> new PaddedNumberField(field, padding);
         };
     }
 
@@ -166,27 +166,27 @@ public class DatePattern {
                 buffer.append('0');
             }
             switch (nDigits) {
-            case 4 -> {
-                buffer.append((char) (value / 1000 + '0'));
-                value %= 1000;
-            }
-            case 3 -> {
-                if (value >= 100) {
-                    buffer.append((char) (value / 100 + '0'));
-                    value %= 100;
-                } else {
-                    buffer.append('0');
+                case 4 -> {
+                    buffer.append((char) (value / 1000 + '0'));
+                    value %= 1000;
                 }
-            }
-            case 2 -> {
-                if (value >= 10) {
-                    buffer.append((char) (value / 10 + '0'));
-                    value %= 10;
-                } else {
-                    buffer.append('0');
+                case 3 -> {
+                    if (value >= 100) {
+                        buffer.append((char) (value / 100 + '0'));
+                        value %= 100;
+                    } else {
+                        buffer.append('0');
+                    }
                 }
-            }
-            case 1 -> buffer.append((char) (value + '0'));
+                case 2 -> {
+                    if (value >= 10) {
+                        buffer.append((char) (value / 10 + '0'));
+                        value %= 10;
+                    } else {
+                        buffer.append('0');
+                    }
+                }
+                case 1 -> buffer.append((char) (value + '0'));
             }
         } else {
             char[] work = new char[Normal._10];
@@ -293,63 +293,64 @@ public class DatePattern {
             final char c = token.charAt(0);
 
             switch (c) {
-            case 'G' -> rule = new TextField(Calendar.ERA, ERAs);
-            case 'y', 'Y' -> {
-                if (tokenLen == 2) {
-                    rule = TwoDigitYearField.INSTANCE;
-                } else {
-                    rule = selectNumberRule(Calendar.YEAR, Math.max(tokenLen, 4));
+                case 'G' -> rule = new TextField(Calendar.ERA, ERAs);
+                case 'y', 'Y' -> {
+                    if (tokenLen == 2) {
+                        rule = TwoDigitYearField.INSTANCE;
+                    } else {
+                        rule = selectNumberRule(Calendar.YEAR, Math.max(tokenLen, 4));
+                    }
+                    if (c == 'Y') {
+                        rule = new WeekYear((NumberRule) rule);
+                    }
                 }
-                if (c == 'Y') {
-                    rule = new WeekYear((NumberRule) rule);
+                case 'M' -> {
+                    if (tokenLen >= 4) {
+                        rule = new TextField(Calendar.MONTH, months);
+                    } else if (tokenLen == 3) {
+                        rule = new TextField(Calendar.MONTH, shortMonths);
+                    } else if (tokenLen == 2) {
+                        rule = TwoDigitMonthField.INSTANCE;
+                    } else {
+                        rule = UnpaddedMonthField.INSTANCE;
+                    }
                 }
-            }
-            case 'M' -> {
-                if (tokenLen >= 4) {
-                    rule = new TextField(Calendar.MONTH, months);
-                } else if (tokenLen == 3) {
-                    rule = new TextField(Calendar.MONTH, shortMonths);
-                } else if (tokenLen == 2) {
-                    rule = TwoDigitMonthField.INSTANCE;
-                } else {
-                    rule = UnpaddedMonthField.INSTANCE;
+                case 'd' -> rule = selectNumberRule(Calendar.DAY_OF_MONTH, tokenLen);
+                case 'h' -> rule = new TwelveHourField(selectNumberRule(Calendar.HOUR, tokenLen));
+                case 'H' -> rule = selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen);
+                case 'm' -> rule = selectNumberRule(Calendar.MINUTE, tokenLen);
+                case 's' -> rule = selectNumberRule(Calendar.SECOND, tokenLen);
+                case 'S' -> rule = selectNumberRule(Calendar.MILLISECOND, tokenLen);
+                case 'E' -> rule = new TextField(Calendar.DAY_OF_WEEK, tokenLen < 4 ? shortWeekdays : weekdays);
+                case 'u' -> rule = new DayInWeekField(selectNumberRule(Calendar.DAY_OF_WEEK, tokenLen));
+                case 'D' -> rule = selectNumberRule(Calendar.DAY_OF_YEAR, tokenLen);
+                case 'F' -> rule = selectNumberRule(Calendar.DAY_OF_WEEK_IN_MONTH, tokenLen);
+                case 'w' -> rule = selectNumberRule(Calendar.WEEK_OF_YEAR, tokenLen);
+                case 'W' -> rule = selectNumberRule(Calendar.WEEK_OF_MONTH, tokenLen);
+                case 'a' -> rule = new TextField(Calendar.AM_PM, AmPmStrings);
+                case 'k' -> rule = new TwentyFourHourField(selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen));
+                case 'K' -> rule = selectNumberRule(Calendar.HOUR, tokenLen);
+                case 'X' -> rule = Iso8601_Rule.getRule(tokenLen);
+                case 'z' -> rule = new TimeZoneNameRule(timeZone, locale,
+                        tokenLen < 4 ? TimeZone.SHORT : TimeZone.LONG);
+                case 'Z' -> {
+                    if (tokenLen == 1) {
+                        rule = TimeZoneNumberRule.INSTANCE_NO_COLON;
+                    } else if (tokenLen == 2) {
+                        rule = Iso8601_Rule.ISO8601_HOURS_COLON_MINUTES;
+                    } else {
+                        rule = TimeZoneNumberRule.INSTANCE_COLON;
+                    }
                 }
-            }
-            case 'd' -> rule = selectNumberRule(Calendar.DAY_OF_MONTH, tokenLen);
-            case 'h' -> rule = new TwelveHourField(selectNumberRule(Calendar.HOUR, tokenLen));
-            case 'H' -> rule = selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen);
-            case 'm' -> rule = selectNumberRule(Calendar.MINUTE, tokenLen);
-            case 's' -> rule = selectNumberRule(Calendar.SECOND, tokenLen);
-            case 'S' -> rule = selectNumberRule(Calendar.MILLISECOND, tokenLen);
-            case 'E' -> rule = new TextField(Calendar.DAY_OF_WEEK, tokenLen < 4 ? shortWeekdays : weekdays);
-            case 'u' -> rule = new DayInWeekField(selectNumberRule(Calendar.DAY_OF_WEEK, tokenLen));
-            case 'D' -> rule = selectNumberRule(Calendar.DAY_OF_YEAR, tokenLen);
-            case 'F' -> rule = selectNumberRule(Calendar.DAY_OF_WEEK_IN_MONTH, tokenLen);
-            case 'w' -> rule = selectNumberRule(Calendar.WEEK_OF_YEAR, tokenLen);
-            case 'W' -> rule = selectNumberRule(Calendar.WEEK_OF_MONTH, tokenLen);
-            case 'a' -> rule = new TextField(Calendar.AM_PM, AmPmStrings);
-            case 'k' -> rule = new TwentyFourHourField(selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen));
-            case 'K' -> rule = selectNumberRule(Calendar.HOUR, tokenLen);
-            case 'X' -> rule = Iso8601_Rule.getRule(tokenLen);
-            case 'z' -> rule = new TimeZoneNameRule(timeZone, locale, tokenLen < 4 ? TimeZone.SHORT : TimeZone.LONG);
-            case 'Z' -> {
-                if (tokenLen == 1) {
-                    rule = TimeZoneNumberRule.INSTANCE_NO_COLON;
-                } else if (tokenLen == 2) {
-                    rule = Iso8601_Rule.ISO8601_HOURS_COLON_MINUTES;
-                } else {
-                    rule = TimeZoneNumberRule.INSTANCE_COLON;
+                case '\'' -> {
+                    final String sub = token.substring(1);
+                    if (sub.length() == 1) {
+                        rule = new CharacterLiteral(sub.charAt(0));
+                    } else {
+                        rule = new StringLiteral(sub);
+                    }
                 }
-            }
-            case '\'' -> {
-                final String sub = token.substring(1);
-                if (sub.length() == 1) {
-                    rule = new CharacterLiteral(sub.charAt(0));
-                } else {
-                    rule = new StringLiteral(sub);
-                }
-            }
-            default -> throw new IllegalArgumentException("Illegal pattern component: " + token);
+                default -> throw new IllegalArgumentException("Illegal pattern component: " + token);
             }
             this.estimateLength += rule.estimateLength();
             rules.add(rule);
@@ -854,10 +855,10 @@ public class DatePattern {
 
         static Iso8601_Rule getRule(final int tokenLen) {
             return switch (tokenLen) {
-            case 1 -> Iso8601_Rule.ISO8601_HOURS;
-            case 2 -> Iso8601_Rule.ISO8601_HOURS_MINUTES;
-            case 3 -> Iso8601_Rule.ISO8601_HOURS_COLON_MINUTES;
-            default -> throw new IllegalArgumentException("invalid number of X");
+                case 1 -> Iso8601_Rule.ISO8601_HOURS;
+                case 2 -> Iso8601_Rule.ISO8601_HOURS_MINUTES;
+                case 3 -> Iso8601_Rule.ISO8601_HOURS_COLON_MINUTES;
+                default -> throw new IllegalArgumentException("invalid number of X");
             };
         }
 

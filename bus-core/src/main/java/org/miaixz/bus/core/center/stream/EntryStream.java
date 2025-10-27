@@ -141,8 +141,10 @@ public class EntryStream<K, V> extends EnhancedWrappedStream<Map.Entry<K, V>, En
      * @param <V>         the type of values
      * @return an {@code EntryStream} instance
      */
-    public static <T, K, V> EntryStream<K, V> of(final Iterable<T> source,
-            final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+    public static <T, K, V> EntryStream<K, V> of(
+            final Iterable<T> source,
+            final Function<? super T, ? extends K> keyMapper,
+            final Function<? super T, ? extends V> valueMapper) {
         Objects.requireNonNull(keyMapper);
         Objects.requireNonNull(valueMapper);
         if (ObjectKit.isNull(source)) {
@@ -611,13 +613,17 @@ public class EntryStream<K, V> extends EnhancedWrappedStream<Map.Entry<K, V>, En
      * @return a {@link Table} containing the grouped elements
      * @see Collectors#groupingBy(Function, Supplier, Collector)
      */
-    public <N> Table<N, K, V> toTable(final BiFunction<? super K, ? super V, ? extends N> rowKeyMapper,
-            final Supplier<Map<K, V>> colMapFactory, final BinaryOperator<V> operator) {
+    public <N> Table<N, K, V> toTable(
+            final BiFunction<? super K, ? super V, ? extends N> rowKeyMapper,
+            final Supplier<Map<K, V>> colMapFactory,
+            final BinaryOperator<V> operator) {
         Objects.requireNonNull(rowKeyMapper);
         Objects.requireNonNull(colMapFactory);
         Objects.requireNonNull(operator);
         final Map<N, Map<K, V>> rawMap = collect(
-                Collectors.groupingBy(e -> rowKeyMapper.apply(e.getKey(), e.getValue()), HashMap::new,
+                Collectors.groupingBy(
+                        e -> rowKeyMapper.apply(e.getKey(), e.getValue()),
+                        HashMap::new,
                         Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, operator, colMapFactory)));
         return new RowKeyTable<>(rawMap, colMapFactory::get);
     }
@@ -644,8 +650,10 @@ public class EntryStream<K, V> extends EnhancedWrappedStream<Map.Entry<K, V>, En
      * @param <N>           the type of the row keys in the parent map
      * @return a {@link Table} containing the grouped elements
      */
-    public <N> Table<N, K, V> toTableByKey(final Function<? super K, ? extends N> rowKeyMapper,
-            final Supplier<Map<K, V>> colMapFactory, final BinaryOperator<V> operator) {
+    public <N> Table<N, K, V> toTableByKey(
+            final Function<? super K, ? extends N> rowKeyMapper,
+            final Supplier<Map<K, V>> colMapFactory,
+            final BinaryOperator<V> operator) {
         return toTable((k, v) -> rowKeyMapper.apply(k), colMapFactory, operator);
     }
 
@@ -671,8 +679,10 @@ public class EntryStream<K, V> extends EnhancedWrappedStream<Map.Entry<K, V>, En
      * @param <N>           the type of the row keys in the parent map
      * @return a {@link Table} containing the grouped elements
      */
-    public <N> Table<N, K, V> toTableByValue(final Function<? super V, ? extends N> rowKeyMapper,
-            final Supplier<Map<K, V>> colMapFactory, final BinaryOperator<V> operator) {
+    public <N> Table<N, K, V> toTableByValue(
+            final Function<? super V, ? extends N> rowKeyMapper,
+            final Supplier<Map<K, V>> colMapFactory,
+            final BinaryOperator<V> operator) {
         return toTable((k, v) -> rowKeyMapper.apply(v), colMapFactory, operator);
     }
 
@@ -718,10 +728,16 @@ public class EntryStream<K, V> extends EnhancedWrappedStream<Map.Entry<K, V>, En
      * @param <M>        the type of the resulting map
      * @return a {@link Map} where keys are the original keys and values are collections of corresponding values
      */
-    public <C extends Collection<V>, M extends Map<K, C>> M groupByKey(final Supplier<M> mapFactory,
+    public <C extends Collection<V>, M extends Map<K, C>> M groupByKey(
+            final Supplier<M> mapFactory,
             final Collector<V, ?, C> collector) {
-        return super.collect(Collectors.groupingBy(Map.Entry::getKey, mapFactory,
-                CollectorKit.transform(ArrayList::new, s -> s.stream().map(Map.Entry::getValue).collect(collector))));
+        return super.collect(
+                Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        mapFactory,
+                        CollectorKit.transform(
+                                ArrayList::new,
+                                s -> s.stream().map(Map.Entry::getValue).collect(collector))));
     }
 
     /**

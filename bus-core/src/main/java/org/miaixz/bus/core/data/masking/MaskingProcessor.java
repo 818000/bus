@@ -246,16 +246,16 @@ public class MaskingProcessor {
         while (matcher.find()) {
             final String matched = matcher.group();
             final String replacement = switch (rule.getMasking()) {
-            case FULL ->
-                    // Full masking: replace the entire matched content with the mask character
-                    StringKit.repeat(rule.getMaskChar(), matched.length());
-            case PARTIAL ->
-                    // Partial masking: preserve some of the original content
-                    partialMask(matched, rule.getPreserveLeft(), rule.getPreserveRight(), rule.getMaskChar());
-            case REPLACE ->
-                    // Replacement masking: replace with the specified text
-                    rule.getReplacement();
-            default -> matched;
+                case FULL ->
+                        // Full masking: replace the entire matched content with the mask character
+                        StringKit.repeat(rule.getMaskChar(), matched.length());
+                case PARTIAL ->
+                        // Partial masking: preserve some of the original content
+                        partialMask(matched, rule.getPreserveLeft(), rule.getPreserveRight(), rule.getMaskChar());
+                case REPLACE ->
+                        // Replacement masking: replace with the specified text
+                        rule.getReplacement();
+                default -> matched;
             };
 
             // Handle special characters in the regular expression

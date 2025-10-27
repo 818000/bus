@@ -148,7 +148,10 @@ public class ZipKit {
      * @return The created zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final String srcPath, final String zipPath, final java.nio.charset.Charset charset,
+    public static File zip(
+            final String srcPath,
+            final String zipPath,
+            final java.nio.charset.Charset charset,
             final boolean withSrcDir) throws InternalException {
         final File srcFile = FileKit.file(srcPath);
         final File zipFile = FileKit.file(zipPath);
@@ -180,7 +183,10 @@ public class ZipKit {
      * @return The created zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final File zipFile, final java.nio.charset.Charset charset, final boolean withSrcDir,
+    public static File zip(
+            final File zipFile,
+            final java.nio.charset.Charset charset,
+            final boolean withSrcDir,
             final File... srcFiles) throws InternalException {
         return zip(zipFile, charset, withSrcDir, null, srcFiles);
     }
@@ -196,8 +202,12 @@ public class ZipKit {
      * @return The created zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final File zipFile, final java.nio.charset.Charset charset, final boolean withSrcDir,
-            final FileFilter filter, final File... srcFiles) throws InternalException {
+    public static File zip(
+            final File zipFile,
+            final java.nio.charset.Charset charset,
+            final boolean withSrcDir,
+            final FileFilter filter,
+            final File... srcFiles) throws InternalException {
         validateFiles(zipFile, srcFiles);
         try (final ZipWriter zipWriter = ZipWriter.of(zipFile, charset)) {
             zipWriter.add(withSrcDir, filter, srcFiles);
@@ -215,8 +225,12 @@ public class ZipKit {
      * @param srcFiles   The source files or directories.
      * @throws InternalException for IO errors.
      */
-    public static void zip(final OutputStream out, final java.nio.charset.Charset charset, final boolean withSrcDir,
-            final FileFilter filter, final File... srcFiles) throws InternalException {
+    public static void zip(
+            final OutputStream out,
+            final java.nio.charset.Charset charset,
+            final boolean withSrcDir,
+            final FileFilter filter,
+            final File... srcFiles) throws InternalException {
         try (final ZipWriter zipWriter = ZipWriter.of(out, charset)) {
             zipWriter.add(withSrcDir, filter, srcFiles);
         }
@@ -245,7 +259,10 @@ public class ZipKit {
      * @return The modified zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final File zipFile, final String path, final String data,
+    public static File zip(
+            final File zipFile,
+            final String path,
+            final String data,
             final java.nio.charset.Charset charset) throws InternalException {
         return zip(zipFile, path, IoKit.toStream(data, charset), charset);
     }
@@ -273,7 +290,10 @@ public class ZipKit {
      * @return The modified zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final File zipFile, final String path, final InputStream in,
+    public static File zip(
+            final File zipFile,
+            final String path,
+            final InputStream in,
             final java.nio.charset.Charset charset) throws InternalException {
         return zip(zipFile, new String[] { path }, new InputStream[] { in }, charset);
     }
@@ -301,7 +321,10 @@ public class ZipKit {
      * @return The modified zip file.
      * @throws InternalException for IO errors.
      */
-    public static File zip(final File zipFile, final String[] paths, final InputStream[] ins,
+    public static File zip(
+            final File zipFile,
+            final String[] paths,
+            final InputStream[] ins,
             final java.nio.charset.Charset charset) throws InternalException {
         try (final ZipWriter zipWriter = ZipWriter.of(zipFile, charset)) {
             zipWriter.add(paths, ins);
@@ -545,7 +568,9 @@ public class ZipKit {
      * @param name        The name of the entry to extract.
      * @return The content of the file as a byte array.
      */
-    public static byte[] unzipFileBytes(final String zipFilePath, final java.nio.charset.Charset charset,
+    public static byte[] unzipFileBytes(
+            final String zipFilePath,
+            final java.nio.charset.Charset charset,
             final String name) {
         return unzipFileBytes(FileKit.file(zipFilePath), charset, name);
     }

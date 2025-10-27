@@ -275,7 +275,9 @@ public class ResourceKit {
      * @param resource   The resource.
      * @param charset    The charset (ignored for XML files).
      */
-    public static void loadTo(final Properties properties, final Resource resource,
+    public static void loadTo(
+            final Properties properties,
+            final Resource resource,
             final java.nio.charset.Charset charset) {
         Assert.notNull(properties);
         Assert.notNull(resource);
@@ -304,8 +306,12 @@ public class ResourceKit {
      * @param charset      The charset.
      * @param isOverride   If `true`, later files will override properties from earlier ones.
      */
-    public static void loadAllTo(final Properties properties, final String resourceName, final ClassLoader classLoader,
-            final java.nio.charset.Charset charset, final boolean isOverride) {
+    public static void loadAllTo(
+            final Properties properties,
+            final String resourceName,
+            final ClassLoader classLoader,
+            final java.nio.charset.Charset charset,
+            final boolean isOverride) {
         if (isOverride) {
             for (final Resource resource : getResources(resourceName, classLoader)) {
                 loadTo(properties, resource, charset);

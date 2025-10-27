@@ -103,7 +103,9 @@ public class TreeKit {
      * @param nodeParser The parser to convert a data object to a tree node.
      * @return A {@link MapTree}.
      */
-    public static <T, E> MapTree<E> buildSingle(final Iterable<T> list, final E parentId,
+    public static <T, E> MapTree<E> buildSingle(
+            final Iterable<T> list,
+            final E parentId,
             final NodeParser<T, E> nodeParser) {
         return buildSingle(list, parentId, NodeConfig.DEFAULT_CONFIG, nodeParser);
     }
@@ -118,7 +120,9 @@ public class TreeKit {
      * @param nodeParser The parser to convert a data object to a tree node.
      * @return A list of root nodes.
      */
-    public static <T, E> List<MapTree<E>> build(final Iterable<T> list, final E parentId,
+    public static <T, E> List<MapTree<E>> build(
+            final Iterable<T> list,
+            final E parentId,
             final NodeParser<T, E> nodeParser) {
         return build(list, parentId, NodeConfig.DEFAULT_CONFIG, nodeParser);
     }
@@ -134,7 +138,10 @@ public class TreeKit {
      * @param nodeParser The parser to convert a data object to a tree node.
      * @return A list of root nodes.
      */
-    public static <T, E> List<MapTree<E>> build(final Iterable<T> list, final E rootId, final NodeConfig nodeConfig,
+    public static <T, E> List<MapTree<E>> build(
+            final Iterable<T> list,
+            final E rootId,
+            final NodeConfig nodeConfig,
             final NodeParser<T, E> nodeParser) {
         return buildSingle(list, rootId, nodeConfig, nodeParser).getChildren();
     }
@@ -150,7 +157,10 @@ public class TreeKit {
      * @param nodeParser The parser to convert a data object to a tree node.
      * @return A {@link MapTree}.
      */
-    public static <T, E> MapTree<E> buildSingle(final Iterable<T> list, final E rootId, final NodeConfig nodeConfig,
+    public static <T, E> MapTree<E> buildSingle(
+            final Iterable<T> list,
+            final E rootId,
+            final NodeConfig nodeConfig,
             final NodeParser<T, E> nodeParser) {
         return TreeBuilder.of(rootId, nodeConfig).append(list, nodeParser).build();
     }
@@ -246,7 +256,9 @@ public class TreeKit {
      * @param fieldFunc          The function to extract the field value.
      * @return A list of field values from all parent nodes.
      */
-    public static <T, E> List<E> getParents(final MapTree<T> node, final boolean includeCurrentNode,
+    public static <T, E> List<E> getParents(
+            final MapTree<T> node,
+            final boolean includeCurrentNode,
             final Function<MapTree<T>, E> fieldFunc) {
         final List<E> result = new ArrayList<>();
         if (null == node) {

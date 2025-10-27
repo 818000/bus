@@ -234,7 +234,9 @@ public class ObjectValidator {
      * @param defaultValue The default return value when the object is {@code null}.
      * @return The result of the handler if the object is not {@code null}, otherwise the default value.
      */
-    public static <T, R> R defaultIfNull(final T source, final Function<? super T, ? extends R> handler,
+    public static <T, R> R defaultIfNull(
+            final T source,
+            final Function<? super T, ? extends R> handler,
             final R defaultValue) {
         return isNull(source) ? defaultValue : handler.apply(source);
     }
@@ -251,7 +253,9 @@ public class ObjectValidator {
      * @return The result of the handler if the object is not {@code null}, otherwise the default value from the
      *         supplier.
      */
-    public static <T, R> R defaultIfNull(final T source, final Function<? super T, ? extends R> handler,
+    public static <T, R> R defaultIfNull(
+            final T source,
+            final Function<? super T, ? extends R> handler,
             final Supplier<? extends R> defaultSupplier) {
         if (isNotNull(source)) {
             return handler.apply(source);

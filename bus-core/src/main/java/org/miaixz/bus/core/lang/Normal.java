@@ -852,9 +852,17 @@ public class Normal {
     /**
      * Set of meta-annotations.
      */
-    public static final Set<Class<? extends Annotation>> META_ANNOTATIONS = SetKit.of(Target.class, Retention.class,
-            Inherited.class, Documented.class, SuppressWarnings.class, Override.class, Deprecated.class,
-            Repeatable.class, Native.class, FunctionalInterface.class);
+    public static final Set<Class<? extends Annotation>> META_ANNOTATIONS = SetKit.of(
+            Target.class,
+            Retention.class,
+            Inherited.class,
+            Documented.class,
+            SuppressWarnings.class,
+            Override.class,
+            Deprecated.class,
+            Repeatable.class,
+            Native.class,
+            FunctionalInterface.class);
 
     /**
      * Checks if the provided URL represents a file resource. File protocols include "file", "vfsfile", or "vfs".

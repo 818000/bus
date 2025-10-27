@@ -90,7 +90,9 @@ public class ThreadKit {
      * @param maximumQueueSize The maximum queue size.
      * @return A {@link ThreadPoolExecutor}.
      */
-    public static ExecutorService newExecutor(final int corePoolSize, final int maximumPoolSize,
+    public static ExecutorService newExecutor(
+            final int corePoolSize,
+            final int maximumPoolSize,
             final int maximumQueueSize) {
         return ExecutorBuilder.of().setCorePoolSize(corePoolSize).setMaxPoolSize(maximumPoolSize)
                 .useLinkedBlockingQueue(maximumQueueSize).build();
@@ -119,7 +121,9 @@ public class ThreadKit {
      * @param isBlocked        If `true`, uses a `BlockPolicy` for rejected tasks.
      * @return An {@link ExecutorService}.
      */
-    public static ExecutorService newFixedExecutor(final int nThreads, final String threadNamePrefix,
+    public static ExecutorService newFixedExecutor(
+            final int nThreads,
+            final String threadNamePrefix,
             final boolean isBlocked) {
         return newFixedExecutor(nThreads, 1024, threadNamePrefix, isBlocked);
     }
@@ -133,9 +137,15 @@ public class ThreadKit {
      * @param isBlocked        If `true`, uses a `BlockPolicy`.
      * @return A {@link ThreadPoolExecutor}.
      */
-    public static ThreadPoolExecutor newFixedExecutor(final int nThreads, final int maximumQueueSize,
-            final String threadNamePrefix, final boolean isBlocked) {
-        return newFixedExecutor(nThreads, maximumQueueSize, threadNamePrefix,
+    public static ThreadPoolExecutor newFixedExecutor(
+            final int nThreads,
+            final int maximumQueueSize,
+            final String threadNamePrefix,
+            final boolean isBlocked) {
+        return newFixedExecutor(
+                nThreads,
+                maximumQueueSize,
+                threadNamePrefix,
                 (isBlocked ? RejectPolicy.BLOCK : RejectPolicy.ABORT).getValue());
     }
 
@@ -148,8 +158,11 @@ public class ThreadKit {
      * @param handler          The rejection handler.
      * @return A {@link ThreadPoolExecutor}.
      */
-    public static ThreadPoolExecutor newFixedExecutor(final int nThreads, final int maximumQueueSize,
-            final String threadNamePrefix, final RejectedExecutionHandler handler) {
+    public static ThreadPoolExecutor newFixedExecutor(
+            final int nThreads,
+            final int maximumQueueSize,
+            final String threadNamePrefix,
+            final RejectedExecutionHandler handler) {
         return ExecutorBuilder.of().setCorePoolSize(nThreads).setMaxPoolSize(nThreads)
                 .setWorkQueue(new LinkedBlockingQueue<>(maximumQueueSize))
                 .setThreadFactory(createThreadFactory(threadNamePrefix)).setHandler(handler).build();
@@ -541,7 +554,9 @@ public class ThreadKit {
      * @param isDaemon    If `true`, created threads will be daemon threads.
      * @return A {@link ThreadFactory}.
      */
-    public static ThreadFactory newNamedThreadFactory(final String prefix, final ThreadGroup threadGroup,
+    public static ThreadFactory newNamedThreadFactory(
+            final String prefix,
+            final ThreadGroup threadGroup,
             final boolean isDaemon) {
         return new NamedThreadFactory(prefix, threadGroup, isDaemon);
     }
@@ -555,8 +570,11 @@ public class ThreadKit {
      * @param handler     The handler for uncaught exceptions.
      * @return A {@link ThreadFactory}.
      */
-    public static ThreadFactory newNamedThreadFactory(final String prefix, final ThreadGroup threadGroup,
-            final boolean isDaemon, final UncaughtExceptionHandler handler) {
+    public static ThreadFactory newNamedThreadFactory(
+            final String prefix,
+            final ThreadGroup threadGroup,
+            final boolean isDaemon,
+            final UncaughtExceptionHandler handler) {
         return new NamedThreadFactory(prefix, threadGroup, isDaemon, handler);
     }
 
@@ -610,8 +628,12 @@ public class ThreadKit {
      * @param fixedRateOrFixedDelay If `true`, uses fixed-rate execution; otherwise, fixed-delay.
      * @return The `ScheduledExecutorService`.
      */
-    public static ScheduledExecutorService schedule(final ScheduledExecutorService executor, final Runnable command,
-            final long initialDelay, final long period, final boolean fixedRateOrFixedDelay) {
+    public static ScheduledExecutorService schedule(
+            final ScheduledExecutorService executor,
+            final Runnable command,
+            final long initialDelay,
+            final long period,
+            final boolean fixedRateOrFixedDelay) {
         return schedule(executor, command, initialDelay, period, TimeUnit.MILLISECONDS, fixedRateOrFixedDelay);
     }
 
@@ -626,8 +648,13 @@ public class ThreadKit {
      * @param fixedRateOrFixedDelay If `true`, uses fixed-rate execution; otherwise, fixed-delay.
      * @return The `ScheduledExecutorService`.
      */
-    public static ScheduledExecutorService schedule(ScheduledExecutorService executor, final Runnable command,
-            final long initialDelay, final long period, final TimeUnit timeUnit, final boolean fixedRateOrFixedDelay) {
+    public static ScheduledExecutorService schedule(
+            ScheduledExecutorService executor,
+            final Runnable command,
+            final long initialDelay,
+            final long period,
+            final TimeUnit timeUnit,
+            final boolean fixedRateOrFixedDelay) {
         if (null == executor) {
             executor = createScheduledExecutor(2);
         }

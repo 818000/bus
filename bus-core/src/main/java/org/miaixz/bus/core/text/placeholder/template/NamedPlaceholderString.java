@@ -97,8 +97,8 @@ public class NamedPlaceholderString extends StringTemplate {
         if (!placeholderSegments.isEmpty()) {
             for (final AbstractSegment segment : placeholderSegments) {
                 if (segment instanceof IndexedSegment) {
-                    this.indexedSegmentMaxIdx = Math.max(this.indexedSegmentMaxIdx,
-                            ((IndexedSegment) segment).getIndex());
+                    this.indexedSegmentMaxIdx = Math
+                            .max(this.indexedSegmentMaxIdx, ((IndexedSegment) segment).getIndex());
                 }
             }
         }
@@ -153,7 +153,9 @@ public class NamedPlaceholderString extends StringTemplate {
                     hasDoubleEscape = true;
                 } else {
                     // The opening symbol is escaped, skip, find the next opening symbol
-                    addLiteralSegment(isLastLiteralSegment, segments,
+                    addLiteralSegment(
+                            isLastLiteralSegment,
+                            segments,
                             template.substring(closeCursor, openCursor - 1) + prefix);
                     isLastLiteralSegment = true;
                     closeCursor = openCursor + openLength;
@@ -519,7 +521,9 @@ public class NamedPlaceholderString extends StringTemplate {
      *                            not found in the collection. This parameter can be {@code null}, and is only effective
      *                            with the {@link Feature#MATCH_EMPTY_VALUE_TO_DEFAULT_VALUE} strategy.
      */
-    public void matchesIndexed(final String text, final BiConsumer<Integer, String> idxValueConsumer,
+    public void matchesIndexed(
+            final String text,
+            final BiConsumer<Integer, String> idxValueConsumer,
             final IntFunction<String> missingIndexHandler) {
         if (text == null || CollKit.isEmpty(placeholderSegments) || !isMatches(text)) {
             return;

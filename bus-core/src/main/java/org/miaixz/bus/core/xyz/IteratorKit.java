@@ -83,9 +83,14 @@ public class IteratorKit extends IteratorValidator {
      * @param fieldNameForValue the name of the field to be used as the value (obtained via reflection)
      * @return a map constructed from the specified fields
      */
-    public static <K, V> Map<K, V> fieldValueAsMap(final Iterator<?> iter, final String fieldNameForKey,
+    public static <K, V> Map<K, V> fieldValueAsMap(
+            final Iterator<?> iter,
+            final String fieldNameForKey,
             final String fieldNameForValue) {
-        return MapKit.putAll(new HashMap<>(), iter, (value) -> (K) FieldKit.getFieldValue(value, fieldNameForKey),
+        return MapKit.putAll(
+                new HashMap<>(),
+                iter,
+                (value) -> (K) FieldKit.getFieldValue(value, fieldNameForKey),
                 (value) -> (V) FieldKit.getFieldValue(value, fieldNameForValue));
     }
 
@@ -147,7 +152,10 @@ public class IteratorKit extends IteratorValidator {
      * @param suffix      the suffix to add to each element ({@code null} for no suffix)
      * @return the joined string
      */
-    public static <T> String join(final Iterator<T> iterator, final CharSequence conjunction, final String prefix,
+    public static <T> String join(
+            final Iterator<T> iterator,
+            final CharSequence conjunction,
+            final String prefix,
             final String suffix) {
         return StringJoiner.of(conjunction, prefix, suffix).setWrapElement(true).append(iterator).toString();
     }
@@ -162,7 +170,9 @@ public class IteratorKit extends IteratorValidator {
      * @param func        the function to convert each element to a string
      * @return the joined string
      */
-    public static <T> String join(final Iterator<T> iterator, final CharSequence conjunction,
+    public static <T> String join(
+            final Iterator<T> iterator,
+            final CharSequence conjunction,
             final Function<T, ? extends CharSequence> func) {
         if (null == iterator) {
             return null;
@@ -263,7 +273,9 @@ public class IteratorKit extends IteratorValidator {
      * @param valueMapper the function to map an element to a value in the list
      * @return a {@link HashMap}
      */
-    public static <T, K, V> Map<K, List<V>> toListMap(final Iterable<T> iterable, final Function<T, K> keyMapper,
+    public static <T, K, V> Map<K, List<V>> toListMap(
+            final Iterable<T> iterable,
+            final Function<T, K> keyMapper,
             final Function<T, V> valueMapper) {
         return toListMap(MapKit.newHashMap(), iterable, keyMapper, valueMapper);
     }
@@ -280,8 +292,11 @@ public class IteratorKit extends IteratorValidator {
      * @param valueMapper the function to map an element to a value in the list
      * @return the populated map
      */
-    public static <T, K, V> Map<K, List<V>> toListMap(Map<K, List<V>> resultMap, final Iterable<T> iterable,
-            final Function<T, K> keyMapper, final Function<T, V> valueMapper) {
+    public static <T, K, V> Map<K, List<V>> toListMap(
+            Map<K, List<V>> resultMap,
+            final Iterable<T> iterable,
+            final Function<T, K> keyMapper,
+            final Function<T, V> valueMapper) {
         if (null == resultMap) {
             resultMap = MapKit.newHashMap();
         }
@@ -320,7 +335,9 @@ public class IteratorKit extends IteratorValidator {
      * @param valueMapper the function to map an element to a value
      * @return a {@link HashMap}
      */
-    public static <T, K, V> Map<K, V> toMap(final Iterable<T> iterable, final Function<T, K> keyMapper,
+    public static <T, K, V> Map<K, V> toMap(
+            final Iterable<T> iterable,
+            final Function<T, K> keyMapper,
             final Function<T, V> valueMapper) {
         return MapKit.putAll(MapKit.newHashMap(), iterable, keyMapper, valueMapper);
     }
@@ -456,7 +473,8 @@ public class IteratorKit extends IteratorValidator {
      *                  retained
      * @return a new {@link FilterIterator}
      */
-    public static <E> FilterIterator<E> filtered(final Iterator<? extends E> iterator,
+    public static <E> FilterIterator<E> filtered(
+            final Iterator<? extends E> iterator,
             final Predicate<? super E> predicate) {
         return new FilterIterator<>(iterator, predicate);
     }
@@ -481,7 +499,8 @@ public class IteratorKit extends IteratorValidator {
      * @param function the transformation function
      * @return the transformed {@link Iterator}
      */
-    public static <F, T> Iterator<T> trans(final Iterator<F> iterator,
+    public static <F, T> Iterator<T> trans(
+            final Iterator<F> iterator,
             final Function<? super F, ? extends T> function) {
         return new TransIterator<>(iterator, function);
     }
@@ -606,8 +625,12 @@ public class IteratorKit extends IteratorValidator {
      * @param suffix    the suffix for the entire string
      * @return a string representation of the iterator's elements
      */
-    public static <E> String toString(final Iterator<E> iterator, final Function<? super E, String> transFunc,
-            final String delimiter, final String prefix, final String suffix) {
+    public static <E> String toString(
+            final Iterator<E> iterator,
+            final Function<? super E, String> transFunc,
+            final String delimiter,
+            final String prefix,
+            final String suffix) {
         final StringJoiner stringJoiner = StringJoiner.of(delimiter, prefix, suffix);
         stringJoiner.append(iterator, transFunc);
         return stringJoiner.toString();

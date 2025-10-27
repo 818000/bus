@@ -50,7 +50,9 @@ public class Calculate extends Resolver {
      * @param endDate   The inclusive end date.
      * @return {@code true} if within range, {@code false} otherwise.
      */
-    public static boolean isIn(final TemporalAccessor date, final TemporalAccessor beginDate,
+    public static boolean isIn(
+            final TemporalAccessor date,
+            final TemporalAccessor beginDate,
             final TemporalAccessor endDate) {
         return isIn(date, beginDate, endDate, true, true);
     }
@@ -68,8 +70,12 @@ public class Calculate extends Resolver {
      * @param includeEnd   {@code true} if the time range includes the end date.
      * @return {@code true} if within range, {@code false} otherwise.
      */
-    public static boolean isIn(final TemporalAccessor date, final TemporalAccessor beginDate,
-            final TemporalAccessor endDate, final boolean includeBegin, final boolean includeEnd) {
+    public static boolean isIn(
+            final TemporalAccessor date,
+            final TemporalAccessor beginDate,
+            final TemporalAccessor endDate,
+            final boolean includeBegin,
+            final boolean includeEnd) {
         if (date == null || beginDate == null || endDate == null) {
             throw new IllegalArgumentException("Parameters cannot be null");
         }
@@ -114,8 +120,10 @@ public class Calculate extends Resolver {
      * @param endTime       The end time of the second period.
      * @return {@code true} if the time periods overlap, {@code false} otherwise.
      */
-    public static boolean isOverlap(final ChronoLocalDateTime<?> realStartTime,
-            final ChronoLocalDateTime<?> realEndTime, final ChronoLocalDateTime<?> startTime,
+    public static boolean isOverlap(
+            final ChronoLocalDateTime<?> realStartTime,
+            final ChronoLocalDateTime<?> realEndTime,
+            final ChronoLocalDateTime<?> startTime,
             final ChronoLocalDateTime<?> endTime) {
         // x > b || a > y means no intersection
         // So the logic for intersection is !(x > b || a > y)

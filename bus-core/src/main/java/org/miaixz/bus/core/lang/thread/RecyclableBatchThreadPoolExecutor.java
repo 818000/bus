@@ -224,8 +224,10 @@ public class RecyclableBatchThreadPoolExecutor {
      * @param resultArr  The array to store the results of each batch.
      * @throws RuntimeException If a task execution fails or is interrupted.
      */
-    private <R> void processRemainingTasks(final Queue<IdempotentTask<R>> taskQueue,
-            final Map<Integer, Future<TaskResult<R>>> futuresMap, final List<R>[] resultArr) {
+    private <R> void processRemainingTasks(
+            final Queue<IdempotentTask<R>> taskQueue,
+            final Map<Integer, Future<TaskResult<R>>> futuresMap,
+            final List<R>[] resultArr) {
         // Main thread consumes unexecuted tasks
         IdempotentTask<R> task;
         while ((task = taskQueue.poll()) != null) {

@@ -64,7 +64,9 @@ public class JdkProxy {
      * @param interfaces        The interfaces that the proxy class needs to implement.
      * @return The proxy class instance.
      */
-    public static <T> T newProxyInstance(final ClassLoader classloader, final InvocationHandler invocationHandler,
+    public static <T> T newProxyInstance(
+            final ClassLoader classloader,
+            final InvocationHandler invocationHandler,
             final Class<?>... interfaces) {
         return (T) Proxy.newProxyInstance(classloader, interfaces, invocationHandler);
     }

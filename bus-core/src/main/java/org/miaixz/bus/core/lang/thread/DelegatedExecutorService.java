@@ -192,7 +192,9 @@ public class DelegatedExecutorService extends AbstractExecutorService implements
      * @throws InterruptedException if interrupted while waiting, in which case unfinished tasks are cancelled.
      */
     @Override
-    public <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks, final long timeout,
+    public <T> List<Future<T>> invokeAll(
+            final Collection<? extends Callable<T>> tasks,
+            final long timeout,
             final TimeUnit unit) throws InterruptedException {
         return this.raw.invokeAll(tasks, timeout, unit);
     }

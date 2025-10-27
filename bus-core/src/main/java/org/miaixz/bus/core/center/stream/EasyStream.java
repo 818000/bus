@@ -238,7 +238,9 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * @param next    a function that applies to the previous element to produce a new element
      * @return an infinite sequential ordered {@code EasyStream}
      */
-    public static <T> EasyStream<T> iterate(final T seed, final Predicate<? super T> hasNext,
+    public static <T> EasyStream<T> iterate(
+            final T seed,
+            final Predicate<? super T> hasNext,
             final UnaryOperator<T> next) {
         Objects.requireNonNull(next);
         Objects.requireNonNull(hasNext);
@@ -267,7 +269,9 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * @param <T>        the type of the object
      * @return a stream consisting of all nodes in the hierarchical structure, including the root node
      */
-    public static <T> EasyStream<T> iterateHierarchies(final T root, final Function<T, Collection<T>> discoverer,
+    public static <T> EasyStream<T> iterateHierarchies(
+            final T root,
+            final Function<T, Collection<T>> discoverer,
             final Predicate<T> filter) {
         return of(StreamKit.iterateHierarchies(root, discoverer, filter));
     }
@@ -442,15 +446,18 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * @return an {@link Optional} containing the calculated average. If the stream is empty, returns
      *         {@link Optional#empty()}.
      */
-    public Optional<BigDecimal> avg(final Function<? super T, BigDecimal> mapper, final int scale,
+    public Optional<BigDecimal> avg(
+            final Function<? super T, BigDecimal> mapper,
+            final int scale,
             final RoundingMode roundingMode) {
         // List of elements
         final List<BigDecimal> bigDecimalList = stream.map(mapper).collect(Collectors.toList());
         if (CollKit.isEmpty(bigDecimalList)) {
             return Optional.empty();
         }
-        return Optional.ofNullable(EasyStream.of(bigDecimalList).reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(MathKit.toBigDecimal(bigDecimalList.size()), scale, roundingMode));
+        return Optional.ofNullable(
+                EasyStream.of(bigDecimalList).reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .divide(MathKit.toBigDecimal(bigDecimalList.size()), scale, roundingMode));
     }
 
     /**

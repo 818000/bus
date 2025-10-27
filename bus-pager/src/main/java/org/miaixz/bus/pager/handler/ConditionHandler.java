@@ -45,8 +45,8 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
 /**
- * Base class for handling multi-table conditions.
- * Provides methods for processing SELECT, UPDATE, and DELETE statements and appending conditions based on table metadata.
+ * Base class for handling multi-table conditions. Provides methods for processing SELECT, UPDATE, and DELETE statements
+ * and appending conditions based on table metadata.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -54,9 +54,10 @@ import net.sf.jsqlparser.statement.select.*;
 public abstract class ConditionHandler extends SqlParserHandler implements MapperHandler {
 
     /**
-     * The mode for appending conditional expressions (defaults to appending at the end, only for UPDATE, DELETE, SELECT).
+     * The mode for appending conditional expressions (defaults to appending at the end, only for UPDATE, DELETE,
+     * SELECT).
      */
-    private EnumValue.AppendMode appendMode = EnumValue.AppendMode.LAST;
+    private EnumValue.Append append = EnumValue.Append.LAST;
 
     /**
      * Processes the body of a SELECT statement, applying the specified condition segment.
@@ -163,8 +164,8 @@ public abstract class ConditionHandler extends SqlParserHandler implements Mappe
     }
 
     /**
-     * Processes subqueries in the WHERE clause, supporting IN, =, &gt;, &lt;, &gt;=, &lt;=, &lt;&gt;, EXISTS, NOT EXISTS.
-     * Prerequisite: Subqueries must be in parentheses and usually on the right side of a comparison operator.
+     * Processes subqueries in the WHERE clause, supporting IN, =, &gt;, &lt;, &gt;=, &lt;=, &lt;&gt;, EXISTS, NOT
+     * EXISTS. Prerequisite: Subqueries must be in parentheses and usually on the right side of a comparison operator.
      *
      * @param where        the WHERE condition
      * @param whereSegment the full Mapper path
@@ -435,14 +436,15 @@ public abstract class ConditionHandler extends SqlParserHandler implements Mappe
     }
 
     /**
-     * Appends a conditional expression. By default, it appends to the end, but the position can be configured via `appendMode`.
+     * Appends a conditional expression. By default, it appends to the end, but the position can be configured via
+     * `appendMode`.
      *
      * @param expression       the original SQL conditional expression
      * @param injectExpression the conditional expression to be injected
      * @return the complete appended expression (for WHERE or ON clauses)
      */
     protected Expression appendExpression(Expression expression, Expression injectExpression) {
-        if (EnumValue.AppendMode.LAST == appendMode || appendMode == null) {
+        if (EnumValue.Append.LAST == append || append == null) {
             return new AndExpression(expression, injectExpression);
         } else {
             return new AndExpression(injectExpression, expression);
@@ -455,7 +457,8 @@ public abstract class ConditionHandler extends SqlParserHandler implements Mappe
      * @param table   the Table object
      * @param where   the current WHERE condition
      * @param segment the full Mapper path
-     * @return the new query condition to be added (does not overwrite the original WHERE, only appends). Returns null if no new condition is added.
+     * @return the new query condition to be added (does not overwrite the original WHERE, only appends). Returns null
+     *         if no new condition is added.
      */
     public abstract Expression buildTableExpression(final Table table, final Expression where, final String segment);
 

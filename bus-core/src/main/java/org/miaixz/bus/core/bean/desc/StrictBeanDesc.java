@@ -106,7 +106,9 @@ public class StrictBeanDesc extends AbstractBeanDesc {
      * @param ignoreCase       Whether to ignore case during matching.
      * @return The found method, or {@code null} if not found.
      */
-    private static Method getGetterForBoolean(final Method[] gettersOrSetters, final String fieldName,
+    private static Method getGetterForBoolean(
+            final Method[] gettersOrSetters,
+            final String fieldName,
             final boolean ignoreCase) {
         // Search for isXXX
         return MethodKit.getMethod(gettersOrSetters, m -> {
@@ -140,7 +142,9 @@ public class StrictBeanDesc extends AbstractBeanDesc {
      * @param ignoreCase       Whether to ignore case during matching.
      * @return The found method, or {@code null} if not found.
      */
-    private static Method getSetterForBoolean(final Method[] gettersOrSetters, final String fieldName,
+    private static Method getSetterForBoolean(
+            final Method[] gettersOrSetters,
+            final String fieldName,
             final boolean ignoreCase) {
         // Search for isXXX
         return MethodKit.getMethod(gettersOrSetters, m -> {
@@ -151,8 +155,10 @@ public class StrictBeanDesc extends AbstractBeanDesc {
 
             if (StringKit.startWith(fieldName, Normal.IS, ignoreCase)) {
                 // isName -> setName
-                return StringKit.equals(Normal.SET + StringKit.removePrefix(fieldName, Normal.IS, ignoreCase),
-                        m.getName(), ignoreCase);
+                return StringKit.equals(
+                        Normal.SET + StringKit.removePrefix(fieldName, Normal.IS, ignoreCase),
+                        m.getName(),
+                        ignoreCase);
             }
 
             // Other cases do not match.
@@ -170,8 +176,8 @@ public class StrictBeanDesc extends AbstractBeanDesc {
 
         final Method[] gettersAndSetters = MethodKit.getPublicMethods(beanClass, MethodKit::isGetterOrSetterIgnoreCase);
         // Exclude static fields and outer class fields.
-        final Field[] fields = FieldKit.getFields(beanClass,
-                field -> !ModifierKit.isStatic(field) && !FieldKit.isOuterClassField(field));
+        final Field[] fields = FieldKit
+                .getFields(beanClass, field -> !ModifierKit.isStatic(field) && !FieldKit.isOuterClassField(field));
         PropDesc prop;
         for (final Field field : fields) {
             prop = createProp(field, gettersAndSetters);
@@ -269,8 +275,11 @@ public class StrictBeanDesc extends AbstractBeanDesc {
      * @param ignoreCase       Whether to ignore case during matching.
      * @return An array containing the found getter method at index 0 and the setter method at index 1.
      */
-    private Method[] findGetterAndSetter(final String fieldName, final Class<?> fieldType,
-            final Method[] gettersOrSetters, final boolean ignoreCase) {
+    private Method[] findGetterAndSetter(
+            final String fieldName,
+            final Class<?> fieldType,
+            final Method[] gettersOrSetters,
+            final boolean ignoreCase) {
         Method getter = null;
         Method setter = null;
         String methodName;

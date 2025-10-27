@@ -159,7 +159,10 @@ public class PathResolve {
      * @param fileFilter    A filter to select which files to include.
      * @return A list of matching files.
      */
-    public static List<File> loopFiles(final Path path, final int maxDepth, final boolean isFollowLinks,
+    public static List<File> loopFiles(
+            final Path path,
+            final int maxDepth,
+            final boolean isFollowLinks,
             final FileFilter fileFilter) {
         final List<File> fileList = new ArrayList<>();
 
@@ -216,7 +219,10 @@ public class PathResolve {
      * @param visitor       The {@link FileVisitor}.
      * @param isFollowLinks Whether to follow symbolic links.
      */
-    public static void walkFiles(final Path start, int maxDepth, final boolean isFollowLinks,
+    public static void walkFiles(
+            final Path start,
+            int maxDepth,
+            final boolean isFollowLinks,
             final FileVisitor<? super Path> visitor) {
         if (maxDepth < 0) {
             maxDepth = Integer.MAX_VALUE;
@@ -520,7 +526,9 @@ public class PathResolve {
      * @param options The open options.
      * @return A {@link BufferedReader}.
      */
-    public static BufferedReader getReader(final Path path, final java.nio.charset.Charset charset,
+    public static BufferedReader getReader(
+            final Path path,
+            final java.nio.charset.Charset charset,
             final OpenOption... options) {
         return IoKit.toReader(getInputStream(path, options), charset);
     }

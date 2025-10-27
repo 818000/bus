@@ -172,7 +172,9 @@ public class Between implements Serializable {
      * @return The time difference as a long value in the specified unit.
      * @see Between#between(Temporal, Temporal, ChronoUnit)
      */
-    public static long between(final LocalDateTime startTimeInclude, final LocalDateTime endTimeExclude,
+    public static long between(
+            final LocalDateTime startTimeInclude,
+            final LocalDateTime endTimeExclude,
             final ChronoUnit unit) {
         return between(startTimeInclude, endTimeExclude, unit);
     }

@@ -206,7 +206,8 @@ public class ULID implements Comparable<ULID>, Serializable {
      * @param timestamp The timestamp to check.
      */
     private static void checkTimestamp(final long timestamp) {
-        Assert.isTrue((timestamp & TIMESTAMP_MASK) == 0,
+        Assert.isTrue(
+                (timestamp & TIMESTAMP_MASK) == 0,
                 "ULID does not support timestamps after +10889-08-02T05:31:50.655Z!");
     }
 

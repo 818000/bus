@@ -245,7 +245,10 @@ public class WordTree extends HashMap<Character, WordTree> {
      *                       finds [ab]).
      * @return A list of matched keywords.
      */
-    public List<String> matchAll(final String text, final int limit, final boolean isDensityMatch,
+    public List<String> matchAll(
+            final String text,
+            final int limit,
+            final boolean isDensityMatch,
             final boolean isGreedMatch) {
         final List<FoundWord> matchAllWords = matchAllWords(text, limit, isDensityMatch, isGreedMatch);
         return CollKit.map(matchAllWords, FoundWord::toString);
@@ -260,7 +263,10 @@ public class WordTree extends HashMap<Character, WordTree> {
      * @param isGreedMatch   If {@code true}, performs a greedy (longest) match.
      * @return A list of {@link FoundWord} objects.
      */
-    public List<FoundWord> matchAllWords(final String text, final int limit, final boolean isDensityMatch,
+    public List<FoundWord> matchAllWords(
+            final String text,
+            final int limit,
+            final boolean isDensityMatch,
             final boolean isGreedMatch) {
         if (null == text) {
             return null;

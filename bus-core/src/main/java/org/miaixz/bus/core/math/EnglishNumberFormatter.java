@@ -139,13 +139,13 @@ public class EnglishNumberFormatter {
         final String[] a = new String[5]; // Array to store three-digit groups.
 
         switch (lstrrev.length() % 3) {
-        case 1:
-            lstrrev += "00";
-            break;
+            case 1:
+                lstrrev += "00";
+                break;
 
-        case 2:
-            lstrrev += "0";
-            break;
+            case 2:
+                lstrrev += "0";
+                break;
         }
         StringBuilder lm = new StringBuilder(); // Stores the converted integer part.
         for (int i = 0; i < lstrrev.length() / 3; i++) {

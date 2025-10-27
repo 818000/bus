@@ -80,7 +80,8 @@ public class TransCollection<F, T> extends AbstractCollection<T> {
      * @param function The transformation function to apply to each element. Must not be {@code null}.
      * @return A new {@link Spliterator} that provides a transformed view of the source.
      */
-    public static <F, T> Spliterator<T> trans(final Spliterator<F> from,
+    public static <F, T> Spliterator<T> trans(
+            final Spliterator<F> from,
             final Function<? super F, ? extends T> function) {
         return new TransSpliterator<>(from, function);
     }
