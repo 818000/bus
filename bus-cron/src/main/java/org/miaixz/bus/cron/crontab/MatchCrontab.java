@@ -25,55 +25,64 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.auth.nimble.microsoft;
+package org.miaixz.bus.cron.crontab;
 
-import org.miaixz.bus.cache.CacheX;
-import org.miaixz.bus.core.lang.exception.AuthorizedException;
-import org.miaixz.bus.core.net.Protocol;
-import org.miaixz.bus.auth.Context;
-import org.miaixz.bus.auth.Registry;
-import org.miaixz.bus.auth.magic.ErrorCode;
+import org.miaixz.bus.cron.Repertoire;
+import org.miaixz.bus.cron.Scheduler;
+
+import java.util.concurrent.locks.Lock;
 
 /**
- * Microsoft China login provider.
+ * Task table based on matching<br>
+ * Each time checks if the expressions in the task table match the specified time, and executes the corresponding Task
+ * if they match
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class MicrosoftCnProvider extends AbstractMicrosoftProvider {
+public class MatchCrontab extends Repertoire {
 
     /**
-     * Constructs a {@code MicrosoftCnProvider} with the specified context.
-     *
-     * @param context the authentication context
+     * Constructor with default capacity of {@link Repertoire#DEFAULT_CAPACITY}
      */
-    public MicrosoftCnProvider(Context context) {
-        super(context, Registry.MICROSOFT_CN);
+    public MatchCrontab() {
+        this(DEFAULT_CAPACITY);
     }
 
     /**
-     * Constructs a {@code MicrosoftCnProvider} with the specified context and cache.
+     * Constructor
      *
-     * @param context the authentication context
-     * @param cache   the cache implementation
+     * @param initialCapacity Initial capacity
      */
-    public MicrosoftCnProvider(Context context, CacheX cache) {
-        super(context, Registry.MICROSOFT_CN, cache);
+    public MatchCrontab(final int initialCapacity) {
+        super(initialCapacity);
     }
 
-    /**
-     * Checks the completeness and validity of the context configuration for Microsoft China authentication.
-     * Specifically, it ensures that the redirect URI uses HTTPS or is a localhost address.
-     *
-     * @param context the authentication context
-     * @throws AuthorizedException if the redirect URI is invalid
-     */
     @Override
-    protected void validate(Context context) {
-        super.validate(context);
-        // Microsoft China's redirect uri must use the HTTPS or localhost
-        if (Registry.MICROSOFT_CN == this.complex && !Protocol.isHttpsOrLocalHost(context.getRedirectUri())) {
-            throw new AuthorizedException(ErrorCode._110005.getKey(), this.complex);
+    public void execute(final Scheduler scheduler, final long millis) {
+        final Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            executeTaskIfMatchInternal(scheduler, millis);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    /**
+     * Execute the corresponding Task if the time matches, without lock
+     *
+     * @param scheduler {@link Scheduler}
+     * @param millis    Time in milliseconds
+     */
+    private void executeTaskIfMatchInternal(final Scheduler scheduler, final long millis) {
+        final int size = size();
+        for (int i = 0; i < size; i++) {
+            if (this.table.getMiddle(i)
+                    .match(scheduler.config.getTimeZone(), millis, scheduler.config.isMatchSecond())) {
+                scheduler.manager.spawnExecutor(
+                        new CronCrontab(this.table.getLeft(i), this.table.getMiddle(i), this.table.getRight(i)));
+            }
         }
     }
 
