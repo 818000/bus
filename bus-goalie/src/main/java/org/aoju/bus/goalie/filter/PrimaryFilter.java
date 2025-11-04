@@ -61,12 +61,27 @@ import java.util.Objects;
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class PrimaryFilter implements WebFilter {
+    private final String path;
+
+    public PrimaryFilter(String path) {
+        this.path = path;
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
         ServerWebExchange mutate = setDefaultContentTypeIfNecessary(exchange);
         Context context = Context.get(mutate);
         context.setStartTime(System.currentTimeMillis());
+
+        String path = exchange.getRequest().getPath().value();
+        if (!path.equals(this.path)) {
+            throw new BusinessException(ErrorCode.EM_100515);
+        }
+        MediaType contentType = mutate.getRequest().getHeaders().getContentType();
+        if (!MediaType.MULTIPART_FORM_DATA.isCompatibleWith(contentType) && !MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
+            throw new BusinessException(ErrorCode.EM_100515);
+        }
         ServerHttpRequest request = mutate.getRequest();
         if (Objects.equals(request.getMethod(), HttpMethod.GET)) {
             MultiValueMap<String, String> params = request.getQueryParams();

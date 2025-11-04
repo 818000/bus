@@ -40,19 +40,22 @@ public class Athlete {
     private final HttpServer httpServer;
 
     private DisposableServer disposableServer;
+    
+    private final String name;
 
-    public Athlete(HttpServer httpServer) {
+    public Athlete(String name,HttpServer httpServer) {
+        this.name = name;
         this.httpServer = httpServer;
     }
 
-    private void init() {
+    public void init() {
         disposableServer = httpServer.bindNow();
-        Logger.info("reactor server start on port:{} success", disposableServer.port());
+        Logger.info("{} reactor server start on port:{} success",name, disposableServer.port());
     }
 
-    private void destroy() {
+    public void destroy() {
         disposableServer.disposeNow();
-        Logger.info("reactor server stop on port:{} success", disposableServer.port());
+        Logger.info("{} reactor server stop on port:{} success",name, disposableServer.port());
     }
 
 }

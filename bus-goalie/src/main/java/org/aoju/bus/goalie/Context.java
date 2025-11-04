@@ -72,6 +72,8 @@ public class Context {
     private boolean needDecrypt = false;
 
     private long startTime;
+    
+    private String path;
 
     public static Context get(ServerWebExchange exchange) {
         Context context = exchange.getAttribute(Context.$);

@@ -67,12 +67,14 @@ public class Config {
      * 默认数据大小
      */
     public static final Integer MAX_INMEMORY_SIZE = 100 * 1024 * 1024;
-
+    private String name;
     private final Encrypt encrypt = new Encrypt();
     private final Decrypt decrypt = new Decrypt();
     private final Limit limit = new Limit();
+    private final Security security = new Security();
     private String path;
     private int port;
+    private String scope;
 
     @Data
     public static class Encrypt {
@@ -93,6 +95,11 @@ public class Config {
     @Data
     public static class Limit {
         private boolean enabled;
+    }
+    @Data
+    public static class Security {
+        private boolean permEnabled;
+        private boolean mockEnabled;
     }
 
 }

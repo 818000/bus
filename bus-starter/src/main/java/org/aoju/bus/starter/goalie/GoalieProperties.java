@@ -30,6 +30,9 @@ import org.aoju.bus.goalie.Config;
 import org.aoju.bus.spring.BusXConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 路由配置
  *
@@ -43,7 +46,7 @@ public class GoalieProperties {
     /**
      * 默认配置
      */
-    private final Config server = new Config();
+    private final List<Config> servers = new ArrayList<>();
     /**
      * 自定义Spring MVC配置处理
      */

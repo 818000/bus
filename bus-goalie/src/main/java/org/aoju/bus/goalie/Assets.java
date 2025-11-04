@@ -70,7 +70,7 @@ public class Assets {
      */
     private String method;
     /**
-     * 模式
+     * 模式 1 需要鉴权 2 匿名鉴权
      */
     private String mode;
     /**
@@ -89,6 +89,10 @@ public class Assets {
      * 版本
      */
     private String version;
+    /**
+     * 访问域
+     */
+    private String scope;
     /**
      * 描述
      */

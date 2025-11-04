@@ -244,6 +244,8 @@ public class ErrorCode {
      */
     public static String EM_100514 = "100514";
 
+    public static String EM_100515 = "100515";
+
     /**
      * 错误码缓存
      */
@@ -299,6 +301,7 @@ public class ErrorCode {
         register(EM_100512, "数据已存在");
         register(EM_100513, "业务处理失败");
         register(EM_100514, "任务执行失败");
+        register(EM_100515, "非法访问");
     }
 
     /**

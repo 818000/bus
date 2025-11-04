@@ -25,8 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.goalie.filter;
 
-import org.aoju.bus.base.normal.ErrorCode;
 import org.aoju.bus.base.entity.OAuth2;
+import org.aoju.bus.base.normal.ErrorCode;
 import org.aoju.bus.core.beans.copier.CopyOptions;
 import org.aoju.bus.core.exception.BusinessException;
 import org.aoju.bus.core.toolkit.BeanKit;
@@ -62,9 +62,13 @@ public class AuthorizeFilter implements WebFilter {
 
     private final AssetsRegistry registry;
 
-    public AuthorizeFilter(Authorize authorize, AssetsRegistry registry) {
+
+    private final Config config;
+
+    public AuthorizeFilter(Config config, Authorize authorize, AssetsRegistry registry) {
         this.authorize = authorize;
         this.registry = registry;
+        this.config = config;
     }
 
     @Override
@@ -82,6 +86,12 @@ public class AuthorizeFilter implements WebFilter {
 
         if (null == assets) {
             return Mono.error(new BusinessException(ErrorCode.EM_100500));
+        }
+
+        if (StringKit.isNotBlank(assets.getScope())) {
+            if (!assets.getScope().contains(config.getScope())) {
+                return Mono.error(new BusinessException(ErrorCode.EM_100509));
+            }
         }
         //校验方法
         checkMethod(exchange.getRequest(), assets);
@@ -121,7 +131,7 @@ public class AuthorizeFilter implements WebFilter {
     }
 
     private void checkAnonymous(Context context, Assets assets) {
-        if(assets.isToken() && StringKit.isBlank(context.getToken()) &&  "2".equals(assets.getMode())) {
+        if (assets.isToken() && StringKit.isBlank(context.getToken()) && "2".equals(assets.getMode())) {
             context.setToken("anonymous");
         }
     }
