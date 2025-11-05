@@ -150,7 +150,7 @@ public class AuthorizeFilter implements WebFilter {
                 throw new BusinessException(ErrorCode.EM_100106);
             }
             Token access = new Token(context.getToken(), context.getChannel().getTokenType(), assets);
-            Delegate delegate = authorize.authorize(access);
+            Delegate delegate = authorize.authorize(config,access);
             if (delegate.isOk()) {
                 OAuth2 auth2 = delegate.getOAuth2();
                 Map<String, Object> map = new HashMap<>();

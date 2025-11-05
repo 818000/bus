@@ -67,6 +67,7 @@ public class GlobalExceptionHandler extends Controller implements ErrorWebExcept
             method = map.get(Config.METHOD);
         }
         Logger.error("traceId:{},request: {},error:{}", exchange.getLogPrefix(), method, ex.getMessage());
+        Logger.error(ex, ex.getMessage());
         Object message;
         if (ex instanceof WebClientException) {
             if (ex.getCause() instanceof ReadTimeoutException) {

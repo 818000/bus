@@ -65,12 +65,8 @@ public class EncryptFilter implements WebFilter {
 
     public EncryptFilter(Config.Encrypt encrypt) {
         this.encrypt = encrypt;
-    }
-
-    @PostConstruct
-    public void init() {
         if (Algorithm.AES.getValue().equals(encrypt.getType())) {
-            crypto = new AES(Mode.CBC, Padding.PKCS7Padding, encrypt.getKey().getBytes(),
+            this.crypto = new AES(Mode.CBC, Padding.PKCS7Padding, encrypt.getKey().getBytes(),
                     encrypt.getOffset().getBytes());
         }
     }

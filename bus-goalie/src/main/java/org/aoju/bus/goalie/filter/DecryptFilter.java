@@ -59,12 +59,8 @@ public class DecryptFilter implements WebFilter {
 
     public DecryptFilter(Config.Decrypt decrypt) {
         this.decrypt = decrypt;
-    }
-
-    @PostConstruct
-    public void init() {
         if (Algorithm.AES.getValue().equals(decrypt.getType())) {
-            crypto = new AES(Mode.CBC, Padding.PKCS7Padding, decrypt.getKey().getBytes(),
+            this.crypto = new AES(Mode.CBC, Padding.PKCS7Padding, decrypt.getKey().getBytes(),
                     decrypt.getOffset().getBytes());
         }
     }

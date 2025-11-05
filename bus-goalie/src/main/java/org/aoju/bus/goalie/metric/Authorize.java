@@ -25,6 +25,8 @@
  ********************************************************************************/
 package org.aoju.bus.goalie.metric;
 
+import org.aoju.bus.goalie.Config;
+
 /**
  * 访问授权认证
  *
@@ -39,7 +41,7 @@ public interface Authorize {
      * @param token 授权令牌
      * @return OAuth2
      */
-    default Delegate authorize(Token token) {
+    default Delegate authorize(Config config, Token token) {
         return new Delegate();
     }
 
