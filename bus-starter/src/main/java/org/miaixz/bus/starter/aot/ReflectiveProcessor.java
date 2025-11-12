@@ -25,29 +25,51 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.storage.metric;
+package org.miaixz.bus.starter.aot;
 
-import org.miaixz.bus.storage.Context;
+import org.springframework.aot.hint.ExecutableMode;
+import org.springframework.aot.hint.ReflectionHints;
+
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 
 /**
- * Storage service provider for JD Cloud Object Storage Service (OSS). This provider integrates with JD Cloud OSS using
- * an S3-compatible client.
+ * A Spring AOT (Ahead-Of-Time) {@link org.springframework.aot.hint.annotation.ReflectiveProcessor}.
+ *
+ * <p>
+ * This processor is designed to be used with a custom annotation that is meta-annotated with
+ * {@code @Reflective(ReflectiveProcessor.class)}.
+ * </p>
+ * <p>
+ * When the AOT engine encounters an element marked with such an annotation, it invokes the
+ * {@link #registerReflectionHints(ReflectionHints, AnnotatedElement)} method. This specific implementation checks if
+ * the annotated element is a {@link Method} and registers it for reflective invocation ({@link ExecutableMode#INVOKE}).
+ * This is crucial for ensuring that methods intended for dynamic invocation function correctly in a GraalVM native
+ * image.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class JdOssProvider extends GenericS3Provider {
+public class ReflectiveProcessor implements org.springframework.aot.hint.annotation.ReflectiveProcessor {
 
     /**
-     * Constructs a JD Cloud OSS provider with the given context. Initializes the S3 client and presigner using the
-     * provided credentials and endpoint configuration.
-     *
-     * @param context The storage context, containing endpoint, bucket, access key, secret key, and other
-     *                configurations.
-     * @throws IllegalArgumentException If required context parameters are missing or invalid.
+     * Registers reflection hints for the annotated element.
+     * <p>
+     * This method is called by the Spring AOT framework during context processing. It checks if the provided
+     * {@link AnnotatedElement} is an instance of {@link Method}. If it is, the method is registered with the
+     * {@link ReflectionHints} using {@link ExecutableMode#INVOKE} to make it reflectively callable in the native image.
+     * </p>
+     * 
+     * @param hints   the {@link ReflectionHints} instance to register hints against
+     * @param element the annotated element (expected to be a {@link Method} in this implementation)
      */
-    public JdOssProvider(Context context) {
-        super(context);
+    @Override
+    public void registerReflectionHints(ReflectionHints hints, AnnotatedElement element) {
+        if (element instanceof Method method) {
+            // If the annotated element is a method, register it for invocation
+            hints.registerMethod(method, ExecutableMode.INVOKE);
+        }
     }
 
 }
