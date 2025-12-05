@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.net.PORT;
 import org.miaixz.bus.vortex.*;
 import org.miaixz.bus.vortex.filter.PrimaryFilter;
@@ -159,19 +160,19 @@ public class VortexConfiguration {
     }
 
     /**
-     * Provides the CipherStrategy bean. This strategy handles request decryption and response encryption based on
-     * configured properties.
+     * Provides the VettingStrategy bean. This strategy performs access authorization based on tokens, API keys, and
+     * asset configurations.
      *
-     * @param vortexProperties The Vortex configuration properties, containing decryption and encryption settings.
-     * @return A new instance of CipherStrategy.
+     * 
+     * @return A new instance of VettingStrategy.
      */
     @Bean
-    public CipherStrategy cipherStrategy(VortexProperties vortexProperties) {
-        return new CipherStrategy(vortexProperties.getDecrypt(), vortexProperties.getEncrypt());
+    public VettingStrategy vettingStrategy() {
+        return new VettingStrategy();
     }
 
     /**
-     * Provides the AuthorizeStrategy bean. This strategy performs access authorization based on tokens, API keys, and
+     * Provides the QualiferStrategy bean. This strategy performs access authorization based on tokens, API keys, and
      * asset configurations.
      *
      * @param authorizeProvider The AuthorizeProvider for handling authorization logic.
@@ -179,8 +180,8 @@ public class VortexConfiguration {
      * @return A new instance of AuthorizeStrategy.
      */
     @Bean
-    public AuthorizeStrategy authorizeStrategy(AuthorizeProvider authorizeProvider, AssetsRegistry assetsRegistry) {
-        return new AuthorizeStrategy(authorizeProvider, assetsRegistry);
+    public QualifierStrategy qualiferStrategy(AuthorizeProvider authorizeProvider, AssetsRegistry assetsRegistry) {
+        return new QualifierStrategy(authorizeProvider, assetsRegistry);
     }
 
     /**
@@ -190,8 +191,8 @@ public class VortexConfiguration {
      * @return A new instance of LimitStrategy.
      */
     @Bean
-    public LimitStrategy limitStrategy(LimiterRegistry limiterRegistry) {
-        return new LimitStrategy(limiterRegistry);
+    public LimiterStrategy limitStrategy(LimiterRegistry limiterRegistry) {
+        return new LimiterStrategy(limiterRegistry);
     }
 
     /**
@@ -201,8 +202,8 @@ public class VortexConfiguration {
      * @return A new instance of FormatStrategy.
      */
     @Bean
-    public FormatStrategy formatStrategy() {
-        return new FormatStrategy();
+    public ResponseStrategy formatStrategy() {
+        return new ResponseStrategy();
     }
 
     /**
@@ -247,8 +248,9 @@ public class VortexConfiguration {
         VortexHandler vortexHandler = new VortexHandler(handlers, routers);
 
         // Configure the router to handle requests at the specified path.
-        RouterFunction<ServerResponse> routerFunction = RouterFunctions
-                .route(RequestPredicates.path(this.properties.getPath() + "/**"), vortexHandler::handle);
+        RouterFunction<ServerResponse> routerFunction = RouterFunctions.route(
+                RequestPredicates.path(this.properties.getPath() + Symbol.SLASH + Symbol.STAR + Symbol.STAR),
+                vortexHandler::handle);
 
         // Configure codecs, setting the maximum in-memory size.
         ServerCodecConfigurer configurer = ServerCodecConfigurer.create();
@@ -262,7 +264,8 @@ public class VortexConfiguration {
         // Create the Reactor Netty HTTP server adapter.
         ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);
         HttpServer server = HttpServer.create()
-                .port(this.properties.getPort() != 0 ? this.properties.getPort() : PORT._8765).handle(adapter);
+                .port(this.properties.getPort() != 0 ? this.properties.getPort() : PORT._8765.getPort())
+                .handle(adapter);
 
         return new Vortex(server);
     }
