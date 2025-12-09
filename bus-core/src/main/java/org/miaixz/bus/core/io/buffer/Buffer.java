@@ -2755,12 +2755,6 @@ public class Buffer implements BufferSource, BufferSink, Cloneable, ByteChannel 
     public static final class UnsafeCursor implements Closeable {
 
         /**
-         * Constructs a new UnsafeCursor.
-         */
-        public UnsafeCursor() {
-        }
-
-        /**
          * The buffer this cursor is attached to.
          */
         public Buffer buffer;

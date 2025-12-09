@@ -49,12 +49,6 @@ import org.miaixz.bus.core.net.ip.IPv4;
 public class ID {
 
     /**
-     * Constructs a new ID. Utility class constructor for static access.
-     */
-    private ID() {
-    }
-
-    /**
      * Gets a random UUID.
      *
      * @return A random UUID.

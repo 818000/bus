@@ -14,6 +14,15 @@
         "pattern": "\\Qlogback-spring.xml\\E"
       },
       {
+        "pattern": "\\Qlogback-test-spring.groovy\\E"
+      },
+      {
+        "pattern": "\\Qlogback-test-spring.xml\\E"
+      },
+      {
+        "pattern": "\\Qlogback-test.groovy\\E"
+      },
+      {
         "pattern": "\\Qlogback-test.scmo\\E"
       },
       {

@@ -43,12 +43,6 @@ import org.miaixz.bus.core.lang.Assert;
 public class CastKit {
 
     /**
-     * Constructs a new CastKit. Utility class constructor for static access.
-     */
-    private CastKit() {
-    }
-
-    /**
      * Forcefully casts an object to a specified type.
      *
      * @param <T>   The target type.

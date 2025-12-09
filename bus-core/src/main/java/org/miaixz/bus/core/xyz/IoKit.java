@@ -28,7 +28,10 @@
 package org.miaixz.bus.core.xyz;
 
 import java.io.*;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.*;
@@ -74,12 +77,6 @@ import org.miaixz.bus.core.lang.exception.InternalException;
  * @since Java 17+
  */
 public class IoKit {
-
-    /**
-     * Constructs a new IoKit. Utility class constructor for static access.
-     */
-    private IoKit() {
-    }
 
     /**
      * Copies content from a {@link Reader} to a {@link Writer} using the default buffer size. The Reader is not closed
@@ -2052,7 +2049,7 @@ public class IoKit {
         }
         if (name.indexOf(Symbol.C_COLON) < 2)
             return new FileInputStream(name);
-        return URI.create(name).toURL().openStream();
+        return new URL(name).openStream();
     }
 
     /**

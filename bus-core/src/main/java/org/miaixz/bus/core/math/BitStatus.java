@@ -37,12 +37,6 @@ package org.miaixz.bus.core.math;
 public class BitStatus {
 
     /**
-     * Constructs a new BitStatus. Utility class constructor for static access.
-     */
-    private BitStatus() {
-    }
-
-    /**
      * Adds a status.
      *
      * @param states The original status collection.

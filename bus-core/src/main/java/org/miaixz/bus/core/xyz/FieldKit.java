@@ -51,12 +51,6 @@ import org.miaixz.bus.core.lang.reflect.field.FieldReflect;
 public class FieldKit {
 
     /**
-     * Constructs a new FieldKit. Utility class constructor for static access.
-     */
-    private FieldKit() {
-    }
-
-    /**
      * Field cache.
      */
     private static final WeakConcurrentMap<Class<?>, FieldReflect> FIELDS_CACHE = new WeakConcurrentMap<>();

@@ -45,12 +45,6 @@ import java.util.TimeZone;
  */
 public class DefaultDatePrinter implements DatePrinter, Serializable {
 
-    /**
-     * Constructs a new DefaultDatePrinter. Utility class constructor for static access.
-     */
-    private DefaultDatePrinter() {
-    }
-
     @Serial
     private static final long serialVersionUID = 2852257378058L;
 

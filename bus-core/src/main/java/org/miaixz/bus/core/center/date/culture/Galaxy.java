@@ -37,12 +37,6 @@ package org.miaixz.bus.core.center.date.culture;
 public class Galaxy {
 
     /**
-     * Constructs a new Galaxy. Utility class constructor for static access.
-     */
-    private Galaxy() {
-    }
-
-    /**
      * Represents 2 * PI.
      */
     public static final double PI_2 = 2 * Math.PI;

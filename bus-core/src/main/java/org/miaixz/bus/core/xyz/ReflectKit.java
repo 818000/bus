@@ -27,7 +27,10 @@
 */
 package org.miaixz.bus.core.xyz;
 
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -418,13 +421,8 @@ public class ReflectKit {
      * @throws SecurityException if access is denied.
      */
     public static <T extends AccessibleObject> T setAccessible(final T accessibleObject) throws SecurityException {
-        if (null != accessibleObject) {
-            try {
-                accessibleObject.trySetAccessible();
-            } catch (InaccessibleObjectException e) {
-                // Fall back to setAccessible if trySetAccessible fails
-                accessibleObject.setAccessible(true);
-            }
+        if (null != accessibleObject && !accessibleObject.isAccessible()) {
+            accessibleObject.setAccessible(true);
         }
         return accessibleObject;
     }

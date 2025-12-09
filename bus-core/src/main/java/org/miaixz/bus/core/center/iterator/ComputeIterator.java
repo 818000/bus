@@ -43,12 +43,6 @@ import java.util.NoSuchElementException;
 public abstract class ComputeIterator<T> implements Iterator<T> {
 
     /**
-     * Constructs a new ComputeIterator. Utility class constructor for static access.
-     */
-    public ComputeIterator() {
-    }
-
-    /**
      * The next element to be returned by the iterator.
      */
     private T next;

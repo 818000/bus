@@ -57,12 +57,6 @@ import org.miaixz.bus.core.xyz.ObjectKit;
  */
 public class ExecutorBuilder implements Builder<ThreadPoolExecutor> {
 
-    /**
-     * Constructs a new ExecutorBuilder. Utility class constructor for static access.
-     */
-    private ExecutorBuilder() {
-    }
-
     @Serial
     private static final long serialVersionUID = 2852279106156L;
 

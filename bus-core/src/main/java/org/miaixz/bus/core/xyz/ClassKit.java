@@ -59,12 +59,6 @@ import org.miaixz.bus.core.text.CharsBacker;
 public class ClassKit {
 
     /**
-     * Constructs a new ClassKit. Utility class constructor for static access.
-     */
-    private ClassKit() {
-    }
-
-    /**
      * Map of primitive type names to their corresponding wrapper classes.
      */
     private static final Map<String, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>();

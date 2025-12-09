@@ -30,7 +30,6 @@ package org.miaixz.bus.core.lang.loader;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -155,7 +154,7 @@ public class StdLoader extends ResourceLoader implements Loader {
                         int index = spec.lastIndexOf(Normal.JAR_URL_SEPARATOR);
                         if (index < 0)
                             continue;
-                        set.add(URI.create(spec.substring(0, index + Normal.JAR_URL_SEPARATOR.length())).toURL());
+                        set.add(new URL(url, spec.substring(0, index + Normal.JAR_URL_SEPARATOR.length())));
                     }
                 }
                 return Collections.enumeration(set);
@@ -178,8 +177,7 @@ public class StdLoader extends ResourceLoader implements Loader {
                     try {
                         String uri = UrlDecoder.decode(url.getPath(), Charset.UTF_8);
                         String root = uri.substring(0, uri.lastIndexOf(path));
-                        URL context = URI.create(Normal.FILE_URL_PREFIX + UrlEncoder.encodeAll(root, Charset.UTF_8))
-                                .toURL();
+                        URL context = new URL(url, Normal.FILE_URL_PREFIX + UrlEncoder.encodeAll(root, Charset.UTF_8));
                         File file = new File(root);
                         resources = new FileLoader(context, file).load(path, recursively, filter);
                         return hasMoreElements();
@@ -190,8 +188,7 @@ public class StdLoader extends ResourceLoader implements Loader {
                     try {
                         String uri = UrlDecoder.decode(url.getPath(), Charset.UTF_8);
                         String root = uri.substring(0, uri.lastIndexOf(path));
-                        URL context = URI.create(Normal.JAR_URL_PREFIX + UrlEncoder.encodeAll(root, Charset.UTF_8))
-                                .toURL();
+                        URL context = new URL(url, Normal.JAR_URL_PREFIX + UrlEncoder.encodeAll(root, Charset.UTF_8));
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                         JarFile jarFile = jarURLConnection.getJarFile();
                         resources = new JarLoader(context, jarFile).load(path, recursively, filter);

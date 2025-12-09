@@ -40,12 +40,6 @@ import java.util.Queue;
  */
 public class DiscardingQueue extends AbstractQueue<Object> {
 
-    /**
-     * Constructs a new DiscardingQueue. Utility class constructor for static access.
-     */
-    private DiscardingQueue() {
-    }
-
     private static final DiscardingQueue INSTANCE = new DiscardingQueue();
 
     /**

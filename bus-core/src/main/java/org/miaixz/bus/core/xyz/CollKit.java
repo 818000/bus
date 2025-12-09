@@ -66,12 +66,6 @@ import org.miaixz.bus.core.text.CharsBacker;
 public class CollKit extends CollectionStream {
 
     /**
-     * Constructs a new CollKit. Utility class constructor for static access.
-     */
-    private CollKit() {
-    }
-
-    /**
      * Returns a `Predicate` that maintains state for filtering distinct elements based on a key extractor.
      *
      * @param <T> The type of the elements.
@@ -597,30 +591,30 @@ public class CollKit extends CollectionStream {
      * Returns a view of the portion of this list between the specified `fromIndex` (inclusive) and `toIndex`
      * (exclusive).
      *
-     * @param <T>       The type of the elements.
-     * @param list      The list to slice.
-     * @param fromIndex The start index (inclusive).
-     * @param toIndex   The end index (exclusive).
+     * @param <T>   The type of the elements.
+     * @param list  The list to slice.
+     * @param start The start index (inclusive).
+     * @param end   The end index (exclusive).
      * @return The sublist.
      * @see ListKit#sub(List, int, int)
      */
-    public static <T> List<T> sub(final List<T> list, final int fromIndex, final int toIndex) {
-        return ListKit.sub(list, fromIndex, toIndex);
+    public static <T> List<T> sub(final List<T> list, final int start, final int end) {
+        return ListKit.sub(list, start, end);
     }
 
     /**
      * Returns a view of the portion of this list with a given step.
      *
-     * @param <T>       The type of the elements.
-     * @param list      The list to slice.
-     * @param fromIndex The start index (inclusive).
-     * @param toIndex   The end index (exclusive).
-     * @param step      The step size.
+     * @param <T>   The type of the elements.
+     * @param list  The list to slice.
+     * @param start The start index (inclusive).
+     * @param end   The end index (exclusive).
+     * @param step  The step size.
      * @return The sublist.
      * @see ListKit#sub(List, int, int, int)
      */
-    public static <T> List<T> sub(final List<T> list, final int fromIndex, final int toIndex, final int step) {
-        return ListKit.sub(list, fromIndex, toIndex, step);
+    public static <T> List<T> sub(final List<T> list, final int start, final int end, final int step) {
+        return ListKit.sub(list, start, end, step);
     }
 
     /**
@@ -628,12 +622,12 @@ public class CollKit extends CollectionStream {
      *
      * @param <T>        The type of the elements.
      * @param collection The collection to slice.
-     * @param fromIndex  The start index (inclusive).
-     * @param toIndex    The end index (exclusive).
+     * @param start      The start index (inclusive).
+     * @param end        The end index (exclusive).
      * @return The sliced list.
      */
-    public static <T> List<T> sub(final Collection<T> collection, final int fromIndex, final int toIndex) {
-        return sub(collection, fromIndex, toIndex, 1);
+    public static <T> List<T> sub(final Collection<T> collection, final int start, final int end) {
+        return sub(collection, start, end, 1);
     }
 
     /**
@@ -641,21 +635,17 @@ public class CollKit extends CollectionStream {
      *
      * @param <T>        The type of the elements.
      * @param collection The collection to slice.
-     * @param fromIndex  The start index (inclusive).
-     * @param toIndex    The end index (exclusive).
+     * @param start      The start index (inclusive).
+     * @param end        The end index (exclusive).
      * @param step       The step size.
      * @return The sliced list.
      */
-    public static <T> List<T> sub(
-            final Collection<T> collection,
-            final int fromIndex,
-            final int toIndex,
-            final int step) {
+    public static <T> List<T> sub(final Collection<T> collection, final int start, final int end, final int step) {
         if (isEmpty(collection)) {
             return ListKit.empty();
         }
         final List<T> list = collection instanceof List ? (List<T>) collection : ListKit.of(collection);
-        return sub(list, fromIndex, toIndex, step);
+        return sub(list, start, end, step);
     }
 
     /**

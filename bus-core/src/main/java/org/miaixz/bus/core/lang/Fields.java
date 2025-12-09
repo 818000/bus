@@ -64,12 +64,6 @@ package org.miaixz.bus.core.lang;
 public class Fields {
 
     /**
-     * Constructs a new Fields. Utility class constructor for static access.
-     */
-    private Fields() {
-    }
-
-    /**
      * Year format: yyyy
      */
     public static final String NORM_YEAR = "yyyy";

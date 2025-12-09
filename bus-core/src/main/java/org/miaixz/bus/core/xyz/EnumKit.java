@@ -45,12 +45,6 @@ import org.miaixz.bus.core.lang.Assert;
  */
 public class EnumKit {
 
-    /**
-     * Constructs a new EnumKit. Utility class constructor for static access.
-     */
-    private EnumKit() {
-    }
-
     private static final Map<Class<?>, Enum<?>[]> CACHE = new ConcurrentHashMap<>();
 
     /**
@@ -192,7 +186,6 @@ public class EnumKit {
     /**
      * Gets a list of the names of all constants in an enum class.
      *
-     * @param <E>   the enum type
      * @param clazz The enum class.
      * @return A list of names.
      */
@@ -214,7 +207,6 @@ public class EnumKit {
     /**
      * Gets a list of values for a specified field from all constants in an enum class.
      *
-     * @param <E>       the enum type
      * @param clazz     The enum class.
      * @param fieldName The name of the field.
      * @return A list of field values.
@@ -392,7 +384,6 @@ public class EnumKit {
      * Creates a map where keys are the names of enum constants and values are the values of a specified field for each
      * constant.
      *
-     * @param <E>       the enum type
      * @param clazz     The enum class.
      * @param fieldName The name of the field.
      * @return A map from enum name to field value.

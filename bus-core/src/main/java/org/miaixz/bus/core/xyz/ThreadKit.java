@@ -510,7 +510,7 @@ public class ThreadKit {
      */
     public static Thread getMainThread() {
         for (final Thread thread : getThreads()) {
-            if (thread.threadId() == 1) {
+            if (thread.getId() == 1) {
                 return thread;
             }
         }
@@ -532,7 +532,7 @@ public class ThreadKit {
      * @return The thread ID.
      */
     public static long currentThreadId() {
-        return Thread.currentThread().threadId();
+        return Thread.currentThread().getId();
     }
 
     /**

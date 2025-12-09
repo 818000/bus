@@ -53,7 +53,7 @@ public class URLConverter extends AbstractConverter {
             if (value instanceof URI) {
                 return ((URI) value).toURL();
             }
-            return URI.create(convertToString(value)).toURL();
+            return new URL(convertToString(value));
         } catch (final Exception e) {
             // Ignore Exception
         }
