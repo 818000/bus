@@ -100,7 +100,7 @@ public class Assets {
     private List<String> roleIds;
     private HttpMethod httpMethod;
 
-    private long timeout = 10000;
+    private long timeout = 30000;
 
     @Override
     public boolean equals(Object o) {

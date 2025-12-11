@@ -194,6 +194,7 @@ public class AuthorizeFilter implements WebFilter {
             }
             requestParam.put("x_remote_ip", ip);
         }
+        requestParam.put("x_trace_id", exchange.getLogPrefix());
     }
 
     /**
