@@ -3,7 +3,7 @@
  ~                                                                               ~
  ~ The MIT License (MIT)                                                         ~
  ~                                                                               ~
- ~ Copyright (c) 2015-2025 miaixz.org and other contributors.                    ~
+ ~ Copyright (c) 2015-2025 miaixz.org OSHI and other contributors.               ~
  ~                                                                               ~
  ~ Permission is hereby granted, free of charge, to any person obtaining a copy  ~
  ~ of this software and associated documentation files (the "Software"), to deal ~
@@ -25,66 +25,66 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.core.xyz;
+package org.miaixz.bus.health.linux.jna;
 
-import java.lang.reflect.RecordComponent;
-import java.lang.reflect.Type;
-import java.util.AbstractMap;
-import java.util.Map;
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 
-import org.miaixz.bus.core.bean.copier.ValueProvider;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
- * Utility class for `java.lang.Record`.
- *
- * @author Kimi Liu
- * @since Java 17+
+ * JNA bindings for libsystemd. This class should be considered non-API as it may be removed if/when its code is
+ * incorporated into the JNA project.
  */
-public class RecordKit {
+@ThreadSafe
+public interface Systemd extends Library {
+
+    Systemd INSTANCE = Native.load("systemd", Systemd.class);
 
     /**
-     * Checks if the given class is a Record.
+     * Get start time of session
      *
-     * @param clazz The class.
-     * @return `true` if it is a Record class.
+     * @param session Session ID or null for current session
+     * @param usec    Pointer to store microseconds since epoch
+     * @return 0 on success, negative errno on failure
      */
-    public static boolean isRecord(final Class<?> clazz) {
-        return null != clazz && clazz.isRecord();
-    }
+    int sd_session_get_start_time(String session, LongByReference usec);
 
     /**
-     * Gets all record components (name and type) of a Record class.
+     * Get username of session
      *
-     * @param recordClass The Record class.
-     * @return An array of map entries representing the components.
+     * @param session  Session ID or null for current session
+     * @param username Pointer to store username string (must be freed)
+     * @return 0 on success, negative errno on failure
      */
-    public static Map.Entry<String, Type>[] getRecordComponents(final Class<?> recordClass) {
-        final RecordComponent[] components = recordClass.getRecordComponents();
-        if (null == components) {
-            return null;
-        }
-        final Map.Entry<String, Type>[] entries = new Map.Entry[components.length];
-        for (int i = 0; i < components.length; i++) {
-            entries[i] = new AbstractMap.SimpleEntry<>(components[i].getName(), components[i].getGenericType());
-        }
-        return entries;
-    }
+    int sd_session_get_username(String session, PointerByReference username);
 
     /**
-     * Instantiates a Record class.
+     * Get TTY of session
      *
-     * @param recordClass   The Record class.
-     * @param valueProvider A provider for the constructor arguments.
-     * @return A new instance of the Record.
+     * @param session Session ID or null for current session
+     * @param tty     Pointer to store TTY string (must be freed)
+     * @return 0 on success, negative errno on failure
      */
-    public static Object newInstance(final Class<?> recordClass, final ValueProvider<String> valueProvider) {
-        final Map.Entry<String, Type>[] recordComponents = getRecordComponents(recordClass);
-        final Object[] args = new Object[recordComponents.length];
-        for (int i = 0; i < args.length; i++) {
-            args[i] = valueProvider.value(recordComponents[i].getKey(), recordComponents[i].getValue());
-        }
+    int sd_session_get_tty(String session, PointerByReference tty);
 
-        return ReflectKit.newInstance(recordClass, args);
-    }
+    /**
+     * Get remote host of session
+     *
+     * @param session     Session ID or null for current session
+     * @param remote_host Pointer to store remote host string (must be freed)
+     * @return 0 on success, negative errno on failure
+     */
+    int sd_session_get_remote_host(String session, PointerByReference remote_host);
+
+    /**
+     * Enumerate sessions
+     *
+     * @param sessions Pointer to store array of session IDs (must be freed)
+     * @return Number of sessions on success, negative errno on failure
+     */
+    int sd_get_sessions(PointerByReference sessions);
 
 }
