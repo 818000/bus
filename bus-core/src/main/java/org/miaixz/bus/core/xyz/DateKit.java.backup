@@ -177,17 +177,16 @@ public class DateKit extends Calendar {
     }
 
     /**
-     * Gets the current date and time as a {@link DateTime} object.
+     * Gets the current time as a {@link DateTime} object.
      *
-     * @return The current date and time.
+     * @return The current time.
      */
-
     public static DateTime now() {
         return new DateTime();
     }
 
     /**
-     * Gets the start of the current day (00:00:00).
+     * Gets the start of the current day (e.g., 2022-10-26 00:00:00).
      *
      * @return The start of today.
      */
@@ -196,7 +195,7 @@ public class DateKit extends Calendar {
     }
 
     /**
-     * Gets the current time, truncated to seconds precision (milliseconds set to 0).
+     * Gets the current time, truncated to the second.
      *
      * @return The current time without milliseconds.
      */
@@ -306,7 +305,7 @@ public class DateKit extends Calendar {
     }
 
     /**
-     * Gets the current time in seconds since the Unix epoch (January 1, 1970).
+     * Gets the current time in seconds.
      *
      * @return The current time in seconds.
      */
@@ -503,8 +502,6 @@ public class DateKit extends Calendar {
     }
 
     /**
-     * Gets the current month value.
-     *
      * @return The current month (0-11).
      */
     public static int thisMonth() {
@@ -512,8 +509,6 @@ public class DateKit extends Calendar {
     }
 
     /**
-     * Gets the current month as a {@link Month} enum.
-     *
      * @return The current month as a {@link Month} enum.
      */
     public static Month thisMonthEnum() {
