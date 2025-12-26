@@ -40,7 +40,6 @@ import java.util.Date;
 import org.miaixz.bus.core.center.date.culture.en.Units;
 import org.miaixz.bus.core.center.date.format.FormatPeriod;
 import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.xyz.DateKit;
 
 /**
  * Represents the interval between two dates.
@@ -59,11 +58,11 @@ public class Between implements Serializable {
     /**
      * The beginning date of the interval.
      */
-    private final long begin;
+    private final Date begin;
     /**
      * The ending date of the interval.
      */
-    private final long end;
+    private final Date end;
 
     /**
      * Constructs a {@code Between} object. The earlier date is set as the beginning time, and the later date as the
@@ -90,11 +89,11 @@ public class Between implements Serializable {
 
         if (isAbs && begin.after(end)) {
             // If the interval should be positive, and the begin date is after the end date, swap them.
-            this.begin = end.getTime();
-            this.end = begin.getTime();
+            this.begin = end;
+            this.end = begin;
         } else {
-            this.begin = begin.getTime();
-            this.end = end.getTime();
+            this.begin = begin;
+            this.end = end;
         }
     }
 
@@ -200,7 +199,7 @@ public class Between implements Serializable {
      * @return The duration difference in the specified unit.
      */
     public long between(final Units unit) {
-        final long diff = end - begin;
+        final long diff = end.getTime() - begin.getTime();
         return diff / unit.getMillis();
     }
 
@@ -274,7 +273,7 @@ public class Between implements Serializable {
      * @return The beginning date.
      */
     public Date getBegin() {
-        return DateKit.date(begin);
+        return begin;
     }
 
     /**
@@ -283,7 +282,7 @@ public class Between implements Serializable {
      * @return The ending date.
      */
     public Date getEnd() {
-        return DateKit.date(end);
+        return end;
     }
 
     /**

@@ -30,6 +30,7 @@ package org.miaixz.bus.vortex.magic;
 import org.miaixz.bus.core.basic.entity.Authorize;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.basic.normal.Consts;
+import org.miaixz.bus.logger.Logger;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -74,7 +75,14 @@ public class Delegate {
      *         {@code false} otherwise.
      */
     public boolean isOk() {
-        return message != null && Consts.ZERO.toString().equals(message.getErrcode());
+        if (Consts.ZERO.equals(message.getErrcode())) {
+            Logger.error(message.getErrmsg());
+        }
+        if (String.valueOf(Consts.ZERO).equals(message.getErrcode())) {
+            Logger.error(message.getErrmsg());
+        }
+
+        return message != null && Consts.ZERO.equals(message.getErrcode());
     }
 
 }

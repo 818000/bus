@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.ibatis.executor.Executor;
@@ -48,6 +47,7 @@ import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.mapper.Args;
 import org.miaixz.bus.mapper.Context;
+import org.miaixz.bus.mapper.Holder;
 import org.miaixz.bus.mapper.handler.ConditionHandler;
 
 /**
@@ -61,17 +61,12 @@ import org.miaixz.bus.mapper.handler.ConditionHandler;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
+public class VisibleHandler<T> extends ConditionHandler<T> {
 
     /**
      * Visible configuration from file (lowest priority).
      */
     private VisibleConfig config;
-
-    /**
-     * Cached modification status to avoid redundant processing.
-     */
-    private static final ConcurrentHashMap<String, Boolean> MODIFICATION_CACHE = new ConcurrentHashMap<>();
 
     /**
      * Default constructor (uses default configuration).
@@ -102,14 +97,12 @@ public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
             return false;
         }
 
-        // Store all properties for dynamic lookup (in parent class)
-        this.properties = properties;
-
-        // Get current datasource key for static config initialization
-        String datasourceKey = getDatasourceKey();
-
         // Try to get provider from properties
-        VisibleProvider provider = getProvider(properties, VisibleProvider.class);
+        VisibleProvider provider = null;
+        Object object = properties.get(Args.PROVIDER_KEY);
+        if (object instanceof VisibleProvider) {
+            provider = (VisibleProvider) object;
+        }
 
         // Set provider if found
         if (provider == null) {
@@ -117,60 +110,46 @@ public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
             return false;
         }
 
-        // Build initial static config
-        this.config = buildVisibleConfig(datasourceKey, properties, provider);
-        return true;
-    }
-
-    @Override
-    protected String scope() {
-        return Args.VISIBLE_KEY;
-    }
-
-    @Override
-    protected VisibleConfig defaults() {
-        return config;
-    }
-
-    @Override
-    protected VisibleConfig capture() {
-        Context.MapperConfig context = Context.getMapperConfig();
-        return context != null ? context.getVisible() : null;
-    }
-
-    @Override
-    protected VisibleConfig derived(String datasourceKey, Properties properties) {
-        // Try to get provider from properties
-        VisibleProvider provider = getProvider(properties, VisibleProvider.class);
-
-        // Set provider if found
-        if (provider == null) {
-            return null;
+        // Get current datasource key
+        String datasourceKey = Holder.getKey();
+        if (StringKit.isEmpty(datasourceKey)) {
+            // Use actual default datasource name or fallback to "default"
+            datasourceKey = "default";
         }
 
-        return buildVisibleConfig(datasourceKey, properties, provider);
-    }
-
-    /**
-     * Build visible configuration from properties for a specific datasource.
-     *
-     * @param datasourceKey the datasource key
-     * @param properties    the properties
-     * @param provider      the visible provider
-     * @return the visible configuration
-     */
-    private VisibleConfig buildVisibleConfig(String datasourceKey, Properties properties, VisibleProvider provider) {
+        // Build configuration paths
         String sharedPrefix = Args.SHARED_KEY + Symbol.DOT + Args.VISIBLE_KEY + Symbol.DOT;
         String dsPrefix = datasourceKey + Symbol.DOT + Args.VISIBLE_KEY + Symbol.DOT;
 
+        // Merge configuration: datasource-specific > shared > default
         String ignore = properties.getProperty(
                 dsPrefix + Args.PROP_IGNORE,
                 properties.getProperty(sharedPrefix + Args.PROP_IGNORE, Normal.EMPTY));
 
+        // Get ignore tables list
         List<String> ignoreTables = StringKit.isNotEmpty(ignore) ? Arrays.stream(ignore.split(Symbol.COMMA))
                 .map(String::trim).filter(ObjectKit::isNotEmpty).collect(Collectors.toList()) : Collections.emptyList();
 
-        return VisibleConfig.builder().provider(provider).ignore(ignoreTables).build();
+        // Build and store config
+        this.config = VisibleConfig.builder().provider(provider).ignore(ignoreTables).build();
+
+        return true;
+    }
+
+    /**
+     * Get current effective configuration with priority: Context > File Config.
+     *
+     * @return the effective visible configuration
+     */
+    private VisibleConfig getConfig() {
+        // 1. Highest priority: Context configuration
+        Context.MapperConfig context = Context.getMapperConfig();
+        if (context != null && context.getVisible() != null) {
+            return context.getVisible();
+        }
+
+        // 2. Lowest priority: File configuration
+        return config;
     }
 
     @Override
@@ -203,7 +182,7 @@ public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
             ResultHandler resultHandler,
             BoundSql boundSql) {
         // Get current configuration
-        VisibleConfig currentConfig = current();
+        VisibleConfig currentConfig = getConfig();
 
         // Skip if perimeter control is disabled
         if (currentConfig == null) {
@@ -232,15 +211,6 @@ public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
         // Get original SQL
         String originalSql = boundSql.getSql();
 
-        // Generate cache key for this SQL
-        String cacheKey = ms.getId() + "::" + System.identityHashCode(originalSql);
-
-        // Check cache to avoid redundant processing
-        if (MODIFICATION_CACHE.containsKey(cacheKey)) {
-            Logger.debug(false, "Visible", "SQL already processed (cached), skipping");
-            return true;
-        }
-
         // Create builder for current config and apply perimeter condition
         VisibleBuilder builder = new VisibleBuilder(currentConfig);
         String modifiedSql = builder.applyVisibility(originalSql);
@@ -249,19 +219,26 @@ public class VisibleHandler<T> extends ConditionHandler<T, VisibleConfig> {
         if (!originalSql.equals(modifiedSql)) {
             Logger.debug(false, "Visible", "Applied visibility filter for query: {}", ms.getId());
             // Use reflection to update SQL in BoundSql
-            if (setBoundSql(boundSql, modifiedSql)) {
-                Logger.debug(false, "Visible", "Modified BoundSql.sql");
-                // Mark as processed in cache
-                MODIFICATION_CACHE.put(cacheKey, true);
-            } else {
+            try {
+                java.lang.reflect.Field field = BoundSql.class.getDeclaredField("sql");
+                field.setAccessible(true);
+                field.set(boundSql, modifiedSql);
+            } catch (Exception e) {
                 // If reflection fails, log warning and continue with original SQL
-                Logger.warn(false, "Visible", "Failed to update SQL");
+                Logger.warn(false, "Visible", "Failed to update SQL: {}", e.getMessage(), e);
             }
         } else {
             Logger.debug(false, "Visible", "SQL unchanged for query: {}", ms.getId());
         }
 
         return true;
+    }
+
+    /**
+     * Clear metadata cache (no-op since we don't cache builders anymore).
+     */
+    public void clear() {
+        // No-op: builder is created on-demand per SQL execution
     }
 
 }

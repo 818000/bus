@@ -3554,10 +3554,9 @@ public class CharsBacker extends CharsValidator {
             return toStringOrNull(text);
         }
         // Limit byte count
-        final int dotsBytes = "...".getBytes(charset).length;
         final int limitBytes;
-        if (appendDots && maxBytesLength > dotsBytes) {
-            limitBytes = maxBytesLength - dotsBytes;
+        if (appendDots) {
+            limitBytes = maxBytesLength - "...".getBytes(charset).length;
         } else {
             limitBytes = maxBytesLength;
         }

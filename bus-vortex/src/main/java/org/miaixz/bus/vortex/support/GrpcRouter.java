@@ -48,7 +48,8 @@ import reactor.core.publisher.Mono;
  * A {@link Router} implementation for forwarding requests to gRPC services.
  * <p>
  * This class acts as a coordinator for gRPC communication. It extracts the request body and uses a {@link GrpcService}
- * to invoke the gRPC method on the target service.
+ * to invoke the gRPC method on the target service. It supports both unary and streaming gRPC calls based on the
+ * {@link Assets#getStream()} configuration.
  *
  * @author Kimi Liu
  * @see GrpcService
@@ -75,6 +76,8 @@ public class GrpcRouter implements Router {
      * <p>
      * This method retrieves the {@link Context} and {@link Assets} to determine the target gRPC service and method. It
      * then reads the request body and delegates the invocation to the {@link GrpcService}.
+     * <p>
+     * Supports both streaming and atomic response modes based on the {@link Assets#getStream()} configuration.
      *
      * @param request The current {@link ServerRequest}.
      * @return A {@code Mono<ServerResponse>} containing the response from the gRPC service.
@@ -103,9 +106,8 @@ public class GrpcRouter implements Router {
             boolean isStreaming = assets.getStream() != null && assets.getStream() == 2;
 
             return request.bodyToMono(String.class).switchIfEmpty(Mono.just("{}")).flatMap(payload -> {
-                // Invoke gRPC service (wrap synchronous call in Mono)
-                Mono<String> responseMono = Mono.fromCallable(() -> this.service.invoke(assets, payload))
-                        .subscribeOn(reactor.core.scheduler.Schedulers.boundedElastic());
+                // Invoke gRPC service
+                Mono<String> responseMono = this.service.invoke(assets, payload);
 
                 if (isStreaming) {
                     // STREAMING MODE: Use streaming execution

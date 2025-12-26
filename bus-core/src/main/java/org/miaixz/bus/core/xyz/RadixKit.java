@@ -27,8 +27,6 @@
 */
 package org.miaixz.bus.core.xyz;
 
-import org.miaixz.bus.core.lang.Assert;
-
 /**
  * Radix (base) conversion utility class. This can be used to convert a decimal integer to a custom-defined base.
  * <p>
@@ -90,17 +88,11 @@ public class RadixKit {
      * @return The decoded long.
      */
     public static long decode(final String radixs, final String encode) {
-        Assert.notNull(radixs, "radixs must not be null");
-        Assert.notEmpty(encode, "encode must not be empty");
-
         final int rl = radixs.length();
-        Assert.isTrue(rl >= 2, "radixs must be at least 2 characters");
         long res = 0L;
 
         for (final char c : encode.toCharArray()) {
-            final int idx = radixs.indexOf(c);
-            Assert.isTrue(idx >= 0, "Illegal character '" + c + "' for radixs");
-            res = res * rl + idx;
+            res = res * rl + radixs.indexOf(c);
         }
         return res;
     }

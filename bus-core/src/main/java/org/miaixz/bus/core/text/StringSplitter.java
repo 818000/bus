@@ -160,9 +160,7 @@ public class StringSplitter extends ComputeIterator<String> implements Serializa
     /**
      * Resets the splitter to its initial state, allowing re-iteration from the beginning.
      */
-    @Override
     public void reset() {
-        super.reset();
         this.finder.reset();
         this.offset = 0;
         this.count = 0;

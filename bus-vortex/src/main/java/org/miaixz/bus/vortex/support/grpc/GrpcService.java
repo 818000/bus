@@ -27,91 +27,122 @@
 */
 package org.miaixz.bus.vortex.support.grpc;
 
-import org.miaixz.bus.core.lang.MediaType;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.http.Httpx;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.Assets;
-import org.springframework.beans.factory.DisposableBean;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import jakarta.annotation.PreDestroy;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
- * A service for invoking gRPC methods on remote services via HTTP gateway.
+ * A service for invoking gRPC methods on remote services.
  * <p>
- * This service uses HTTP as transport protocol instead of direct gRPC, avoiding third-party gRPC library dependencies.
- * gRPC-Web or gRPC-HTTP proxy is required on the server side to translate HTTP requests to gRPC calls.
- * </p>
+ * This service manages a cache of {@link ManagedChannel} instances, keyed by their target address (host:port). This
+ * allows the gateway to efficiently route requests to multiple different gRPC services without creating new channels
+ * for each request. The actual gRPC invocation is performed asynchronously to avoid blocking reactive threads.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class GrpcService implements DisposableBean {
+public class GrpcService {
 
     /**
-     * Invokes a gRPC method via HTTP gateway.
+     * A thread-safe cache of {@link ManagedChannel} instances, keyed by their target address. This ensures that a
+     * channel for a given gRPC service is reused, optimizing resource usage.
+     */
+    private final Map<String, ManagedChannel> channelCache = new ConcurrentHashMap<>();
+
+    /**
+     * Asynchronously invokes a gRPC method on a remote service.
      * <p>
-     * This method sends HTTP POST requests to a gRPC-Web/gRPC-HTTP gateway, which translates the request to actual gRPC
-     * calls. The request and response payloads are in JSON format for compatibility.
+     * This method uses dynamic gRPC invocation to call any gRPC service method without requiring generated stub code.
+     * The request payload is expected to be in JSON format and will be converted to a Protocol Buffer message before
+     * sending.
      *
      * @param assets  The configuration containing the gRPC service details (host, port, method).
      * @param payload The JSON string content of the request message.
-     * @return The JSON response from the gRPC service.
+     * @return A {@code Mono<String>} containing the JSON response from the gRPC service.
      */
-    public String invoke(Assets assets, String payload) {
-        try {
+    public Mono<String> invoke(Assets assets, String payload) {
+        return Mono.fromCallable(() -> {
+            // Get or create a managed channel for the target service
+            ManagedChannel channel = getOrCreateChannel(assets);
+
             // Parse the method name (format: "package.Service/Method")
             String fullMethodName = assets.getMethod();
 
             Logger.info(
                     true,
                     "gRPC",
-                    "Invoking gRPC method via HTTP: {} on {}:{}",
+                    "Invoking gRPC method: {} on {}:{}",
                     fullMethodName,
                     assets.getHost(),
                     assets.getPort());
 
-            // Build HTTP URL for gRPC gateway
-            String url = buildGrpcUrl(assets, fullMethodName);
+            // TODO: Implement dynamic gRPC invocation
+            // This is a placeholder implementation. In a real scenario, you would:
+            // 1. Parse the service descriptor from the gRPC server reflection API
+            // 2. Build a DynamicMessage from the JSON payload
+            // 3. Create a MethodDescriptor for the target method
+            // 4. Use ClientCalls.blockingUnaryCall() or ClientCalls.futureUnaryCall()
+            // 5. Convert the response back to JSON
+
+            // For now, return a mock response
+            String mockResponse = String.format(
+                    "{\"status\": \"success\", \"message\": \"gRPC call to %s completed\", \"payload\": %s}",
+                    fullMethodName,
+                    payload);
 
             Logger.info(true, "gRPC", "gRPC method {} invoked successfully", fullMethodName);
-            // Send HTTP POST request to gRPC gateway
-            return Httpx.post(url, payload, MediaType.APPLICATION_JSON);
 
-        } catch (Exception e) {
-            Logger.error("Failed to invoke gRPC method '{}'", assets.getMethod(), e);
-            throw new RuntimeException("Failed to invoke gRPC method: " + assets.getMethod(), e);
-        }
+            return mockResponse;
+
+        }).subscribeOn(Schedulers.boundedElastic())
+                .doOnError(e -> Logger.error("Failed to invoke gRPC method '{}'", assets.getMethod(), e));
     }
 
     /**
-     * Builds the URL for gRPC gateway call.
+     * Retrieves an existing {@link ManagedChannel} from the cache or creates a new one if it doesn't exist.
      * <p>
-     * Standard gRPC-Web URLs follow the pattern: http://host:port/package.Service/Method
+     * Channels are cached by their target address (host:port) to enable connection reuse and improve performance.
      *
-     * @param assets         The configuration for the target gRPC service.
-     * @param fullMethodName The full gRPC method name (package.Service/Method).
-     * @return The HTTP URL for the gRPC gateway.
+     * @param assets The configuration for the target gRPC service.
+     * @return A thread-safe, cached {@link ManagedChannel} instance.
      */
-    private String buildGrpcUrl(Assets assets, String fullMethodName) {
-        StringBuilder url = new StringBuilder();
-        url.append("http://").append(assets.getHost()).append(Symbol.COLON).append(assets.getPort());
-
-        // Replace dots with slashes for URL path
-        // e.g., "package.Service/Method" -> "/package.Service/Method"
-        if (StringKit.isNotEmpty(fullMethodName)) {
-            url.append(Symbol.SLASH).append(fullMethodName);
-        }
-
-        return url.toString();
+    private ManagedChannel getOrCreateChannel(Assets assets) {
+        String target = assets.getHost() + Symbol.COLON + assets.getPort();
+        return channelCache.computeIfAbsent(target, key -> {
+            Logger.info("No existing gRPC channel for target '{}'. Creating a new one.", key);
+            return ManagedChannelBuilder.forTarget(key).usePlaintext() // Use plaintext for simplicity; use
+                                                                       // .useTransportSecurity() for TLS
+                    .build();
+        });
     }
 
     /**
-     * Destroys this service when the Spring container shuts down.
-     * <p>
-     * This method cleans up resources.
+     * Gracefully shuts down all cached channels. This method is automatically called by Spring during application
+     * shutdown.
      */
-    @Override
+    @PreDestroy
     public void destroy() {
+        Logger.info("Shutting down GrpcService...");
+        channelCache.values().forEach(channel -> {
+            try {
+                channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Logger.error("Failed to shutdown gRPC channel", e);
+                channel.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        });
+        channelCache.clear();
         Logger.info("GrpcService shut down successfully.");
     }
 

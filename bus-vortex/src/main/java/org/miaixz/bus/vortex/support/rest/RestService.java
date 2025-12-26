@@ -57,6 +57,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
+
 /**
  * The core executor for forwarding requests to downstream RESTful HTTP services.
  * <p>
@@ -108,8 +109,11 @@ public class RestService {
 
         // 2. Build a WebClient with shared connection pool (timeout is handled at VortexHandler level)
         HttpClient httpClient = HttpClient.create(SHARED_CONNECTION_PROVIDER);
-        WebClient webClient = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient))
-                .exchangeStrategies(CACHED_EXCHANGE_STRATEGIES).baseUrl(baseUrl).build();
+        WebClient webClient = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .exchangeStrategies(CACHED_EXCHANGE_STRATEGIES)
+                .baseUrl(baseUrl)
+                .build();
 
         // 3. Build and execute the request.
         String targetUri = buildTargetUri(assets, context);
@@ -175,7 +179,13 @@ public class RestService {
         }
 
         // 6. Send the request and process the response (timeout and retry are handled at VortexHandler level).
-        Logger.info(true, "Http", "[{}] [{}] [{}] [HTTP_ROUTER_SEND] - Sending request", ip, method, path);
+        Logger.info(
+                true,
+                "Http",
+                "[{}] [{}] [{}] [HTTP_ROUTER_SEND] - Sending request",
+                ip,
+                method,
+                path);
 
         // Choose the execution strategy based on the asset's stream configuration.
         boolean isStreaming = assets.getStream() != null && assets.getStream() == 2;
@@ -402,13 +412,13 @@ public class RestService {
 
             return responseBuilder.body(bodyFlux, DataBuffer.class);
         }).doOnSubscribe(
-                subscription -> Logger.info(
-                        true,
-                        "Http",
-                        "[{}] [{}] [{}] [HTTP_ROUTER_SUBSCRIBE] - Request subscribed (Streaming).",
-                        ip,
-                        method,
-                        path))
+                        subscription -> Logger.info(
+                                true,
+                                "Http",
+                                "[{}] [{}] [{}] [HTTP_ROUTER_SUBSCRIBE] - Request subscribed (Streaming).",
+                                ip,
+                                method,
+                                path))
                 .doOnSuccess(
                         serverResponse -> Logger.info(
                                 false,

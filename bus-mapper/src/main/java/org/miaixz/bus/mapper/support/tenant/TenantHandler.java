@@ -33,8 +33,11 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.miaixz.bus.core.lang.Normal;
@@ -44,6 +47,7 @@ import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.mapper.Args;
 import org.miaixz.bus.mapper.Context;
+import org.miaixz.bus.mapper.Holder;
 import org.miaixz.bus.mapper.handler.ConditionHandler;
 
 /**
@@ -80,7 +84,7 @@ import org.miaixz.bus.mapper.handler.ConditionHandler;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
+public class TenantHandler<T> extends ConditionHandler<T> {
 
     /**
      * Tenant configuration from file (lowest priority).
@@ -119,58 +123,27 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
             return false;
         }
 
-        // Store all properties for dynamic lookup (in parent class)
-        this.properties = properties;
-
-        // Get current datasource key for static config initialization
-        String datasourceKey = getDatasourceKey();
-
         // Try to get provider from properties
-        TenantProvider provider = getProvider(properties, TenantProvider.class);
-
-        // Build initial static config (will create default provider if column is configured)
-        this.config = buildTenantConfig(datasourceKey, properties, provider);
-        return this.config != null;
-    }
-
-    @Override
-    protected String scope() {
-        return Args.TENANT_KEY;
-    }
-
-    @Override
-    protected TenantConfig defaults() {
-        return config;
-    }
-
-    @Override
-    protected TenantConfig capture() {
-        Context.MapperConfig contextConfig = Context.getMapperConfig();
-        return contextConfig != null ? contextConfig.getTenant() : null;
-    }
-
-    @Override
-    protected TenantConfig derived(String datasourceKey, Properties properties) {
-        // Try to get provider from properties
-        TenantProvider provider = getProvider(properties, TenantProvider.class);
+        TenantProvider provider = null;
+        Object object = properties.get(Args.PROVIDER_KEY);
+        if (object instanceof TenantProvider) {
+            provider = (TenantProvider) object;
+        }
 
         // If no provider, tenant feature is not enabled
         if (provider == null) {
-            return null;
+            Logger.warn(false, "Mapper", "TenantProvider not found, tenant feature will not be enabled");
+            return false;
         }
 
-        return buildTenantConfig(datasourceKey, properties, provider);
-    }
+        // Get current datasource key
+        String datasourceKey = Holder.getKey();
+        // Use actual default datasource name or fallback to "default"
+        if (StringKit.isEmpty(datasourceKey)) {
+            datasourceKey = "default";
+        }
 
-    /**
-     * Build tenant configuration from properties for a specific datasource.
-     *
-     * @param datasourceKey the datasource key
-     * @param properties    the properties
-     * @param provider      the tenant provider
-     * @return the tenant configuration
-     */
-    private TenantConfig buildTenantConfig(String datasourceKey, Properties properties, TenantProvider provider) {
+        // Build configuration paths
         String sharedPrefix = Args.SHARED_KEY + Symbol.DOT + Args.TENANT_KEY + Symbol.DOT;
         String dsPrefix = datasourceKey + Symbol.DOT + Args.TENANT_KEY + Symbol.DOT;
 
@@ -182,32 +155,44 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
                 dsPrefix + Args.PROP_IGNORE,
                 properties.getProperty(sharedPrefix + Args.PROP_IGNORE, Normal.EMPTY));
 
-        Logger.debug(false, "Tenant", "Building config for datasource: {}", datasourceKey);
-        Logger.debug(false, "Tenant", "  Ignore config key: {}", dsPrefix + Args.PROP_IGNORE);
-        Logger.debug(false, "Tenant", "  Ignore raw value: {}", ignoreTablesStr);
-
         List<String> ignoreTables = Arrays.stream(ignoreTablesStr.split(Symbol.COMMA)).map(String::trim)
                 .filter(ObjectKit::isNotEmpty).collect(Collectors.toList());
 
-        Logger.debug(false, "Tenant", "  Ignore parsed list: {}", ignoreTables);
+        // Build and store config
+        this.config = TenantConfig.builder().column(column).ignore(ignoreTables).provider(provider).build();
 
-        // If column is configured, create a default provider that gets tenant ID from TenantContext
-        TenantProvider finalProvider = provider;
-        if (finalProvider == null && StringKit.isNotEmpty(column)) {
-            // Create default provider that uses TenantContext
-            finalProvider = TenantContext::getTenantId;
+        return true;
+    }
+
+    /**
+     * Get current effective configuration with priority: Context > Provider.getConfig() > File Config.
+     *
+     * @return the effective tenant configuration
+     */
+    private TenantConfig getCurrentConfig() {
+        // 1. Highest priority: Context configuration
+        Context.MapperConfig contextConfig = Context.getMapperConfig();
+        if (contextConfig != null && contextConfig.getTenant() != null) {
+            return contextConfig.getTenant();
         }
 
-        if (finalProvider == null) {
-            return null;
+        // 2. Medium priority: Provider's dynamic configuration
+        if (config != null && config.getProvider() != null) {
+            // Check if provider implements getConfig() method (custom providers might have this)
+            TenantProvider provider = config.getProvider();
+            if (provider instanceof TenantProvider) {
+                // For now, provider doesn't have getConfig(), so use fileConfig
+                // In future, if TenantProvider extends Configurable<TenantConfig>, check here
+            }
         }
 
-        return TenantConfig.builder().column(column).ignore(ignoreTables).provider(finalProvider).build();
+        // 3. Lowest priority: File configuration
+        return config;
     }
 
     @Override
     public int getOrder() {
-        return MIN_VALUE + 2;
+        return MIN_VALUE + 3;
     }
 
     @Override
@@ -219,7 +204,7 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
             ResultHandler resultHandler,
             BoundSql boundSql) {
         // If multi-tenancy is not enabled, return true directly
-        TenantConfig currentConfig = current();
+        TenantConfig currentConfig = getCurrentConfig();
         if (currentConfig == null) {
             Logger.debug(true, "Tenant", "Multi-tenancy disabled for query: {}", ms.getId());
             return true;
@@ -251,27 +236,76 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
             ResultHandler resultHandler,
             BoundSql boundSql) {
         Logger.debug(false, "Tenant", "Processing query SQL: {}", ms.getId());
-        handleSqlInMappedStatement(ms, parameter, boundSql);
+        // Process query SQL
+        handleSql(boundSql, ms);
+    }
+
+    @Override
+    public boolean isUpdate(Executor executor, MappedStatement ms, Object parameter) {
+        // If multi-tenancy is not enabled, return true directly
+        TenantConfig currentConfig = getCurrentConfig();
+        if (currentConfig == null) {
+            Logger.debug(true, "Tenant", "Multi-tenancy disabled for update: {}", ms.getId());
+            return true;
+        }
+
+        // If tenant filtering is ignored, return true directly
+        if (TenantContext.isIgnore()) {
+            Logger.debug(true, "Tenant", "Tenant filtering ignored for update: {}", ms.getId());
+            return true;
+        }
+
+        // Check if the Mapper should be ignored
+        String mapperId = ms.getId();
+        if (currentConfig.isIgnoreMapper(mapperId)) {
+            Logger.debug(true, "Tenant", "Mapper ignored for tenant filtering: {}", mapperId);
+            return true;
+        }
+
+        return true;
     }
 
     @Override
     public void update(Executor executor, MappedStatement ms, Object parameter) {
         Logger.debug(false, "Tenant", "Processing update SQL: {}", ms.getId());
-        // Get BoundSql and process SQL by modifying MappedStatement's SqlSource
+        // Process update SQL
         BoundSql boundSql = ms.getBoundSql(parameter);
-        handleSqlInMappedStatement(ms, parameter, boundSql);
+        handleSql(boundSql, ms);
+    }
+
+    @Override
+    public void prepare(StatementHandler statementHandler) {
+        // Process SQL in prepare phase
+        MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
+
+        // Get BoundSql
+        BoundSql boundSql = (BoundSql) metaObject.getValue(DELEGATE_BOUNDSQL);
+        if (boundSql == null) {
+            Logger.debug(true, "Tenant", "BoundSql is null in prepare phase");
+            return;
+        }
+
+        // Get MappedStatement
+        MappedStatement ms = (MappedStatement) metaObject.getValue(DELEGATE_MAPPEDSTATEMENT);
+        if (ms == null) {
+            Logger.debug(true, "Tenant", "MappedStatement is null in prepare phase");
+            return;
+        }
+
+        Logger.debug(false, "Tenant", "Processing SQL in prepare phase: {}", ms.getId());
+        // Process SQL
+        handleSql(boundSql, ms);
     }
 
     /**
-     * Process SQL by modifying the MappedStatement's SqlSource.
+     * Process SQL.
      *
-     * @param ms        the MappedStatement
-     * @param parameter the parameter object
-     * @param boundSql  the current BoundSql
+     * @param boundSql        the BoundSql object
+     * @param mappedStatement the MappedStatement object
      */
-    private void handleSqlInMappedStatement(MappedStatement ms, Object parameter, BoundSql boundSql) {
+    private void handleSql(BoundSql boundSql, MappedStatement mappedStatement) {
         // Get current configuration
-        TenantConfig currentConfig = current();
+        TenantConfig currentConfig = getCurrentConfig();
         if (currentConfig == null) {
             return;
         }
@@ -281,8 +315,15 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
             return;
         }
 
+        // Get current tenant ID using configured resolver
+        String tenantId = currentConfig.getProvider().getTenantId();
+        if (tenantId == null || tenantId.isEmpty()) {
+            Logger.warn(false, "Tenant", "Tenant ID not found for mapper: {}", mappedStatement.getId());
+            return;
+        }
+
         // Check if the Mapper should be ignored
-        String mapperId = ms.getId();
+        String mapperId = mappedStatement.getId();
         if (currentConfig.isIgnoreMapper(mapperId)) {
             return;
         }
@@ -290,37 +331,8 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
         // Get original SQL
         String originalSql = boundSql.getSql();
 
-        // Check if SQL already has tenant condition - if yes, no need to process
-        if (originalSql.contains(currentConfig.getColumn() + " =")) {
-            Logger.debug(false, "Tenant", "SQL already contains tenant condition, skipping");
-            return;
-        }
-
-        // Check if this SQL actually needs tenant filtering by using TenantBuilder
-        // This checks if the table is in the ignore list
+        // Create builder for current config and rewrite SQL
         TenantBuilder builder = new TenantBuilder(currentConfig);
-        String testSql = builder.handleSql(originalSql, "__TEST__");
-
-        Logger.debug(false, "Tenant", "Ignore check - Table: {}", currentConfig.getIgnore());
-        Logger.debug(false, "Tenant", "Ignore check - SQL modified: {}", !originalSql.equals(testSql));
-
-        // If SQL wasn't modified (table is ignored), skip tenant ID validation
-        if (originalSql.equals(testSql)) {
-            Logger.debug(false, "Tenant", "Table is in ignore list, skipping tenant filtering");
-            return;
-        }
-
-        // Get current tenant ID using configured resolver
-        // Only validate tenant ID when we actually need to add it to SQL
-        String tenantId = currentConfig.getProvider().getTenantId();
-        if (tenantId == null || tenantId.isEmpty()) {
-            // Throw exception without SQL details to avoid duplicate logging
-            throw new IllegalStateException("Tenant ID is required but not found. "
-                    + "Please set tenant ID using TenantContext.setTenantId() before executing database operations. "
-                    + "Mapper: " + mapperId);
-        }
-
-        // Rewrite SQL with actual tenant ID
         String newSql = builder.handleSql(originalSql, tenantId);
 
         // If SQL hasn't changed, return directly
@@ -331,17 +343,9 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
 
         Logger.debug(false, "Tenant", "Applied tenant filter (tenantId={}) for mapper: {}", tenantId, mapperId);
 
-        // Step 1: Modify the BoundSql parameter using reflection
-        // This ensures the current BoundSql instance is modified for current execution
-        if (!setBoundSql(boundSql, newSql)) {
-            Logger.warn(false, "Tenant", "Failed to modify BoundSql.sql");
-            // Fallback: continue with SqlSource replacement only
-        }
-
-        // Step 2: Replace the SqlSource in MappedStatement
-        // This ensures subsequent getBoundSql() calls return the modified SQL
-        replaceSqlSource(ms, boundSql, newSql);
-        Logger.debug(false, "Tenant", "Replaced MappedStatement.sqlSource");
+        // Use reflection to modify SQL in BoundSql
+        MetaObject metaObject = SystemMetaObject.forObject(boundSql);
+        metaObject.setValue("sql", newSql);
     }
 
     /**
@@ -351,6 +355,13 @@ public class TenantHandler<T> extends ConditionHandler<T, TenantConfig> {
      */
     public TenantConfig getConfig() {
         return config;
+    }
+
+    /**
+     * Clear SQL cache (no-op since we don't cache builders anymore).
+     */
+    public void clear() {
+        // No-op: builder is created on-demand per SQL execution
     }
 
 }

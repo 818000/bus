@@ -30,7 +30,6 @@ package org.miaixz.bus.vortex.support;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.vortex.Assets;
 import org.miaixz.bus.vortex.Context;
@@ -46,6 +45,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /**
@@ -130,8 +130,7 @@ public class McpRouter implements Router {
 
             String[] parts = prefixedToolName.split(TOOL_NAME_SEPARATOR, 2);
             if (parts.length != 2) {
-                return ServerResponse.badRequest()
-                        .bodyValue("Invalid toolName format. Expected 'serviceName::toolName'.");
+                return ServerResponse.badRequest().bodyValue("Invalid toolName format. Expected 'serviceName::toolName'.");
             }
 
             String serviceName = parts[0];
@@ -148,7 +147,8 @@ public class McpRouter implements Router {
 
             // 1. Wrap the potentially blocking call `service.getMcp()` in fromCallable
             // and offload it from the event loop.
-            return Mono.fromCallable(() -> this.service.getMcp(serviceName)).subscribeOn(Schedulers.boundedElastic())
+            return Mono.fromCallable(() -> this.service.getMcp(serviceName))
+                    .subscribeOn(Schedulers.boundedElastic())
                     .flatMap(client -> {
                         // 2. This logic now runs after the client has been fetched asynchronously.
                         if (client == null) {
@@ -184,15 +184,19 @@ public class McpRouter implements Router {
             DefaultDataBufferFactory bufferFactory = new DefaultDataBufferFactory();
 
             // Convert result to streaming data buffers
-            Flux<DataBuffer> dataFlux = Flux.interval(Duration.ofMillis(10)).take(1).map(i -> {
-                byte[] bytes = resultJson.getBytes(Charset.UTF_8);
-                return bufferFactory.wrap(bytes);
-            });
+            Flux<DataBuffer> dataFlux = Flux.interval(Duration.ofMillis(10))
+                    .take(1)
+                    .map(i -> {
+                        byte[] bytes = resultJson.getBytes(StandardCharsets.UTF_8);
+                        return bufferFactory.wrap(bytes);
+                    });
 
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(dataFlux, DataBuffer.class);
-        }).onErrorResume(
-                e -> ServerResponse.status(500).contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue("{\"error\": \"Error calling tool: " + e.getMessage() + "\"}"));
+            return ServerResponse.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(dataFlux, DataBuffer.class);
+        }).onErrorResume(e -> ServerResponse.status(500)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{\"error\": \"Error calling tool: " + e.getMessage() + "\"}"));
     }
 
     /**
@@ -204,11 +208,12 @@ public class McpRouter implements Router {
      * @return A buffered ServerResponse
      */
     private Mono<ServerResponse> executeBuffering(Mono<Object> toolResultMono) {
-        return toolResultMono
-                .flatMap(result -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(result))
-                .onErrorResume(
-                        e -> ServerResponse.status(500).contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue("{\"error\": \"Error calling tool: " + e.getMessage() + "\"}"));
+        return toolResultMono.flatMap(result -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(result))
+                .onErrorResume(e -> ServerResponse.status(500)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue("{\"error\": \"Error calling tool: " + e.getMessage() + "\"}"));
     }
 
 }
