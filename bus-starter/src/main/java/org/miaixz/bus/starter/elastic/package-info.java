@@ -25,57 +25,10 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.vortex;
-
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.miaixz.bus.vortex.Args;
-import org.miaixz.bus.vortex.magic.Performance;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Getter;
-import lombok.Setter;
-
 /**
- * Configuration properties for the Vortex routing gateway.
+ * ElasticSearch integration support.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-@Getter
-@Setter
-@ConfigurationProperties(GeniusBuilder.VORTEX)
-public class VortexProperties {
-
-    /**
-     * The service port, specifying the port number the server listens on.
-     */
-    private int port;
-
-    /**
-     * The service path, specifying the access path for the server.
-     */
-    private String path;
-
-    /**
-     * A condition to enable or disable custom Spring MVC configuration handling.
-     */
-    private boolean condition;
-
-    /**
-     * Rate limiting configuration, initialized by default.
-     */
-    private Args.Limit limit = new Args.Limit();
-
-    /**
-     * Security configuration, initialized by default.
-     */
-    private Args.Mock mock = new Args.Mock();
-
-    /**
-     * Performance optimization settings for request body processing and connection pooling.
-     * <p>
-     * These settings allow fine-tuning of memory usage and throughput trade-offs.
-     */
-    private Performance performance = new Performance();
-
-}
+package org.miaixz.bus.starter.elastic;
