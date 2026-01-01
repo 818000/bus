@@ -30,8 +30,8 @@ package org.miaixz.bus.core.center.date.culture.solar;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.Loops;
-import org.miaixz.bus.core.center.date.culture.cn.Week;
+import org.miaixz.bus.core.center.date.culture.Week;
+import org.miaixz.bus.core.center.date.culture.parts.WeekPart;
 
 /**
  * Represents a week in the Gregorian calendar.
@@ -39,22 +39,7 @@ import org.miaixz.bus.core.center.date.culture.cn.Week;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class SolarWeek extends Loops {
-
-    /**
-     * The solar month this week belongs to.
-     */
-    protected SolarMonth month;
-
-    /**
-     * The index of the week within the month, 0-5.
-     */
-    protected int index;
-
-    /**
-     * The starting day of the week.
-     */
-    protected Week start;
+public class SolarWeek extends WeekPart {
 
     /**
      * Constructs a {@code SolarWeek} with the given year, month, week index, and start day.
@@ -66,19 +51,11 @@ public class SolarWeek extends Loops {
      * @throws IllegalArgumentException if the index or start day is out of valid range.
      */
     public SolarWeek(int year, int month, int index, int start) {
-        if (index < 0 || index > 5) {
-            throw new IllegalArgumentException(String.format("illegal solar week index: %d", index));
-        }
-        if (start < 0 || start > 6) {
-            throw new IllegalArgumentException(String.format("illegal solar week start: %d", start));
-        }
-        SolarMonth m = SolarMonth.fromYm(year, month);
-        if (index >= m.getWeekCount(start)) {
-            throw new IllegalArgumentException(String.format("illegal solar week index: %d in month: %s", index, m));
-        }
-        this.month = m;
+        validate(year, month, index, start);
+        this.year = year;
+        this.month = month;
         this.index = index;
-        this.start = Week.fromIndex(start);
+        this.start = start;
     }
 
     /**
@@ -95,51 +72,41 @@ public class SolarWeek extends Loops {
     }
 
     /**
+     * Validates the given year, month, week index, and start day.
+     *
+     * @param year  The year to validate.
+     * @param month The month to validate.
+     * @param index The week index to validate, 0-5.
+     * @param start The start day to validate, 1-7 (1 for Monday, 7 for Sunday).
+     * @throws IllegalArgumentException if the index or start day is out of valid range.
+     */
+    public static void validate(int year, int month, int index, int start) {
+        WeekPart.validate(index, start);
+        SolarMonth m = SolarMonth.fromYm(year, month);
+        if (index >= m.getWeekCount(start)) {
+            throw new IllegalArgumentException(String.format("illegal solar week index: %d in month: %s", index, m));
+        }
+    }
+
+    /**
      * Gets the solar month this week belongs to.
      *
      * @return The {@link SolarMonth}.
      */
     public SolarMonth getSolarMonth() {
-        return month;
-    }
-
-    /**
-     * Gets the year of this solar week.
-     *
-     * @return The year.
-     */
-    public int getYear() {
-        return month.getYear();
-    }
-
-    /**
-     * Gets the month of this solar week.
-     *
-     * @return The month.
-     */
-    public int getMonth() {
-        return month.getMonth();
-    }
-
-    /**
-     * Gets the index of the week within the month, 0-5.
-     *
-     * @return The index.
-     */
-    public int getIndex() {
-        return index;
+        return SolarMonth.fromYm(year, month);
     }
 
     /**
      * Gets the index of this week within the year.
      *
-     * @return The index within the year.
+     * @return The index within the year (starting from 0).
      */
     public int getIndexInYear() {
         int i = 0;
         SolarDay firstDay = getFirstDay();
         // The first week of the year
-        SolarWeek w = SolarWeek.fromYm(getYear(), 1, 0, start.getIndex());
+        SolarWeek w = SolarWeek.fromYm(year, 1, 0, start);
         while (!w.getFirstDay().equals(firstDay)) {
             w = w.next(1);
             i++;
@@ -148,18 +115,9 @@ public class SolarWeek extends Loops {
     }
 
     /**
-     * Gets the starting day of the week.
+     * Gets the name of this week in Chinese format.
      *
-     * @return The {@link Week} representing the start day.
-     */
-    public Week getStart() {
-        return start;
-    }
-
-    /**
-     * Gets the Chinese name of the week.
-     *
-     * @return The name of the week.
+     * @return The name of the week (e.g., "第一周" for first week).
      */
     public String getName() {
         return Week.WHICH[index];
@@ -167,7 +125,7 @@ public class SolarWeek extends Loops {
 
     @Override
     public String toString() {
-        return month + getName();
+        return getSolarMonth() + getName();
     }
 
     /**
@@ -177,31 +135,30 @@ public class SolarWeek extends Loops {
      * @return The {@link SolarWeek} after {@code n} weeks.
      */
     public SolarWeek next(int n) {
-        int startIndex = start.getIndex();
         int d = index;
-        SolarMonth m = month;
+        SolarMonth m = getSolarMonth();
         if (n > 0) {
             d += n;
-            int weekCount = m.getWeekCount(startIndex);
+            int weekCount = m.getWeekCount(start);
             while (d >= weekCount) {
                 d -= weekCount;
                 m = m.next(1);
-                if (!SolarDay.fromYmd(m.getYear(), m.getMonth(), 1).getWeek().equals(start)) {
+                if (m.getFirstDay().getWeek().getIndex() != start) {
                     d += 1;
                 }
-                weekCount = m.getWeekCount(startIndex);
+                weekCount = m.getWeekCount(start);
             }
         } else if (n < 0) {
             d += n;
             while (d < 0) {
-                if (!SolarDay.fromYmd(m.getYear(), m.getMonth(), 1).getWeek().equals(start)) {
+                if (m.getFirstDay().getWeek().getIndex() != start) {
                     d -= 1;
                 }
                 m = m.next(-1);
-                d += m.getWeekCount(startIndex);
+                d += m.getWeekCount(start);
             }
         }
-        return fromYm(m.getYear(), m.getMonth(), d, startIndex);
+        return fromYm(m.getYear(), m.getMonth(), d, start);
     }
 
     /**
@@ -211,7 +168,7 @@ public class SolarWeek extends Loops {
      */
     public SolarDay getFirstDay() {
         SolarDay firstDay = SolarDay.fromYmd(getYear(), getMonth(), 1);
-        return firstDay.next(index * 7 - indexOf(firstDay.getWeek().getIndex() - start.getIndex(), 7));
+        return firstDay.next(index * 7 - indexOf(firstDay.getWeek().getIndex() - start, 7));
     }
 
     /**

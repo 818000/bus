@@ -29,11 +29,15 @@ package org.miaixz.bus.core.center.date.culture.solar;
 
 import org.miaixz.bus.core.center.date.culture.Galaxy;
 import org.miaixz.bus.core.center.date.culture.Samsara;
-import org.miaixz.bus.core.center.date.culture.cn.JulianDay;
+import org.miaixz.bus.core.center.date.culture.JulianDay;
 import org.miaixz.bus.core.xyz.EnumKit;
 
 /**
- * Represents a Solar Term (节气).
+ * Represents a Solar Term (节气) in the Chinese lunisolar calendar.
+ * <p>
+ * Solar Terms are 24 periods in a year used to guide agricultural activities in traditional Chinese culture. Each solar
+ * term corresponds to the sun's position on the ecliptic and reflects the changes in seasons, climate, and natural
+ * phenomena.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -41,7 +45,7 @@ import org.miaixz.bus.core.xyz.EnumKit;
 public class SolarTerms extends Samsara {
 
     /**
-     * Names of solar terms.
+     * Names of the 24 solar terms in Chinese.
      */
     public static final String[] NAMES = X.get("name");
     /**
@@ -50,7 +54,7 @@ public class SolarTerms extends Samsara {
     protected int year;
 
     /**
-     * Julian day (for calendar, accurate only to 12:00 PM).
+     * Cursory Julian day number (for calendar purposes, accurate only to 12:00 PM).
      */
     protected double cursoryJulianDay;
 
@@ -101,9 +105,11 @@ public class SolarTerms extends Samsara {
 
     /**
      * Initializes the solar term by year and offset.
+     * <p>
+     * This method calculates the Julian day number for the solar term based on the year and offset.
      *
      * @param year   The year.
-     * @param offset The offset of the solar term.
+     * @param offset The offset of the solar term (0-23).
      */
     protected void initByYear(int year, int offset) {
         double jd = Math.floor((year - 2000) * 365.2422 + 180);
@@ -129,18 +135,22 @@ public class SolarTerms extends Samsara {
     }
 
     /**
-     * Checks if this solar term is a Jie (节令).
+     * Checks if this solar term is a Jie (节令 - Major Term).
+     * <p>
+     * Major Terms occur at odd indices (1, 3, 5, ..., 23).
      *
-     * @return {@code true} if it's a Jie, {@code false} otherwise.
+     * @return {@code true} if it's a Jie (Major Term), {@code false} otherwise.
      */
     public boolean isJie() {
         return index % 2 == 1;
     }
 
     /**
-     * Checks if this solar term is a Qi (气令).
+     * Checks if this solar term is a Qi (气令 - Minor Term).
+     * <p>
+     * Minor Terms occur at even indices (0, 2, 4, ..., 22).
      *
-     * @return {@code true} if it's a Qi, {@code false} otherwise.
+     * @return {@code true} if it's a Qi (Minor Term), {@code false} otherwise.
      */
     public boolean isQi() {
         return index % 2 == 0;
@@ -157,24 +167,28 @@ public class SolarTerms extends Samsara {
 
     /**
      * Gets the Gregorian solar day (for calendar use).
+     * <p>
+     * Returns the solar day corresponding to this solar term, using cursory calculation.
      *
-     * @return The SolarDay object
+     * @return The {@link SolarDay} object.
      */
     public SolarDay getSolarDay() {
         return JulianDay.fromJulianDay(cursoryJulianDay + JulianDay.J2000).getSolarDay();
     }
 
     /**
-     * Gets the year.
+     * Gets the year of this solar term.
      *
-     * @return The year
+     * @return The year.
      */
     public int getYear() {
         return year;
     }
 
     /**
-     * Gets the cursory Julian day of the solar term.
+     * Gets the cursory Julian day number of the solar term.
+     * <p>
+     * This value is accurate only to 12:00 PM and is used for calendar purposes.
      *
      * @return The cursory Julian day number.
      */

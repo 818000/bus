@@ -30,8 +30,8 @@ package org.miaixz.bus.cron.pattern.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.en.Month;
-import org.miaixz.bus.core.center.date.culture.en.Week;
+import org.miaixz.bus.core.center.date.Month;
+import org.miaixz.bus.core.center.date.Week;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.CrontabException;
 import org.miaixz.bus.core.text.CharsBacker;

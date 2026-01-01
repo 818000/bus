@@ -30,7 +30,10 @@ package org.miaixz.bus.core.center.date.culture.solar;
 import org.miaixz.bus.core.center.date.culture.Replenish;
 
 /**
- * Represents a day within a solar term.
+ * Represents a day within a solar term period.
+ * <p>
+ * This class encapsulates the relationship between a solar day and its corresponding solar term, including the day's
+ * index within the solar term (0-based, starting from the first day of the term).
  *
  * @author Kimi Liu
  * @since Java 17+

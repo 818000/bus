@@ -30,8 +30,8 @@ package org.miaixz.bus.core.center.date.culture.solar;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.Loops;
-import org.miaixz.bus.core.center.date.culture.en.Quarter;
+import org.miaixz.bus.core.center.date.culture.parts.YearPart;
+import org.miaixz.bus.core.center.date.Quarter;
 
 /**
  * Represents a quarter in the Gregorian calendar.
@@ -39,12 +39,7 @@ import org.miaixz.bus.core.center.date.culture.en.Quarter;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class SolarQuarter extends Loops {
-
-    /**
-     * The solar year this quarter belongs to.
-     */
-    protected SolarYear year;
+public class SolarQuarter extends YearPart {
 
     /**
      * The index of the quarter within the year, 0-3.
@@ -59,10 +54,8 @@ public class SolarQuarter extends Loops {
      * @throws IllegalArgumentException if the index is out of valid range.
      */
     public SolarQuarter(int year, int index) {
-        if (index < 0 || index > 3) {
-            throw new IllegalArgumentException(String.format("illegal solar season index: %d", index));
-        }
-        this.year = SolarYear.fromYear(year);
+        validate(year, index);
+        this.year = year;
         this.index = index;
     }
 
@@ -78,21 +71,26 @@ public class SolarQuarter extends Loops {
     }
 
     /**
+     * Validates the given year and quarter index.
+     *
+     * @param year  The year to validate.
+     * @param index The quarter index to validate, 0-3.
+     * @throws IllegalArgumentException if the index is out of valid range or the year is invalid.
+     */
+    public static void validate(int year, int index) {
+        if (index < 0 || index > 3) {
+            throw new IllegalArgumentException(String.format("illegal solar season index: %d", index));
+        }
+        SolarYear.validate(year);
+    }
+
+    /**
      * Gets the solar year this quarter belongs to.
      *
      * @return The {@link SolarYear}.
      */
     public SolarYear getSolarYear() {
-        return year;
-    }
-
-    /**
-     * Gets the year number.
-     *
-     * @return The year number.
-     */
-    public int getYear() {
-        return year.getYear();
+        return SolarYear.fromYear(year);
     }
 
     /**
@@ -115,7 +113,7 @@ public class SolarQuarter extends Loops {
 
     @Override
     public String toString() {
-        return year + getName();
+        return getSolarYear() + getName();
     }
 
     /**
@@ -126,7 +124,7 @@ public class SolarQuarter extends Loops {
      */
     public SolarQuarter next(int n) {
         int i = index + n;
-        return fromIndex((getYear() * 4 + i) / 4, indexOf(i, 4));
+        return fromIndex((year * 4 + i) / 4, indexOf(i, 4));
     }
 
     /**
@@ -136,9 +134,8 @@ public class SolarQuarter extends Loops {
      */
     public List<SolarMonth> getMonths() {
         List<SolarMonth> l = new ArrayList<>(3);
-        int y = getYear();
         for (int i = 1; i < 4; i++) {
-            l.add(SolarMonth.fromYm(y, index * 3 + i));
+            l.add(SolarMonth.fromYm(year, index * 3 + i));
         }
         return l;
     }

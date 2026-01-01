@@ -26,7 +26,41 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Provides classes related to the Chinese Lunar calendar.
+ * Provides classes for the Chinese Lunar calendar system.
+ * <p>
+ * The Lunar calendar (also known as the traditional Chinese calendar) is a lunisolar calendar that incorporates
+ * elements of both lunar and solar calendars. It has been used for centuries in China and other East Asian countries to
+ * determine festival dates, auspicious days, and agricultural timing.
+ * </p>
+ * <p>
+ * This package contains concrete implementations of date-time components for the Lunar calendar system, including:
+ * </p>
+ * <ul>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarYear} - Lunar year representation with Sixty Cycle
+ * (GanZhi), Nine Star, and Jupiter Direction</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarMonth} - Lunar month representation with leap month
+ * support</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarDay} - Lunar day representation with comprehensive
+ * cultural information</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarWeek} - Lunar week representation</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarHour} - Two-hour time blocks (Shichen) with Eight
+ * Characters (Bazi)</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarFestival} - Traditional Lunar festivals</li>
+ * <li>{@link org.miaixz.bus.core.center.date.culture.lunar.LunarSeason} - Lunar seasons</li>
+ * </ul>
+ * <ul>
+ * <li>Sixty Cycle (GanZhi) - Heavenly Stems and Earthly Branches combinations</li>
+ * <li>Nine Star (Jiu Xing) - Nine stars associated with time periods</li>
+ * <li>Jupiter Direction (Tai Sui) - The position of Jupiter in Chinese astrology</li>
+ * <li>Solar Terms (Jie Qi) - 24 seasonal periods</li>
+ * <li>Traditional Festivals - Spring Festival, Mid-Autumn Festival, etc.</li>
+ * <li>Auspicious Days - Days suitable for specific activities</li>
+ * <li>Eight Characters (Ba Zi) - Four pillars of destiny for birth charts</li>
+ * </ul>
+ * <p>
+ * The Lunar calendar implementation follows the national standard "Compilation and Promulgation of the Lunar Calendar"
+ * (GB/T 33661-2017).
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 17+

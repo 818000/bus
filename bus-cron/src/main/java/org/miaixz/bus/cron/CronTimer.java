@@ -30,7 +30,7 @@ package org.miaixz.bus.cron;
 import java.io.Serial;
 import java.io.Serializable;
 
-import org.miaixz.bus.core.center.date.culture.en.Units;
+import org.miaixz.bus.core.center.date.Units;
 import org.miaixz.bus.core.xyz.ThreadKit;
 import org.miaixz.bus.logger.Logger;
 

@@ -28,7 +28,7 @@
 package org.miaixz.bus.cron.pattern;
 
 import org.miaixz.bus.core.center.date.Calendar;
-import org.miaixz.bus.core.center.date.culture.en.Week;
+import org.miaixz.bus.core.center.date.Week;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.xyz.CompareKit;
 import org.miaixz.bus.core.xyz.DateKit;

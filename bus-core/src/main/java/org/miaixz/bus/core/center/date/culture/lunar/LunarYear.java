@@ -30,12 +30,11 @@ package org.miaixz.bus.core.center.date.culture.lunar;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.Loops;
-import org.miaixz.bus.core.center.date.culture.Vesta;
-import org.miaixz.bus.core.center.date.culture.cn.Direction;
-import org.miaixz.bus.core.center.date.culture.cn.Twenty;
-import org.miaixz.bus.core.center.date.culture.cn.sixty.SixtyCycle;
-import org.miaixz.bus.core.center.date.culture.cn.star.nine.NineStar;
+import org.miaixz.bus.core.center.date.culture.Direction;
+import org.miaixz.bus.core.center.date.culture.Twenty;
+import org.miaixz.bus.core.center.date.culture.parts.YearPart;
+import org.miaixz.bus.core.center.date.culture.sixty.SixtyCycle;
+import org.miaixz.bus.core.center.date.culture.star.nine.NineStar;
 
 /**
  * Represents a year in the Lunar calendar.
@@ -43,7 +42,7 @@ import org.miaixz.bus.core.center.date.culture.cn.star.nine.NineStar;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class LunarYear extends Loops {
+public class LunarYear extends YearPart {
 
     /**
      * Cache for leap months: {leapMonth:year}.
@@ -85,20 +84,13 @@ public class LunarYear extends Loops {
     }
 
     /**
-     * The year.
-     */
-    protected int year;
-
-    /**
      * Constructs a {@code LunarYear} with the given year.
      *
      * @param year The year, supporting -1 to 9999.
      * @throws IllegalArgumentException if the year is out of the supported range.
      */
     public LunarYear(int year) {
-        if (year < -1 || year > 9999) {
-            throw new IllegalArgumentException(String.format("illegal lunar year: %d", year));
-        }
+        validate(year);
         this.year = year;
     }
 
@@ -113,12 +105,15 @@ public class LunarYear extends Loops {
     }
 
     /**
-     * Gets the year.
+     * Validates a lunar year value.
      *
-     * @return The year.
+     * @param year The year to validate, supporting -1 to 9999.
+     * @throws IllegalArgumentException if the year is out of the supported range.
      */
-    public int getYear() {
-        return year;
+    public static void validate(int year) {
+        if (year < -1 || year > 9999) {
+            throw new IllegalArgumentException(String.format("illegal lunar year: %d", year));
+        }
     }
 
     /**
@@ -240,15 +235,6 @@ public class LunarYear extends Loops {
             m = m.next(1);
         }
         return l;
-    }
-
-    /**
-     * Gets the Vesta (ZaoMaTou) for this lunar year.
-     *
-     * @return The {@link Vesta} for this year.
-     */
-    public Vesta getVesta() {
-        return Vesta.fromLunarYear(year);
     }
 
 }

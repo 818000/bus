@@ -34,7 +34,11 @@ import org.miaixz.bus.core.center.date.culture.Loops;
 import org.miaixz.bus.core.lang.EnumValue;
 
 /**
- * Represents modern Gregorian festivals.
+ * Represents modern Gregorian festivals (public holidays and commemorative days).
+ * <p>
+ * This class encapsulates various modern festivals observed in the Gregorian calendar, such as New Year's Day, Labor
+ * Day, National Day, etc. Each festival has an associated solar day, type, and the year from which it started being
+ * observed.
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -42,13 +46,16 @@ import org.miaixz.bus.core.lang.EnumValue;
 public class SolarFestival extends Loops {
 
     /**
-     * Names of solar festivals.
+     * Names of solar festivals in Chinese.
      */
     public static final String[] NAMES = { "元旦", "三八妇女节", "植树节", "五一劳动节", "五四青年节", "六一儿童节", "建党节", "八一建军节", "教师节",
             "国庆节" };
 
     /**
-     * Data string containing festival information, including type, month, day, and start year.
+     * Data string containing festival information in encoded format.
+     * <p>
+     * Each entry contains: type, month, day, and start year. Format: @TTMMDDYYYY where T=type (2 digits), M=month (2
+     * digits), D=day (2 digits), Y=start year (4 digits).
      */
     public static String DATA = "@00001011950@01003081950@02003121979@03005011950@04005041950@05006011950@06007011941@07008011933@08009101985@09010011950";
 
@@ -103,7 +110,7 @@ public class SolarFestival extends Loops {
      */
     public static SolarFestival fromIndex(int year, int index) {
         if (index < 0 || index >= NAMES.length) {
-            throw new IllegalArgumentException(String.format("illegal index: %d", index));
+            return null;
         }
         Matcher matcher = Pattern.compile(String.format("@%02d\\d+", index)).matcher(DATA);
         if (!matcher.find()) {

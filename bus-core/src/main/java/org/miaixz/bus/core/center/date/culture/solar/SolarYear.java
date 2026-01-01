@@ -30,7 +30,7 @@ package org.miaixz.bus.core.center.date.culture.solar;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.Loops;
+import org.miaixz.bus.core.center.date.culture.parts.YearPart;
 import org.miaixz.bus.core.center.date.culture.rabjung.RabjungYear;
 
 /**
@@ -39,12 +39,7 @@ import org.miaixz.bus.core.center.date.culture.rabjung.RabjungYear;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class SolarYear extends Loops {
-
-    /**
-     * The year number.
-     */
-    protected int year;
+public class SolarYear extends YearPart {
 
     /**
      * Constructs a {@code SolarYear} with the given year.
@@ -53,9 +48,7 @@ public class SolarYear extends Loops {
      * @throws IllegalArgumentException if the year is out of the supported range.
      */
     public SolarYear(int year) {
-        if (year < 1 || year > 9999) {
-            throw new IllegalArgumentException(String.format("illegal solar year: %d", year));
-        }
+        validate(year);
         this.year = year;
     }
 
@@ -70,12 +63,15 @@ public class SolarYear extends Loops {
     }
 
     /**
-     * Gets the year number.
+     * Validates the given year.
      *
-     * @return The year number.
+     * @param year The year to validate, must be between 1 and 9999.
+     * @throws IllegalArgumentException if the year is out of the supported range.
      */
-    public int getYear() {
-        return year;
+    public static void validate(int year) {
+        if (year < 1 || year > 9999) {
+            throw new IllegalArgumentException(String.format("illegal solar year: %d", year));
+        }
     }
 
     /**
@@ -107,7 +103,7 @@ public class SolarYear extends Loops {
     /**
      * Gets the name of this solar year.
      *
-     * @return The name of this solar year.
+     * @return The name of this solar year in Chinese format (e.g., "2023年").
      */
     public String getName() {
         return String.format("%d年", year);

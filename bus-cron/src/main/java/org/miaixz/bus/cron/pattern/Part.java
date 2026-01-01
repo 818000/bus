@@ -27,8 +27,8 @@
 */
 package org.miaixz.bus.cron.pattern;
 
-import org.miaixz.bus.core.center.date.culture.en.Month;
-import org.miaixz.bus.core.center.date.culture.en.Week;
+import org.miaixz.bus.core.center.date.Month;
+import org.miaixz.bus.core.center.date.Week;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.CrontabException;
 

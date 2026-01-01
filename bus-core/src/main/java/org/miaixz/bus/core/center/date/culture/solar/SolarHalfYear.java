@@ -30,7 +30,7 @@ package org.miaixz.bus.core.center.date.culture.solar;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.center.date.culture.Loops;
+import org.miaixz.bus.core.center.date.culture.parts.YearPart;
 
 /**
  * Represents a half-year in the Gregorian calendar.
@@ -38,7 +38,7 @@ import org.miaixz.bus.core.center.date.culture.Loops;
  * @author Kimi Liu
  * @since Java 17+
  */
-public class SolarHalfYear extends Loops {
+public class SolarHalfYear extends YearPart {
 
     /**
      * Names of solar half-years.
@@ -46,12 +46,7 @@ public class SolarHalfYear extends Loops {
     public static final String[] NAMES = { "上半年", "下半年" };
 
     /**
-     * The solar year this half-year belongs to.
-     */
-    protected SolarYear year;
-
-    /**
-     * The index of the half-year within the year, 0-1.
+     * The index of the half-year within the year, 0-1 (0 for first half, 1 for second half).
      */
     protected int index;
 
@@ -63,10 +58,8 @@ public class SolarHalfYear extends Loops {
      * @throws IllegalArgumentException if the index is out of valid range.
      */
     public SolarHalfYear(int year, int index) {
-        if (index < 0 || index > 1) {
-            throw new IllegalArgumentException(String.format("illegal solar half year index: %d", index));
-        }
-        this.year = SolarYear.fromYear(year);
+        validate(year, index);
+        this.year = year;
         this.index = index;
     }
 
@@ -82,21 +75,26 @@ public class SolarHalfYear extends Loops {
     }
 
     /**
+     * Validates the given year and half-year index.
+     *
+     * @param year  The year to validate.
+     * @param index The half-year index to validate, 0-1.
+     * @throws IllegalArgumentException if the index is out of valid range or the year is invalid.
+     */
+    public static void validate(int year, int index) {
+        if (index < 0 || index > 1) {
+            throw new IllegalArgumentException(String.format("illegal solar half year index: %d", index));
+        }
+        SolarYear.validate(year);
+    }
+
+    /**
      * Gets the solar year this half-year belongs to.
      *
      * @return The {@link SolarYear}.
      */
     public SolarYear getSolarYear() {
-        return year;
-    }
-
-    /**
-     * Gets the year number.
-     *
-     * @return The year number.
-     */
-    public int getYear() {
-        return year.getYear();
+        return SolarYear.fromYear(year);
     }
 
     /**
@@ -119,7 +117,7 @@ public class SolarHalfYear extends Loops {
 
     @Override
     public String toString() {
-        return year + getName();
+        return getSolarYear() + getName();
     }
 
     /**
@@ -130,7 +128,7 @@ public class SolarHalfYear extends Loops {
      */
     public SolarHalfYear next(int n) {
         int i = index + n;
-        return fromIndex((getYear() * 2 + i) / 2, indexOf(i, 2));
+        return fromIndex((year * 2 + i) / 2, indexOf(i, 2));
     }
 
     /**
@@ -140,9 +138,8 @@ public class SolarHalfYear extends Loops {
      */
     public List<SolarMonth> getMonths() {
         List<SolarMonth> l = new ArrayList<>(6);
-        int y = getYear();
         for (int i = 1; i < 7; i++) {
-            l.add(SolarMonth.fromYm(y, index * 6 + i));
+            l.add(SolarMonth.fromYm(year, index * 6 + i));
         }
         return l;
     }
@@ -154,9 +151,8 @@ public class SolarHalfYear extends Loops {
      */
     public List<SolarQuarter> getSeasons() {
         List<SolarQuarter> l = new ArrayList<>(2);
-        int y = getYear();
         for (int i = 0; i < 2; i++) {
-            l.add(SolarQuarter.fromIndex(y, index * 2 + i));
+            l.add(SolarQuarter.fromIndex(year, index * 2 + i));
         }
         return l;
     }
