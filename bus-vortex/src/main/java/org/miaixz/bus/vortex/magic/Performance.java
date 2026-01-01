@@ -27,19 +27,34 @@
 */
 package org.miaixz.bus.vortex.magic;
 
-import org.miaixz.bus.core.lang.EnumValue;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * A data transfer object (DTO) that provides a consolidated view of a single managed service, including its status and
- * performance metrics.
+ * Centralized performance configuration holder for the Vortex gateway.
  * <p>
- * This object is typically constructed by the {@link org.miaixz.bus.vortex.registry.ServerRegistry} and returned by
- * management APIs to be consumed by a UI dashboard.
+ * This class acts as a global registry for all performance-related settings, providing a single source of truth for
+ * components that need to access these configurations. It is designed to be framework-agnostic and can be instantiated
+ * from any configuration source (Spring Boot properties, system properties, environment variables, etc.).
+ * <p>
+ * Performance optimizations controlled by this configuration:
+ * <ul>
+ * <li>Request body size limits for DoS prevention</li>
+ * <li>Streaming thresholds for memory optimization</li>
+ * <li>Connection pool sizing for HTTP clients</li>
+ * <li>Cache size limits for MQ producers</li>
+ * </ul>
+ * <p>
+ * <b>Default Values:</b>
+ * <ul>
+ * <li>streamingRequestThreshold: 10 MB</li>
+ * <li>maxRequestSize: 100 MB</li>
+ * <li>maxMultipartRequestSize: 512 MB</li>
+ * <li>maxConnections: 500</li>
+ * <li>maxProducerCacheSize: 100</li>
+ * </ul>
  *
  * @author Kimi Liu
  * @since Java 17+
@@ -48,21 +63,41 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transmit {
+public class Performance {
 
     /**
-     * The unique name or ID of the service, derived from {@link org.miaixz.bus.vortex.Assets#getName()}.
+     * The threshold in bytes for enabling streaming request body processing.
+     * <p>
+     * Request bodies smaller than this threshold will be cached in memory for faster processing. Request bodies larger
+     * than this threshold will use streaming processing to avoid high memory pressure.
      */
-    private String name;
+    @Builder.Default
+    private long streamingRequestThreshold = 10 * 1024 * 1024;
 
     /**
-     * The latest performance metrics for the service process (e.g., CPU and memory usage).
+     * Maximum size in bytes for non-multipart request bodies (JSON, form-urlencoded).
+     * <p>
+     * Acts as a DoS prevention limit. Requests exceeding this size will be rejected.
      */
-    private Metrics metrics;
+    @Builder.Default
+    private long maxRequestSize = 100 * 1024 * 1024;
 
     /**
-     * The current lifecycle status of the service process (e.g., RUNNING, STOPPED).
+     * Maximum size in bytes for multipart/form-data requests (file uploads).
      */
-    private EnumValue.Lifecycle lifecycle;
+    @Builder.Default
+    private long maxMultipartRequestSize = 512 * 1024 * 1024;
+
+    /**
+     * Maximum number of HTTP connections in the connection pool.
+     */
+    @Builder.Default
+    private int maxConnections = 500;
+
+    /**
+     * Maximum number of MQ producer instances to cache.
+     */
+    @Builder.Default
+    private int maxProducerCacheSize = 100;
 
 }
