@@ -74,9 +74,26 @@ public class OperationHandler<T> extends AbstractSqlHandler implements MapperHan
             Pattern.CASE_INSENSITIVE);
 
     /**
+     * Pre-compiled patterns for SQL normalization (performance optimization)
+     */
+    private static final Pattern SINGLE_LINE_COMMENT_PATTERN = Pattern.compile("--[^\\r\\n]*");
+    private static final Pattern MULTI_LINE_COMMENT_PATTERN = Pattern.compile("/\\*.*?\\*/");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+
+    /**
      * Whether to enable strict mode (check for trivial WHERE clauses)
      */
     private boolean strictMode = true;
+
+    /**
+     * Get the handler name for logging purposes.
+     *
+     * @return the handler name "Operation"
+     */
+    @Override
+    public String getHandler() {
+        return "Operation";
+    }
 
     @Override
     public int getOrder() {
@@ -136,6 +153,10 @@ public class OperationHandler<T> extends AbstractSqlHandler implements MapperHan
 
     /**
      * Normalizes SQL by removing comments and extra whitespace.
+     * <p>
+     * <strong>Performance Optimization:</strong> Uses pre-compiled Pattern objects to avoid repeated regex compilation,
+     * significantly improving performance for high-frequency SQL execution.
+     * </p>
      *
      * @param sql the original SQL
      * @return the normalized SQL
@@ -145,14 +166,14 @@ public class OperationHandler<T> extends AbstractSqlHandler implements MapperHan
             return Normal.EMPTY;
         }
 
-        // Remove single-line comments (-- ...)
-        sql = sql.replaceAll("--[^\r\n]*", Symbol.SPACE);
+        // Remove single-line comments (-- ...) using pre-compiled pattern
+        sql = SINGLE_LINE_COMMENT_PATTERN.matcher(sql).replaceAll(Symbol.SPACE);
 
-        // Remove multi-line comments (/* ... */)
-        sql = sql.replaceAll("/\\*.*?\\*/", Symbol.SPACE);
+        // Remove multi-line comments (/* ... */) using pre-compiled pattern
+        sql = MULTI_LINE_COMMENT_PATTERN.matcher(sql).replaceAll(Symbol.SPACE);
 
-        // Replace multiple whitespace with single space
-        sql = sql.replaceAll("\\s+", Symbol.SPACE);
+        // Replace multiple whitespace with single space using pre-compiled pattern
+        sql = WHITESPACE_PATTERN.matcher(sql).replaceAll(Symbol.SPACE);
 
         return sql.trim();
     }
