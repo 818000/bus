@@ -1,71 +1,71 @@
-# 🔐 Bus Auth: Enterprise-Grade Authentication & Authorization Framework
+# 🔐 Bus Auth：企业级身份验证与授权框架
 
 <p align="center">
-<strong>Unified Authentication and Authorization Solution Supporting Multiple Protocols and Identity Providers</strong>
+<strong>统一身份验证和授权解决方案，支持多种协议和身份提供程序</strong>
 </p>
 
 -----
 
-## 📖 Project Introduction
+## 📖 项目简介
 
-**Bus Auth** is an enterprise-grade authentication and authorization framework designed to simplify integration with third-party identity providers. It provides a unified API for implementing OAuth2, SAML, LDAP, and custom authentication protocols, supporting **40+** mainstream platforms worldwide.
+**Bus Auth** 是一个企业级身份验证和授权框架，旨在简化与第三方身份提供程序的集成。它提供统一的 API 来实现 OAuth2、SAML、LDAP 和自定义身份验证协议，支持全球 **40+** 主流平台。
 
-The framework abstracts away protocol complexities, allowing developers to focus on business logic rather than authentication implementation details. Whether it's social logins, enterprise SSO, or custom identity providers, Bus Auth provides a consistent, type-safe, and extensible approach.
+该框架抽象了协议复杂性，使开发人员能够专注于业务逻辑而非身份验证实现细节。无论是社交登录、企业 SSO 还是自定义身份提供程序，Bus Auth 都提供一致、类型安全和可扩展的方法。
 
 -----
 
-## ✨ Core Features
+## ✨ 核心功能
 
-### 🎯 Unified Authentication Interface
+### 🎯 统一身份验证接口
 
-* **Protocol Agnostic**: Single API for OAuth2, SAML, LDAP, and custom protocols
-* **Provider Abstraction**: Consistent interface across 40+ identity providers
-* **Builder Pattern**: Fluent API for configuring authentication flows
-* **Type Safety**: Strongly typed configuration and response objects
+* **协议无关**：OAuth2、SAML、LDAP 和自定义协议的单一 API
+* **提供程序抽象**：40+ 身份提供程序的一致接口
+* **构建器模式**：流畅的 API 用于配置身份验证流程
+* **类型安全**：强类型配置和响应对象
 
-### 🔐 Security First
+### 🔐 安全优先
 
-| Feature | Description |
+| 功能 | 描述 |
 | :--- | :--- |
-| **PKCE Support** | RFC 7636 compliant Proof Key for Code Exchange for mobile/spa apps |
-| **State Validation** | Built-in CSRF protection with state parameter validation |
-| **Token Management** | Secure token storage, refresh, and revocation |
-| **Signature Verification** | HMAC-SHA256 signature support for OAuth1.0a |
-| **Cache Integration** | Distributed state caching support |
+| **PKCE 支持** | 符合 RFC 7636 的代码交换证明密钥，用于移动/SPA 应用 |
+| **状态验证**：内置 CSRF 保护，带状态参数验证 |
+| **令牌管理**：安全令牌存储、刷新和撤销 |
+| **签名验证**：OAuth1.0a 的 HMAC-SHA256 签名支持 |
+| **缓存集成**：分布式状态缓存支持 |
 
-### 🌍 Platform Coverage
+### 🌍 平台覆盖
 
-**Social Platforms** (15+)
-- GitHub, Google, Facebook, Twitter, LinkedIn, Microsoft
-- WeChat, QQ, Weibo, Douyin, TikTok
-- Apple, Amazon, Slack, Line, VK
+**社交平台**（15+）
+- GitHub、Google、Facebook、Twitter、LinkedIn、Microsoft
+- 微信、QQ、微博、抖音、TikTok
+- Apple、Amazon、Slack、Line、VK
 
-**Enterprise Platforms** (10+)
-- DingTalk, Feishu, Lark, WeChat Work
-- Okta, GitLab, Gitee, Teambition
-- Huawei, Aliyun, Baidu Cloud
+**企业平台**（10+）
+- 钉钉、飞书、Lark、企业微信
+- Okta、GitLab、Gitee、Teambition
+- 华为、阿里云、百度云
 
-**E-Commerce** (8+)
-- Alipay, Taobao, JD, Meituan, Eleme
-- Kujiale, Xiaomi, RedNote
+**电商平台**（8+）
+- 支付宝、淘宝、京东、美团、饿了么
+- 酷家乐、小米、小红书
 
-**Domestic Platforms** (China)
-- Ximalaya, Renren, OSChina, Coding, Proginn
-- Stack Overflow, Pinterest, Figma
+**国内平台**（中国）
+- 喜马拉雅、人人、开源中国、Coding、Programmer
+- Stack Overflow、Pinterest、Figma
 
-### ⚡ Developer Experience
+### ⚡ 开发体验
 
-* **Zero Boilerplate**: Minimal code required for authentication
-* **Auto Configuration**: Convention over configuration with sensible defaults
-* **Flexible Scoping**: Fine-grained permission control via OAuth scopes
-* **Rich Metadata**: Comprehensive user profile data from providers
-* **Extensible**: Easy to add custom providers or extend existing ones
+* **零样板代码**：最少代码实现身份验证
+* **自动配置**：约定优于配置，具有合理的默认值
+* **灵活作用域**：通过 OAuth 作用域进行细粒度权限控制
+* **丰富的元数据**：来自提供程序的综合用户配置文件数据
+* **可扩展**：易于添加自定义提供程序或扩展现有提供程序
 
 -----
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### Maven Dependency
+### Maven 依赖
 
 ```xml
 <dependency>
@@ -75,12 +75,12 @@ The framework abstracts away protocol complexities, allowing developers to focus
 </dependency>
 ```
 
-### Basic Usage
+### 基础用法
 
-#### 1. Configure Authentication Context
+#### 1. 配置身份验证上下文
 
 ```java
-// Create authentication context
+// 创建身份验证上下文
 Context context = Context.builder()
     .clientId("your_client_id")
     .clientSecret("your_client_secret")
@@ -89,43 +89,43 @@ Context context = Context.builder()
     .build();
 ```
 
-#### 2. Create Authentication Provider
+#### 2. 创建身份验证提供程序
 
 ```java
-// Method 1: Direct instantiation
+// 方法 1：直接实例化
 Provider github = new GithubProvider(context);
 
-// Method 2: Using Authorizer builder (recommended)
+// 方法 2：使用 Authorizer 构建器（推荐）
 Provider github = Authorizer.builder()
     .source("GITHUB")
     .context(context)
     .build();
 ```
 
-#### 3. Generate Authorization URL
+#### 3. 生成授权 URL
 
 ```java
-// Generate state parameter for CSRF protection
+// 为 CSRF 保护生成状态参数
 String state = UUID.randomUUID().toString();
 
-// Get authorization URL
+// 获取授权 URL
 Message message = github.build(state);
 String authUrl = message.getData();
 
-// Redirect user to authUrl
-// After authentication, user will be redirected to redirectUri with code and state
+// 重定向用户到 authUrl
+// 身份验证后，用户将使用 code 和 state 重定向到 redirectUri
 ```
 
-#### 4. Handle Callback and Login
+#### 4. 处理回调和登录
 
 ```java
-// Extract callback parameters
+// 提取回调参数
 Callback callback = Callback.builder()
     .code(request.getParameter("code"))
     .state(request.getParameter("state"))
     .build();
 
-// Perform authentication
+// 执行身份验证
 Message result = github.authorize(callback);
 
 if (result.isSuccess()) {
@@ -134,19 +134,19 @@ if (result.isSuccess()) {
     String username = claims.getUsername();
     String email = claims.getEmail();
 
-    // Log user in or create account
-    // Store claims.getToken() for future API calls
+    // 登录用户或创建账户
+    // 存储 claims.getToken() 用于未来的 API 调用
 }
 ```
 
 -----
 
-## 📝 Usage Examples
+## 📝 使用示例
 
-### 1. GitHub OAuth2 Authentication
+### 1. GitHub OAuth2 身份验证
 
 ```java
-// Configuration
+// 配置
 Context context = Context.builder()
     .clientId("github_client_id")
     .clientSecret("github_client_secret")
@@ -155,17 +155,17 @@ Context context = Context.builder()
 
 Provider github = new GithubProvider(context);
 
-// Step 1: Redirect to GitHub
+// 步骤 1：重定向到 GitHub
 @GetMapping("/auth/github")
 public void githubLogin(HttpServletResponse response) throws IOException {
     String state = UUID.randomUUID().toString();
-    cache.set(state, "true", 10, TimeUnit.MINUTES); // Store state in cache
+    cache.set(state, "true", 10, TimeUnit.MINUTES); // 在缓存中存储状态
 
     Message message = github.build(state);
     response.sendRedirect(message.getData());
 }
 
-// Step 2: Handle callback
+// 步骤 2：处理回调
 @GetMapping("/auth/github/callback")
 public Message githubCallback(@RequestParam String code, @RequestParam String state) {
     Callback callback = Callback.builder()
@@ -177,17 +177,17 @@ public Message githubCallback(@RequestParam String code, @RequestParam String st
 
     if (result.isSuccess()) {
         Claims user = result.getData(Claims.class);
-        // Process user information
+        // 处理用户信息
         return Message.success(user);
     }
-    return Message.error("Authentication failed");
+    return Message.error("身份验证失败");
 }
 ```
 
-### 2. WeChat Work (Enterprise WeChat) Authentication
+### 2. 企业微信身份验证
 
 ```java
-// WeChat Work requires additional agentId
+// 企业微信需要额外的 agentId
 Context context = Context.builder()
     .clientId("corp_id")
     .clientSecret("corp_secret")
@@ -197,38 +197,38 @@ Context context = Context.builder()
 
 Provider wechatWork = new WeChatEeWebProvider(context);
 
-// Authentication flow is the same as GitHub
+// 身份验证流程与 GitHub 相同
 Message result = wechatWork.authorize(callback);
 Claims user = result.getData(Claims.class);
 ```
 
-### 3. PKCE Mode for Mobile/SPA Applications
+### 3. 移动/SPA 应用的 PKCE 模式
 
 ```java
-// Enable PKCE mode
+// 启用 PKCE 模式
 Context context = Context.builder()
     .clientId("client_id")
-    .clientSecret("")  // No client secret for public clients
+    .clientSecret("")  // 公共客户端无客户端密钥
     .redirectUri("myapp://callback")
-    .pkce(true)  // Enable PKCE
+    .pkce(true)  // 启用 PKCE
     .build();
 
 Provider google = new GoogleProvider(context);
 
-// Generate code verifier and challenge
+// 生成代码验证器和挑战
 String codeVerifier = Builder.codeVerifier();
 String codeChallenge = Builder.codeChallenge("S256", codeVerifier);
 
-// Store codeVerifier for later use
+// 存储 codeVerifier 供稍后使用
 cache.set(state, codeVerifier, 10, TimeUnit.MINUTES);
 
-// Include code_challenge in authorization URL
+// 在授权 URL 中包含 code_challenge
 ```
 
-### 4. Custom OAuth2 Provider
+### 4. 自定义 OAuth2 提供程序
 
 ```java
-// Method 1: Extend AbstractProvider
+// 方法 1：扩展 AbstractProvider
 public class CustomProvider extends AbstractProvider {
 
     public CustomProvider(Context context) {
@@ -246,16 +246,16 @@ public class CustomProvider extends AbstractProvider {
 
     @Override
     public Message token(Callback callback) {
-        // Custom token exchange logic
+        // 自定义令牌交换逻辑
     }
 
     @Override
     public Message userInfo(Authorization authorization) {
-        // Custom user info retrieval
+        // 自定义用户信息检索
     }
 }
 
-// Method 2: Use Registry with custom Complex
+// 方法 2：使用 Registry 和自定义 Complex
 Complex customComplex = new Complex() {
     @Override
     public String getName() { return "CUSTOM"; }
@@ -270,7 +270,7 @@ Complex customComplex = new Complex() {
 
     @Override
     public Map<Endpoint, String> endpoint() {
-        // Return endpoint mappings
+        // 返回端点映射
     }
 };
 
@@ -281,54 +281,54 @@ Provider provider = Authorizer.builder()
     .build();
 ```
 
-### 5. Token Management
+### 5. 令牌管理
 
 ```java
-// Get access token
+// 获取访问令牌
 Message tokenMsg = provider.token(callback);
 Authorization token = tokenMsg.getData(Authorization.class);
 
-// Access token details
+// 访问令牌详情
 String accessToken = token.getToken();
 int expiresIn = token.getExpireIn();
 String refreshToken = token.getRefresh();
 
-// Refresh token (if supported)
+// 刷新令牌（如果支持）
 Message refreshMsg = provider.refresh(token);
 Authorization newToken = refreshMsg.getData(Authorization.class);
 
-// Revoke authorization (logout)
+// 撤销授权（登出）
 Message revokeMsg = provider.revoke(token);
 ```
 
-### 6. Multiple Provider Support
+### 6. 多提供程序支持
 
 ```java
-// Provider registry
+// 提供程序注册表
 Map<String, Provider> providers = new HashMap<>();
 
-// Configure multiple providers
+// 配置多个提供程序
 providers.put("github", new GithubProvider(githubContext));
 providers.put("google", new GoogleProvider(googleContext));
 providers.put("wechat", new WeChatMpProvider(wechatContext));
 
-// Unified authentication endpoint
+// 统一身份验证端点
 @PostMapping("/auth/{provider}")
 public Message authenticate(@PathVariable String provider,
                             @RequestBody Callback callback) {
     Provider authProvider = providers.get(provider);
     if (authProvider == null) {
-        return Message.error("Unsupported provider: " + provider);
+        return Message.error("不支持的提供程序：" + provider);
     }
 
     return authProvider.authorize(callback);
 }
 ```
 
-### 7. Custom Cache Implementation
+### 7. 自定义缓存实现
 
 ```java
-// Use Redis for distributed state caching
+// 使用 Redis 进行分布式状态缓存
 public class RedisAuthCache implements CacheX {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -354,15 +354,15 @@ public class RedisAuthCache implements CacheX {
     }
 }
 
-// Use custom cache
+// 使用自定义缓存
 RedisAuthCache cache = new RedisAuthCache(redisTemplate);
 Provider github = new GithubProvider(context, cache);
 ```
 
-### 8. Dynamic Endpoint Configuration
+### 8. 动态端点配置
 
 ```java
-// Override default endpoints
+// 覆盖默认端点
 Map<Endpoint, String> customEndpoints = new HashMap<>();
 customEndpoints.put(Endpoint.AUTHORIZE, "https://custom.auth.com/authorize");
 customEndpoints.put(Endpoint.TOKEN, "https://custom.auth.com/token");
@@ -373,61 +373,61 @@ Context context = Context.builder()
     .clientId("client_id")
     .clientSecret("client_secret")
     .redirectUri("https://yourapp.com/callback")
-    .endpoint(customEndpoints)  // Custom endpoints
+    .endpoint(customEndpoints)  // 自定义端点
     .build();
 ```
 
 -----
 
-## 📋 Configuration Reference
+## 📋 配置参考
 
-### Context Parameters
+### 上下文参数
 
-| Parameter | Type | Required | Description |
+| 参数 | 类型 | 必需 | 描述 |
 | :--- | :--- | :--- | :--- |
-| `clientId` | String | ✅ | OAuth2 client ID or API key |
-| `clientSecret` | String | ✅ | OAuth2 client secret |
-| `unionId` | String | ❌ | Platform-specific identifier (e.g., WeChat agentId) |
-| `extId` | String | ❌ | Extended identifier |
-| `deviceId` | String | ❌ | Device ID for some platforms |
-| `type` | String | ❌ | Platform-specific type |
-| `flag` | boolean | ❌ | Platform-specific flag |
-| `pkce` | boolean | ❌ | Enable PKCE mode (default: false) |
-| `prefix` | String | ❌ | Domain prefix (for Okta, Coding) |
-| `redirectUri` | String | ✅ | OAuth2 callback URL |
-| `scopes` | List<String> | ❌ | OAuth2 scopes (permissions) |
-| `ignoreState` | boolean | ❌ | Skip state validation (not recommended) |
-| `ignoreRedirectUri` | boolean | ❌ | Skip redirect URI validation |
-| `kid` | String | ❌ | Apple Key ID |
-| `teamId` | String | ❌ | Apple Team ID |
-| `loginType` | String | ❌ | WeChat Work login type |
-| `lang` | String | ❌ | Language code (default: zh) |
-| `extension` | String | ❌ | Extension properties |
-| `endpoint` | Map<Endpoint, String> | ❌ | Custom OAuth endpoints |
+| `clientId` | String | ✅ | OAuth2 客户端 ID 或 API 密钥 |
+| `clientSecret` | String | ✅ | OAuth2 客户端密钥 |
+| `unionId` | String | ❌ | 平台特定标识符（例如，微信 agentId） |
+| `extId` | String | ❌ | 扩展标识符 |
+| `deviceId` | String | ❌ | 某些平台的设备 ID |
+| `type` | String | ❌ | 平台特定类型 |
+| `flag` | boolean | ❌ | 平台特定标志 |
+| `pkce` | boolean | ❌ | 启用 PKCE 模式（默认：false） |
+| `prefix` | String | ❌ | 域前缀（用于 Okta、Coding） |
+| `redirectUri` | String | ✅ | OAuth2 回调 URL |
+| `scopes` | List<String> | ❌ | OAuth2 作用域（权限） |
+| `ignoreState` | boolean | ❌ | 跳过状态验证（不推荐） |
+| `ignoreRedirectUri` | boolean | ❌ | 跳过重定向 URI 验证 |
+| `kid` | String | ❌ | Apple 密钥 ID |
+| `teamId` | String | ❌ | Apple 团队 ID |
+| `loginType` | String | ❌ | 企业微信登录类型 |
+| `lang` | String | ❌ | 语言代码（默认：zh） |
+| `extension` | String | ❌ | 扩展属性 |
+| `endpoint` | Map<Endpoint, String> | ❌ | 自定义 OAuth 端点 |
 
-### Supported Endpoints
+### 支持的端点
 
-| Endpoint | Description |
+| 端点 | 描述 |
 | :--- | :--- |
-| `AUTHORIZE` | Authorization endpoint URL |
-| `TOKEN` | Token endpoint URL |
-| `USERINFO` | User information endpoint URL |
-| `REFRESH` | Token refresh endpoint URL |
-| `REVOKE` | Token revocation endpoint URL |
+| `AUTHORIZE` | 授权端点 URL |
+| `TOKEN` | 令牌端点 URL |
+| `USERINFO` | 用户信息端点 URL |
+| `REFRESH` | 令牌刷新端点 URL |
+| `REVOKE` | 令牌撤销端点 URL |
 
-### Provider Registry
+### 提供程序注册表
 
-All built-in providers are registered in the `Registry` enum:
+所有内置提供程序都在 `Registry` 枚举中注册：
 
 ```java
-// Access registry
+// 访问注册表
 Registry.GITHUB
 Registry.GOOGLE
 Registry.WECHAT_MP
 Registry.DINGTALK
-// ... 40+ providers
+// ... 40+ 提供程序
 
-// Use with Authorizer
+// 与 Authorizer 一起使用
 Provider provider = Authorizer.builder()
     .source(Registry.GITHUB.getName())
     .context(context)
@@ -436,49 +436,49 @@ Provider provider = Authorizer.builder()
 
 -----
 
-## 🔧 Advanced Configuration
+## 🔧 高级配置
 
-### 1. Custom Scope Configuration
+### 1. 自定义作用域配置
 
 ```java
-// Default scopes are provided by each provider
-// You can customize scopes for specific needs
+// 每个提供程序提供默认作用域
+// 可以为特定需求自定义作用域
 
 Context context = Context.builder()
     .clientId("client_id")
     .clientSecret("client_secret")
     .redirectUri("https://yourapp.com/callback")
-    .scopes(Arrays.asList("read", "write", "email"))  // Custom scopes
+    .scopes(Arrays.asList("read", "write", "email"))  // 自定义作用域
     .build();
 ```
 
-### 2. State Validation
+### 2. 状态验证
 
 ```java
-// State validation is enabled by default
-// To disable (not recommended for production):
+// 默认启用状态验证
+// 禁用（生产环境不推荐）：
 
 Context context = Context.builder()
     .clientId("client_id")
     .clientSecret("client_secret")
     .redirectUri("https://yourapp.com/callback")
-    .ignoreState(true)  // ⚠️ Disable state validation
+    .ignoreState(true)  // ⚠️ 禁用状态验证
     .build();
 ```
 
-### 3. Custom User Info Mapping
+### 3. 自定义用户信息映射
 
 ```java
-// Extend AbstractProvider to customize user info parsing
+// 扩展 AbstractProvider 以自定义用户信息解析
 
 public class CustomGithubProvider extends GithubProvider {
 
     @Override
     public Message userInfo(Authorization authorization) {
-        // Get raw user data
+        // 获取原始用户数据
         Message response = super.userInfo(authorization);
 
-        // Custom mapping logic
+        // 自定义映射逻辑
         Map<String, Object> rawData = response.getData();
         Claims claims = Claims.builder()
             .uuid(rawData.get("id").toString())
@@ -495,7 +495,7 @@ public class CustomGithubProvider extends GithubProvider {
 }
 ```
 
-### 4. Error Handling
+### 4. 错误处理
 
 ```java
 try {
@@ -503,91 +503,91 @@ try {
 
     if (result.isSuccess()) {
         Claims user = result.getData(Claims.class);
-        // Success handling
+        // 成功处理
     } else {
-        // Error handling
+        // 错误处理
         String errorCode = result.getErrcode();
         String errorMsg = result.getErrmsg();
     }
 } catch (AuthorizedException e) {
-    // Handle authentication exceptions
-    log.error("Authentication failed", e);
+    // 处理身份验证异常
+    log.error("身份验证失败", e);
 
-    // Common error codes:
-    // 110001 - Unsupported provider or invalid configuration
-    // 110002 - Incomplete configuration
-    // 110005 - Invalid redirect URI
-    // 110007 - Missing authorization code
-    // 110008 - Invalid or expired state
+    // 常见错误代码：
+    // 110001 - 不支持的提供程序或配置无效
+    // 110002 - 配置不完整
+    // 110005 - 无效的重定向 URI
+    // 110007 - 缺少授权代码
+    // 110008 - 状态无效或已过期
 }
 ```
 
 -----
 
-## 💡 Best Practices
+## 💡 最佳实践
 
-### 1. Always Use HTTPS
+### 1. 始终使用 HTTPS
 
 ```java
-// ❌ Not recommended
+// ❌ 不推荐
 Context context = Context.builder()
     .redirectUri("http://yourapp.com/callback")
     .build();
 
-// ✅ Recommended
+// ✅ 推荐
 Context context = Context.builder()
     .redirectUri("https://yourapp.com/callback")
     .build();
 ```
 
-### 2. Enable State Validation
+### 2. 启用状态验证
 
 ```java
-// ✅ Always enable state validation in production
+// ✅ 始终在生产环境启用状态验证
 Context context = Context.builder()
-    .ignoreState(false)  // Default: false
+    .ignoreState(false)  // 默认：false
     .build();
 ```
 
-### 3. Use Distributed Cache
+### 3. 使用分布式缓存
 
 ```java
-// ✅ Use Redis or other distributed cache for state
+// ✅ 使用 Redis 或其他分布式缓存存储状态
 RedisAuthCache cache = new RedisAuthCache(redisTemplate);
 Provider provider = new GithubProvider(context, cache);
 ```
 
-### 4. Implement Proper Error Handling
+### 4. 实现适当的错误处理
 
 ```java
-// ✅ Comprehensive error handling
+// ✅ 全面的错误处理
 try {
     Message result = provider.authorize(callback);
-    // Process result
+    // 处理结果
 } catch (AuthorizedException e) {
-    // Log error details
-    log.error("Auth failed: code={}, message={}",
+    // 记录错误详情
+    log.error("身份验证失败：code={}, message={}",
         e.getCode(), e.getMessage());
 
-    // Return user-friendly error message
-    return Message.error("Login failed, please try again");
+    // 返回用户友好的错误消息
+    return Message.error("登录失败，请重试");
 }
 ```
 
-### 5. Validate Redirect URI
+### 5. 验证重定向 URI
 
 ```java
-// ✅ Always validate redirect URI matches configuration
+// ✅ 始终验证重定向 URI 与配置匹配
 String redirectUri = request.getParameter("redirect_uri");
 if (!context.getRedirectUri().equals(redirectUri)) {
-    throw new SecurityException("Invalid redirect URI");
+    throw new SecurityException("无效的重定向 URI");
 }
 ```
 
-### 6. Store Tokens Securely
+### 6. 安全存储令牌
 
 ```java
-// ✅ Encrypt tokens before storing in database
+// ✅ 在存储到数据库之前加密令牌
 String encryptedToken = crypto.encrypt(claims.getToken().getToken());
 
 User user = new User();
@@ -596,24 +596,24 @@ user.setRefreshToken(crypto.encrypt(claims.getToken().getRefresh()));
 user.setTokenExpiry(LocalDateTime.now().plusSeconds(claims.getToken().getExpireIn()));
 ```
 
-### 7. Implement Token Refresh
+### 7. 实现令牌刷新
 
 ```java
-// ✅ Automatically refresh expired tokens
+// ✅ 自动刷新过期令牌
 if (user.isTokenExpired()) {
     Message refreshMsg = provider.refresh(claims.getToken());
     Authorization newToken = refreshMsg.getData(Authorization.class);
 
-    // Update stored token
+    // 更新存储的令牌
     user.setAccessToken(crypto.encrypt(newToken.getToken()));
     user.setTokenExpiry(LocalDateTime.now().plusSeconds(newToken.getExpireIn()));
 }
 ```
 
-### 8. Handle Rate Limiting
+### 8. 处理速率限制
 
 ```java
-// ✅ Implement rate limiting for auth endpoints
+// ✅ 为身份验证端点实现速率限制
 @RateLimit(requests = 10, period = 1, timeUnit = TimeUnit.MINUTES)
 @PostMapping("/auth/github")
 public Message authenticate(@RequestBody Callback callback) {
@@ -623,12 +623,12 @@ public Message authenticate(@RequestBody Callback callback) {
 
 -----
 
-## ❓ Frequently Asked Questions
+## ❓ 常见问题
 
-### Q1: How do I add a custom OAuth provider?
+### Q1: 如何添加自定义 OAuth 提供程序？
 
 ```java
-// Method 1: Extend AbstractProvider
+// 方法 1：扩展 AbstractProvider
 public class MyProvider extends AbstractProvider {
     public MyProvider(Context context) {
         super(context, new Complex() {
@@ -638,33 +638,33 @@ public class MyProvider extends AbstractProvider {
                 return MyProvider.class;
             }
             @Override public Map<Endpoint, String> endpoint() {
-                // Return endpoint mappings
+                // 返回端点映射
             }
         });
     }
 
     @Override
-    public Message token(Callback callback) { /* implementation */ }
+    public Message token(Callback callback) { /* 实现 */ }
 
     @Override
-    public Message userInfo(Authorization authorization) { /* implementation */ }
+    public Message userInfo(Authorization authorization) { /* 实现 */ }
 }
 ```
 
-### Q2: How do I handle PKCE for mobile apps?
+### Q2: 如何为移动应用处理 PKCE？
 
 ```java
-// Client-side (mobile app):
+// 客户端（移动应用）：
 String codeVerifier = Builder.codeVerifier();
 String codeChallenge = Builder.codeChallenge("S256", codeVerifier);
 
-// Include code_challenge in authorization URL
+// 在授权 URL 中包含 code_challenge
 
-// Server-side:
-// Extract code_verifier from callback and use it to exchange token
+// 服务器端：
+// 从回调中提取 code_verifier 并使用它交换令牌
 ```
 
-### Q3: How do I implement "Login with GitHub" for a Spring Boot app?
+### Q3: 如何为 Spring Boot 应用实现"使用 GitHub 登录"？
 
 ```java
 @Controller
@@ -686,13 +686,13 @@ public class AuthController {
     public String callback(@RequestParam String code,
                           @RequestParam String state,
                           HttpSession session) {
-        // Validate state
+        // 验证状态
         String savedState = (String) session.getAttribute("oauth_state");
         if (!state.equals(savedState)) {
-            throw new SecurityException("Invalid state");
+            throw new SecurityException("无效状态");
         }
 
-        // Authenticate
+        // 身份验证
         Callback callback = Callback.builder()
             .code(code)
             .state(state)
@@ -701,7 +701,7 @@ public class AuthController {
         Message result = githubProvider.authorize(callback);
         Claims user = result.getData(Claims.class);
 
-        // Create user session
+        // 创建用户会话
         session.setAttribute("user", user);
 
         return "redirect:/dashboard";
@@ -709,27 +709,27 @@ public class AuthController {
 }
 ```
 
-### Q4: How do I debug authentication issues?
+### Q4: 如何调试身份验证问题？
 
 ```java
-// Enable debug logging
+// 启用调试日志
 logging.level.org.miaixz.bus.auth=DEBUG
 
-// Check configuration
+// 检查配置
 Checker.check(context, Registry.GITHUB);
 
-// Validate callback
+// 验证回调
 Checker.check(Registry.GITHUB, callback);
 
-// Log token response
+// 记录令牌响应
 Message tokenMsg = provider.token(callback);
-log.debug("Token response: {}", tokenMsg);
+log.debug("令牌响应：{}", tokenMsg);
 ```
 
-### Q5: How do I support multiple redirect URIs?
+### Q5: 如何支持多个重定向 URI？
 
 ```java
-// Dynamic context based on request
+// 根据请求动态上下文
 Context getContextForRequest(HttpServletRequest request) {
     String redirectUri = determineRedirectUri(request);
 
@@ -741,117 +741,117 @@ Context getContextForRequest(HttpServletRequest request) {
 }
 ```
 
-### Q6: How do I implement single sign-out?
+### Q6: 如何实现单点登出？
 
 ```java
 @PostMapping("/logout")
 public Message logout(HttpSession session) {
     Claims user = (Claims) session.getAttribute("user");
 
-    // Revoke token
+    // 撤销令牌
     provider.revoke(user.getToken());
 
-    // Clear session
+    // 清除会话
     session.invalidate();
 
-    return Message.success("Logged out successfully");
+    return Message.success("登出成功");
 }
 ```
 
-### Q7: How do I handle token expiration?
+### Q7: 如何处理令牌过期？
 
 ```java
-// Check token expiry before API calls
+// 在 API 调用前检查令牌过期
 public void callApi(Claims user) {
     Authorization token = user.getToken();
 
     if (isTokenExpired(token)) {
-        // Refresh token
+        // 刷新令牌
         Message refreshMsg = provider.refresh(token);
         Authorization newToken = refreshMsg.getData(Authorization.class);
         user.setToken(newToken);
     }
 
-    // Use fresh token
+    // 使用新令牌
     callApiWithToken(newToken.getToken());
 }
 ```
 
-### Q8: Which providers are supported?
+### Q8: 支持哪些提供程序？
 
-Bus Auth supports **40+** providers including:
-- Social: GitHub, Google, Facebook, Twitter, LinkedIn, Microsoft, Apple
-- Chinese: WeChat, QQ, Weibo, Douyin, DingTalk, Feishu
-- Enterprise: Okta, GitLab, Gitee, WeChat Work
-- And many more! See `Registry` enum for complete list.
+Bus Auth 支持 **40+** 提供程序，包括：
+- 社交：GitHub、Google、Facebook、Twitter、LinkedIn、Microsoft、Apple
+- 中国：微信、QQ、微博、抖音、钉钉、飞书
+- 企业：Okta、GitLab、Gitee、企业微信
+- 更多！查看 `Registry` 枚举获取完整列表。
 
 -----
 
-## 🔄 Version Compatibility
+## 🔄 版本兼容性
 
-| Bus Auth Version | JDK Version | Spring Boot | Notes |
+| Bus Auth 版本 | JDK 版本 | Spring Boot | 说明 |
 | :--- | :--- | :--- | :--- |
-| 8.x | 17+ | 3.x | Current stable version |
-| 7.x | 11+ | 2.x | Legacy version |
+| 8.x | 17+ | 3.x | 当前稳定版本 |
+| 7.x | 11+ | 2.x | 旧版本 |
 
 -----
 
-## 🚀 Roadmap
+## 🚀 路线图
 
-- [ ] Additional OAuth2 providers
-- [ ] OpenID Connect Discovery support
-- [ ] JWT token validation utilities
-- [ ] Enhanced token caching strategies
-- [ ] Multi-tenant authentication support
-- [ ] Authentication event hooks
-- [ ] Comprehensive test coverage
-
------
-
-## 📊 Supported Providers
-
-### Social Login
-- GitHub, GitLab, Gitee
-- Google, Facebook, Twitter, LinkedIn, Microsoft
-- Apple, Amazon, Slack, Line, VK
-- Stack Overflow, Pinterest, Figma
-
-### Chinese Platforms
-- WeChat (MP, Open, Mini, Work)
-- QQ, Weibo, Douyin, Toutiao
-- DingTalk, Feishu, Baidu, Xiaomi
-- Alipay, Taobao, JD, Meituan
-
-### Enterprise
-- Okta, GitLab, Coding
-- WeChat Work (Enterprise WeChat)
-- Aliyun, Huawei Cloud
-
-### Domestic (China)
-- Ximalaya, Renren, OSChina
-- Kujiale, Proginn, RedNote
-- Teambition, Eleme
-
-For complete list, see the `Registry` enum.
+- [ ] 其他 OAuth2 提供程序
+- [ ] OpenID Connect 发现支持
+- [ ] JWT 令牌验证工具
+- [ ] 增强的令牌缓存策略
+- [ ] 多租户身份验证支持
+- [ ] 身份验证事件钩子
+- [ ] 全面的测试覆盖
 
 -----
 
-## 🤝 Contributing
+## 📊 支持的提供程序
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### 社交登录
+- GitHub、GitLab、Gitee
+- Google、Facebook、Twitter、LinkedIn、Microsoft
+- Apple、Amazon、Slack、Line、VK
+- Stack Overflow、Pinterest、Figma
+
+### 中国平台
+- 微信（公众号、开放平台、小程序、企业）
+- QQ、微博、抖音、今日头条
+- 钉钉、飞书、百度、小米
+- 支付宝、淘宝、京东、美团
+
+### 企业
+- Okta、GitLab、Coding
+- 企业微信
+- 阿里云、华为云
+
+### 国内（中国）
+- 喜马拉雅、人人、开源中国
+- 酷家乐、程序员客栈、小红书
+- Teambition、饿了么
+
+完整列表请参见 `Registry` 枚举。
 
 -----
 
-## 📄 License
+## 🤝 贡献
 
-[The MIT License (MIT)](https://github.com/818000/bus/blob/main/LICENSE)
-
-Copyright (c) 2015-2025 miaixz.org and other contributors.
+欢迎贡献！请随时提交拉取请求。
 
 -----
 
-## 🔗 Links
+## 📄 许可证
 
-- [GitHub Repository](https://github.com/818000/bus)
-- [Issue Tracker](https://github.com/818000/bus/issues)
+[MIT License (MIT)](https://github.com/818000/bus/blob/main/LICENSE)
+
+版权所有 (c) 2015-2025 miaixz.org 及其他贡献者。
+
+-----
+
+## 🔗 链接
+
+- [GitHub 仓库](https://github.com/818000/bus)
+- [问题追踪](https://github.com/818000/bus/issues)
 - [Maven Central](https://central.sonatype.com/artifact/org.miaixz/bus-auth)
