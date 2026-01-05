@@ -906,17 +906,9 @@ public class Nativex {
     private void generateTopIndex(Set<String> processedVersions) throws IOException {
         Set<String> allTestedVersions = collectAllTestedVersions(processedVersions);
 
-        // metadata-version should be the latest actually processed version directory
-        String latestVersion = processedVersions.stream().max(Comparator.naturalOrder()).orElse("unknown");
+        String latestVersion = allTestedVersions.stream().max(Comparator.naturalOrder()).orElse("unknown");
 
-        // Generate default-for pattern: major.minor.* (e.g., "8.5.*" becomes "8\\.5\\.[0-9]+")
-        String[] versionParts = latestVersion.split("\\.");
-        String defaultForPattern;
-        if (versionParts.length >= 2) {
-            defaultForPattern = versionParts[0] + "\\\\." + versionParts[1] + "\\\\.[0-9]+";
-        } else {
-            defaultForPattern = latestVersion.replace(".", "\\\\.") + "\\\\.[0-9]+";
-        }
+        String defaultForPattern = latestVersion.replace(".", "\\\\.") + "\\\\.[0-9]+";
 
         StringBuilder metadataBuilder = new StringBuilder();
         metadataBuilder.append("[\n");
@@ -928,7 +920,7 @@ public class Nativex {
         metadataBuilder.append("    \"metadata-version\": \"").append(latestVersion).append("\",\n");
         metadataBuilder.append("    \"tested-versions\": [\n");
 
-        List<String> sortedVersions = allTestedVersions.stream().sorted(Comparator.naturalOrder()).toList();
+        List<String> sortedVersions = allTestedVersions.stream().sorted(Comparator.reverseOrder()).toList();
 
         for (int i = 0; i < sortedVersions.size(); i++) {
             metadataBuilder.append("      \"").append(sortedVersions.get(i)).append("\"");

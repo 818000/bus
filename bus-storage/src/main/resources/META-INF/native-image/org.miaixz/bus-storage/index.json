@@ -3,12 +3,11 @@
     "latest": true,
     "override": true,
     "module": "org.miaixz:bus-storage",
-    "default-for": "8\\.5\\.[0-9]+",
-    "metadata-version": "8.5.0",
+    "default-for": "8\\.5\\.[0-9]",
+    "metadata-version": "8.5.1",
     "tested-versions": [
       "8.5.0",
-      "8.5.1",
-      "8.5.2"
+      "8.5.1"
     ]
   }
 ]
