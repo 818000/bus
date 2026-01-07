@@ -25,33 +25,70 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.spring.banner;
+package org.miaixz.bus.vortex;
+
+import java.time.Duration;
+
+import org.miaixz.bus.vortex.magic.Metrics;
 
 /**
- * Version banner generator.
+ * Performance monitor interface for tracking Vortex gateway metrics.
+ * <p>
+ * Framework-layer abstract interface for monitoring gateway performance metrics. Provides basic metric collection
+ * capabilities, with support for integration with monitoring systems like Micrometer.
+ * </p>
+ *
+ * <p>
+ * <b>Monitored Metrics:</b>
+ * </p>
+ * <ul>
+ * <li>Request Statistics: Total requests, success count, failure count</li>
+ * <li>Response Times: Average, P95, P99</li>
+ * <li>Cache Statistics: Hit rate, miss count</li>
+ * <li>Database Operations: Query count, update count</li>
+ * </ul>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class VersionBanner extends AbstractBanner {
+public interface Monitor {
 
-    public VersionBanner(Class<?> resourceClass, String resourceLocation, String defaultBanner) {
-        super(resourceClass, resourceLocation, defaultBanner);
-        initialize();
-    }
+    /**
+     * Records an access event (e.g., cache access).
+     *
+     * @param key           the resource key
+     * @param hit           whether the access was a hit
+     * @param durationNanos access duration in nanoseconds
+     */
+    void access(String key, boolean hit, long durationNanos);
 
-    @Override
-    protected String printBanner(String bannerText) {
-        if (null == bannerText) {
-            String implementationVersion = resourceClass.getPackage().getImplementationVersion();
-            if (null != implementationVersion) {
-                return implementationVersion;
-            } else {
-                return defaultBanner;
-            }
-        } else {
-            return bannerText;
-        }
-    }
+    /**
+     * Records a request event.
+     *
+     * @param duration request duration
+     * @param success  whether the request was successful
+     */
+    void request(Duration duration, boolean success);
+
+    /**
+     * Records a database operation.
+     *
+     * @param operation the operation type (e.g., "SELECT", "INSERT", "UPDATE")
+     * @param duration  operation duration
+     * @param rowCount  number of rows affected
+     */
+    void operation(String operation, Duration duration, int rowCount);
+
+    /**
+     * Resets all collected statistics.
+     */
+    void reset();
+
+    /**
+     * Retrieves a summary of collected metrics.
+     *
+     * @return unified metrics containing both system and application-level data
+     */
+    Metrics getSummary();
 
 }
