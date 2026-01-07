@@ -25,33 +25,73 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.spring.banner;
+package org.miaixz.bus.vortex.metrics;
+
+import lombok.*;
+import org.miaixz.bus.vortex.Monitor;
 
 /**
- * Version banner generator.
+ * Cache statistics data structure for tracking cache access metrics.
+ * <p>
+ * A generic cache statistics container that tracks cache access patterns. Suitable for both L1 cache
+ * (ConcurrentHashMap) and L2 cache (Caffeine) statistics.
+ * </p>
+ *
+ * <p>
+ * <b>Responsibility:</b>
+ * </p>
+ * <ul>
+ * <li>Located in the {@code metrics} package as part of performance metrics collection</li>
+ * <li>Coexists with {@link Monitor} and {@link org.miaixz.bus.vortex.magic.Metrics}</li>
+ * <li>Focuses on being a data carrier without involving cache implementation details</li>
+ * </ul>
+ *
+ * <p>
+ * <b>Use Cases:</b>
+ * </p>
+ * <ul>
+ * <li>Two-level cache statistics for {@link org.miaixz.bus.vortex.registry.AbstractRegistry}</li>
+ * <li>Statistics for other cache implementations</li>
+ * </ul>
+ *
+ * <p>
+ * <b>Metrics:</b>
+ * </p>
+ * <ul>
+ * <li>{@code hitCount}: Total number of cache hits</li>
+ * <li>{@code missCount}: Total number of cache misses</li>
+ * <li>{@code hitRate}: Cache hit rate (0.0 - 1.0)</li>
+ * <li>{@code cacheSize}: Current size of L1 cache</li>
+ * </ul>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class VersionBanner extends AbstractBanner {
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CacheStats {
 
-    public VersionBanner(Class<?> resourceClass, String resourceLocation, String defaultBanner) {
-        super(resourceClass, resourceLocation, defaultBanner);
-        initialize();
-    }
+    /**
+     * Total number of cache hits.
+     */
+    private long hitCount;
 
-    @Override
-    protected String printBanner(String bannerText) {
-        if (null == bannerText) {
-            String implementationVersion = resourceClass.getPackage().getImplementationVersion();
-            if (null != implementationVersion) {
-                return implementationVersion;
-            } else {
-                return defaultBanner;
-            }
-        } else {
-            return bannerText;
-        }
-    }
+    /**
+     * Total number of cache misses.
+     */
+    private long missCount;
+
+    /**
+     * Cache hit rate (0.0 - 1.0).
+     */
+    private double hitRate;
+
+    /**
+     * Current size of L1 cache (ConcurrentHashMap).
+     */
+    private long cacheSize;
 
 }
