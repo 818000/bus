@@ -2161,7 +2161,7 @@
     "queryAllPublicMethods": true
   },
   {
-    "name": "org.miaixz.bus.mapper.parsing.AidedSqlScript",
+    "name": "org.miaixz.bus.mapper.parsing.EasySqlScript",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,

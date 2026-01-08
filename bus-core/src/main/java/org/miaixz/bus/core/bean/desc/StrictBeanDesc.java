@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.text.CharsBacker;
 import org.miaixz.bus.core.xyz.*;
 
 /**
@@ -286,7 +287,7 @@ public class StrictBeanDesc extends AbstractBeanDesc {
             methodName = method.getName();
             if (0 == method.getParameterCount()) {
                 // No parameters, potentially a Getter method.
-                if (StringKit.equals(methodName, MethodKit.genGetter(fieldName), ignoreCase)) {
+                if (StringKit.equals(methodName, CharsBacker.genGetter(fieldName), ignoreCase)) {
                     final Class<?> returnType = method.getReturnType();
                     if (returnType.isAssignableFrom(fieldType)
                             || (isMatchPrimitive && ClassKit.isBasicTypeMatch(returnType, fieldType))) {
@@ -294,7 +295,7 @@ public class StrictBeanDesc extends AbstractBeanDesc {
                         getter = method;
                     }
                 }
-            } else if (StringKit.equals(methodName, MethodKit.genSetter(fieldName), ignoreCase)) {
+            } else if (StringKit.equals(methodName, CharsBacker.genSetter(fieldName), ignoreCase)) {
                 final Class<?> parameterType = method.getParameterTypes()[0];
                 if (fieldType.isAssignableFrom(parameterType)
                         || (isMatchPrimitive && ClassKit.isBasicTypeMatch(fieldType, parameterType))) {

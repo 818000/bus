@@ -27,7 +27,6 @@
 */
 package org.miaixz.bus.core.math;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -390,26 +389,14 @@ public class NumberParser {
             number = StringKit.subSuf(number, 1);
         }
 
-        // Convert to half-width characters
-        number = Convert.toDBC(number);
-
-        // Handle scientific notation (E+ format)
-        // NumberFormat has poor support for E+ format, so parse directly using BigDecimal
-        if (StringKit.containsIgnoreCase(number, "e")) {
-            try {
-                return new BigDecimal(number);
-            } catch (final NumberFormatException e) {
-                // BigDecimal parsing failed; fall back to trying NumberFormat
-            }
-        }
-
         try {
             final NumberFormat format = NumberFormat.getInstance(locale);
             if (format instanceof DecimalFormat) {
-                // To prevent truncation when the string exceeds double precision, configure to parse as BigDecimal
+                // When the string number exceeds the range of a double, it can be truncated. Use BigDecimal to receive
+                // it.
                 ((DecimalFormat) format).setParseBigDecimal(true);
             }
-            return format.parse(number);
+            return format.parse(Convert.toDBC(number));
         } catch (final ParseException e) {
             final NumberFormatException nfe = new NumberFormatException(e.getMessage());
             nfe.initCause(e);

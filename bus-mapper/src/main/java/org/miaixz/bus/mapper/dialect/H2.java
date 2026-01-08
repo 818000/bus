@@ -27,10 +27,7 @@
 */
 package org.miaixz.bus.mapper.dialect;
 
-import org.miaixz.bus.mapper.parsing.ColumnMeta;
 import org.miaixz.bus.mapper.support.paging.Pageable;
-
-import java.util.List;
 
 /**
  * H2 Database dialect.
@@ -41,7 +38,7 @@ import java.util.List;
  * <ul>
  * <li>LIMIT, OFFSET pagination</li>
  * <li>Multi-values INSERT</li>
- * <li>ON CONFLICT DO UPDATE (UPSERT)</li>
+ * <li>MERGE INTO (UPSERT)</li>
  * <li>JDBC batch operations</li>
  * </ul>
  *
@@ -71,30 +68,7 @@ public class H2 extends AbstractDialect {
 
     @Override
     public String getUpsertTemplate() {
-        return "INSERT INTO %s (%s) VALUES %s ON CONFLICT (%s) DO UPDATE SET %s";
-    }
-
-    @Override
-    public String buildUpsertSql(
-            String tableName,
-            String columnList,
-            String valuesList,
-            String keyColumns,
-            List<ColumnMeta> updateColumns,
-            String itemPrefix) {
-        // H2: INSERT INTO ... VALUES ... ON CONFLICT (keys) DO UPDATE SET with dynamic <if> tags
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO ").append(tableName).append(" (").append(columnList).append(") VALUES\n");
-        sb.append(valuesList);
-        sb.append("\nON CONFLICT (").append(keyColumns).append(") DO UPDATE SET\n");
-
-        for (ColumnMeta col : updateColumns) {
-            String assignment = col.column() + " = EXCLUDED." + col.column();
-            sb.append("  <if test=\"").append(itemPrefix).append(".").append(col.property()).append(" != null\">")
-                    .append(assignment).append(",</if>\n");
-        }
-
-        return sb.toString();
+        return "MERGE INTO %s (%s) KEY (%s) VALUES %s";
     }
 
 }

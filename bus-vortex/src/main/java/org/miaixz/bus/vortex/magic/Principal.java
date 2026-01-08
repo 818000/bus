@@ -27,15 +27,14 @@
 */
 package org.miaixz.bus.vortex.magic;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.miaixz.bus.core.basic.normal.Consts;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.provider.AuthorizeProvider;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 /**
  * Represents a unified security principal, encapsulating the credential to be validated by an
@@ -51,8 +50,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Principal {
 
     /**
@@ -123,7 +122,7 @@ public class Principal {
      * <p>
      * <b>Typical Values:</b> 1=Web, 2=iOS, 3=Android, 4=Server, 5=ThirdParty, etc.
      */
-    protected Integer channel;
+    protected final Integer channel;
 
     /**
      * Request context information.
@@ -162,6 +161,6 @@ public class Principal {
      *
      * @see Context Request context structure and lifecycle
      */
-    protected Context context;
+    protected final Context context;
 
 }

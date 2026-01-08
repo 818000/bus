@@ -150,6 +150,16 @@ public abstract class AbstractDialect implements Dialect {
     }
 
     /**
+     * Indicates whether the database product generally supports JDBC batch operations.
+     *
+     * @return {@code true} by default.
+     */
+    @Override
+    public boolean supportsJdbcBatch() {
+        return true;
+    }
+
+    /**
      * Indicates whether the database product supports limiting results without an offset (i.e., just LIMIT n).
      *
      * @return {@code true} by default.
@@ -167,7 +177,7 @@ public abstract class AbstractDialect implements Dialect {
      */
     @Override
     public int getMaxMultiValuesInsertSize() {
-        return -1;
+        return -1; // Unlimited
     }
 
     /**

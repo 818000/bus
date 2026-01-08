@@ -61,15 +61,14 @@ public class ErrorCode extends org.miaixz.bus.core.basic.normal.ErrorCode {
      * <p>
      * Indicates that the provided API Key is not valid, not found, or has been disabled.
      */
-    public static final Errors _116002 = ErrorRegistry.builder().key("116002").value("Invalid ApiKey or Token").build();
+    public static final Errors _116002 = ErrorRegistry.builder().key("116002").value("Invalid ApiKey").build();
 
     /**
      * Error code: 116003 - ApiKey expired.
      * <p>
      * Indicates that the provided API Key is valid but has passed its expiration date.
      */
-    public static final Errors _116003 = ErrorRegistry.builder().key("116003").value("Incorrect parameter value")
-            .build();
+    public static final Errors _116003 = ErrorRegistry.builder().key("116003").value("ApiKey expired").build();
 
     /**
      * Error code: 116004 - Request body is too large.
