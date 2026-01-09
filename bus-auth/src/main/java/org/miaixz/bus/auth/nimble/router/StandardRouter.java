@@ -25,51 +25,29 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.auth.nimble.rednote;
-
-import org.miaixz.bus.auth.nimble.AuthorizeScope;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package org.miaixz.bus.auth.nimble.router;
 
 /**
- * Xiaohongshu Commercial Platform OAuth authorization scopes.
- * 
+ * Standard OAuth2 router implementation.
+ * <p>
+ * Implements standard OAuth2 protocol forwarding, supporting RFC 6749 specification. Automatically handles extraction
+ * and forwarding of non-standard parameters.
+ * </p>
+ * <p>
+ * This class extends {@link AbstractRouter} and uses all default implementations. No additional platform-specific logic
+ * is required for standard OAuth2 providers.
+ * </p>
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-@Getter
-@AllArgsConstructor
-public enum RednoteMarketiScope implements AuthorizeScope {
+public class StandardRouter extends AbstractRouter {
 
     /**
-     * Get account report information. The meaning of {@code scope} is subject to {@code description}.
+     * Creates a standard OAuth2 router.
      */
-    report_service("report_service", "Get account report information", true),
-    /**
-     * Get promotion plan, promotion unit, and promotion creative information.
-     */
-    ad_query("ad_query", "Get promotion plan, promotion unit, and promotion creative information", false),
-    /**
-     * Create / modify promotion plans, promotion units, and promotion creatives.
-     */
-    ad_manage("ad_manage", "Create & modify promotion plans, promotion units, and promotion creatives", false),
-    /**
-     * Account management.
-     */
-    account_manage("account_manage", "Account management", false);
-
-    /**
-     * The scope string as defined by Xiaohongshu.
-     */
-    private final String scope;
-    /**
-     * A description of what the scope grants access to.
-     */
-    private final String description;
-    /**
-     * Indicates if this scope is enabled by default.
-     */
-    private final boolean isDefault;
+    public StandardRouter() {
+        super();
+    }
 
 }
