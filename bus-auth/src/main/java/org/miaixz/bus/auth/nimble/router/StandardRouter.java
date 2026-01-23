@@ -25,76 +25,29 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.mapper.dialect;
-
-import java.util.List;
-
-import org.miaixz.bus.mapper.parsing.ColumnMeta;
-import org.miaixz.bus.mapper.support.paging.Pageable;
+package org.miaixz.bus.auth.nimble.router;
 
 /**
- * PostgreSQL dialect.
- *
+ * Standard OAuth2 router implementation.
  * <p>
- * Supports:
+ * Implements standard OAuth2 protocol forwarding, supporting RFC 6749 specification. Automatically handles extraction
+ * and forwarding of non-standard parameters.
  * </p>
- * <ul>
- * <li>LIMIT, OFFSET pagination</li>
- * <li>Multi-values INSERT</li>
- * <li>ON CONFLICT DO UPDATE (UPSERT)</li>
- * <li>JDBC batch operations</li>
- * </ul>
+ * <p>
+ * This class extends {@link AbstractRouter} and uses all default implementations. No additional platform-specific logic
+ * is required for standard OAuth2 providers.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class PostgreSql extends AbstractDialect {
+public class StandardRouter extends AbstractRouter {
 
-    public PostgreSql() {
-        super("PostgreSQL", "jdbc:postgresql:");
-    }
-
-    @Override
-    public String getPaginationSql(String originalSql, Pageable pageable) {
-        return buildLimitOffsetPagination(originalSql, pageable);
-    }
-
-    @Override
-    public boolean supportsMultiValuesInsert() {
-        return true;
-    }
-
-    @Override
-    public boolean supportsUpsert() {
-        return true;
-    }
-
-    @Override
-    public String getUpsertTemplate() {
-        return "INSERT INTO %s (%s) VALUES %s ON CONFLICT (%s) DO UPDATE SET %s";
-    }
-
-    @Override
-    public String buildUpsertSql(
-            String tableName,
-            String columnList,
-            String valuesList,
-            String keyColumns,
-            List<ColumnMeta> updateColumns,
-            String itemPrefix) {
-        // PostgreSQL: INSERT INTO ... VALUES ... ON CONFLICT (keys) DO UPDATE SET with dynamic <if> tags
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO ").append(tableName).append(" (").append(columnList).append(") VALUES\n");
-        sb.append(valuesList);
-        sb.append("\nON CONFLICT (").append(keyColumns).append(") DO UPDATE SET\n");
-
-        for (ColumnMeta col : updateColumns) {
-            String assignment = col.column() + " = EXCLUDED." + col.column();
-            sb.append("  <if test=\"").append(itemPrefix).append(".").append(col.property()).append(" != null\">")
-                    .append(assignment).append(",</if>\n");
-        }
-
-        return sb.toString();
+    /**
+     * Creates a standard OAuth2 router.
+     */
+    public StandardRouter() {
+        super();
     }
 
 }
