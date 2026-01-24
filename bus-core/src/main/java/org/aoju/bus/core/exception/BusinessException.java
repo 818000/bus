@@ -43,7 +43,7 @@ public class BusinessException extends UncheckedException {
     }
 
     public BusinessException(String errcode) {
-        this(errcode, (String) null);
+        this(errcode, errcode);
     }
 
     public BusinessException(String format, Object... args) {

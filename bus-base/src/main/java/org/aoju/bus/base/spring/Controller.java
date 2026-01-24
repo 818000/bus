@@ -80,9 +80,12 @@ public class Controller {
      * @return body 返回值
      */
     public static Object write(String errcode, String errmsg) {
+        if (StringKit.isNotEmpty(errmsg) && !errcode.equals(errmsg)) {
+            return Message.builder().errcode(errcode).errmsg(errmsg).build();
+        }
         String error = ErrorCode.require(errcode);
         if (StringKit.isNotEmpty(error)) {
-            return Message.builder().errcode(errcode).errmsg(errmsg).build();
+            return Message.builder().errcode(errcode).errmsg(error).build();
         }
         return Message.builder().errcode(ErrorCode.EM_FAILURE).errmsg(ErrorCode.require(ErrorCode.EM_FAILURE)).build();
     }

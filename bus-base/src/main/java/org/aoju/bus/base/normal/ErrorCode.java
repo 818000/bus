@@ -255,6 +255,8 @@ public class ErrorCode {
         register(EM_SUCCESS, "请求成功");
         register(EM_FAILURE, "系统繁忙,请稍后重试");
         register(EM_LIMITER, "请求过于频繁");
+        register(EM_TIMEOUT, "请求超时");
+        register(EM_ANR, "请求未响应");
         register(EM_100100, "无效的令牌");
         register(EM_100101, "无效的参数");
         register(EM_100102, "无效的版本");
@@ -335,6 +337,30 @@ public class ErrorCode {
      */
     public static String require(String name) {
         return ERRORCODE_CACHE.get(name);
+    }
+
+    /**
+     * 根据错误码名称获取错误信息,支持模板参数
+     * 使用 {} 作为占位符
+     *
+     * @param name 错误码名称
+     * @param args 模板参数
+     * @return 格式化后的错误信息, 找不到时返回null
+     */
+    public static String getMessage(String name, Object... args) {
+        String template = ERRORCODE_CACHE.get(name);
+        if (template == null) {
+            return null;
+        }
+        if (args == null || args.length == 0) {
+            return template;
+        }
+        // 使用 {} 作为占位符进行替换
+        String result = template;
+        for (Object arg : args) {
+            result = result.replaceFirst("\\{\\}", String.valueOf(arg));
+        }
+        return result;
     }
 
 }

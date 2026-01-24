@@ -117,7 +117,7 @@ public class BaseAdvice extends Controller {
         if (StringKit.isBlank(e.getErrcode())) {
             return write(ErrorCode.EM_100513);
         }
-        return write(e.getErrcode());
+        return write(e.getErrcode(),e.getErrmsg());
     }
 
     /**
