@@ -25,70 +25,53 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex;
+package org.miaixz.bus.vortex.support.llm;
 
-import java.time.Duration;
-
-import org.miaixz.bus.vortex.magic.Metrics;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
- * Performance monitor interface for tracking Vortex gateway metrics.
+ * Interface for Large Language Model (LLM) providers.
  * <p>
- * Framework-layer abstract interface for monitoring gateway performance metrics. Provides basic metric collection
- * capabilities, with support for integration with monitoring systems like Micrometer.
- * </p>
- *
- * <p>
- * <b>Monitored Metrics:</b>
- * </p>
- * <ul>
- * <li>Request Statistics: Total requests, success count, failure count</li>
- * <li>Response Times: Average, P95, P99</li>
- * <li>Cache Statistics: Hit rate, miss count</li>
- * <li>Database Operations: Query count, update count</li>
- * </ul>
+ * This interface defines the contract for LLM providers that can handle chat completion requests in both streaming and
+ * non-streaming modes. Implementations should support the OpenAIProvider Chat Completions API format.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public interface Monitor {
+public interface LlmProvider {
 
     /**
-     * Records an access event (e.g., cache access).
+     * Gets the type of this provider (e.g., "vllm", "ollama", "openai").
      *
-     * @param key           the resource key
-     * @param hit           whether the access was a hit
-     * @param durationNanos access duration in nanoseconds
+     * @return The provider type.
      */
-    void access(String key, boolean hit, long durationNanos);
+    String getType();
 
     /**
-     * Records a request event.
+     * Gets the base URL of the LLM service.
      *
-     * @param duration request duration
-     * @param success  whether the request was successful
+     * @return The base URL.
      */
-    void request(Duration duration, boolean success);
+    String getUrl();
 
     /**
-     * Records a database operation.
+     * Sends a streaming chat completion request to the LLM service.
+     * <p>
+     * The response is returned as Server-Sent Events (SSE) in the format: {@code data:
+     * {"choices":[{"delta":{"content":"token"}}]}}
      *
-     * @param type     the operation type (e.g., "SELECT", "INSERT", "UPDATE")
-     * @param duration operation duration
-     * @param rowCount number of rows affected
+     * @param request The LLM request containing messages, model, and parameters.
+     * @return A {@link Flux} emitting SSE-formatted response chunks.
      */
-    void operation(String type, Duration duration, int rowCount);
+    Flux<String> stream(LlmRequest request);
 
     /**
-     * Resets all collected statistics.
-     */
-    void reset();
-
-    /**
-     * Retrieves a summary of collected metrics.
+     * Sends a non-streaming chat completion request to the LLM service.
      *
-     * @return unified metrics containing both system and application-level data
+     * @param request The LLM request containing messages, model, and parameters.
+     * @return A {@link Mono} emitting the complete response.
      */
-    Metrics getSummary();
+    Mono<LlmResponse> chat(LlmRequest request);
 
 }
