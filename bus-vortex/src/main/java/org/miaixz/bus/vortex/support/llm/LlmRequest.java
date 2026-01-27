@@ -25,70 +25,103 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex;
+package org.miaixz.bus.vortex.support.llm;
 
-import java.time.Duration;
+import java.util.List;
 
-import org.miaixz.bus.vortex.magic.Metrics;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
- * Performance monitor interface for tracking Vortex gateway metrics.
+ * Request model for LLM chat completion requests.
  * <p>
- * Framework-layer abstract interface for monitoring gateway performance metrics. Provides basic metric collection
- * capabilities, with support for integration with monitoring systems like Micrometer.
- * </p>
- *
- * <p>
- * <b>Monitored Metrics:</b>
- * </p>
- * <ul>
- * <li>Request Statistics: Total requests, success count, failure count</li>
- * <li>Response Times: Average, P95, P99</li>
- * <li>Cache Statistics: Hit rate, miss count</li>
- * <li>Database Operations: Query count, update count</li>
- * </ul>
+ * This model follows the OpenAIProvider Chat Completions API format. JsonKit will automatically handle snake_case to
+ * camelCase conversion.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public interface Monitor {
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class LlmRequest {
 
     /**
-     * Records an access event (e.g., cache access).
-     *
-     * @param key           the resource key
-     * @param hit           whether the access was a hit
-     * @param durationNanos access duration in nanoseconds
+     * The model to use for completion (e.g., "gpt-4", "llama3-70b").
      */
-    void access(String key, boolean hit, long durationNanos);
+    private String model;
 
     /**
-     * Records a request event.
-     *
-     * @param duration request duration
-     * @param success  whether the request was successful
+     * The list of messages in the conversation.
      */
-    void request(Duration duration, boolean success);
+    private List<Message> messages;
 
     /**
-     * Records a database operation.
-     *
-     * @param type     the operation type (e.g., "SELECT", "INSERT", "UPDATE")
-     * @param duration operation duration
-     * @param rowCount number of rows affected
+     * Whether to stream the response (default: false).
      */
-    void operation(String type, Duration duration, int rowCount);
+    private boolean stream = false;
 
     /**
-     * Resets all collected statistics.
+     * Sampling temperature (0.0 to 2.0). Higher values make output more random.
      */
-    void reset();
+    private Double temperature;
 
     /**
-     * Retrieves a summary of collected metrics.
-     *
-     * @return unified metrics containing both system and application-level data
+     * Maximum number of tokens to generate. JSON field: max_tokens
      */
-    Metrics getSummary();
+    private Integer maxTokens;
+
+    /**
+     * Nucleus sampling parameter (0.0 to 1.0). JSON field: top_p
+     */
+    private Double topP;
+
+    /**
+     * Frequency penalty (-2.0 to 2.0). JSON field: frequency_penalty
+     */
+    private Double frequencyPenalty;
+
+    /**
+     * Presence penalty (-2.0 to 2.0). JSON field: presence_penalty
+     */
+    private Double presencePenalty;
+
+    /**
+     * Stop sequences to end generation.
+     */
+    private List<String> stop;
+
+    /**
+     * Unique identifier for the end-user.
+     */
+    private String user;
+
+    /**
+     * Represents a single message in the conversation.
+     */
+    @Getter
+    @Setter
+    public static class Message {
+
+        /**
+         * The role of the message author (system, user, assistant).
+         */
+        private String role;
+
+        /**
+         * The content of the message.
+         */
+        private String content;
+
+        /**
+         * Optional name of the author.
+         */
+        private String name;
+    }
 
 }
