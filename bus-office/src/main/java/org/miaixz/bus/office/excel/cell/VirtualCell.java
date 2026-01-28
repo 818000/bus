@@ -1,21 +1,29 @@
 /*
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
- ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
- ~                                                                           ~
- ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
- ~ you may not use this file except in compliance with the License.          ~
- ~ You may obtain a copy of the License at                                   ~
- ~                                                                           ~
- ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
- ~                                                                           ~
- ~ Unless required by applicable law or agreed to in writing, software       ~
- ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
- ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
- ~ See the License for the specific language governing permissions and       ~
- ~ limitations under the License.                                            ~
- ~                                                                           ~
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                               ~
+ ~ The MIT License (MIT)                                                         ~
+ ~                                                                               ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                    ~
+ ~                                                                               ~
+ ~ Permission is hereby granted, free of charge, to any person obtaining a copy  ~
+ ~ of this software and associated documentation files (the "Software"), to deal ~
+ ~ in the Software without restriction, including without limitation the rights  ~
+ ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     ~
+ ~ copies of the Software, and to permit persons to whom the Software is         ~
+ ~ furnished to do so, subject to the following conditions:                      ~
+ ~                                                                               ~
+ ~ The above copyright notice and this permission notice shall be included in    ~
+ ~ all copies or substantial portions of the Software.                           ~
+ ~                                                                               ~
+ ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    ~
+ ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      ~
+ ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   ~
+ ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER        ~
+ ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, ~
+ ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     ~
+ ~ THE SOFTWARE.                                                                 ~
+ ~                                                                               ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 package org.miaixz.bus.office.excel.cell;
 
@@ -27,7 +35,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.miaixz.bus.office.excel.cell.values.FormulaCellValue;
-import org.miaixz.bus.office.excel.CellKit;
+import org.miaixz.bus.office.excel.xyz.CellKit;
 
 /**
  * A virtual cell representing a cell's position, value, and style, but not an actually created cell. Note: Setting
@@ -112,7 +120,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param cellType the cell type to set
      */
@@ -122,7 +130,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param formula the formula string to set
      */
@@ -132,7 +140,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      */
     @Override
     protected void removeFormulaImpl() {
@@ -142,7 +150,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the numeric value to set
      */
@@ -153,7 +161,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the date value to set
      */
@@ -164,7 +172,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the local date time value to set
      */
@@ -175,7 +183,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the calendar value to set
      */
@@ -186,7 +194,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the string value to set
      */
@@ -197,7 +205,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the rich text string value to set
      */
@@ -208,7 +216,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the spreadsheet version (always Excel2007 for virtual cells)
      */
@@ -218,7 +226,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the column index of this cell
      */
@@ -228,7 +236,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the row index of this cell
      */
@@ -238,7 +246,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the sheet that this cell belongs to
      */
@@ -248,7 +256,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the row that this cell belongs to
      */
@@ -258,7 +266,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the cell type
      */
@@ -268,7 +276,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the cached formula result type, or null if not a formula
      */
@@ -281,7 +289,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the formula string, or null if not a formula
      */
@@ -294,7 +302,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the numeric value
      */
@@ -304,7 +312,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the date value
      */
@@ -314,7 +322,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the local date time value
      */
@@ -324,7 +332,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the rich text string value
      */
@@ -334,7 +342,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the string value
      */
@@ -344,7 +352,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the boolean value to set
      */
@@ -355,7 +363,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param value the error value to set
      */
@@ -366,7 +374,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the boolean value
      */
@@ -376,7 +384,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the error value
      */
@@ -386,7 +394,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the cell style
      */
@@ -396,7 +404,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param style the cell style to set
      */
@@ -406,7 +414,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      */
     @Override
     public void setAsActiveCell() {
@@ -414,7 +422,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the cell comment
      */
@@ -424,7 +432,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param comment the cell comment to set
      */
@@ -434,7 +442,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      */
     @Override
     public void removeCellComment() {
@@ -442,7 +450,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return the hyperlink associated with this cell
      */
@@ -452,7 +460,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param link the hyperlink to set
      */
@@ -462,7 +470,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      */
     @Override
     public void removeHyperlink() {
@@ -472,7 +480,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return null (virtual cells are not part of array formulas)
      */
@@ -482,7 +490,7 @@ public class VirtualCell extends CellBase {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @return false (virtual cells are not part of array formula groups)
      */

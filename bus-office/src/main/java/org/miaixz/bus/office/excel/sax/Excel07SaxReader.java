@@ -1,21 +1,29 @@
 /*
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
- ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
- ~                                                                           ~
- ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
- ~ you may not use this file except in compliance with the License.          ~
- ~ You may obtain a copy of the License at                                   ~
- ~                                                                           ~
- ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
- ~                                                                           ~
- ~ Unless required by applicable law or agreed to in writing, software       ~
- ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
- ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
- ~ See the License for the specific language governing permissions and       ~
- ~ limitations under the License.                                            ~
- ~                                                                           ~
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                               ~
+ ~ The MIT License (MIT)                                                         ~
+ ~                                                                               ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                    ~
+ ~                                                                               ~
+ ~ Permission is hereby granted, free of charge, to any person obtaining a copy  ~
+ ~ of this software and associated documentation files (the "Software"), to deal ~
+ ~ in the Software without restriction, including without limitation the rights  ~
+ ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     ~
+ ~ copies of the Software, and to permit persons to whom the Software is         ~
+ ~ furnished to do so, subject to the following conditions:                      ~
+ ~                                                                               ~
+ ~ The above copyright notice and this permission notice shall be included in    ~
+ ~ all copies or substantial portions of the Software.                           ~
+ ~                                                                               ~
+ ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    ~
+ ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      ~
+ ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   ~
+ ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER        ~
+ ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, ~
+ ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     ~
+ ~ THE SOFTWARE.                                                                 ~
+ ~                                                                               ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 package org.miaixz.bus.office.excel.sax;
 
@@ -35,7 +43,7 @@ import org.miaixz.bus.core.xyz.MethodKit;
 import org.miaixz.bus.core.xyz.ObjectKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.office.excel.sax.handler.RowHandler;
-import org.miaixz.bus.office.excel.ExcelSaxKit;
+import org.miaixz.bus.office.excel.xyz.ExcelSaxKit;
 
 /**
  * SAX-based reader for Excel 2007+ files (XLSX). For details on Excel 2007+ format, see:
@@ -68,19 +76,7 @@ public class Excel07SaxReader implements ExcelSaxReader<Excel07SaxReader> {
      *                          {@code false} otherwise.
      */
     public Excel07SaxReader(final RowHandler rowHandler, final boolean padCellAtEndOfRow) {
-        this(rowHandler, padCellAtEndOfRow, null);
-    }
-
-    /**
-     * Constructs a new {@code Excel07SaxReader}.
-     *
-     * @param rowHandler        The row handler to process each row.
-     * @param padCellAtEndOfRow {@code true} to pad missing cells at the end of a row with {@code null} values,
-     *                          {@code false} otherwise.
-     * @param includeColumns    Optional included columns (sorted unique indexes).
-     */
-    public Excel07SaxReader(final RowHandler rowHandler, final boolean padCellAtEndOfRow, final int[] includeColumns) {
-        this.handler = new SheetDataSaxHandler(rowHandler, padCellAtEndOfRow, includeColumns);
+        this.handler = new SheetDataSaxHandler(rowHandler, padCellAtEndOfRow);
     }
 
     /**
@@ -95,12 +91,12 @@ public class Excel07SaxReader implements ExcelSaxReader<Excel07SaxReader> {
     }
 
     /**
-     * Reads an Excel file from a file source.
+     * Description inherited from parent class or interface.
      *
-     * @param file               Excel file to read.
-     * @param idOrRidOrSheetName Sheet identifier (sheet ID, rId, or sheet name).
-     * @return This reader instance, for chaining.
-     * @throws InternalException If an {@link InvalidFormatException} or {@link IOException} occurs.
+     * @param file               the Excel file to read
+     * @param idOrRidOrSheetName the sheet identifier (sheet ID, rID, or sheet name)
+     * @return this reader instance for chaining
+     * @throws InternalException if an InvalidFormatException or IOException occurs
      */
     @Override
     public Excel07SaxReader read(final File file, final String idOrRidOrSheetName) throws InternalException {
@@ -112,7 +108,7 @@ public class Excel07SaxReader implements ExcelSaxReader<Excel07SaxReader> {
     }
 
     /**
-     * Implements the behavior defined by the supertype.
+     * Description inherited from parent class or interface.
      *
      * @param in                 the input stream containing the Excel data
      * @param idOrRidOrSheetName the sheet identifier (sheet ID, rID, or sheet name)

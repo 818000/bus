@@ -1,28 +1,35 @@
 /*
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
- ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
- ~                                                                           ~
- ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
- ~ you may not use this file except in compliance with the License.          ~
- ~ You may obtain a copy of the License at                                   ~
- ~                                                                           ~
- ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
- ~                                                                           ~
- ~ Unless required by applicable law or agreed to in writing, software       ~
- ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
- ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
- ~ See the License for the specific language governing permissions and       ~
- ~ limitations under the License.                                            ~
- ~                                                                           ~
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                               ~
+ ~ The MIT License (MIT)                                                         ~
+ ~                                                                               ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                    ~
+ ~                                                                               ~
+ ~ Permission is hereby granted, free of charge, to any person obtaining a copy  ~
+ ~ of this software and associated documentation files (the "Software"), to deal ~
+ ~ in the Software without restriction, including without limitation the rights  ~
+ ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     ~
+ ~ copies of the Software, and to permit persons to whom the Software is         ~
+ ~ furnished to do so, subject to the following conditions:                      ~
+ ~                                                                               ~
+ ~ The above copyright notice and this permission notice shall be included in    ~
+ ~ all copies or substantial portions of the Software.                           ~
+ ~                                                                               ~
+ ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    ~
+ ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      ~
+ ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   ~
+ ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER        ~
+ ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, ~
+ ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     ~
+ ~ THE SOFTWARE.                                                                 ~
+ ~                                                                               ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 package org.miaixz.bus.core.lang;
 
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -31,7 +38,10 @@ import javax.naming.directory.InitialDirContext;
 
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.xyz.*;
+import org.miaixz.bus.core.xyz.BooleanKit;
+import org.miaixz.bus.core.xyz.MapKit;
+import org.miaixz.bus.core.xyz.ObjectKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * A constant pool for system property names, encapsulating information about the Java runtime environment, Java Virtual
@@ -269,34 +279,20 @@ public class Keys {
 
     static {
         // Set UTF-8 as default encoding system-wide
-        System.setProperty("file.encoding", Charset.DEFAULT_UTF_8);
-        System.setProperty("sun.jnu.encoding", Charset.DEFAULT_UTF_8);
-        System.setProperty("java.nio.charset.defaultCharset", Charset.DEFAULT_UTF_8);
+        System.setProperty("file.encoding", "UTF-8");
+        System.setProperty("sun.jnu.encoding", "UTF-8");
+        System.setProperty("java.nio.charset.defaultCharset", "UTF-8");
 
         // Initialize JVM version.
-        JVM_VERSION = getJvmVersion();
+        JVM_VERSION = _getJvmVersion();
         IS_AT_LEAST_JDK25 = JVM_VERSION >= 25;
 
         // Initialize JVM name related flags.
-        final String jvmName = getJvmName();
+        final String jvmName = _getJvmName();
         IS_ANDROID = jvmName.equals("Dalvik");
         IS_OPENJ9 = jvmName.contains("OpenJ9");
         // Initialize GraalVM Native Image flag.
         IS_GRAALVM_NATIVE = null != System.getProperty("org.graalvm.nativeimage.imagecode");
-    }
-
-    /**
-     * Sets a system property. If {@code value} is {@code null}, the property is removed.
-     *
-     * @param key   The name of the property to set or remove.
-     * @param value The value to set for the property, or {@code null} to remove the property.
-     */
-    public static void set(final String key, final String value) {
-        if (null == value) {
-            System.clearProperty(key);
-        } else {
-            System.setProperty(key, value);
-        }
     }
 
     /**
@@ -314,23 +310,6 @@ public class Keys {
     }
 
     /**
-     * Retrieves a system property or environment variable value. If a {@link SecurityException} occurs due to Java
-     * security restrictions, the error is logged, and the value from {@code defaultIfAbsent} is returned.
-     *
-     * @param name            The name of the property or environment variable.
-     * @param defaultIfAbsent A supplier providing the default value if the property is not found or access is denied.
-     * @return The property value, or the value from {@code defaultIfAbsent} if not found or access is denied.
-     * @see System#getProperty(String)
-     * @see System#getenv(String)
-     */
-    public static String get(final String name, final Supplier<String> defaultIfAbsent) {
-        if (StringKit.isEmpty(name)) {
-            return FunctionKit.get(defaultIfAbsent);
-        }
-        return ObjectKit.defaultIfNull(get(name), defaultIfAbsent);
-    }
-
-    /**
      * Retrieves a system property or environment variable value. If a {@link SecurityException} occurs, it is logged,
      * and {@code null} is returned.
      *
@@ -341,6 +320,19 @@ public class Keys {
      */
     public static String get(final String key) {
         return get(key, false);
+    }
+
+    /**
+     * Retrieves a system property or environment variable value, suppressing any {@link SecurityException}s. If a
+     * security exception occurs, {@code null} is returned without logging the error.
+     *
+     * @param key The name of the property or environment variable.
+     * @return The property value, or {@code null} if not found or access is denied.
+     * @see System#getProperty(String)
+     * @see System#getenv(String)
+     */
+    public static String getQuietly(final String key) {
+        return get(key, true);
     }
 
     /**
@@ -426,21 +418,22 @@ public class Keys {
      *
      * @return A {@link Properties} object containing all system properties.
      */
-    public static Properties getProperties() {
+    public static Properties getProps() {
         return System.getProperties();
     }
 
     /**
-     * Retrieves a system property or environment variable value, suppressing any {@link SecurityException}s. If a
-     * security exception occurs, {@code null} is returned without logging the error.
+     * Sets a system property. If {@code value} is {@code null}, the property is removed.
      *
-     * @param key The name of the property or environment variable.
-     * @return The property value, or {@code null} if not found or access is denied.
-     * @see System#getProperty(String)
-     * @see System#getenv(String)
+     * @param key   The name of the property to set or remove.
+     * @param value The value to set for the property, or {@code null} to remove the property.
      */
-    public static String getQuietly(final String key) {
-        return get(key, true);
+    public static void set(final String key, final String value) {
+        if (null == value) {
+            System.clearProperty(key);
+        } else {
+            System.setProperty(key, value);
+        }
     }
 
     /**
@@ -457,7 +450,7 @@ public class Keys {
      *
      * @return The absolute path to the user's home directory.
      */
-    public static String getUserHome() {
+    public static String getUserHomePath() {
         return get(USER_HOME);
     }
 
@@ -466,7 +459,7 @@ public class Keys {
      *
      * @return The absolute path to the temporary directory.
      */
-    public static String getTmpDir() {
+    public static String getTmpDirPath() {
         return get(JAVA_IO_TMPDIR);
     }
 
@@ -475,7 +468,7 @@ public class Keys {
      *
      * @return The JVM name.
      */
-    public static String getJvmName() {
+    static String _getJvmName() {
         return getQuietly(JAVA_VM_NAME);
     }
 
@@ -485,7 +478,7 @@ public class Keys {
      *
      * @return The major JVM version number.
      */
-    public static int getJvmVersion() {
+    static int _getJvmVersion() {
         int jvmVersion = 17;
 
         String javaSpecVer = getQuietly(JAVA_SPECIFICATION_VERSION);
@@ -512,26 +505,7 @@ public class Keys {
      */
     public static Attributes getAttributes(final String uri, final String... attrIds) {
         try {
-            return initialDirContext(null).getAttributes(uri, attrIds);
-        } catch (final NamingException e) {
-            throw new InternalException(e);
-        }
-    }
-
-    /**
-     * Creates a new {@link InitialContext} instance.
-     *
-     * @param environment A map of environment properties for the context. If {@code null} or empty, no environment
-     *                    properties are used.
-     * @return A new {@link InitialContext} instance.
-     * @throws InternalException if a {@link NamingException} occurs during context creation.
-     */
-    static InitialContext initialContext(final Map<String, String> environment) {
-        try {
-            if (MapKit.isEmpty(environment)) {
-                return new InitialContext();
-            }
-            return new InitialContext(Convert.convert(Hashtable.class, environment));
+            return createInitialDirContext(null).getAttributes(uri, attrIds);
         } catch (final NamingException e) {
             throw new InternalException(e);
         }
@@ -545,12 +519,31 @@ public class Keys {
      * @return A new {@link InitialDirContext} instance.
      * @throws InternalException if a {@link NamingException} occurs during context creation.
      */
-    static InitialDirContext initialDirContext(final Map<String, String> environment) {
+    static InitialDirContext createInitialDirContext(final Map<String, String> environment) {
         try {
             if (MapKit.isEmpty(environment)) {
                 return new InitialDirContext();
             }
             return new InitialDirContext(Convert.convert(Hashtable.class, environment));
+        } catch (final NamingException e) {
+            throw new InternalException(e);
+        }
+    }
+
+    /**
+     * Creates a new {@link InitialContext} instance.
+     *
+     * @param environment A map of environment properties for the context. If {@code null} or empty, no environment
+     *                    properties are used.
+     * @return A new {@link InitialContext} instance.
+     * @throws InternalException if a {@link NamingException} occurs during context creation.
+     */
+    static InitialContext createInitialContext(final Map<String, String> environment) {
+        try {
+            if (MapKit.isEmpty(environment)) {
+                return new InitialContext();
+            }
+            return new InitialContext(Convert.convert(Hashtable.class, environment));
         } catch (final NamingException e) {
             throw new InternalException(e);
         }
