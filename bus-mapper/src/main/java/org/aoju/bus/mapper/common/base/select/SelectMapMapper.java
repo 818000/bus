@@ -23,26 +23,32 @@
  * THE SOFTWARE.                                                                 *
  *                                                                               *
  ********************************************************************************/
-package org.aoju.bus.mapper.common.base;
+package org.aoju.bus.mapper.common.base.select;
 
 import org.aoju.bus.mapper.annotation.RegisterMapper;
-import org.aoju.bus.mapper.common.base.select.*;
+import org.aoju.bus.mapper.provider.base.BaseSelectProvider;
+import org.apache.ibatis.annotations.SelectProvider;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * 通用Mapper接口,基础查询
+ * 通用Mapper接口,查询
  *
  * @param <T> 不能为空
  * @author Kimi Liu
  * @since Java 17+
  */
 @RegisterMapper
-public interface BaseSelectMapper<T> extends
-        SelectOneMapper<T>,
-        SelectMapper<T>,
-        SelectAllMapper<T>,
-        SelectCountMapper<T>,
-        SelectByPrimaryKeyMapper<T>,
-        SelectMapMapper<T>,
-        ExistsWithPrimaryKeyMapper<T>{
+public interface SelectMapMapper<T> {
+
+    /**
+     * 根据实体中的属性值进行查询，查询条件使用等号
+     *
+     * @param record 记录值
+     * @return the list
+     */
+    @SelectProvider(type = BaseSelectProvider.class, method = "dynamicSQL")
+    List<Map<String, String>> selectMap(T record);
 
 }

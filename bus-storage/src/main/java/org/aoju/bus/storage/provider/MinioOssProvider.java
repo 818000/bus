@@ -200,11 +200,12 @@ public class MinioOssProvider extends AbstractProvider {
     public Message upload(String bucket, String fileName, InputStream content) {
         Logger.debug("上传{}-{}", bucket, fileName);
         try {
+            String contentType = getContentType(fileName);
             this.client.putObject(PutObjectArgs.builder()
                     .bucket(bucket)
                     .object(fileName)
                     .stream(content, content.available(), -1)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentType(contentType)
                     .build());
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
@@ -257,4 +258,27 @@ public class MinioOssProvider extends AbstractProvider {
         return remove(bucket, path.toString());
     }
 
+
+    // 辅助方法：根据文件扩展名获取 MIME 类型
+    private String getContentType(String fileName) {
+        if (fileName == null) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+
+        int lastDot = fileName.lastIndexOf('.');
+        if (lastDot == -1) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+        String extension = fileName.substring(lastDot + 1).toLowerCase();
+        return switch (extension) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
+            case "png" -> MediaType.IMAGE_PNG;
+            case "gif" -> MediaType.IMAGE_GIF;
+            case "pdf" -> MediaType.APPLICATION_PDF;
+            case "txt" -> MediaType.TEXT_PLAIN;
+            case "html" -> MediaType.TEXT_HTML;
+            case "json" -> MediaType.APPLICATION_JSON;
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
+    }
 }

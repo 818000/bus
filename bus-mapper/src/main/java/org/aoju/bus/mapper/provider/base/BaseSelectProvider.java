@@ -83,6 +83,24 @@ public class BaseSelectProvider extends MapperTemplate {
      * @param ms MappedStatement
      * @return the string
      */
+    public String selectMap(MappedStatement ms) {
+        Class<?> entityClass = getEntityClass(ms);
+        // 修改返回值类型为实体类型
+        setResultType(ms, entityClass);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM ");
+        sql.append(tableName(entityClass));
+        sql.append(SqlBuilder.whereAllIfColumns(entityClass, isNotEmpty()));
+        sql.append(SqlBuilder.orderByDefault(entityClass));
+        return sql.toString();
+    }
+
+    /**
+     * 查询
+     *
+     * @param ms MappedStatement
+     * @return the string
+     */
     public String selectByRowBounds(MappedStatement ms) {
         return select(ms);
     }
