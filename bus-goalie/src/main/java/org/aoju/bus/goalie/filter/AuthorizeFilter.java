@@ -195,6 +195,132 @@ public class AuthorizeFilter implements WebFilter {
             requestParam.put("x_remote_ip", ip);
         }
         requestParam.put("x_trace_id", exchange.getLogPrefix());
+
+        // 解析 User-Agent 获取浏览器和操作系统信息
+        String userAgent = exchange.getRequest().getHeaders().getFirst("User-Agent");
+        if (StringKit.isNotBlank(userAgent)) {
+            String browser = parseBrowser(userAgent);
+            String os = parseOperatingSystem(userAgent);
+            if (StringKit.isNotBlank(browser)) {
+                requestParam.replace("x_remote_browser", browser);
+            }
+            if (StringKit.isNotBlank(os)) {
+                requestParam.replace("x_remote_terminal", os);
+            }
+        }
+    }
+
+    /**
+     * 解析浏览器信息
+     *
+     * @param userAgent User-Agent 字符串
+     * @return 浏览器名称和版本
+     */
+    private String parseBrowser(String userAgent) {
+        String ua = userAgent.toLowerCase();
+        // 优先检测微信浏览器
+        if (ua.contains("micromessenger")) {
+            int start = ua.indexOf("micromessenger/");
+            int end = ua.indexOf(' ', start);
+            return "WeChat " + (end > start ? ua.substring(start + 15, end) : ua.substring(start + 15));
+        }
+        if (ua.contains("edg/")) {
+            int start = ua.indexOf("edg/");
+            int end = ua.indexOf(' ', start);
+            return "Edge " + (end > start ? ua.substring(start + 4, end) : ua.substring(start + 4));
+        }
+        if (ua.contains("chrome/") && !ua.contains("edg/")) {
+            int start = ua.indexOf("chrome/");
+            int end = ua.indexOf(' ', start);
+            return "Chrome " + (end > start ? ua.substring(start + 7, end) : ua.substring(start + 7));
+        }
+        if (ua.contains("firefox/")) {
+            int start = ua.indexOf("firefox/");
+            int end = ua.indexOf(' ', start);
+            return "Firefox " + (end > start ? ua.substring(start + 8, end) : ua.substring(start + 8));
+        }
+        if (ua.contains("safari/") && !ua.contains("chrome/")) {
+            int start = ua.indexOf("safari/");
+            int end = ua.indexOf(' ', start);
+            String version = end > start ? ua.substring(start + 7, end) : ua.substring(start + 7);
+            return "Safari " + version;
+        }
+        if (ua.contains("opr/") || ua.contains("opera/")) {
+            int start = ua.indexOf("opr/") > -1 ? ua.indexOf("opr/") : ua.indexOf("opera/");
+            int end = ua.indexOf(' ', start);
+            return "Opera " + (end > start ? ua.substring(start + 4, end) : ua.substring(start + 4));
+        }
+        if (ua.contains("msie ") || ua.contains("trident/")) {
+            int start = ua.indexOf("msie ") > -1 ? ua.indexOf("msie ") : ua.indexOf("rv:");
+            int end = ua.indexOf(';', start);
+            return "IE " + (end > start ? ua.substring(start + (ua.contains("msie ") ? 5 : 3), end) : "");
+        }
+        return "Unknown";
+    }
+
+    /**
+     * 解析操作系统信息
+     *
+     * @param userAgent User-Agent 字符串
+     * @return 操作系统名称和版本
+     */
+    private String parseOperatingSystem(String userAgent) {
+        String ua = userAgent.toLowerCase();
+        // 优先检测鸿蒙系统
+        if (ua.contains("harmonyos")) {
+            int start = ua.indexOf("harmonyos/");
+            int end = ua.indexOf(' ', start);
+            if (end > start) {
+                return "HarmonyOS " + ua.substring(start + 10, end);
+            }
+            return "HarmonyOS";
+        }
+        if (ua.contains("windows nt 10.0")) {
+            return "Windows 10/11";
+        }
+        if (ua.contains("windows nt 6.3")) {
+            return "Windows 8.1";
+        }
+        if (ua.contains("windows nt 6.2")) {
+            return "Windows 8";
+        }
+        if (ua.contains("windows nt 6.1")) {
+            return "Windows 7";
+        }
+        if (ua.contains("windows nt 6.0")) {
+            return "Windows Vista";
+        }
+        if (ua.contains("windows nt 5.1") || ua.contains("windows xp")) {
+            return "Windows XP";
+        }
+        if (ua.contains("windows nt")) {
+            return "Windows";
+        }
+        if (ua.contains("mac os x")) {
+            int start = ua.indexOf("mac os x ");
+            int end = ua.indexOf(')', start);
+            if (end > start) {
+                return "MacOS " + ua.substring(start + 9, end).replace('_', '.');
+            }
+            return "MacOS";
+        }
+        if (ua.contains("iphone os")) {
+            int start = ua.indexOf("iphone os ");
+            int end = ua.indexOf(' ', start + 10);
+            return "iOS " + (end > start ? ua.substring(start + 10, end).replace('_', '.') : "");
+        }
+        if (ua.contains("ipad")) {
+            return "iPadOS";
+        }
+        if (ua.contains("android")) {
+            int start = ua.indexOf("android ");
+            int end = ua.indexOf(';', start);
+            return "Android " + (end > start ? ua.substring(start + 8, end) : "");
+        }
+        if (ua.contains("linux")) {
+            return "Linux";
+        }
+        return "Unknown";
     }
 
     /**
