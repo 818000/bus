@@ -17,42 +17,10 @@
  ~                                                                               ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.office.excel.cell.setters;
-
-import java.util.Date;
-
-import org.apache.poi.ss.usermodel.Cell;
-
 /**
- * {@link CellSetter} for {@link Date} values.
+ * Provides encapsulated operations for PowerPoint documents using POI.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-public class DateCellSetter implements CellSetter {
-
-    /**
-     * The date value to set in the cell.
-     */
-    private final Date value;
-
-    /**
-     * Constructs a {@code DateCellSetter} with the specified {@link Date} value.
-     *
-     * @param value The {@link Date} value to set in the cell.
-     */
-    DateCellSetter(final Date value) {
-        this.value = value;
-    }
-
-    /**
-     * Implements the behavior defined by the supertype.
-     *
-     * @param cell the cell to set the value in
-     */
-    @Override
-    public void setValue(final Cell cell) {
-        cell.setCellValue(value);
-    }
-
-}
+package org.miaixz.bus.office.ppt;
