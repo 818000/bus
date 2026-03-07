@@ -17,32 +17,28 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.workflow;
+
+import org.miaixz.bus.core.data.id.ID;
+import org.miaixz.bus.core.lang.Symbol;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Strategy interface for generating Temporal workflow identifiers.
+ * <p>
+ * Implementations can enforce naming conventions or identifier composition rules for published workflows.
  */
-module bus.cron {
+public interface WorkflowIdGenerator {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Generates a workflow identifier for the specified publication definition.
+     * <p>
+     * The default implementation uses the workflow type name followed by a colon and a generated object identifier.
+     *
+     * @param definition the workflow publication definition
+     * @return the generated workflow identifier
+     */
+    default String generateWorkflowId(WorkflowPublisherDefinition definition) {
+        return definition.getWorkflowType() + Symbol.C_COLON + ID.objectId();
+    }
 
 }

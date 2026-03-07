@@ -17,32 +17,43 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
 /**
- * bus.cron
+ * Serializable payload container for Temporal workflow data.
+ * <p>
+ * This class represents the data passed to Temporal workflows and can wrap any serializable Java object for transport.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.cron {
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Temporal implements Serializable {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
+    @Serial
+    private static final long serialVersionUID = 2852290719686L;
 
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * The workflow execution arguments.
+     * <p>
+     * This can be any serializable Java object (POJO, Map, etc.) and will be converted to JSON format before being
+     * passed to the workflow.
+     * </p>
+     */
+    public Object data;
 
 }
