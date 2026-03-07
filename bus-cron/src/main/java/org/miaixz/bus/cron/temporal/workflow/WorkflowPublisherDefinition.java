@@ -17,32 +17,35 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.workflow;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Describes the metadata required to publish a Temporal workflow.
+ * <p>
+ * Implementations supply the destination endpoint, task queue, and workflow type used by publisher-side framework
+ * components.
  */
-module bus.cron {
+public interface WorkflowPublisherDefinition {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
+    /**
+     * Returns the Temporal server endpoint that should receive the workflow.
+     *
+     * @return the Temporal server endpoint
+     */
+    String getEndpoint();
 
-    requires lombok;
-    requires temporal.sdk;
+    /**
+     * Returns the task queue targeted by the workflow execution.
+     *
+     * @return the task queue name
+     */
+    String getTaskQueue();
 
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Returns the workflow type name used to start the workflow.
+     *
+     * @return the workflow type name
+     */
+    String getWorkflowType();
 
 }

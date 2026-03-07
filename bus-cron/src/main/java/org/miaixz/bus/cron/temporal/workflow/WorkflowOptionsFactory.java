@@ -17,32 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.workflow;
+
+import io.temporal.client.WorkflowOptions;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Creates {@link WorkflowOptions} for workflow publications.
+ * <p>
+ * This abstraction allows applications to centralize timeout, task queue, and workflow identifier policies for
+ * published workflows.
  */
-module bus.cron {
+public interface WorkflowOptionsFactory {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Creates workflow options for the specified publication definition.
+     *
+     * @param definition the workflow publication definition
+     * @return the workflow options
+     */
+    WorkflowOptions createWorkflowOptions(WorkflowPublisherDefinition definition);
 
 }

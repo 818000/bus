@@ -18,31 +18,12 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.cron
+ * Provides reusable abstractions and base implementations for Temporal activities.
+ * <p>
+ * This package contains activity execution contracts, context creation hooks, executor resolution interfaces, result
+ * serialization contracts, and the shared activity handler template used by framework consumers.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.cron {
-
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
-
-}
+package org.miaixz.bus.cron.temporal.activity;

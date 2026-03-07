@@ -17,32 +17,36 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Defines the top-level contract for Temporal subscriber components.
+ * <p>
+ * This interface represents framework-managed components that start and stop worker-side infrastructure used to consume
+ * Temporal tasks.
  */
-module bus.cron {
+public interface Subscriber extends AutoCloseable {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
+    /**
+     * Starts the subscriber component.
+     */
+    void start();
 
-    requires lombok;
-    requires temporal.sdk;
+    /**
+     * Shuts down the subscriber component.
+     *
+     * @throws Exception if shutdown fails
+     */
+    void shutdown() throws Exception;
 
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Closes this subscriber component by delegating to {@link #shutdown()}.
+     *
+     * @throws Exception if shutdown fails
+     */
+    @Override
+    default void close() throws Exception {
+        shutdown();
+    }
 
 }

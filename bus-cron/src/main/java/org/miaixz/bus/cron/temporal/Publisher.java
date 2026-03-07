@@ -17,32 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal;
+
+import org.miaixz.bus.cron.temporal.workflow.WorkflowPublisherDefinition;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Defines the top-level contract for publishing Temporal workflows.
+ * <p>
+ * This interface represents the framework entry point for starting workflow executions from application code.
  */
-module bus.cron {
+public interface Publisher {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Publishes a workflow execution using the specified definition and arguments.
+     *
+     * @param definition the workflow publication definition
+     * @param args       the workflow arguments
+     * @return the Temporal run identifier
+     */
+    String publish(WorkflowPublisherDefinition definition, Object... args);
 
 }

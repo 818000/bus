@@ -17,32 +17,36 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.notifier;
+
 /**
- * bus.cron
+ * Receives activity completion notifications.
+ * <p>
+ * Implementations can propagate execution outcomes to external systems or perform additional post-processing after
+ * activity completion.
  *
- * @author Kimi Liu
- * @since Java 17+
+ * @param <R> the activity input type
  */
-module bus.cron {
+public interface CallbackNotifier<R> {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
+    /**
+     * Notifies a successful activity execution.
+     *
+     * @param request the activity input
+     * @param result  the execution result
+     */
+    default void success(R request, Object result) {
 
-    requires lombok;
-    requires temporal.sdk;
+    }
 
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Notifies a failed activity execution.
+     *
+     * @param request  the activity input
+     * @param errorMsg the failure message
+     */
+    default void failure(R request, String errorMsg) {
+
+    }
 
 }

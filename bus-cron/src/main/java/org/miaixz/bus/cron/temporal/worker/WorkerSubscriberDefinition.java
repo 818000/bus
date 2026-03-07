@@ -17,32 +17,51 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.worker;
+
+import io.temporal.worker.Worker;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Describes how a Temporal worker subscriber should be created and configured.
+ * <p>
+ * Implementations provide connection settings, concurrency limits, and the workflow and activity registrations required
+ * for a worker instance.
  */
-module bus.cron {
+public interface WorkerSubscriberDefinition {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
+    /**
+     * Returns the Temporal server endpoint used by the worker.
+     *
+     * @return the Temporal server endpoint
+     */
+    String getEndpoint();
 
-    requires lombok;
-    requires temporal.sdk;
+    /**
+     * Returns the task queue consumed by the worker.
+     *
+     * @return the task queue name
+     */
+    String getTaskQueue();
 
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Returns whether the worker should be started.
+     *
+     * @return {@code true} if the worker is enabled; {@code false} otherwise
+     */
+    boolean isEnabled();
+
+    /**
+     * Returns the maximum concurrency used for workflow tasks and activities.
+     *
+     * @return the maximum concurrency
+     */
+    int getMaxConcurrent();
+
+    /**
+     * Registers workflow implementations and activity instances with the worker.
+     *
+     * @param worker the Temporal worker to configure
+     */
+    void registerWorkflowsAndActivities(Worker worker);
 
 }

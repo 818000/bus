@@ -17,32 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.workflow;
+
+import io.temporal.client.WorkflowClient;
+
 /**
- * bus.cron
- *
- * @author Kimi Liu
- * @since Java 17+
+ * Creates Temporal {@link WorkflowClient} instances for target endpoints.
+ * <p>
+ * Implementations may create fresh clients, reuse cached clients, or apply custom connection policies for different
+ * Temporal clusters.
  */
-module bus.cron {
+public interface WorkflowClientProvider {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Returns a workflow client for the specified Temporal server endpoint.
+     *
+     * @param endpoint the Temporal server endpoint
+     * @return the workflow client
+     */
+    WorkflowClient createWorkflowClient(String endpoint);
 
 }
