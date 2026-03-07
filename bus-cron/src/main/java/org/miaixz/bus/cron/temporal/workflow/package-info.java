@@ -18,31 +18,12 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.cron
+ * Provides workflow publication and execution abstractions for Temporal.
+ * <p>
+ * This package contains workflow handler templates, publishing contracts, workflow option factories, client providers,
+ * publication metadata definitions, and default implementations used to start workflows.
  *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.cron {
-
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
-
-}
+package org.miaixz.bus.cron.temporal.workflow;

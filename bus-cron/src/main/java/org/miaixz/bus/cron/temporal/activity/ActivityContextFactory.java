@@ -17,32 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.activity;
+
 /**
- * bus.cron
+ * Creates execution contexts for activity invocations.
+ * <p>
+ * Implementations can derive per-request state, dependencies, or metadata that will be passed to activity executors.
  *
- * @author Kimi Liu
- * @since Java 17+
+ * @param <R> the activity input type
+ * @param <C> the activity context type
  */
-module bus.cron {
+public interface ActivityContextFactory<R, C> {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Creates an execution context for the specified activity input.
+     *
+     * @param request the activity input
+     * @return the execution context
+     */
+    C create(R request);
 
 }

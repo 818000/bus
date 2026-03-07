@@ -17,32 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cron.temporal.activity;
+
 /**
- * bus.cron
+ * Resolves an {@link ActivityExecutor} for a given activity input.
+ * <p>
+ * Implementations select the executor responsible for handling a specific request at runtime.
  *
- * @author Kimi Liu
- * @since Java 17+
+ * @param <R> the activity input type
+ * @param <C> the activity context type
  */
-module bus.cron {
+public interface ActivityExecutorResolver<R, C> {
 
-    requires bus.core;
-    requires bus.logger;
-    requires bus.setting;
-
-    requires lombok;
-    requires temporal.sdk;
-
-    exports org.miaixz.bus.cron;
-    exports org.miaixz.bus.cron.crontab;
-    exports org.miaixz.bus.cron.listener;
-    exports org.miaixz.bus.cron.pattern;
-    exports org.miaixz.bus.cron.pattern.matcher;
-    exports org.miaixz.bus.cron.pattern.parser;
-    exports org.miaixz.bus.cron.timings;
-    exports org.miaixz.bus.cron.temporal;
-    exports org.miaixz.bus.cron.temporal.activity;
-    exports org.miaixz.bus.cron.temporal.notifier;
-    exports org.miaixz.bus.cron.temporal.worker;
-    exports org.miaixz.bus.cron.temporal.workflow;
+    /**
+     * Resolves an executor for the specified input.
+     *
+     * @param request the activity input
+     * @return the resolved activity executor, or {@code null} if none matches
+     */
+    ActivityExecutor<R, C> resolve(R request);
 
 }
