@@ -63,8 +63,7 @@ import java.util.regex.Matcher;
                 RowBounds.class, ResultHandler.class})})
 public class NatureSqlHandler extends AbstractSqlParserHandler implements Interceptor {
 
-    private static void getSql(Configuration configuration, BoundSql boundSql, String sqlId, long time) {
-        Logger.debug(sqlId + " :  ==> " + time + " ms");
+    private static void getSql(Configuration configuration, BoundSql boundSql, String sqlId) {
         // 获取参数
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
@@ -86,12 +85,14 @@ public class NatureSqlHandler extends AbstractSqlParserHandler implements Interc
                 MetaObject metaObject = configuration.newMetaObject(parameterObject);
                 for (ParameterMapping parameterMapping : parameterMappings) {
                     String propertyName = parameterMapping.getProperty();
-                    if (metaObject.hasGetter(propertyName)) {
-                        Object object = metaObject.getValue(propertyName);
-                        sql = sql.replaceFirst(id, Matcher.quoteReplacement(getParameterValue(object)));
-                    } else if (boundSql.hasAdditionalParameter(propertyName)) {
-                        Object object = boundSql.getAdditionalParameter(propertyName);
-                        // 该分支是动态sql
+                    Object object = null;
+                    // 优先从boundSql的additionalParameter获取,这里包含了加密后的值
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
+                        object = boundSql.getAdditionalParameter(propertyName);
+                    } else if (metaObject.hasGetter(propertyName)) {
+                        object = metaObject.getValue(propertyName);
+                    }
+                    if (object != null) {
                         sql = sql.replaceFirst(id, Matcher.quoteReplacement(getParameterValue(object)));
                     } else {
                         // 打印Missing,提醒该参数缺失并防止错位
@@ -100,7 +101,7 @@ public class NatureSqlHandler extends AbstractSqlParserHandler implements Interc
                 }
             }
         }
-        Logger.debug(sql);
+        Logger.debug(sqlId + " :  ==> " + sql);
     }
 
     private static String getParameterValue(Object object) {
@@ -122,9 +123,6 @@ public class NatureSqlHandler extends AbstractSqlParserHandler implements Interc
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        long start = System.currentTimeMillis();
-        Object returnValue = invocation.proceed();
-        long end = System.currentTimeMillis();
         try {
             final Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
@@ -132,7 +130,17 @@ public class NatureSqlHandler extends AbstractSqlParserHandler implements Interc
             if (invocation.getArgs().length > 1) {
                 parameter = invocation.getArgs()[1];
             }
-            getSql(ms.getConfiguration(), ms.getBoundSql(parameter), ms.getId(), end - start);
+            getSql(ms.getConfiguration(), ms.getBoundSql(parameter), ms.getId());
+        } catch (Exception e) {
+            throw new InternalException(e);
+        }
+        long start = System.currentTimeMillis();
+        Object returnValue = invocation.proceed();
+        long end = System.currentTimeMillis();
+        try {
+            final Object[] args = invocation.getArgs();
+            MappedStatement ms = (MappedStatement) args[0];
+            Logger.debug(ms.getId() + " :  ==> " + (end - start) + " ms");
         } catch (Exception e) {
             throw new InternalException(e);
         }

@@ -125,7 +125,16 @@ public class LocalFileProvider extends AbstractProvider {
 
     @Override
     public Message remove(String bucket, String fileName) {
-        return null;
+        File dest = new File(context.getRegion() + Symbol.SLASH + bucket + Symbol.SLASH, fileName);
+        if(dest.exists()) {
+           boolean result = dest.delete();
+           if(result) {
+               return Message.builder().errcode(Builder.ErrorCode.SUCCESS.getCode())
+                        .errmsg(Builder.ErrorCode.SUCCESS.getMsg()).build();
+           }
+        }
+        return Message.builder().errcode(Builder.ErrorCode.FAILURE.getCode()).errmsg(Builder.ErrorCode.FAILURE.getMsg())
+                .build();
     }
 
     @Override
