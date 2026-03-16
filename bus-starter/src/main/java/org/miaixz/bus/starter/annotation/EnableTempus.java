@@ -17,32 +17,27 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.starter.annotation;
+
+import java.lang.annotation.*;
+
+import org.miaixz.bus.starter.tempus.TempusConfiguration;
+import org.springframework.context.annotation.Import;
+
 /**
- * bus.gitlab
- * 
+ * Enables Temporal workflow support.
+ * <p>
+ * Imports {@link TempusConfiguration} to register Temporal client, worker, publisher and subscriber beans. The
+ * subscriber worker only starts when {@code bus.tempus.enabled=true}.
+ *
  * @author Kimi Liu
  * @since Java 17+
  */
-module bus.gitlab {
-
-    requires java.logging;
-
-    requires bus.core;
-
-    requires jakarta.ws.rs;
-    requires jakarta.servlet;
-    requires jakarta.annotation;
-    requires jersey.client;
-    requires jersey.media.multipart;
-    requires jersey.common;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-
-    exports org.miaixz.bus.gitlab;
-    exports org.miaixz.bus.gitlab.hooks.system;
-    exports org.miaixz.bus.gitlab.hooks.web;
-    exports org.miaixz.bus.gitlab.models;
-    exports org.miaixz.bus.gitlab.services;
-    exports org.miaixz.bus.gitlab.support;
+@Inherited
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+@Import({ TempusConfiguration.class })
+public @interface EnableTempus {
 
 }
