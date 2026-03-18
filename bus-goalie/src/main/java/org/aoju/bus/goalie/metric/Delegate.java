@@ -27,7 +27,6 @@ package org.aoju.bus.goalie.metric;
 
 import lombok.Data;
 import org.aoju.bus.base.entity.Message;
-import org.aoju.bus.base.entity.OAuth2;
 import org.aoju.bus.base.normal.Consts;
 
 /**
@@ -40,7 +39,7 @@ import org.aoju.bus.base.normal.Consts;
 public class Delegate {
 
     private Message message;
-    private OAuth2 oAuth2;
+    private Object oAuth2;
 
     public boolean isOk() {
         return Consts.STATUS_ZERO.equals(message.getErrcode());

@@ -152,7 +152,7 @@ public class AuthorizeFilter implements WebFilter {
             Token access = new Token(context.getToken(), context.getChannel().getTokenType(), assets);
             Delegate delegate = authorize.authorize(config,access);
             if (delegate.isOk()) {
-                OAuth2 auth2 = delegate.getOAuth2();
+                OAuth2 auth2 = (OAuth2) delegate.getOAuth2();
                 Map<String, Object> map = new HashMap<>();
                 BeanKit.beanToMap(auth2, map, CopyOptions.of().setTransientSupport(false).ignoreNullValue());
                 map.forEach((k, v) -> params.put(k, v.toString()));
