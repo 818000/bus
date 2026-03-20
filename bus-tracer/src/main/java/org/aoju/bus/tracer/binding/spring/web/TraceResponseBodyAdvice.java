@@ -44,9 +44,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author Kimi Liu
  * @since Java 17+
  */
-@Order()
-@ControllerAdvice
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+//@ControllerAdvice
+//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class TraceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Resource

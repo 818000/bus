@@ -44,8 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Kimi Liu
  * @since Java 17+
  */
-@Component
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+//@Component
+//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class GenieWrapperHandler implements HandlerInterceptor {
 
     /**

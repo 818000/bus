@@ -41,9 +41,9 @@
 ```xml  
 
 <dependency>
-    <groupId>org.miaixz</groupId>
+    <groupId>org.bus</groupId>
     <artifactId>bus-pager</artifactId>
-    <version>6.6.1</version>
+    <version>6.6.2</version>
 </dependency>
 ```  
 

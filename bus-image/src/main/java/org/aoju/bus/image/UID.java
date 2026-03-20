@@ -2982,8 +2982,8 @@ public class UID {
         map.put("1.2.528.1.1001.5.1.1.1", "Private GE Collage Storage");
         map.put("1.2.826.0.1.3680043.293.1.0.1", "Private ERAD Practice Builder Report Text Storage");
         map.put("1.2.826.0.1.3680043.293.1.0.2", "Private ERAD Practice Builder Report Dictation Storage");
-        map.put("1.2.840.113543.6.6.1.3.10001", "Private Philips HP Live 3D 01 Storage");
-        map.put("1.2.840.113543.6.6.1.3.10002", "Private Philips HP Live 3D 02 Storage");
+        map.put("1.2.840.113543.6.6.2.3.10001", "Private Philips HP Live 3D 01 Storage");
+        map.put("1.2.840.113543.6.6.2.3.10002", "Private Philips HP Live 3D 02 Storage");
         map.put("1.2.840.113619.4.26", "Private GE 3D Model Storage");
         map.put("1.2.840.113619.4.3", "Private GE Dicom CT Image Info Object");
         map.put("1.2.840.113619.4.4", "Private GE Dicom Display Image Info Object");

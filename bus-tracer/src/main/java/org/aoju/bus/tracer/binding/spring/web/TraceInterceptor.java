@@ -46,8 +46,8 @@ import java.util.Map;
  * @author Kimi Liu
  * @since Java 17+
  */
-@Component
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+//@Component
+//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public final class TraceInterceptor implements HandlerInterceptor {
 
     private final Backend backend;

@@ -37,10 +37,10 @@ import org.aoju.bus.core.toolkit.MapKit;
 import org.aoju.bus.core.toolkit.ObjectKit;
 import org.aoju.bus.core.toolkit.StringKit;
 import org.aoju.bus.logger.Logger;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,16 +60,12 @@ import java.util.Arrays;
  * @author Kimi Liu
  * @since Java 17+
  */
-@EnableConfigurationProperties({WrapperProperties.class})
-public class WrapperConfiguration implements WebMvcRegistrations {
+//@Configuration
+//@EnableConfigurationProperties({WrapperProperties.class})
+public class WrapperConfiguration {
 
     @Resource
     WrapperProperties properties;
-
-    @Override
-    public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
-        return new RequestMappingHandler();
-    }
 
     @Bean("registrationBodyCacheFilter")
     public FilterRegistrationBean registrationBodyCacheFilter() {

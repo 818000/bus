@@ -80,7 +80,7 @@ public class ApiRouterHandler {
                         .codecs(configurer -> configurer.defaultCodecs()
                                 .maxInMemorySize(Config.MAX_INMEMORY_SIZE)).build())
                 .baseUrl(baseUrl).build());
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl).path(assets.getUrl());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl).path(assets.getUrl());
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.setAll(params);
         if (HttpMethod.GET.equals(assets.getHttpMethod())) {
