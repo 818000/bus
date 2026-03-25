@@ -18,38 +18,13 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.metrics
+ * Provides rule-based festival definitions and lookup support.
+ * <p>
+ * This package contains classes for describing festivals by encoded rules, building festival definitions, resolving
+ * festival dates for a given year, and maintaining the in-memory festival registry.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-module bus.metrics {
-
-    requires bus.core;
-    requires bus.cache;
-    requires bus.health;
-    requires bus.logger;
-
-    requires java.management;
-    requires lombok;
-    requires jakarta.servlet;
-
-    requires micrometer.core;
-    requires io.opentelemetry.api;
-    requires io.prometheus.metrics.model;
-    requires io.prometheus.metrics.core;
-
-    exports org.miaixz.bus.metrics.bridge;
-    exports org.miaixz.bus.metrics.builtin;
-    exports org.miaixz.bus.metrics.guard;
-    exports org.miaixz.bus.metrics.magic;
-    exports org.miaixz.bus.metrics.metric;
-    exports org.miaixz.bus.metrics.observe;
-    exports org.miaixz.bus.metrics.window;
-    exports org.miaixz.bus.metrics.metric.indigenous;
-    exports org.miaixz.bus.metrics.metric.micrometer;
-    exports org.miaixz.bus.metrics.metric.opentelemetry;
-    exports org.miaixz.bus.metrics.metric.prometheus;
-    exports org.miaixz.bus.metrics;
-
-}
+package org.miaixz.bus.core.center.date.culture.festival;
