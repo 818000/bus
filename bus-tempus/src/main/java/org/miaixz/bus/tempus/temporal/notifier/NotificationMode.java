@@ -17,37 +17,29 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.tempus.temporal.notifier;
+
 /**
- * bus.tempus
+ * Defines when callback notifications run relative to the Temporal activity completion handshake.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-module bus.tempus {
+public enum NotificationMode {
 
-    requires bus.core;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.logger;
-    requires bus.setting;
+    /**
+     * Executes notification logic inline before the activity completion is reported to Temporal.
+     */
+    INLINE_BEFORE_COMPLETE,
 
-    requires lombok;
-    requires temporal.sdk;
+    /**
+     * Reports activity completion to Temporal first and executes notification logic afterward.
+     */
+    AFTER_COMPLETE,
 
-    exports org.miaixz.bus.tempus;
-    exports org.miaixz.bus.tempus.crontab;
-    exports org.miaixz.bus.tempus.listener;
-    exports org.miaixz.bus.tempus.pattern;
-    exports org.miaixz.bus.tempus.pattern.matcher;
-    exports org.miaixz.bus.tempus.pattern.parser;
-    exports org.miaixz.bus.tempus.timings;
-    exports org.miaixz.bus.tempus.temporal;
-    exports org.miaixz.bus.tempus.temporal.activity;
-    exports org.miaixz.bus.tempus.temporal.notifier;
-    exports org.miaixz.bus.tempus.temporal.payload;
-    exports org.miaixz.bus.tempus.temporal.worker;
-    exports org.miaixz.bus.tempus.temporal.workflow;
-    exports org.miaixz.bus.tempus.temporal.workflow.publisher;
-    exports org.miaixz.bus.tempus.temporal.workflow.subscriber;
+    /**
+     * Disables callback notification handling inside the activity execution flow.
+     */
+    DISABLED
 
 }
