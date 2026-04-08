@@ -17,44 +17,46 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.cortex.magic.identity;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.miaixz.bus.core.codec.binary.Hex;
+
 /**
- * bus.office
- * 
+ * Fingerprint utility for generating stable instance identifiers.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
-module bus.office {
+public final class Fingerprint {
 
-    requires java.sql;
-    requires java.desktop;
+    /**
+     * Creates a new Fingerprint.
+     */
 
-    requires bus.core;
-    requires bus.logger;
+    private Fingerprint() {
 
-    requires lombok;
-    requires org.apache.poi.poi;
-    requires org.apache.poi.ooxml;
-    requires ofdrw.converter;
-    requires ofdrw.layout;
-    requires ofdrw.font;
-    requires ofdrw.reader;
+    }
 
-    exports org.miaixz.bus.office;
-    exports org.miaixz.bus.office.builtin;
-    exports org.miaixz.bus.office.csv;
-    exports org.miaixz.bus.office.excel;
-    exports org.miaixz.bus.office.excel.cell;
-    exports org.miaixz.bus.office.excel.cell.editors;
-    exports org.miaixz.bus.office.excel.cell.setters;
-    exports org.miaixz.bus.office.excel.cell.values;
-    exports org.miaixz.bus.office.excel.reader;
-    exports org.miaixz.bus.office.excel.sax;
-    exports org.miaixz.bus.office.excel.sax.handler;
-    exports org.miaixz.bus.office.excel.shape;
-    exports org.miaixz.bus.office.excel.style;
-    exports org.miaixz.bus.office.excel.writer;
-    exports org.miaixz.bus.office.ofd;
-    exports org.miaixz.bus.office.ppt;
-    exports org.miaixz.bus.office.word;
+    /**
+     * Generates a 32-char hex fingerprint from host and port.
+     *
+     * @param host instance host
+     * @param port instance port
+     * @return 32-character hex string
+     */
+    public static String of(String host, int port) {
+        String input = host + ":" + port;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            return Hex.encodeString(digest).substring(0, 32);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 not available", e);
+        }
+    }
 
 }
