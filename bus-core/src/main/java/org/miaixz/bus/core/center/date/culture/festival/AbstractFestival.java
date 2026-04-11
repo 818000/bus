@@ -17,65 +17,81 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.core.center.date.culture.parts;
+package org.miaixz.bus.core.center.date.culture.festival;
 
-import org.miaixz.bus.core.center.date.culture.Week;
+import org.miaixz.bus.core.center.date.culture.Loops;
+import org.miaixz.bus.core.center.date.culture.parts.DayParts;
 
 /**
- * Abstract base class for date components containing week information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds week-related fields, representing a specific week within a month. The
- * week definition can vary based on the starting weekday and the week index.
- * </p>
- *
+ * Abstract base class for festival instances.
  * @author Kimi Liu
  * @since Java 21+
  */
-public abstract class WeekParts extends MonthParts {
+public abstract class AbstractFestival extends Loops {
 
     /**
-     * The week index within the month (0-5).
+     * Festival index within the registry.
      */
     protected int index;
 
     /**
-     * The starting weekday (1-7 for Monday-Sunday, or 0 for Sunday).
+     * Day associated with this festival instance.
      */
-    protected int start;
+    protected DayParts day;
 
     /**
-     * Gets the week index.
+     * Festival definition.
+     */
+    protected Festival event;
+
+    /**
+     * Constructs a festival instance bound to a specific day.
      *
-     * @return the week index (0-5)
+     * @param index festival index within the registry
+     * @param event festival definition
+     * @param day   matched day
+     */
+    public AbstractFestival(int index, Festival event, DayParts day) {
+        this.index = index;
+        this.event = event;
+        this.day = day;
+    }
+
+    /**
+     * Gets the festival index.
+     *
+     * @return festival index
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * Gets the starting weekday of the week.
+     * Gets the associated day.
      *
-     * @return the starting weekday as a {@link Week} enum value
+     * @return associated day
      */
-    public Week getStart() {
-        return Week.fromIndex(start);
+    public DayParts getDay() {
+        return day;
     }
 
     /**
-     * Validates the week components.
+     * Gets the display name from the underlying festival definition.
      *
-     * @param index the week index to validate (0-5)
-     * @param start the starting weekday to validate (0-6)
-     * @throws IllegalArgumentException if index or start is out of valid range
+     * @return festival name
      */
-    public static void validate(int index, int start) {
-        if (index < 0 || index > 5) {
-            throw new IllegalArgumentException("illegal week index: " + index);
-        }
-        if (start < 0 || start > 6) {
-            throw new IllegalArgumentException("illegal week start: " + start);
-        }
+    public String getName() {
+        return event.getName();
+    }
+
+    /**
+     * Returns a combined textual representation of the festival day and its name.
+     *
+     * @return display string
+     */
+    @Override
+    public String toString() {
+        return String.format("%s %s", day, getName());
     }
 
 }
