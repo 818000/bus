@@ -22,36 +22,57 @@ package org.miaixz.bus.mapper.dialect;
 import org.miaixz.bus.mapper.support.paging.Pageable;
 
 /**
- * Dialect implementation for SQLite databases.
+ * Dameng database dialect.
  *
  * <p>
- * This dialect uses standard {@code LIMIT/OFFSET} pagination and the SQLite {@code INSERT OR REPLACE} UPSERT family.
+ * Dameng follows an Oracle-compatible MERGE path and is detected by the {@code jdbc:dm:} prefix.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public class SQLite extends AbstractDialect {
+public class Dameng extends AbstractDialect {
 
     /**
-     * Creates the SQLite dialect.
+     * Creates the Dameng dialect.
      */
-    public SQLite() {
-        super("SQLite", "jdbc:sqlite:");
+    public Dameng() {
+        super("Dameng", "jdbc:dm:");
     }
 
     /**
-     * Returns the UPSERT family used by SQLite.
+     * Returns the UPSERT family used by Dameng in this framework.
      *
-     * @return {@link Dialect.Type#INSERT_OR_REPLACE}
+     * @return {@link Dialect.Type#MERGE_USING_DUAL}
      */
     @Override
     public Dialect.Type getUpsertType() {
-        return Dialect.Type.INSERT_OR_REPLACE;
+        return Dialect.Type.MERGE_USING_DUAL;
     }
 
     /**
-     * Builds paginated SQL using SQLite {@code LIMIT/OFFSET} syntax.
+     * Returns the keyword used by Dameng to express row limits.
+     *
+     * @return the keyword {@code FETCH NEXT}
+     */
+    @Override
+    public String getLimitKeyword() {
+        return "FETCH NEXT";
+    }
+
+    /**
+     * Builds a count query for Dameng by wrapping the original SQL as a subquery.
+     *
+     * @param originalSql the original SQL statement
+     * @return the generated count SQL
+     */
+    @Override
+    public String buildCountSql(String originalSql) {
+        return "SELECT COUNT(*) FROM (" + originalSql + ")";
+    }
+
+    /**
+     * Builds paginated SQL using Dameng's Oracle-compatible {@code OFFSET ... FETCH NEXT} syntax.
      *
      * @param originalSql the original SQL statement
      * @param pageable    the requested pagination information
@@ -59,7 +80,16 @@ public class SQLite extends AbstractDialect {
      */
     @Override
     public String buildPaginationSql(String originalSql, Pageable pageable) {
-        return buildPaginatedSql(originalSql, pageable);
+        if (pageable.isUnpaged()) {
+            return originalSql;
+        }
+        StringBuilder sql = new StringBuilder(originalSql.length() + 100);
+        sql.append(originalSql);
+        if (pageable.getOffset() > 0) {
+            sql.append(" OFFSET ").append(pageable.getOffset()).append(" ROWS");
+        }
+        sql.append(" FETCH NEXT ").append(pageable.getPageSize()).append(" ROWS ONLY");
+        return sql.toString();
     }
 
 }
