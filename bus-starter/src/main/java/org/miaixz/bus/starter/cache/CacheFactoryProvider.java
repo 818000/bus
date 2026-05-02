@@ -17,24 +17,33 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.validate;
+package org.miaixz.bus.starter.cache;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.springframework.context.annotation.Import;
+import org.miaixz.bus.cache.Factory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 
 /**
- * Auto-configuration for data validation.
+ * Provides the shared cache factory only for starters that explicitly import it.
  * <p>
- * This configuration class enables the AOP-based validation feature by importing the {@link AspectjValidateProxy}. This
- * allows for automatic validation of method parameters in Spring-managed beans (typically controllers) that are
- * annotated with validation constraints.
+ * This class intentionally has no {@code @Configuration} or auto-configuration registration, so applications that do
+ * not enable cache-backed starters do not get a {@link Factory} bean.
+ * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@ConditionalOnProperty(prefix = GeniusBuilder.VALIDATE, name = "enabled", havingValue = "true", matchIfMissing = true)
-@Import(AspectjValidateProxy.class)
-public class ValidateConfiguration {
+public class CacheFactoryProvider {
+
+    /**
+     * Exposes the shared cache factory when the host application does not provide one.
+     *
+     * @return cache factory
+     */
+    @Bean
+    @ConditionalOnMissingBean(Factory.class)
+    public Factory factory() {
+        return new Factory();
+    }
 
 }
