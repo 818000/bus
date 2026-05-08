@@ -17,59 +17,44 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.vortex;
+package org.miaixz.bus.cortex.registry;
 
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.miaixz.bus.vortex.Args;
-import org.miaixz.bus.vortex.magic.Performance;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Getter;
-import lombok.Setter;
+import org.miaixz.bus.cortex.builtin.batch.BatchOperation;
+import org.miaixz.bus.cortex.builtin.batch.BatchResult;
 
 /**
- * Configuration properties for the Vortex routing gateway.
+ * Pluggable registry batch execution strategy.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@Getter
-@Setter
-@ConfigurationProperties(GeniusBuilder.VORTEX)
-public class VortexProperties {
+public interface RegistryBatchExecutor {
 
     /**
-     * Creates an empty Vortex configuration property holder.
+     * Returns executor order. Lower values run first.
+     *
+     * @return order value
      */
-    public VortexProperties() {
-
+    default int order() {
+        return 0;
     }
 
     /**
-     * The service port, specifying the port number the server listens on.
+     * Returns whether this executor can handle one operation.
+     *
+     * @param operation  batch operation
+     * @param operations batch operations
+     * @return {@code true} when supported
      */
-    private int port;
+    boolean supports(BatchOperation operation, RegistryBatchOperations operations);
 
     /**
-     * The service path, specifying the access path for the server.
+     * Executes one batch operation.
+     *
+     * @param operation  batch operation
+     * @param operations batch operations
+     * @return batch result
      */
-    private String path;
-
-    /**
-     * A condition to enable or disable custom Spring MVC configuration handling.
-     */
-    private boolean condition;
-
-    /**
-     * Rate limiting configuration, initialized by default.
-     */
-    private Args.Limit limit = Args.Limit.builder().build();
-
-    /**
-     * Performance optimization settings for request body processing and connection pooling.
-     * <p>
-     * These settings allow fine-tuning of memory usage and throughput trade-offs.
-     */
-    private Performance performance = Performance.builder().build();
+    BatchResult execute(BatchOperation operation, RegistryBatchOperations operations);
 
 }

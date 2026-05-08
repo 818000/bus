@@ -17,59 +17,46 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.vortex;
+package org.miaixz.bus.cortex.registry;
 
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.miaixz.bus.vortex.Args;
-import org.miaixz.bus.vortex.magic.Performance;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Getter;
-import lombok.Setter;
+import org.miaixz.bus.cortex.Assets;
+import org.miaixz.bus.cortex.builtin.batch.BatchOperation;
 
 /**
- * Configuration properties for the Vortex routing gateway.
+ * Batch-specific registry operations exposed to pluggable batch strategies.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@Getter
-@Setter
-@ConfigurationProperties(GeniusBuilder.VORTEX)
-public class VortexProperties {
+public interface RegistryBatchOperations extends RegistryOperations {
 
     /**
-     * Creates an empty Vortex configuration property holder.
+     * Prepares a source entry with operation defaults.
+     *
+     * @param operation batch operation
+     * @param source    source entry
+     * @return prepared entry
      */
-    public VortexProperties() {
+    Assets prepareEntry(BatchOperation operation, Assets source);
 
+    /**
+     * Returns whether execution should continue after one failed entry.
+     *
+     * @param operation batch operation
+     * @return continue-on-error flag
+     */
+    default boolean continueOnError(BatchOperation operation) {
+        return operation != null && operation.isContinueOnError();
     }
 
     /**
-     * The service port, specifying the port number the server listens on.
+     * Returns whether execution should skip durable mutation.
+     *
+     * @param operation batch operation
+     * @return dry-run flag
      */
-    private int port;
-
-    /**
-     * The service path, specifying the access path for the server.
-     */
-    private String path;
-
-    /**
-     * A condition to enable or disable custom Spring MVC configuration handling.
-     */
-    private boolean condition;
-
-    /**
-     * Rate limiting configuration, initialized by default.
-     */
-    private Args.Limit limit = Args.Limit.builder().build();
-
-    /**
-     * Performance optimization settings for request body processing and connection pooling.
-     * <p>
-     * These settings allow fine-tuning of memory usage and throughput trade-offs.
-     */
-    private Performance performance = Performance.builder().build();
+    default boolean dryRun(BatchOperation operation) {
+        return operation != null && operation.isDryRun();
+    }
 
 }

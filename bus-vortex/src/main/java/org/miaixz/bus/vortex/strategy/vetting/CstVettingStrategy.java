@@ -17,59 +17,28 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.vortex;
+package org.miaixz.bus.vortex.strategy.vetting;
 
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.miaixz.bus.vortex.Args;
-import org.miaixz.bus.vortex.magic.Performance;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import lombok.Getter;
-import lombok.Setter;
+import org.miaixz.bus.vortex.strategy.VettingStrategy;
+import org.miaixz.bus.core.Order;
 
 /**
- * Configuration properties for the Vortex routing gateway.
+ * CST URL-based request vetting strategy.
+ * <p>
+ * CST currently uses the common validation, enrichment, and authorization-attribute merge behavior provided by
+ * {@link VettingStrategy}. This class exists as the CST-specific strategy type used by the strategy factory.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@Getter
-@Setter
-@ConfigurationProperties(GeniusBuilder.VORTEX)
-public class VortexProperties {
+@org.springframework.core.annotation.Order(Order.THIRD)
+public class CstVettingStrategy extends VettingStrategy {
 
     /**
-     * Creates an empty Vortex configuration property holder.
+     * Creates a CST vetting strategy.
      */
-    public VortexProperties() {
-
+    public CstVettingStrategy() {
+        super();
     }
-
-    /**
-     * The service port, specifying the port number the server listens on.
-     */
-    private int port;
-
-    /**
-     * The service path, specifying the access path for the server.
-     */
-    private String path;
-
-    /**
-     * A condition to enable or disable custom Spring MVC configuration handling.
-     */
-    private boolean condition;
-
-    /**
-     * Rate limiting configuration, initialized by default.
-     */
-    private Args.Limit limit = Args.Limit.builder().build();
-
-    /**
-     * Performance optimization settings for request body processing and connection pooling.
-     * <p>
-     * These settings allow fine-tuning of memory usage and throughput trade-offs.
-     */
-    private Performance performance = Performance.builder().build();
 
 }
