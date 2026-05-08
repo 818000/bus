@@ -42,7 +42,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <lombok.version>1.18.34</lombok.version>
-        <fastjson.version>1.2.83</fastjson.version>
+        <fastjson.version>2.0.61</fastjson.version>
         <gson.version>2.10</gson.version>
         <jackson.version>2.15.3</jackson.version>
         <jpinyin.version>1.1.8</jpinyin.version>
