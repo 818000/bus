@@ -17,31 +17,49 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.image.nimble.codec;
+package org.miaixz.bus.image.nimble.opencv;
 
-import java.io.IOException;
+import java.util.Locale;
 
-import org.miaixz.bus.image.galaxy.data.Attributes;
-import org.miaixz.bus.image.nimble.codec.mp4.MP4FileType;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
+
+import org.miaixz.bus.core.Version;
 
 /**
+ * ImageIO writer SPI for native JPEG XL encoding.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
-public interface XPEGParser {
+public class NativeJXLImageWriterSpi extends ImageWriterSpi {
 
-    long getCodeStreamPosition();
+    public NativeJXLImageWriterSpi() {
+        this(NativeJXLImageWriter.class);
+    }
 
-    long getPositionAfterAPPSegments();
+    public NativeJXLImageWriterSpi(Class<? extends NativeJXLImageWriter> writer) {
+        super("Miaixz Team", Version._VERSION, NativeJXLImageReaderSpi.NAMES, NativeJXLImageReaderSpi.SUFFIXES,
+                NativeJXLImageReaderSpi.MIMES, writer.getName(), new Class[] { ImageOutputStream.class },
+                new String[] { NativeJXLImageReaderSpi.class.getName() }, false, null, null, null, null, false, null,
+                null, null, null);
+    }
 
-    MP4FileType getMP4FileType();
+    @Override
+    public boolean canEncodeImage(ImageTypeSpecifier type) {
+        return NativeJPEGImageWriterSpi.checkCommonJpgRequirement(type);
+    }
 
-    Attributes getAttributes(Attributes attrs);
+    @Override
+    public String getDescription(Locale locale) {
+        return "Natively-accelerated JPEG XL Image Writer";
+    }
 
-    String getTransferSyntaxUID(boolean fragmented) throws IOException;
-
-    default String getTransferSyntaxUID() throws IOException {
-        return getTransferSyntaxUID(false);
+    @Override
+    public ImageWriter createWriterInstance(Object extension) {
+        return new NativeJXLImageWriter(this);
     }
 
 }
