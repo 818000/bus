@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.extra.nlp.provider.jieba;
 
+import com.huaban.analysis.jieba.JiebaSegmenter;
+import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
+
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.extra.nlp.NLPProvider;
 import org.miaixz.bus.extra.nlp.NLPResult;
 import org.miaixz.bus.logger.Logger;
-
-import com.huaban.analysis.jieba.JiebaSegmenter;
-import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
 
 /**
  * Jieba word segmentation engine implementation. This class serves as a concrete {@link NLPProvider} for the Jieba NLP
@@ -42,6 +42,7 @@ public class JiebaProvider implements NLPProvider {
      * The underlying Jieba {@link JiebaSegmenter} instance used for performing word segmentation.
      */
     private final JiebaSegmenter jiebaSegmenter;
+
     /**
      * The segmentation mode used by the Jieba segmenter (e.g., SEARCH or INDEX).
      */

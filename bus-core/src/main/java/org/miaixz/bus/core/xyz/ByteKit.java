@@ -63,6 +63,7 @@ public class ByteKit {
      * Default byte order: Little Endian.
      */
     public static final ByteOrder DEFAULT_ORDER = ByteOrder.LITTLE_ENDIAN;
+
     /**
      * The byte order of the current CPU.
      */
@@ -1495,7 +1496,7 @@ public class ByteKit {
      * Swaps the last byte of the first array with the first byte of the second array.
      *
      * < * @param b1 The first byte array.
-     * 
+     *
      * @param b2 The second byte array.
      */
     private static void swapLastFirst(byte[] b1, byte[] b2) {

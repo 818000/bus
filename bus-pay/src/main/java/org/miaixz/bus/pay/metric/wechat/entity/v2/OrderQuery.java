@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 import org.miaixz.bus.pay.magic.Voucher;
 
 /**
@@ -44,42 +45,52 @@ public class OrderQuery extends Voucher {
      * Sub-merchant App ID.
      */
     private String sub_appid;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Sub-merchant ID.
      */
     private String sub_mch_id;
+
     /**
      * WeChat's order number.
      */
     private String transaction_id;
+
     /**
      * Merchant's order number.
      */
     private String out_trade_no;
+
     /**
      * WeChat's profit sharing order ID.
      */
     private String order_id;
+
     /**
      * Merchant's profit sharing order number.
      */
     private String out_order_no;
+
     /**
      * Merchant's refund number.
      */
     private String out_return_no;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */

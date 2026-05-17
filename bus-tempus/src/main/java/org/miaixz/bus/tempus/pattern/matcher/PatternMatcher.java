@@ -19,18 +19,18 @@
 */
 package org.miaixz.bus.tempus.pattern.matcher;
 
-import org.miaixz.bus.core.xyz.DateKit;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.tempus.pattern.Part;
-
 import java.time.Year;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.miaixz.bus.core.xyz.DateKit;
+import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.tempus.pattern.Part;
+
 /**
  * A matcher for a single cron expression. A {@code PatternMatcher} consists of seven {@link PartMatcher} instances,
  * each representing one of the seven fields in a cron expression:
- * 
+ *
  * <pre>
  *    0      1     2        3         4       5        6
  * SECOND MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK YEAR
@@ -149,7 +149,7 @@ public class PatternMatcher {
      * <li>If a field's next value is less than the current value (a rollover), go back to the previous higher field and
      * get its next value.</li>
      * </ul>
-     * 
+     *
      * <pre>
      *        SECOND MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK YEAR
      *     Lower &lt;------------------------------------------&gt; Higher

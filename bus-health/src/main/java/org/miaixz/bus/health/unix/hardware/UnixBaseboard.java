@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -35,14 +35,17 @@ public final class UnixBaseboard extends AbstractBaseboard {
      * The manufacturer value.
      */
     private final String manufacturer;
+
     /**
      * The model value.
      */
     private final String model;
+
     /**
      * The serialNumber value.
      */
     private final String serialNumber;
+
     /**
      * The version value.
      */

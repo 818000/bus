@@ -49,14 +49,17 @@ public class TomlReader {
      * The TOML string data to be parsed.
      */
     private final String data;
+
     /**
      * Flag indicating whether to enforce strict ASCII for bare keys.
      */
     private final boolean strictAsciiBareKeys;
+
     /**
      * The current parsing position in the data string.
      */
     private int pos = 0;
+
     /**
      * The current line number for error reporting.
      */
@@ -66,7 +69,7 @@ public class TomlReader {
      * Constructs a new {@code TomlReader}.
      * <p>
      * Bare key character rules:
-     * 
+     *
      * <pre>
      * Strict mode (true): [A-Za-z0-9_-]
      * Lenient mode (false): Any character except . [ ] # =
@@ -676,7 +679,7 @@ public class TomlReader {
 
     /**
      * Converts a character to its string representation, escaping it if necessary.
-     * 
+     *
      * @param c The character to convert.
      * @return The string representation.
      */

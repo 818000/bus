@@ -29,6 +29,10 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.mapper.Order;
 import org.miaixz.bus.mapper.binding.function.Fn;
@@ -37,10 +41,6 @@ import org.miaixz.bus.mapper.criteria.Criterion;
 import org.miaixz.bus.mapper.criteria.OrCriteria;
 import org.miaixz.bus.mapper.parsing.ColumnMeta;
 import org.miaixz.bus.mapper.parsing.TableMeta;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 /**
  * A generic condition query object for building complex query criteria.
@@ -58,30 +58,37 @@ public class Condition<T> {
      * The Order BY clause for the query.
      */
     protected String orderByClause;
+
     /**
      * Whether to use the DISTINCT keyword in the query.
      */
     protected boolean distinct;
+
     /**
      * The specific columns to be selected in the query.
      */
     protected String selectColumns;
+
     /**
      * The specific columns to be selected, without "column AS alias" aliases.
      */
     protected String simpleSelectColumns;
+
     /**
      * SQL to be prepended to the main query.
      */
     protected String startSql;
+
     /**
      * SQL to be appended to the main query.
      */
     protected String endSql;
+
     /**
      * A list of criteria groups connected by OR.
      */
     protected List<Criteria<T>> oredCriteria;
+
     /**
      * A list of fields to be set in an UPDATE statement.
      */
@@ -252,15 +259,6 @@ public class Condition<T> {
     }
 
     /**
-     * Gets the string of selected columns.
-     *
-     * @return The selected columns string.
-     */
-    public String getSelectColumns() {
-        return selectColumns;
-    }
-
-    /**
      * Sets the string of selected columns.
      *
      * @param selectColumns The string of columns to select.
@@ -269,15 +267,6 @@ public class Condition<T> {
     public Condition<T> setSelectColumns(String selectColumns) {
         this.selectColumns = selectColumns;
         return this;
-    }
-
-    /**
-     * Gets the string of selected columns without aliases.
-     *
-     * @return The simple selected columns string.
-     */
-    public String getSimpleSelectColumns() {
-        return simpleSelectColumns;
     }
 
     /**
@@ -292,15 +281,6 @@ public class Condition<T> {
     }
 
     /**
-     * Gets the starting SQL fragment.
-     *
-     * @return The starting SQL string.
-     */
-    public String getStartSql() {
-        return startSql;
-    }
-
-    /**
      * Sets the starting SQL fragment.
      *
      * @param startSql The starting SQL string.
@@ -309,15 +289,6 @@ public class Condition<T> {
     public Condition<T> setStartSql(String startSql) {
         this.startSql = startSql;
         return this;
-    }
-
-    /**
-     * Gets the ending SQL fragment.
-     *
-     * @return The ending SQL string.
-     */
-    public String getEndSql() {
-        return endSql;
     }
 
     /**
@@ -409,15 +380,6 @@ public class Condition<T> {
     }
 
     /**
-     * Gets the Order BY clause.
-     *
-     * @return The Order BY clause string.
-     */
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
-    /**
      * Sets the Order BY clause.
      *
      * @param orderByClause The Order BY clause string.
@@ -426,24 +388,6 @@ public class Condition<T> {
     public Condition<T> setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
         return this;
-    }
-
-    /**
-     * Gets the list of all OR criteria groups.
-     *
-     * @return A list of {@link Criteria} objects.
-     */
-    public List<Criteria<T>> getOredCriteria() {
-        return oredCriteria;
-    }
-
-    /**
-     * Gets the list of values to be set in an UPDATE statement.
-     *
-     * @return A list of {@link Criterion} objects for the SET clause.
-     */
-    public List<Criterion> getSetValues() {
-        return setValues;
     }
 
     /**
@@ -456,15 +400,6 @@ public class Condition<T> {
             return true;
         }
         return oredCriteria.stream().allMatch(criteria -> criteria.getCriteria().isEmpty());
-    }
-
-    /**
-     * Checks if the DISTINCT keyword is enabled.
-     *
-     * @return {@code true} if DISTINCT is enabled, {@code false} otherwise.
-     */
-    public boolean isDistinct() {
-        return distinct;
     }
 
     /**

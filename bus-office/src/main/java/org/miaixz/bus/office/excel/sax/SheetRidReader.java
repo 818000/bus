@@ -27,20 +27,21 @@ import java.util.Map;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.CollKit;
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.ListKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.office.excel.ExcelSaxKit;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads the mapping between sheetId and r:id in the sheet tag when reading Excel using SAX.
  * <p>
  * Similar to:
- * 
+ *
  * <pre>
  *  sheet name="Sheet6" sheetId="4" r:id="rId6"
  * </pre>
@@ -60,22 +61,27 @@ public class SheetRidReader extends DefaultHandler {
      * The tag name for a sheet element in the Excel XML.
      */
     private final static String TAG_NAME = "sheet";
+
     /**
      * The attribute name for the relationship ID (r:id).
      */
     private final static String RID_ATTR = "r:id";
+
     /**
      * The attribute name for the sheet ID.
      */
     private final static String SHEET_ID_ATTR = "sheetId";
+
     /**
      * The attribute name for the sheet name.
      */
     private final static String NAME_ATTR = "name";
+
     /**
      * Map storing the mapping from sheet ID (1-based) to relationship ID (1-based).
      */
     private final Map<Integer, Integer> ID_RID_MAP = new LinkedHashMap<>();
+
     /**
      * Map storing the mapping from sheet name to relationship ID (1-based).
      */

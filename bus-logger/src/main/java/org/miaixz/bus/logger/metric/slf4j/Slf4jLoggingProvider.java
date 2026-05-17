@@ -19,13 +19,14 @@
 */
 package org.miaixz.bus.logger.metric.slf4j;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LocationAwareLogger;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.logger.Level;
 import org.miaixz.bus.logger.magic.AbstractProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * A logger provider implementation that wraps an {@link org.slf4j.Logger} instance.
@@ -41,6 +42,7 @@ public class Slf4jLoggingProvider extends AbstractProvider {
      * The underlying SLF4J logger instance.
      */
     private final transient Logger logger;
+
     /**
      * Whether the underlying logger is a {@link LocationAwareLogger}. This is used to determine if the FQCN can be
      * passed.

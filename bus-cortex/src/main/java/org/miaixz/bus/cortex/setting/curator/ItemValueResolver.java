@@ -19,15 +19,15 @@
 */
 package org.miaixz.bus.cortex.setting.curator;
 
-import java.util.Locale;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.cortex.setting.item.GrayRequestContext;
 import org.miaixz.bus.cortex.setting.item.GrayRule;
 import org.miaixz.bus.cortex.setting.item.GrayRuleMatcher;
-import org.miaixz.bus.cortex.setting.item.GrayRequestContext;
 import org.miaixz.bus.cortex.setting.item.Item;
 import org.miaixz.bus.cortex.setting.item.ItemNormalizer;
 import org.miaixz.bus.cortex.setting.secret.SecretCodec;
@@ -45,10 +45,12 @@ public class ItemValueResolver {
      * Source adapters keyed by their supported source.
      */
     private final Map<String, ItemSourceAdapter> adapters;
+
     /**
      * Gray-rule matcher used for conditional delivery.
      */
     private final GrayRuleMatcher grayRuleMatcher;
+
     /**
      * Secret codec used to decrypt protected resolved values.
      */

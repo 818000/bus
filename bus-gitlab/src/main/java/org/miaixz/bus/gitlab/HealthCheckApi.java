@@ -22,11 +22,17 @@ package org.miaixz.bus.gitlab;
 import java.io.IOException;
 import java.net.URL;
 
-import org.miaixz.bus.gitlab.models.HealthCheckInfo;
-
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.HealthCheckInfo;
 import org.miaixz.bus.logger.Logger;
 
+/**
+ * The health check API class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class HealthCheckApi extends AbstractApi {
 
     public HealthCheckApi(GitLabApi gitLabApi) {

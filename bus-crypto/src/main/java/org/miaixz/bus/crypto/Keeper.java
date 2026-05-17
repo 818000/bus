@@ -57,6 +57,7 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
+
 import org.miaixz.bus.core.codec.binary.Base64;
 import org.miaixz.bus.core.io.file.FileName;
 import org.miaixz.bus.core.lang.Algorithm;
@@ -89,14 +90,17 @@ public class Keeper {
      * (inclusive) for these algorithms.
      */
     public static final int DEFAULT_KEY_SIZE = 1024;
+
     /**
      * KeyStore type for Java Key Store (JKS).
      */
     public static final String TYPE_JKS = "JKS";
+
     /**
      * KeyStore type for JCEKS.
      */
     public static final String TYPE_JCEKS = "jceks";
+
     /**
      * KeyStore type for PKCS#12.
      * <p>
@@ -104,6 +108,7 @@ public class Keeper {
      * and certificates. It is stored in a binary format and is also known as a PFX file.
      */
     public static final String TYPE_PKCS12 = "pkcs12";
+
     /**
      * Certificate type for X.509 certificates.
      */

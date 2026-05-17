@@ -31,8 +31,8 @@ import org.miaixz.bus.cortex.Keying;
 import org.miaixz.bus.cortex.Keying.SettingSpec;
 import org.miaixz.bus.cortex.Suite;
 import org.miaixz.bus.cortex.Trait;
-import org.miaixz.bus.cortex.builtin.SettingGenerator;
 import org.miaixz.bus.cortex.builtin.MetadataMatcher;
+import org.miaixz.bus.cortex.builtin.SettingGenerator;
 import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.logger.Logger;
@@ -53,10 +53,12 @@ public class StoreBackedItemStore {
      * Shared cache used for current-state projection.
      */
     private final CacheX<String, Object> cacheX;
+
     /**
      * Optional durable current-state store.
      */
     private final ItemStore store;
+
     /**
      * Setting-domain key strategy.
      */

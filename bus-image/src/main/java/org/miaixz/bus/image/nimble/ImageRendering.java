@@ -23,15 +23,17 @@ import java.awt.image.DataBuffer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.opencv.core.CvType;
+
 import org.miaixz.bus.core.xyz.MathKit;
 import org.miaixz.bus.image.nimble.opencv.ImageCV;
-import org.miaixz.bus.image.nimble.opencv.ImageProcessor;
+import org.miaixz.bus.image.nimble.opencv.ImageTransformer;
 import org.miaixz.bus.image.nimble.opencv.LookupTableCV;
 import org.miaixz.bus.image.nimble.opencv.PlanarImage;
 import org.miaixz.bus.image.nimble.opencv.lut.PresentationStateLut;
 import org.miaixz.bus.image.nimble.opencv.lut.WindLevelParameters;
 import org.miaixz.bus.image.nimble.stream.ImageDescriptor;
-import org.opencv.core.CvType;
 
 /**
  * A utility class for performing various rendering operations on DICOM images.
@@ -200,7 +202,7 @@ public class ImageRendering {
         }
         double slope = 255.0 / range;
         double yint = 255.0 - slope * high;
-        return ImageProcessor.rescaleToByte(ImageCV.toMat(imageSource), slope, yint);
+        return ImageTransformer.rescaleToByte(ImageCV.toMat(imageSource), slope, yint);
     }
 
     /**
@@ -234,7 +236,7 @@ public class ImageRendering {
                     desc.getModalityLutForFrame(frameIndex).adaptWithOverlayBitMask(high - bitsStored);
                 }
                 // Set all bits outside of Bits Stored to 0.
-                return ImageProcessor.bitwiseAnd(img.toMat(), val);
+                return ImageTransformer.bitwiseAnd(img.toMat(), val);
             }
         }
         return img;

@@ -19,11 +19,17 @@
 */
 package org.miaixz.bus.gitlab.hooks.system;
 
+import java.io.Serial;
+
 import org.miaixz.bus.gitlab.hooks.web.AbstractPushEvent;
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
-import java.io.Serial;
-
+/**
+ * The tag push system hook event class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class TagPushSystemHookEvent extends AbstractPushEvent implements SystemHookEvent {
 
     @Serial

@@ -29,6 +29,7 @@ import java.util.Date;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+
 import org.miaixz.bus.office.excel.StyleKit;
 
 /**
@@ -46,22 +47,27 @@ public class DefaultStyleSet implements StyleSet, Serializable {
      * Workbook reference.
      */
     private final Workbook workbook;
+
     /**
      * Header cell style.
      */
     private final CellStyle headCellStyle;
+
     /**
      * Default cell style.
      */
     private final CellStyle cellStyle;
+
     /**
      * Default numeric cell style.
      */
     private final CellStyle cellStyleForNumber;
+
     /**
      * Default date cell style.
      */
     private final CellStyle cellStyleForDate;
+
     /**
      * Default hyperlink cell style.
      */

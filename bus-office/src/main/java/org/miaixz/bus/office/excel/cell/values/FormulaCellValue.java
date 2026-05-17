@@ -21,6 +21,7 @@ package org.miaixz.bus.office.excel.cell.values;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+
 import org.miaixz.bus.office.excel.cell.setters.CellSetter;
 
 /**
@@ -40,10 +41,12 @@ public class FormulaCellValue implements CellValue<String>, CellSetter {
      * The formula string.
      */
     private final String formula;
+
     /**
      * The result of the formula. This can be omitted when using ExcelWriter.
      */
     private final Object result;
+
     /**
      * The type of the formula result.
      */

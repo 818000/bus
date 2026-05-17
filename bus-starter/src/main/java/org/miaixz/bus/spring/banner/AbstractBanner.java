@@ -22,10 +22,11 @@ package org.miaixz.bus.spring.banner;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.xyz.IoKit;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.xyz.IoKit;
 
 /**
  * Abstract base class for {@link Banner} implementations.
@@ -43,14 +44,17 @@ public abstract class AbstractBanner implements Banner {
      * The resource class used to load the banner resource.
      */
     protected Class<?> resourceClass;
+
     /**
      * The location of the banner resource (e.g., "/banner.txt").
      */
     protected String resourceLocation;
+
     /**
      * The default banner text to use if the resource cannot be loaded.
      */
     protected String defaultBanner;
+
     /**
      * The final banner text, after loading and processing.
      */

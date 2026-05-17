@@ -19,17 +19,17 @@
 */
 package org.miaixz.bus.image.plugin;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 /**
  * The {@code Json2Rst} class converts JSON schema files into reStructuredText (RST) format, primarily for generating
@@ -45,22 +45,27 @@ public class Json2Rst {
      * A constant string of '=' characters used for underlining titles in RST.
      */
     private static final String UNDERLINE = "===============================================================";
+
     /**
      * The input directory containing the JSON schema files.
      */
     private final File indir;
+
     /**
      * The output directory where the RST files will be generated.
      */
     private final File outdir;
+
     /**
      * A queue of input files to be processed.
      */
     private final LinkedList<File> inFiles = new LinkedList<>();
+
     /**
      * A set to keep track of all processed references to avoid duplicates.
      */
     private final HashSet<String> totRefs = new HashSet<>();
+
     /**
      * The format string for the RST tabular columns directive.
      */

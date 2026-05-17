@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -78,6 +78,9 @@ public final class ThreadInfo {
 
     /**
      * Class to encapsulate mach thread information.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Immutable
     public static class ThreadStats {
@@ -86,22 +89,27 @@ public final class ThreadInfo {
          * The threadId value.
          */
         private final int threadId;
+
         /**
          * The userTime value.
          */
         private final long userTime;
+
         /**
          * The systemTime value.
          */
         private final long systemTime;
+
         /**
          * The upTime value.
          */
         private final long upTime;
+
         /**
          * The state value.
          */
         private final OSProcess.State state;
+
         /**
          * The priority value.
          */
@@ -206,6 +214,7 @@ public final class ThreadInfo {
         public int getPriority() {
             return priority;
         }
+
     }
 
 }

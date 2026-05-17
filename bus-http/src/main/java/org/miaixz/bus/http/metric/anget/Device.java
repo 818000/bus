@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.http.metric.anget;
 
+import java.util.List;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.CollKit;
 import org.miaixz.bus.core.xyz.ListKit;
-
-import java.util.List;
 
 /**
  * Represents a device type, such as a phone, tablet, or desktop, parsed from a User-Agent string.
@@ -42,10 +42,12 @@ public class Device extends UserAgent {
      * Represents an iPhone device.
      */
     public static final Device IPHONE = new Device("iPhone", "iphone");
+
     /**
      * Represents an iPod device.
      */
     public static final Device IPOD = new Device("iPod", "ipod");
+
     /**
      * Represents an iPad device.
      */
@@ -55,10 +57,12 @@ public class Device extends UserAgent {
      * Represents an Android device.
      */
     public static final Device ANDROID = new Device("Android", "android");
+
     /**
      * Represents a HarmonyOS device.
      */
     public static final Device HARMONY = new Device("Harmony", "OpenHarmony");
+
     /**
      * Represents a Google TV device.
      */
@@ -85,6 +89,7 @@ public class Device extends UserAgent {
             new Device("Symbian", "symbian(os)?"), //
             new Device("Blackberry", "blackberry") //
     );
+
     /**
      * A list of supported desktop device types.
      */

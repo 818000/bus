@@ -21,6 +21,8 @@ package org.miaixz.bus.notify.metric;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.xyz.ObjectKit;
 import org.miaixz.bus.logger.Logger;
@@ -28,14 +30,12 @@ import org.miaixz.bus.notify.Context;
 import org.miaixz.bus.notify.Provider;
 import org.miaixz.bus.notify.magic.Notice;
 
-import lombok.AllArgsConstructor;
-
 /**
  * Abstract base class for notification providers, offering common functionalities and properties.
  *
  * @param <T> The type of {@link Notice} this provider handles.
  * @param <K> The type of {@link Context} this provider uses.
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 21+
  */
 @AllArgsConstructor

@@ -60,18 +60,22 @@ public class DateTime extends Date {
      * Whether {@link #toString()} should delegate to the original JDK {@link Date} formatting style.
      */
     private static boolean useJdkToStringStyle = false;
+
     /**
      * Whether this object is mutable.
      */
     private boolean mutable = true;
+
     /**
      * The first day of the week, defaulting to Monday.
      */
     private Week firstDayOfWeek = Week.MONDAY;
+
     /**
      * The timezone for this DateTime object.
      */
     private transient TimeZone timeZone;
+
     /**
      * The minimum number of days in the first week.
      */
@@ -213,7 +217,7 @@ public class DateTime extends Date {
      * <li>yyyy-MM-dd'T'HH:mm:ssZ</li>
      * <li>yyyy-MM-dd'T'HH:mm:ss.SSSZ</li>
      * </ol>
-     * 
+     *
      * @param date   The date string.
      * @param format The format pattern (see {@link Fields}).
      */
@@ -327,7 +331,7 @@ public class DateTime extends Date {
 
     /**
      * Parses a date string using a format pattern.
-     * 
+     *
      * @param date   the date string
      * @param format the format pattern
      * @return the parsed {@link Date}
@@ -340,7 +344,7 @@ public class DateTime extends Date {
 
     /**
      * Parses a date string using a {@link DateFormat}.
-     * 
+     *
      * @param date   the date string
      * @param format the date format
      * @return the parsed {@link Date}
@@ -358,7 +362,7 @@ public class DateTime extends Date {
 
     /**
      * Parses a date string using a {@link DateParser}.
-     * 
+     *
      * @param date    the date string
      * @param parser  the date parser
      * @param lenient whether parsing should be lenient

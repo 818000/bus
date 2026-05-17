@@ -28,8 +28,8 @@ import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.metrics.Builder;
 import org.miaixz.bus.metrics.Metrics;
 import org.miaixz.bus.metrics.Provider;
-import org.miaixz.bus.metrics.metric.Timer;
 import org.miaixz.bus.metrics.magic.TimerSnapshot;
+import org.miaixz.bus.metrics.metric.Timer;
 import org.miaixz.bus.metrics.metric.indigenous.NativeProvider;
 
 /**
@@ -47,18 +47,22 @@ public class CortexExporter {
      * CacheX store used to write metric snapshots.
      */
     private final CacheX<String, String> store;
+
     /**
      * Cortex namespace used as part of the cache key.
      */
     private final String namespace;
+
     /**
      * Service identifier included in the cache key.
      */
     private final String serviceId;
+
     /**
      * Push interval in seconds; also used as the TTL multiplier base.
      */
     private final int intervalSeconds;
+
     /**
      * Background daemon scheduler for periodic metric pushes.
      */
@@ -84,7 +88,9 @@ public class CortexExporter {
         });
     }
 
-    /** Starts the background push scheduler. */
+    /**
+     * Starts the background push scheduler.
+     */
     public void start() {
         scheduler.scheduleAtFixedRate(this::push, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
         Logger.info(
@@ -96,7 +102,9 @@ public class CortexExporter {
                 serviceId);
     }
 
-    /** Stops the background push scheduler. */
+    /**
+     * Stops the background push scheduler.
+     */
     public void stop() {
         Logger.info(true, "Metrics", "Cortex metrics exporter stop started: intervalSeconds={}", intervalSeconds);
         scheduler.shutdown();

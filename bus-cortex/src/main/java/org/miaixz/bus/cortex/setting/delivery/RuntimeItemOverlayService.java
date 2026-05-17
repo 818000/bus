@@ -28,8 +28,8 @@ import org.miaixz.bus.cortex.Keying.SettingSpec;
 import org.miaixz.bus.cortex.builtin.SettingGenerator;
 import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.magic.watch.WatchManager;
-import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
 import org.miaixz.bus.cortex.setting.item.Item;
+import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
 
 /**
  * Lightweight runtime overlay publisher outside the revision-tracked curator write path.
@@ -43,10 +43,12 @@ public class RuntimeItemOverlayService {
      * Watch-event source name used for runtime overlays.
      */
     private static final String OVERLAY_SOURCE = "runtime-overlay";
+
     /**
      * Watch-event type emitted after one runtime overlay publish.
      */
     private static final String OVERLAY_PUBLISH_EVENT = "runtime-overlay-publish";
+
     /**
      * Watch-event type emitted after one runtime overlay clear operation.
      */
@@ -56,10 +58,12 @@ public class RuntimeItemOverlayService {
      * Lightweight cache-backed publisher used for runtime overlays and warmup snapshots.
      */
     private final RuntimeItemOverlayPublisher publisher;
+
     /**
      * Watch manager notified when one overlay is refreshed.
      */
     private final WatchManager watchManager;
+
     /**
      * Setting-domain key strategy.
      */

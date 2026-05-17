@@ -19,12 +19,18 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
-import java.io.Serial;
 
+/**
+ * The registry repository class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class RegistryRepository implements Serializable {
 
     @Serial

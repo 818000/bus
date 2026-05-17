@@ -28,19 +28,21 @@ import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Map;
 
-import org.miaixz.bus.gitlab.models.ExportStatus;
-import org.miaixz.bus.gitlab.models.ImportStatus;
-import org.miaixz.bus.gitlab.models.Project;
-
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.ExportStatus;
+import org.miaixz.bus.gitlab.models.ImportStatus;
+import org.miaixz.bus.gitlab.models.Project;
 import org.miaixz.bus.logger.Logger;
 
 /**
  * This class provides an entry point to all the GitLab API project import/export calls.
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ee/api/project_import_export.html">Project import/export API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class ImportExportApi extends AbstractApi {
 
@@ -157,7 +159,7 @@ public class ImportExportApi extends AbstractApi {
         Response response = getWithAccepts(
                 Response.Status.OK,
                 null,
-                MediaType.MEDIA_TYPE_WILDCARD,
+                MediaType.WILDCARD,
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "export",

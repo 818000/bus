@@ -23,15 +23,15 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.core.center.map.CaseInsensitiveMap;
-import org.miaixz.bus.core.xyz.CollKit;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.core.center.map.CaseInsensitiveMap;
+import org.miaixz.bus.core.xyz.CollKit;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * Unified authorization response class.
@@ -53,14 +53,17 @@ public class Message extends org.miaixz.bus.core.basic.entity.Message {
      * The body of the message.
      */
     private String body;
+
     /**
      * The body of the message as a byte array.
      */
     private byte[] bodyByte;
+
     /**
      * The HTTP status code of the response.
      */
     private int status;
+
     /**
      * The headers of the message.
      */

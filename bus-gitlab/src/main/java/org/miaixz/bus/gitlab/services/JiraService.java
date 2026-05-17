@@ -22,10 +22,16 @@ package org.miaixz.bus.gitlab.services;
 import java.io.Serial;
 import java.util.Map;
 
-import org.miaixz.bus.gitlab.models.GitLabForm;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.miaixz.bus.gitlab.models.GitLabForm;
+
+/**
+ * The jira service class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class JiraService extends NotificationService {
 
     @Serial
@@ -180,7 +186,7 @@ public class JiraService extends NotificationService {
 
     /**
      * Make sure jiraIssueTransitionId is an integer and not an empty string.
-     * 
+     *
      * @param properties the Map holding the properties
      */
     private void fixJiraIssueTransitionId(Map<String, Object> properties) {

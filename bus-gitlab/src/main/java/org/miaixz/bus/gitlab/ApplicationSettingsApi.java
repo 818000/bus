@@ -22,18 +22,21 @@ package org.miaixz.bus.gitlab;
 import java.text.ParseException;
 import java.util.Iterator;
 
-import org.miaixz.bus.gitlab.models.ApplicationSettings;
-import org.miaixz.bus.gitlab.models.Setting;
-import org.miaixz.bus.gitlab.support.ISO8601;
+import jakarta.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import jakarta.ws.rs.core.Response;
+import org.miaixz.bus.gitlab.models.ApplicationSettings;
+import org.miaixz.bus.gitlab.models.Setting;
+import org.miaixz.bus.gitlab.support.ISO8601;
 import org.miaixz.bus.logger.Logger;
 
 /**
  * This class implements the client side API for the GitLab Application Settings API. See
  * <a href="https://docs.gitlab.com/ee/api/settings.html">Application Settings API at GitLab</a> for more information.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class ApplicationSettingsApi extends AbstractApi {
 

@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import org.bouncycastle.crypto.AlphabetMapper;
 import org.bouncycastle.jcajce.spec.FPEParameterSpec;
+
 import org.miaixz.bus.crypto.Keeper;
 import org.miaixz.bus.crypto.Padding;
 
@@ -63,6 +64,7 @@ public class FPE implements Serializable {
      * The AES cipher instance.
      */
     private final AES aes;
+
     /**
      * The alphabet mapper.
      */
@@ -175,6 +177,9 @@ public class FPE implements Serializable {
 
     /**
      * FPE Mode. FPE includes two modes: FF1 and FF3 (FF2 is deprecated). Both are based on a Feistel network structure.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum FPEMode {
 
@@ -204,6 +209,7 @@ public class FPE implements Serializable {
         public String getValue() {
             return value;
         }
+
     }
 
 }

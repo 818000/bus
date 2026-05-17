@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -21,13 +21,13 @@ package org.miaixz.bus.health.windows.driver.perfmon;
 
 import java.util.Locale;
 
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.health.Config;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
 
 /**
  * Tests whether performance counters are disabled
@@ -42,10 +42,12 @@ public final class PerfmonDisabled {
      * The PERF_OS_DISABLED constant.
      */
     public static final boolean PERF_OS_DISABLED = isDisabled(Config._WINDOWS_PERFOS_DISABLED, "PerfOS");
+
     /**
      * The PERF_PROC_DISABLED constant.
      */
     public static final boolean PERF_PROC_DISABLED = isDisabled(Config._WINDOWS_PERFPROC_DISABLED, "PerfProc");
+
     /**
      * The PERF_DISK_DISABLED constant.
      */

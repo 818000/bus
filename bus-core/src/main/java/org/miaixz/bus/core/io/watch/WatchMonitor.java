@@ -54,6 +54,7 @@ public class WatchMonitor extends Thread implements Closeable, Serializable {
      * monitored.
      */
     private Path dir;
+
     /**
      * The specific file being monitored. This is non-null only when monitoring a single file.
      */
@@ -63,6 +64,7 @@ public class WatchMonitor extends Thread implements Closeable, Serializable {
      * The maximum depth for recursive directory monitoring. If less than 1, only the current directory is monitored.
      */
     private int maxDepth;
+
     /**
      * The {@link Watcher} instance that will be notified of file system events.
      */
@@ -83,7 +85,7 @@ public class WatchMonitor extends Thread implements Closeable, Serializable {
     /**
      * Constructs a new {@code WatchMonitor} for the given directory, maximum recursion depth, and specified event
      * kinds. Examples for {@code maxDepth}:
-     * 
+     *
      * <pre>
      * maxDepth &lt;= 1: Only monitors the current directory.
      * maxDepth = 2: Monitors the current directory and its immediate subdirectories.
@@ -155,7 +157,7 @@ public class WatchMonitor extends Thread implements Closeable, Serializable {
     /**
      * Sets the maximum depth for recursive directory monitoring. When the value is 1 (or less than 1), it means only
      * the current directory is monitored. Examples:
-     * 
+     *
      * <pre>
      * maxDepth &lt;= 1: Only monitors the current directory.
      * maxDepth = 2: Monitors the current directory and its immediate subdirectories.

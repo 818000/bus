@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -42,38 +42,47 @@ public class WindowsOSThread extends AbstractOSThread {
      * The threadId value.
      */
     private final int threadId;
+
     /**
      * The name value.
      */
     private String name;
+
     /**
      * The state value.
      */
     private OSProcess.State state;
+
     /**
      * The startMemoryAddress value.
      */
     private long startMemoryAddress;
+
     /**
      * The contextSwitches value.
      */
     private long contextSwitches;
+
     /**
      * The kernelTime value.
      */
     private long kernelTime;
+
     /**
      * The userTime value.
      */
     private long userTime;
+
     /**
      * The startTime value.
      */
     private long startTime;
+
     /**
      * The upTime value.
      */
     private long upTime;
+
     /**
      * The priority value.
      */

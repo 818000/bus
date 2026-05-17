@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -27,6 +27,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.*;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.linux.LibC;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -40,9 +43,6 @@ import org.miaixz.bus.health.builtin.software.common.AbstractFileSystem;
 import org.miaixz.bus.health.linux.DevPath;
 import org.miaixz.bus.health.linux.ProcPath;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.linux.LibC;
 
 /**
  * The Linux File System contains {@link OSFileStore}s which are a storage pool, device, partition, volume, concrete
@@ -60,16 +60,19 @@ public class LinuxFileSystem extends AbstractFileSystem {
      */
     private static final List<PathMatcher> FS_PATH_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._LINUX_FS_PATH_EXCLUDES);
+
     /**
      * The FS_PATH_INCLUDES constant.
      */
     private static final List<PathMatcher> FS_PATH_INCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._LINUX_FS_PATH_INCLUDES);
+
     /**
      * The FS_VOLUME_EXCLUDES constant.
      */
     private static final List<PathMatcher> FS_VOLUME_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._LINUX_FS_VOLUME_EXCLUDES);
+
     /**
      * The FS_VOLUME_INCLUDES constant.
      */

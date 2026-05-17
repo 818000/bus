@@ -25,8 +25,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.miaixz.bus.gitlab.models.User;
-import org.miaixz.bus.logger.Logger;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.*;
@@ -35,12 +36,14 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.ext.ContextResolver;
+import org.miaixz.bus.gitlab.models.User;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Jackson JSON Configuration and utility class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 @Produces(MediaType.APPLICATION_JSON)
 public class JacksonJson implements ContextResolver<ObjectMapper> {
@@ -283,6 +286,9 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
 
     /**
      * JsonSerializer for serializing dates s yyyy-mm-dd in UTC timezone.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class DateOnlySerializer extends JsonSerializer<Date> {
 
@@ -292,10 +298,14 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
             String dateString = ISO8601.dateOnly(date);
             gen.writeString(dateString);
         }
+
     }
 
     /**
      * JsonSerializer for serializing ISO8601 formatted dates.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class JsonDateSerializer extends JsonSerializer<Date> {
 
@@ -305,10 +315,14 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
             String iso8601String = ISO8601.toString(date);
             gen.writeString(iso8601String);
         }
+
     }
 
     /**
      * JsonDeserializer for deserializing ISO8601 formatted dates.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class JsonDateDeserializer extends JsonDeserializer<Date> {
 
@@ -329,10 +343,14 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
                 throw new RuntimeException(e);
             }
         }
+
     }
 
     /**
      * Serializer for the odd User instances in the "approved_by" array in the merge_request JSON.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class UserListSerializer extends JsonSerializer<List<User>> {
 
@@ -348,10 +366,14 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
             }
             jgen.writeEndArray();
         }
+
     }
 
     /**
      * Deserializer for the odd User instances in the "approved_by" array in the merge_request JSON.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class UserListDeserializer extends JsonDeserializer<List<User>> {
 
@@ -373,6 +395,7 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
 
             return (users);
         }
+
     }
 
     /**
@@ -404,6 +427,9 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
 
     /**
      * This class is used to create a thread-safe singleton instance of JacksonJson customized to be used by
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class JacksonJsonSingletonHelper {
 
@@ -413,6 +439,7 @@ public class JacksonJson implements ContextResolver<ObjectMapper> {
             JACKSON_JSON.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
             JACKSON_JSON.objectMapper.setSerializationInclusion(Include.ALWAYS);
         }
+
     }
 
 }

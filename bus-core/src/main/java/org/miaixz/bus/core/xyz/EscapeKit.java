@@ -47,6 +47,7 @@ public class EscapeKit {
      * Characters that should not be escaped for JS compatibility.
      */
     private static final String NOT_ESCAPE_CHARS = "*@-_+./";
+
     /**
      * Predicate that identifies characters requiring JavaScript-style escaping.
      */
@@ -55,7 +56,7 @@ public class EscapeKit {
 
     /**
      * Escapes special characters in XML.
-     * 
+     *
      * <pre>
      * &amp; (ampersand) becomes &amp;amp;
      * &lt; (less than) becomes &amp;lt;

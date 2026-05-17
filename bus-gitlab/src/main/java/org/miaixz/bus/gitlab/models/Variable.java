@@ -19,19 +19,25 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.gitlab.support.JacksonJson;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The variable class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Variable implements Serializable {
 
     @Serial
@@ -129,6 +135,9 @@ public class Variable implements Serializable {
 
     /**
      * Enum for the various Commit build status values.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum Type {
 
@@ -150,6 +159,7 @@ public class Variable implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
 }

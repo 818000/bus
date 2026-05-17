@@ -33,12 +33,12 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.gitlab.GitLabApiException;
 import org.miaixz.bus.logger.Logger;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * This class uses HTML scraping to create and revoke GitLab personal access tokens, the user's Feed token, and for
@@ -48,11 +48,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * NOTE: This relies on HTML scraping and has been tested on GitLab-CE 11.0.0 to 11.10.1 for proper functionality. It
  * may not work on earlier or later versions.
  * </p>
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public final class AccessToken {
 
     /**
      * This enum defines the available scopes for a personal access token.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum Scope {
 
@@ -106,6 +112,7 @@ public final class AccessToken {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     protected static final String USER_AGENT = "GitLab4J Client";

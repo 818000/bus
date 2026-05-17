@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,6 +22,17 @@ package org.miaixz.bus.health.mac.hardware;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.mac.CoreFoundation;
+import com.sun.jna.platform.mac.CoreFoundation.*;
+import com.sun.jna.platform.mac.DiskArbitration;
+import com.sun.jna.platform.mac.DiskArbitration.DADiskRef;
+import com.sun.jna.platform.mac.DiskArbitration.DASessionRef;
+import com.sun.jna.platform.mac.IOKit;
+import com.sun.jna.platform.mac.IOKit.IOIterator;
+import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
+import com.sun.jna.platform.mac.IOKitUtil;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.builtin.hardware.HWDiskStore;
@@ -30,17 +41,6 @@ import org.miaixz.bus.health.builtin.hardware.common.AbstractHWDiskStore;
 import org.miaixz.bus.health.mac.CFKit;
 import org.miaixz.bus.health.mac.driver.disk.Fsstat;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.mac.CoreFoundation;
-import com.sun.jna.platform.mac.DiskArbitration;
-import com.sun.jna.platform.mac.DiskArbitration.DADiskRef;
-import com.sun.jna.platform.mac.DiskArbitration.DASessionRef;
-import com.sun.jna.platform.mac.IOKit;
-import com.sun.jna.platform.mac.IOKit.IOIterator;
-import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
-import com.sun.jna.platform.mac.IOKitUtil;
-import com.sun.jna.platform.mac.CoreFoundation.*;
 
 /**
  * Mac hard disk implementation.
@@ -55,38 +55,47 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
      * The CF constant.
      */
     private static final CoreFoundation CF = CoreFoundation.INSTANCE;
+
     /**
      * The DA constant.
      */
     private static final DiskArbitration DA = DiskArbitration.INSTANCE;
+
     /**
      * The currentQueueLength value.
      */
     private final long currentQueueLength = 0L;
+
     /**
      * The reads value.
      */
     private long reads = 0L;
+
     /**
      * The readBytes value.
      */
     private long readBytes = 0L;
+
     /**
      * The writes value.
      */
     private long writes = 0L;
+
     /**
      * The writeBytes value.
      */
     private long writeBytes = 0L;
+
     /**
      * The transferTime value.
      */
     private long transferTime = 0L;
+
     /**
      * The timeStamp value.
      */
     private long timeStamp = 0L;
+
     /**
      * The partitionList value.
      */
@@ -578,6 +587,9 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
 
     /**
      * Enum to hold CFStringRef keys for DiskArbitration and IOKit lookups.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private enum CFKey {
 
@@ -671,6 +683,7 @@ public final class MacHWDiskStore extends AbstractHWDiskStore {
         public String getKey() {
             return this.key;
         }
+
     }
 
 }

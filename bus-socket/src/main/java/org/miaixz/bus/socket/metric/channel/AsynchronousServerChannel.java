@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,9 +19,6 @@
 */
 package org.miaixz.bus.socket.metric.channel;
 
-import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.socket.metric.handler.FutureCompletionHandler;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.net.SocketOption;
@@ -30,6 +27,9 @@ import java.nio.channels.*;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.socket.metric.handler.FutureCompletionHandler;
 
 /**
  * An abstract base class for asynchronous server channels, simulating the JDK7 AIO processing style. This class
@@ -44,42 +44,51 @@ class AsynchronousServerChannel extends AsynchronousSocketChannel {
      * The actual underlying {@link SocketChannel}.
      */
     protected final SocketChannel channel;
+
     /**
      * The {@link AsynchronousChannelGroup.Worker} responsible for handling read events.
      */
     private final AsynchronousChannelGroup.Worker readWorker;
     private final boolean lowMemory;
     private final AsynchronousChannelGroup channelGroup;
+
     /**
      * The buffer used to receive data from the read channel. After decoding, the buffer is freed for the next batch of
      * data.
      */
     private ByteBuffer readBuffer;
+
     /**
      * The buffer used to hold data pending for write operations.
      */
     private ByteBuffer writeBuffer;
+
     /**
      * The completion handler for read events.
      */
     private CompletionHandler<Number, Object> readCompletionHandler;
+
     /**
      * The completion handler for write events.
      */
     private CompletionHandler<Number, Object> writeCompletionHandler;
+
     /**
      * The attachment object associated with the read completion handler.
      */
     private Object readAttachment;
+
     /**
      * The attachment object associated with the write completion handler.
      */
     private Object writeAttachment;
     private SelectionKey readSelectionKey;
+
     /**
      * A flag to indicate if a write operation was interrupted.
      */
     private boolean writeInterrupted;
+
     /**
      * Counter for read invoker recursion depth, to prevent excessive recursion.
      */

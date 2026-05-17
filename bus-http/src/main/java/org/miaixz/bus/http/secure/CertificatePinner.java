@@ -19,15 +19,16 @@
 */
 package org.miaixz.bus.http.secure;
 
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.*;
+
+import javax.net.ssl.SSLPeerUnverifiedException;
+
 import org.miaixz.bus.core.io.ByteString;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.http.UnoUrl;
-
-import javax.net.ssl.SSLPeerUnverifiedException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.*;
 
 /**
  * Constrains which certificates are trusted. Certificate pinning increases security, but also limits your server team's
@@ -48,6 +49,7 @@ public class CertificatePinner {
      * The set of configured pins.
      */
     private final Set<Pin> pins;
+
     /**
      * An optional cleaner for the certificate chain.
      */
@@ -55,7 +57,7 @@ public class CertificatePinner {
 
     /**
      * Constructs a new CertificatePinner.
-     * 
+     *
      * @param pins                    The set of pins.
      * @param certificateChainCleaner The certificate chain cleaner.
      */
@@ -79,7 +81,7 @@ public class CertificatePinner {
 
     /**
      * Computes the SHA-1 hash of a certificate's public key.
-     * 
+     *
      * @param x509Certificate The certificate.
      * @return The SHA-1 hash as a ByteString.
      */
@@ -89,7 +91,7 @@ public class CertificatePinner {
 
     /**
      * Computes the SHA-256 hash of a certificate's public key.
-     * 
+     *
      * @param x509Certificate The certificate.
      * @return The SHA-256 hash as a ByteString.
      */
@@ -205,22 +207,29 @@ public class CertificatePinner {
 
     /**
      * Represents a single certificate pin.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     static final class Pin {
 
         private static final String WILDCARD = "*.";
+
         /**
          * A hostname pattern like {@code example.com} or {@code *.example.com}.
          */
         final String pattern;
+
         /**
          * The canonical hostname, extracted from the pattern.
          */
         final String canonicalHostname;
+
         /**
          * The hash algorithm, either {@code sha1/} or {@code sha256/}.
          */
         final String hashAlgorithm;
+
         /**
          * The base64-encoded hash of the certificate's public key.
          */
@@ -274,10 +283,14 @@ public class CertificatePinner {
         public String toString() {
             return hashAlgorithm + hash.base64();
         }
+
     }
 
     /**
      * A builder for creating a {@link CertificatePinner}.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static final class Builder {
 
@@ -310,6 +323,7 @@ public class CertificatePinner {
         public CertificatePinner build() {
             return new CertificatePinner(new LinkedHashSet<>(pins), null);
         }
+
     }
 
 }

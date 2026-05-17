@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.web.server.ServerWebExchange;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.Args;
@@ -38,8 +41,6 @@ import org.miaixz.bus.vortex.strategy.request.RestRequestStrategy;
 import org.miaixz.bus.vortex.strategy.vetting.CstVettingStrategy;
 import org.miaixz.bus.vortex.strategy.vetting.McpVettingStrategy;
 import org.miaixz.bus.vortex.strategy.vetting.RestVettingStrategy;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.web.server.ServerWebExchange;
 
 /**
  * A factory that provides the correct, ordered chain of {@link Strategy} instances for a given request.
@@ -287,6 +288,8 @@ public class StrategyFactory {
      * @param route          route key used in logs and the chain map
      * @param pathMatcher    request path matcher
      * @param strategyFilter strategy filter for the route chain
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private record ChainSpec(String route, Predicate<String> pathMatcher, Predicate<Strategy> strategyFilter) {
 

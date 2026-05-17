@@ -19,13 +19,6 @@
 */
 package org.miaixz.bus.http.accord;
 
-import org.miaixz.bus.core.xyz.IoKit;
-import org.miaixz.bus.http.Address;
-import org.miaixz.bus.http.Builder;
-import org.miaixz.bus.http.Route;
-import org.miaixz.bus.http.accord.platform.Platform;
-import org.miaixz.bus.logger.Logger;
-
 import java.io.IOException;
 import java.lang.ref.Reference;
 import java.net.Proxy;
@@ -34,6 +27,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.miaixz.bus.core.xyz.IoKit;
+import org.miaixz.bus.http.Address;
+import org.miaixz.bus.http.Builder;
+import org.miaixz.bus.http.Route;
+import org.miaixz.bus.http.accord.platform.Platform;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Manages reuse of HTTP and HTTP/2 connections for reduced network latency. An instance of this class maintains
@@ -54,19 +54,23 @@ public final class RealConnectionPool {
      * The maximum number of idle connections for each address.
      */
     private final int maxIdleConnections;
+
     /**
      * The duration in nanoseconds to keep idle connections alive.
      */
     private final long keepAliveDurationNs;
+
     /**
      * A deque of connections in this pool, ordered by most recently used first.
      */
     private final Deque<RealConnection> connections = new ArrayDeque<>();
+
     /**
      * Database of routes that have failed TCP connection attempts. This is used to blacklist routes that are unlikely
      * to be reachable.
      */
     final RouteDatabase routeDatabase = new RouteDatabase();
+
     /**
      * True if a background cleanup thread is running. Guarded by this.
      */

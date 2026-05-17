@@ -19,16 +19,22 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
+/**
+ * The runner detail class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class RunnerDetail extends Runner {
 
     @Serial
@@ -52,7 +58,8 @@ public class RunnerDetail extends Runner {
      * based on reference protection.
      * </p>
      *
-     * @since 17
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum RunnerAccessLevel {
 
@@ -92,6 +99,7 @@ public class RunnerDetail extends Runner {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     public String getArchitecture() {

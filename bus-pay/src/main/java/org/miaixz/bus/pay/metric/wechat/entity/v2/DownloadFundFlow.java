@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Download Fund Flow model.
@@ -44,26 +44,32 @@ public class DownloadFundFlow extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */
     private String sign_type;
+
     /**
      * Bill date.
      */
     private String bill_date;
+
     /**
      * Account type.
      */
     private String account_type;
+
     /**
      * Tar type.
      */

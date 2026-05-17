@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -38,10 +38,12 @@ public class LinuxOSFileStore extends AbstractOSFileStore {
      * The logicalVolume value.
      */
     private String logicalVolume;
+
     /**
      * The description value.
      */
     private String description;
+
     /**
      * The fsType value.
      */
@@ -51,18 +53,22 @@ public class LinuxOSFileStore extends AbstractOSFileStore {
      * The freeSpace value.
      */
     private long freeSpace;
+
     /**
      * The usableSpace value.
      */
     private long usableSpace;
+
     /**
      * The totalSpace value.
      */
     private long totalSpace;
+
     /**
      * The freeInodes value.
      */
     private long freeInodes;
+
     /**
      * The totalInodes value.
      */

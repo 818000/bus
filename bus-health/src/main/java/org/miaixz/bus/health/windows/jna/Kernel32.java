@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -37,6 +37,9 @@ public interface Kernel32 extends com.sun.jna.platform.win32.Kernel32 {
 
     /**
      * The ProcessorFeature enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum ProcessorFeature {
 
@@ -78,6 +81,7 @@ public interface Kernel32 extends com.sun.jna.platform.win32.Kernel32 {
         public int value() {
             return value;
         }
+
     }
 
 }

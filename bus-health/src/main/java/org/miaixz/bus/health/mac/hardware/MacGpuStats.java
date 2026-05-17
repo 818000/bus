@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -23,13 +23,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.builtin.hardware.GpuStats;
-import org.miaixz.bus.health.builtin.hardware.GpuTicks;
-import org.miaixz.bus.health.mac.SmcKit;
-import org.miaixz.bus.health.mac.driver.IOReportClient;
-import org.miaixz.bus.logger.Logger;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation;
 import com.sun.jna.platform.mac.CoreFoundation.CFMutableDictionaryRef;
@@ -39,6 +32,13 @@ import com.sun.jna.platform.mac.IOKit.IOConnect;
 import com.sun.jna.platform.mac.IOKit.IOIterator;
 import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKitUtil;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.builtin.hardware.GpuStats;
+import org.miaixz.bus.health.builtin.hardware.GpuTicks;
+import org.miaixz.bus.health.mac.SmcKit;
+import org.miaixz.bus.health.mac.driver.IOReportClient;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * macOS {@link GpuStats} session.
@@ -69,26 +69,32 @@ final class MacGpuStats implements GpuStats {
      * The PERF_STATS_KEY constant.
      */
     private static final String PERF_STATS_KEY = "PerformanceStatistics";
+
     /**
      * The GPU_CORE_UTIL_KEY constant.
      */
     private static final String GPU_CORE_UTIL_KEY = "GPU Core Utilization";
+
     /**
      * The DEVICE_UTIL_KEY constant.
      */
     private static final String DEVICE_UTIL_KEY = "Device Utilization %";
+
     /**
      * The VRAM_USED_KEY constant.
      */
     private static final String VRAM_USED_KEY = "vramUsedBytes";
+
     /**
      * The VRAM_USED_KEY_AS constant.
      */
     private static final String VRAM_USED_KEY_AS = "In use system memory";
+
     /**
      * The GPU_UTIL_DIVISOR constant.
      */
     private static final double GPU_UTIL_DIVISOR = 0xFFFFFFFFL;
+
     /**
      * The TRADEMARK_PATTERN constant.
      */
@@ -98,6 +104,7 @@ final class MacGpuStats implements GpuStats {
      * The isAppleSilicon value.
      */
     private final boolean isAppleSilicon;
+
     /**
      * The cardName value.
      */
@@ -416,4 +423,5 @@ final class MacGpuStats implements GpuStats {
         Matcher m = Pattern.compile("\\b" + Pattern.quote(normName) + "\\b").matcher(normModel);
         return m.find();
     }
+
 }

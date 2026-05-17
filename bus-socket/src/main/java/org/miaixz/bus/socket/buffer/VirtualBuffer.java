@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -39,16 +39,19 @@ public final class VirtualBuffer {
      * The {@link BufferPage} to which this virtual buffer belongs.
      */
     private final BufferPage bufferPage;
+
     /**
      * A semaphore to ensure that the buffer is cleaned (released) only once.
      */
     private final Semaphore clean = new Semaphore(1);
+
     /**
      * The virtual {@link ByteBuffer}, which is a slice of the parent buffer.
      *
      * @see ByteBuffer#slice()
      */
     private ByteBuffer buffer;
+
     /**
      * The starting position of this virtual buffer within the parent buffer.
      */

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -36,26 +36,32 @@ public class PhysicalMemory {
      * The bankLabel value.
      */
     private final String bankLabel;
+
     /**
      * The capacity value.
      */
     private final long capacity;
+
     /**
      * The clockSpeed value.
      */
     private final long clockSpeed;
+
     /**
      * The manufacturer value.
      */
     private final String manufacturer;
+
     /**
      * The memoryType value.
      */
     private final String memoryType;
+
     /**
      * The partNumber value.
      */
     private final String partNumber;
+
     /**
      * The serialNumber value.
      */

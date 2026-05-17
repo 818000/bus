@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,15 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_netinterface_t;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.Memoizer;
 import org.miaixz.bus.health.builtin.hardware.NetworkIF;
 import org.miaixz.bus.health.builtin.hardware.common.AbstractNetworkIF;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatNetInterface;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_netinterface_t;
 
 /**
  * AIXNetworks class.
@@ -47,42 +47,52 @@ public final class AixNetworkIF extends AbstractNetworkIF {
      * The netstats value.
      */
     private final Supplier<perfstat_netinterface_t[]> netstats;
+
     /**
      * The bytesRecv value.
      */
     private long bytesRecv;
+
     /**
      * The bytesSent value.
      */
     private long bytesSent;
+
     /**
      * The packetsRecv value.
      */
     private long packetsRecv;
+
     /**
      * The packetsSent value.
      */
     private long packetsSent;
+
     /**
      * The inErrors value.
      */
     private long inErrors;
+
     /**
      * The outErrors value.
      */
     private long outErrors;
+
     /**
      * The inDrops value.
      */
     private long inDrops;
+
     /**
      * The collisions value.
      */
     private long collisions;
+
     /**
      * The speed value.
      */
     private long speed;
+
     /**
      * The timeStamp value.
      */

@@ -126,13 +126,13 @@ public class Arrangement implements Serializable {
      * </ul>
      * <p>
      * <b>Count formula:</b>
-     * 
+     *
      * <pre>
      * A(n, m) = n! / (n - m)!
      * </pre>
      * <p>
      * <b>Example:</b>
-     * 
+     *
      * <pre>
      * datas = ["1", "2", "3"]
      * m = 2
@@ -179,7 +179,7 @@ public class Arrangement implements Serializable {
      * </ul>
      * <p>
      * <b>Example (datas = ["1", "2", "3"]):</b>
-     * 
+     *
      * <pre>
      * m=1: ["1"], ["2"], ["3"]                             → 3
      * m=2: ["1", "2"], ["1", "3"], ["2", "1"], ...         → 6
@@ -239,6 +239,9 @@ public class Arrangement implements Serializable {
      * Provides a non-recursive way to traverse permutations, which is memory efficient compared to generating all
      * results at once. This simulates the Depth-First Search (DFS) stack behavior using arrays.
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class ArrangementIterator implements Iterator<String[]> {
 
@@ -445,6 +448,7 @@ public class Arrangement implements Serializable {
             nextItem = null;
             nextPrepared = true;
         }
+
     }
 
 }

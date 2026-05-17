@@ -19,8 +19,10 @@
 */
 package org.miaixz.bus.vortex;
 
-import org.miaixz.bus.vortex.handler.VortexHandler;
 import org.springframework.web.server.ServerWebExchange;
+
+import org.miaixz.bus.vortex.handler.VortexHandler;
+
 import reactor.core.publisher.Mono;
 
 /**
@@ -30,8 +32,8 @@ import reactor.core.publisher.Mono;
  * after the request is routed to its final destination by a {@link Router}. This provides an AOP-like mechanism for
  * tasks such as logging, metrics, or final response modification.
  *
- * @author Kimi Liu
  * @see VortexHandler
+ * @author Kimi Liu
  * @since Java 21+
  */
 public interface Handler {

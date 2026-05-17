@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,6 +22,12 @@ package org.miaixz.bus.health.windows.software;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinBase;
+import com.sun.jna.platform.win32.WinNT;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -34,12 +40,6 @@ import org.miaixz.bus.health.windows.driver.perfmon.ProcessInformation;
 import org.miaixz.bus.health.windows.driver.perfmon.ProcessInformation.HandleCountProperty;
 import org.miaixz.bus.health.windows.driver.wmi.Win32LogicalDisk;
 import org.miaixz.bus.health.windows.driver.wmi.Win32LogicalDisk.LogicalDiskProperty;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.WinBase;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * The Windows File System contains {@link OSFileStore}s which are a storage pool, device, partition, volume, concrete
@@ -56,82 +56,102 @@ public class WindowsFileSystem extends AbstractFileSystem {
      * The MAX_WINDOWS_HANDLES constant.
      */
     static final long MAX_WINDOWS_HANDLES;
+
     /**
      * The BUFSIZE constant.
      */
     private static final int BUFSIZE = 255;
+
     /**
      * The SEM_FAILCRITICALERRORS constant.
      */
     private static final int SEM_FAILCRITICALERRORS = 0x0001;
+
     /**
      * The FILE_CASE_SENSITIVE_SEARCH constant.
      */
     private static final int FILE_CASE_SENSITIVE_SEARCH = 0x00000001;
+
     /**
      * The FILE_CASE_PRESERVED_NAMES constant.
      */
     private static final int FILE_CASE_PRESERVED_NAMES = 0x00000002;
+
     /**
      * The FILE_FILE_COMPRESSION constant.
      */
     private static final int FILE_FILE_COMPRESSION = 0x00000010;
+
     /**
      * The FILE_DAX_VOLUME constant.
      */
     private static final int FILE_DAX_VOLUME = 0x20000000;
+
     /**
      * The FILE_NAMED_STREAMS constant.
      */
     private static final int FILE_NAMED_STREAMS = 0x00040000;
+
     /**
      * The FILE_PERSISTENT_ACLS constant.
      */
     private static final int FILE_PERSISTENT_ACLS = 0x00000008;
+
     /**
      * The FILE_READ_ONLY_VOLUME constant.
      */
     private static final int FILE_READ_ONLY_VOLUME = 0x00080000;
+
     /**
      * The FILE_SEQUENTIAL_WRITE_ONCE constant.
      */
     private static final int FILE_SEQUENTIAL_WRITE_ONCE = 0x00100000;
+
     /**
      * The FILE_SUPPORTS_ENCRYPTION constant.
      */
     private static final int FILE_SUPPORTS_ENCRYPTION = 0x00020000;
+
     /**
      * The FILE_SUPPORTS_OBJECT_IDS constant.
      */
     private static final int FILE_SUPPORTS_OBJECT_IDS = 0x00010000;
+
     /**
      * The FILE_SUPPORTS_REPARSE_POINTS constant.
      */
     private static final int FILE_SUPPORTS_REPARSE_POINTS = 0x00000080;
+
     /**
      * The FILE_SUPPORTS_SPARSE_FILES constant.
      */
     private static final int FILE_SUPPORTS_SPARSE_FILES = 0x00000040;
+
     /**
      * The FILE_SUPPORTS_TRANSACTIONS constant.
      */
     private static final int FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
+
     /**
      * The FILE_SUPPORTS_USN_JOURNAL constant.
      */
     private static final int FILE_SUPPORTS_USN_JOURNAL = 0x02000000;
+
     /**
      * The FILE_UNICODE_ON_DISK constant.
      */
     private static final int FILE_UNICODE_ON_DISK = 0x00000004;
+
     /**
      * The FILE_VOLUME_IS_COMPRESSED constant.
      */
     private static final int FILE_VOLUME_IS_COMPRESSED = 0x00008000;
+
     /**
      * The FILE_VOLUME_QUOTAS constant.
      */
     private static final int FILE_VOLUME_QUOTAS = 0x00000020;
+
     /**
      * The OPTIONS_MAP constant.
      */

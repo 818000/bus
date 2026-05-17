@@ -19,10 +19,10 @@
 */
 package org.miaixz.bus.proxy.invoker;
 
-import org.miaixz.bus.proxy.Aspect;
-
 import java.io.Serial;
 import java.io.Serializable;
+
+import org.miaixz.bus.proxy.Aspect;
 
 /**
  * A simple base class for interceptors, holding a reference to the target object and the aspect to be applied.
@@ -35,9 +35,14 @@ public class Interceptor implements Serializable {
     @Serial
     private static final long serialVersionUID = 2852259600626L;
 
-    /** The original object being proxied. */
+    /**
+     * The original object being proxied.
+     */
     protected final Object target;
-    /** The aspect containing the advice logic. */
+
+    /**
+     * The aspect containing the advice logic.
+     */
     protected final Aspect aspect;
 
     /**

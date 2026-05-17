@@ -24,14 +24,14 @@ import java.io.Serializable;
 
 import javax.sql.DataSource;
 
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.shade.screw.engine.EngineConfig;
-import org.miaixz.bus.shade.screw.process.ProcessConfig;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.shade.screw.engine.EngineConfig;
+import org.miaixz.bus.shade.screw.process.ProcessConfig;
 
 /**
  * Main configuration class for the documentation generation process.
@@ -52,31 +52,38 @@ public class Config implements Serializable {
      * The name of the organization.
      */
     private String organization;
+
     /**
      * The URL of the organization.
      */
     private String organizationUrl;
+
     /**
      * The title of the generated document.
      */
     private String title;
+
     /**
      * The version number of the document.
      */
     private String version;
+
     /**
      * A description for the document.
      */
     private String description;
+
     /**
      * The data source for connecting to the database. Using the {@link DataSource} interface allows for flexibility
      * with any data source implementation.
      */
     private DataSource dataSource;
+
     /**
      * Configuration for data processing.
      */
     private ProcessConfig produceConfig;
+
     /**
      * Configuration for the documentation generation engine.
      */

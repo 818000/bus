@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.shade.screw.dialect.cachedb;
 
-import org.miaixz.bus.shade.screw.mapping.MappingField;
-import org.miaixz.bus.shade.screw.metadata.PrimaryKey;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.miaixz.bus.shade.screw.mapping.MappingField;
+import org.miaixz.bus.shade.screw.metadata.PrimaryKey;
 
 /**
  * Represents primary key information for a CacheDB table.
@@ -40,26 +40,31 @@ public class CacheDbPrimaryKey implements PrimaryKey {
      */
     @MappingField(value = "TABLE_CATALOG")
     private String tableCat;
+
     /**
      * The name of the table.
      */
     @MappingField(value = "TABLE_NAME")
     private String tableName;
+
     /**
      * The schema of the table.
      */
     @MappingField(value = "TABLE_SCHEM")
     private String tableSchem;
+
     /**
      * The name of the column in the primary key.
      */
     @MappingField(value = "COLUMN_NAME")
     private String columnName;
+
     /**
      * The sequence number of the column within the primary key (for composite keys).
      */
     @MappingField(value = "KEY_SEQ")
     private String keySeq;
+
     /**
      * The name of the primary key constraint.
      */

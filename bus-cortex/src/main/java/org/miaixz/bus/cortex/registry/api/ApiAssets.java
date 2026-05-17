@@ -20,17 +20,18 @@
 package org.miaixz.bus.cortex.registry.api;
 
 import jakarta.persistence.Transient;
-import lombok.experimental.SuperBuilder;
-import org.miaixz.bus.cortex.Builder;
-import org.miaixz.bus.cortex.Assets;
-import org.miaixz.bus.cortex.Keying;
-import org.miaixz.bus.cortex.Type;
-import org.miaixz.bus.cortex.builtin.RegistryGenerator;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.extra.json.JsonKit;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.cortex.Assets;
+import org.miaixz.bus.cortex.Builder;
+import org.miaixz.bus.cortex.Keying;
+import org.miaixz.bus.cortex.Type;
+import org.miaixz.bus.cortex.builtin.RegistryGenerator;
+import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -206,6 +207,9 @@ public class ApiAssets extends Assets {
 
     /**
      * API-specific metadata payload stored directly in the raw asset metadata JSON payload.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -215,10 +219,12 @@ public class ApiAssets extends Assets {
          * Heartbeat interval in milliseconds expected for runtime instances of this service.
          */
         private Long heartbeatIntervalMs;
+
         /**
          * Lease timeout in seconds for runtime instances of this service.
          */
         private Integer leaseSeconds;
+
         /**
          * Stable public route alias used by admin and bridge paths, for example {@code dp.license.get:1.0:1}.
          */

@@ -21,12 +21,15 @@ package org.miaixz.bus.cortex.setting.item;
 
 import java.util.List;
 import java.util.Map;
-import org.miaixz.bus.cortex.Setting;
-import org.miaixz.bus.cortex.Type;
+
+import jakarta.persistence.Transient;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import jakarta.persistence.Transient;
+
+import org.miaixz.bus.cortex.Setting;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Full current-state setting item model.
@@ -48,34 +51,42 @@ public class Item extends Setting {
      * Setting data identifier within the group.
      */
     private String data_id;
+
     /**
      * Setting group name within the namespace.
      */
     private String group;
+
     /**
      * Source type used to resolve the effective value.
      */
     private String source;
+
     /**
      * Source-specific descriptor such as an environment variable name or external resource address.
      */
     private String spec;
+
     /**
      * Optional gray-release rule.
      */
     private String rule;
+
     /**
      * Logical content format.
      */
     private String format;
+
     /**
      * Current logical setting value.
      */
     private String content;
+
     /**
      * Delivery exposure policy.
      */
     private String exposure;
+
     /**
      * Monotonic revision number for the current {@code setting.item} state.
      * <p>
@@ -84,10 +95,12 @@ public class Item extends Setting {
      * </p>
      */
     private String version;
+
     /**
      * Content checksum used for idempotent publish and diff calculation.
      */
     private String checksum;
+
     /**
      * Encryption flag of the stored content, where {@code 1} means encrypted and {@code 0} means plain text.
      */
@@ -98,16 +111,19 @@ public class Item extends Setting {
      */
     @Transient
     private Map<String, String> labels;
+
     /**
      * Aggregated application bindings loaded from {@code setting_item_binding}.
      */
     @Transient
     private List<String> app_ids;
+
     /**
      * Aggregated profile bindings loaded from {@code setting_item_binding}.
      */
     @Transient
     private List<String> profile_ids;
+
     /**
      * Structured extension attributes for adapters that need richer integration parameters.
      */

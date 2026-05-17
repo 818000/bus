@@ -19,6 +19,21 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.*;
+import java.security.GeneralSecurityException;
+import java.text.DecimalFormat;
+import java.util.EnumSet;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.IoKit;
@@ -45,20 +60,6 @@ import org.miaixz.bus.image.metric.pdu.ExtendedNegotiation;
 import org.miaixz.bus.image.metric.pdu.PresentationContext;
 import org.miaixz.bus.logger.Logger;
 
-import javax.xml.XMLConstants;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-import java.security.GeneralSecurityException;
-import java.text.DecimalFormat;
-import java.util.EnumSet;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * The {@code FindSCU} class implements a Service Class User (SCU) for the DICOM C-FIND service. It supports various
  * query/retrieve information models, including Patient Root, Study Root, Modality Worklist, Unified Procedure Step, and
@@ -73,94 +74,117 @@ public class FindSCU implements AutoCloseable {
      * The DICOM device associated with this SCU.
      */
     private final Device device = new Device("findscu");
+
     /**
      * The Application Entity used by this SCU.
      */
     private final ApplicationEntity ae = new ApplicationEntity("FINDSCU");
+
     /**
      * The local network connection configuration.
      */
     private final Connection conn = new Connection();
+
     /**
      * The remote network connection configuration.
      */
     private final Connection remote = new Connection();
+
     /**
      * The A-ASSOCIATE-RQ message to be sent.
      */
     private final AAssociateRQ rq = new AAssociateRQ();
+
     /**
      * The query keys (matching attributes) for the C-FIND request.
      */
     private final Attributes keys = new Attributes();
+
     /**
      * A counter for the total number of matches received.
      */
     private final AtomicInteger totNumMatches = new AtomicInteger();
+
     /**
      * The overall status of the C-FIND operation.
      */
     private final Status state;
+
     /**
      * A factory for creating SAX transformers.
      */
     private SAXTransformerFactory saxtf;
+
     /**
      * The priority of the C-FIND request.
      */
     private int priority;
+
     /**
      * The number of matches after which to cancel the request.
      */
     private int cancelAfter;
+
     /**
      * The information model to be used for the query.
      */
     private InformationModel model;
+
     /**
      * The directory to store output files.
      */
     private File outDir;
+
     /**
      * A formatter for the output filenames.
      */
     private DecimalFormat outFileFormat;
+
     /**
      * A filter for attributes to be included from an input file.
      */
     private int[] inFilter;
+
     /**
      * A flag to concatenate all responses into a single output file.
      */
     private boolean catOut = false;
+
     /**
      * A flag to indicate if the output should be in XML format.
      */
     private boolean xml = false;
+
     /**
      * A flag to indent the XML output.
      */
     private boolean xmlIndent = false;
+
     /**
      * A flag to include DICOM keywords in the XML output.
      */
     private boolean xmlIncludeKeyword = true;
+
     /**
      * A flag to include the namespace declaration in the XML output.
      */
     private boolean xmlIncludeNamespaceDeclaration = false;
+
     /**
      * An XSLT file to be applied to the XML output.
      */
     private File xsltFile;
+
     /**
      * The compiled XSLT templates.
      */
     private Templates xsltTpls;
+
     /**
      * The output stream for writing results.
      */
     private OutputStream out;
+
     /**
      * The active DICOM association.
      */
@@ -606,6 +630,9 @@ public class FindSCU implements AutoCloseable {
 
     /**
      * Enumeration of the supported DICOM Information Models for C-FIND.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum InformationModel {
 
@@ -650,6 +677,7 @@ public class FindSCU implements AutoCloseable {
          * The SOP Class UID for the information model.
          */
         final String cuid;
+
         /**
          * The default query/retrieve level for the model.
          */
@@ -686,10 +714,14 @@ public class FindSCU implements AutoCloseable {
         public String getCuid() {
             return cuid;
         }
+
     }
 
     /**
      * A visitor to merge attributes in nested sequences.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class MergeNested implements Visitor {
 
@@ -735,6 +767,7 @@ public class FindSCU implements AutoCloseable {
             }
             return true;
         }
+
     }
 
 }

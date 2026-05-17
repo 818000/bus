@@ -20,13 +20,14 @@
 package org.miaixz.bus.cortex.version;
 
 import jakarta.persistence.Transient;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.cortex.Assets;
 import org.miaixz.bus.cortex.Type;
 import org.miaixz.bus.extra.json.JsonKit;
-
-import lombok.Getter;
-import lombok.Setter;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -235,6 +236,9 @@ public class VersionAssets extends Assets {
 
     /**
      * Version-specific metadata payload stored directly in the raw asset metadata JSON payload.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -244,26 +248,32 @@ public class VersionAssets extends Assets {
          * Semantic version string.
          */
         private String semver;
+
         /**
          * Human-readable changelog for this version.
          */
         private String changelog;
+
         /**
          * Artifact coordinates or download URL for this version.
          */
         private String artifact;
+
         /**
          * Optional compatible API or schema range.
          */
         private String compatibleRange;
+
         /**
          * Release timestamp in epoch milliseconds.
          */
         private Long releasedAt;
+
         /**
          * Support end timestamp in epoch milliseconds.
          */
         private Long supportUntil;
+
         /**
          * Current release state of this version.
          */

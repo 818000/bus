@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,8 +19,9 @@
 */
 package org.miaixz.bus.socket.secure;
 
-import javax.net.ssl.SSLEngine;
 import java.nio.channels.AsynchronousSocketChannel;
+
+import javax.net.ssl.SSLEngine;
 
 import org.miaixz.bus.socket.buffer.VirtualBuffer;
 
@@ -37,18 +38,22 @@ public class HandshakeModel {
      * The underlying {@link AsynchronousSocketChannel} for communication.
      */
     private AsynchronousSocketChannel socketChannel;
+
     /**
      * The {@link SSLEngine} used for SSL/TLS operations.
      */
     private SSLEngine sslEngine;
+
     /**
      * Application data buffer for writing.
      */
     private VirtualBuffer appWriteBuffer;
+
     /**
      * Network data buffer for writing.
      */
     private VirtualBuffer netWriteBuffer;
+
     /**
      * Application data buffer for reading.
      */
@@ -58,14 +63,17 @@ public class HandshakeModel {
      * Network data buffer for reading.
      */
     private VirtualBuffer netReadBuffer;
+
     /**
      * Callback to be invoked upon handshake completion.
      */
     private HandshakeCallback handshakeCallback;
+
     /**
      * Any exception that occurred during the handshake.
      */
     private Throwable exception;
+
     /**
      * Flag indicating if the handshake is finished.
      */

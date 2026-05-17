@@ -19,18 +19,19 @@
 */
 package org.miaixz.bus.image.plugin;
 
-import org.miaixz.bus.image.Tag;
-import org.miaixz.bus.image.UID;
-import org.miaixz.bus.image.galaxy.data.Attributes;
-import org.miaixz.bus.image.galaxy.io.*;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.miaixz.bus.image.Tag;
+import org.miaixz.bus.image.UID;
+import org.miaixz.bus.image.galaxy.data.Attributes;
+import org.miaixz.bus.image.galaxy.io.*;
 
 /**
  * The {@code Xml2Dcm} class provides functionality to convert a DICOM XML representation (according to DICOM Part 19)
@@ -46,54 +47,67 @@ public class Xml2Dcm {
      * Descriptor for handling bulk data.
      */
     private final BasicBulkDataDescriptor bulkDataDescriptor = new BasicBulkDataDescriptor();
+
     /**
      * Whether to allow non-compliant XML structure.
      */
     private boolean lenient = false;
+
     /**
      * How to handle bulk data (e.g., as URI).
      */
     private ImageInputStream.IncludeBulkData includeBulkData = ImageInputStream.IncludeBulkData.URI;
+
     /**
      * Whether to concatenate bulk data files.
      */
     private boolean catBlkFiles = false;
+
     /**
      * Prefix for bulk data file names.
      */
     private String blkFilePrefix = "blk";
+
     /**
      * Suffix for bulk data file names.
      */
     private String blkFileSuffix;
+
     /**
      * Directory for storing bulk data files.
      */
     private File blkDirectory;
+
     /**
      * The Transfer Syntax UID for the output DICOM file.
      */
     private String tsuid;
+
     /**
      * Whether to include File Meta Information if it's not present.
      */
     private boolean withfmi;
+
     /**
      * Whether to exclude File Meta Information from the output.
      */
     private boolean nofmi;
+
     /**
      * Encoding options for the output DICOM file.
      */
     private ImageEncodingOptions encOpts = ImageEncodingOptions.DEFAULT;
+
     /**
      * A list of generated bulk data files.
      */
     private List<File> bulkDataFiles;
+
     /**
      * The File Meta Information of the dataset.
      */
     private Attributes fmi;
+
     /**
      * The main DICOM dataset.
      */

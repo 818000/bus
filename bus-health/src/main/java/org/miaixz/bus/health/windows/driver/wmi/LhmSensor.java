@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -21,12 +21,12 @@ package org.miaixz.bus.health.windows.driver.wmi;
 
 import java.util.Objects;
 
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.windows.WmiKit;
 import org.miaixz.bus.health.windows.WmiQueryHandler;
-
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * Utility to query LibreHardwareMonitor WMI sensor data for GPU metrics.
@@ -58,16 +58,24 @@ public final class LhmSensor {
 
     /**
      * Sensor properties returned by LHM WMI queries.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum LhmSensorProperty {
         NAME, VALUE, PARENT;
+
     }
 
     /**
      * LHM Hardware properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum LhmHardwareProperty {
         IDENTIFIER, NAME;
+
     }
 
     /**

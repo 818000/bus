@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 import org.miaixz.bus.pay.magic.Voucher;
 
 /**
@@ -43,14 +44,17 @@ public class GetPublicKey extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */

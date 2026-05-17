@@ -25,13 +25,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.web.server.ServerWebExchange;
+
+import org.miaixz.bus.core.Order;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.magic.Limiter;
 import org.miaixz.bus.vortex.registry.LimiterRegistry;
-import org.miaixz.bus.core.Order;
-import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -47,9 +48,9 @@ import reactor.core.scheduler.Schedulers;
  * It is ordered to run late in the chain, after authentication and authorization, to ensure that system resources are
  * spent on validating legitimate, authenticated traffic.
  *
- * @author Kimi Liu
  * @see Limiter
  * @see LimiterRegistry
+ * @author Kimi Liu
  * @since Java 21+
  */
 @org.springframework.core.annotation.Order(Order.FOURTH)

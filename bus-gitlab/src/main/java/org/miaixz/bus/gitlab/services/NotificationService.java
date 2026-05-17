@@ -25,11 +25,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.miaixz.bus.gitlab.models.GitLabForm;
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+/**
+ * The notification service class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public abstract class NotificationService implements Serializable {
 
     @Serial
@@ -317,6 +323,12 @@ public abstract class NotificationService implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The branches to be notified enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum BranchesToBeNotified {
 
         ALL, DEFAULT, PROTECTED, DEFAULT_AND_PROTECTED;
@@ -325,6 +337,7 @@ public abstract class NotificationService implements Serializable {
         public String toString() {
             return (name().toLowerCase());
         }
+
     }
 
 }

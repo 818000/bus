@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -35,26 +35,32 @@ public abstract class AbstractOSFileStore implements OSFileStore {
      * The name value.
      */
     private String name;
+
     /**
      * The volume value.
      */
     private String volume;
+
     /**
      * The label value.
      */
     private String label;
+
     /**
      * The mount value.
      */
     private String mount;
+
     /**
      * The options value.
      */
     private String options;
+
     /**
      * The uuid value.
      */
     private String uuid;
+
     /**
      * The local value.
      */

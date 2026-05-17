@@ -19,6 +19,15 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.FileKit;
 import org.miaixz.bus.core.xyz.ObjectKit;
@@ -42,15 +51,6 @@ import org.miaixz.bus.image.metric.service.ImageServiceException;
 import org.miaixz.bus.image.metric.service.ImageServiceRegistry;
 import org.miaixz.bus.logger.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * The {@code StoreSCP} class implements a Service Class Provider (SCP) for the DICOM C-STORE service. It listens for
  * incoming DICOM associations, accepts C-STORE requests, and stores the received DICOM objects to a specified
@@ -65,50 +65,62 @@ public class StoreSCP {
      * The main device for this SCP.
      */
     public final Device device = new Device("storescp");
+
     /**
      * The Application Entity that accepts associations.
      */
     public final ApplicationEntity ae = new ApplicationEntity(Symbol.STAR);
+
     /**
      * The network connection configuration.
      */
     public final Connection conn = new Connection();
+
     /**
      * The base directory where received DICOM files are stored.
      */
     public final String storageDir;
+
     /**
      * A list of nodes that are authorized to send files.
      */
     public final List<Node> authorizedCallingNodes;
+
     /**
      * A progress handler to monitor the storage process.
      */
     public final ImageProgress progress;
+
     /**
      * A handler for post-processing of received files.
      */
     public Efforts efforts;
+
     /**
      * A format string for generating custom file paths.
      */
     public Format filePathFormat;
+
     /**
      * A regex pattern used with the file path format.
      */
     public Pattern regex;
+
     /**
      * The default status to be returned in C-STORE responses.
      */
     public volatile int status = Status.Success;
+
     /**
      * An array of delays (in ms) to simulate latency before receiving data.
      */
     private int[] receiveDelays;
+
     /**
      * An array of delays (in ms) to simulate processing time before sending a response.
      */
     private int[] responseDelays;
+
     /**
      * The core service implementation that handles C-STORE requests.
      */

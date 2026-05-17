@@ -19,15 +19,15 @@
 */
 package org.miaixz.bus.http.plugin.httpz;
 
-import org.miaixz.bus.core.lang.Charset;
-import org.miaixz.bus.http.Httpd;
-import org.miaixz.bus.http.bodys.MultipartBody;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.miaixz.bus.core.lang.Charset;
+import org.miaixz.bus.http.Httpd;
+import org.miaixz.bus.http.bodys.MultipartBody;
 
 /**
  * A builder for creating HTTP POST requests using a fluent interface. It supports setting URL, parameters, headers, a
@@ -42,10 +42,12 @@ public class PostBuilder extends RequestBuilder<PostBuilder> {
      * The raw request body string (e.g., for JSON or XML).
      */
     private String body;
+
     /**
      * A pre-built multipart body.
      */
     private MultipartBody multipartBody;
+
     /**
      * A list of files to be included in the multipart request.
      */

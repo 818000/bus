@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.cortex.health;
 
-import org.miaixz.bus.cortex.Prober;
-import org.miaixz.bus.cortex.Status;
-import org.miaixz.bus.cortex.Instance;
 import org.miaixz.bus.cortex.Builder;
 import org.miaixz.bus.cortex.Callout;
+import org.miaixz.bus.cortex.Instance;
+import org.miaixz.bus.cortex.Prober;
+import org.miaixz.bus.cortex.Status;
 
 /**
  * MCP JSON-RPC ping prober.
@@ -38,6 +38,7 @@ public class McpPingProber implements Prober {
      */
 
     private static final String PING_PAYLOAD = "{\"jsonrpc\":\"2.0\",\"method\":\"ping\",\"id\":1}";
+
     /**
      * Request timeout in milliseconds.
      */

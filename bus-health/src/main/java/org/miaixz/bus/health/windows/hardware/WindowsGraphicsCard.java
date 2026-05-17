@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -20,6 +20,9 @@
 package org.miaixz.bus.health.windows.hardware;
 
 import java.util.*;
+
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.Immutable;
@@ -40,9 +43,6 @@ import org.miaixz.bus.health.windows.driver.wmi.Win32VideoController;
 import org.miaixz.bus.health.windows.driver.wmi.Win32VideoController.VideoControllerProperty;
 import org.miaixz.bus.health.windows.jna.WindowsDxgi;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * Graphics Card obtained from WMI
@@ -68,30 +68,37 @@ public final class WindowsGraphicsCard extends AbstractGraphicsCard {
      * The ADAPTER_STRING constant.
      */
     public static final String ADAPTER_STRING = "HardwareInformation.AdapterString";
+
     /**
      * The DRIVER_DESC constant.
      */
     public static final String DRIVER_DESC = "DriverDesc";
+
     /**
      * The DRIVER_VERSION constant.
      */
     public static final String DRIVER_VERSION = "DriverVersion";
+
     /**
      * The VENDOR constant.
      */
     public static final String VENDOR = "ProviderName";
+
     /**
      * The QW_MEMORY_SIZE constant.
      */
     public static final String QW_MEMORY_SIZE = "HardwareInformation.qwMemorySize";
+
     /**
      * The MATCHING_DEVICE_ID constant.
      */
     public static final String MATCHING_DEVICE_ID = "MatchingDeviceId";
+
     /**
      * The LOCATION_INFORMATION constant.
      */
     public static final String LOCATION_INFORMATION = "LocationInformation";
+
     /**
      * The DISPLAY_DEVICES_REGISTRY_PATH constant.
      */

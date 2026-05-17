@@ -19,8 +19,8 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import java.io.Serializable;
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * This class is utilized by the <code>org.miaixz.bus.gitlab.TopicsApi#createTopic(TopicParams)</code> and
@@ -28,6 +28,9 @@ import java.io.Serial;
  * call to the GitLab API.
  *
  * Avatar Upload has its own Upload in <code>org.miaixz.bus.gitlab.TopicsApi#updateTopicAvatar(Integer,File)</code>
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class TopicParams implements Serializable {
 

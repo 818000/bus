@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.jdpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Represents the request parameters for JD Pay.
@@ -44,10 +44,12 @@ public class JdPayRequest extends Voucher {
      * The version number of the interface.
      */
     private String version;
+
     /**
      * The merchant number.
      */
     private String merchant;
+
     /**
      * The encrypted request data.
      */

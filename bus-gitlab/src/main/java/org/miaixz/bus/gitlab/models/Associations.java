@@ -20,12 +20,16 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
+/**
+ * The associations class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Associations implements Serializable {
 
     @Serial

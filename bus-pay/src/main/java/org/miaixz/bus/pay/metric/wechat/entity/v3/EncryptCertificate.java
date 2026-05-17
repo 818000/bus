@@ -19,14 +19,14 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v3;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Model for the encrypted certificate data provided in the V3 Get Platform Certificates API response.
@@ -48,14 +48,17 @@ public class EncryptCertificate implements Serializable {
      * The encryption algorithm used (e.g., AEAD_AES_256_GCM).
      */
     private String algorithm;
+
     /**
      * The nonce (number used once) for decryption.
      */
     private String nonce;
+
     /**
      * The associated data for decryption.
      */
     private String associated_data;
+
     /**
      * The base64-encoded ciphertext of the certificate content.
      */

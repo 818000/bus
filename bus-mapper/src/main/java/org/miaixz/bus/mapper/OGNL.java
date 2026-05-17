@@ -28,8 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -60,6 +64,7 @@ public class OGNL {
      * A string containing SQL syntax keywords for injection checks, delimited by '|'.
      */
     public static final String SQL_SYNTAX_KEYWORD = "and |exec |peformance_schema|information_schema|extractvalue|updatexml|geohash|gtid_subset|gtid_subtract|insert |select |delete |update |drop |count |chr |mid |master |truncate |char |declare |;|or |+|--";
+
     /**
      * An array of regular expression patterns for detecting sensitive SQL functions commonly used in injection attacks.
      */
@@ -74,6 +79,7 @@ public class OGNL {
             Pattern.compile(".*show\\s+databases.*", Pattern.CASE_INSENSITIVE),
             Pattern.compile(".*sleep\\(\\d*\\).*", Pattern.CASE_INSENSITIVE),
             Pattern.compile(".*sleep\\(.*\\).*", Pattern.CASE_INSENSITIVE) };
+
     /**
      * Template for logging SQL injection warning messages. Uses '{}' as placeholders for the suspicious value and the
      * detected keyword.
@@ -94,15 +100,18 @@ public class OGNL {
      */
     public static final Pattern SQL_COMMENT_PATTERN = Pattern
             .compile("'.*(or|union|--|#|/\\*|;)", Pattern.CASE_INSENSITIVE);
+
     /**
      * Cache for the serialized result of {@link Fn} lambda expressions, avoiding repeated and expensive reflection
      * operations.
      */
     private static final ConcurrentHashMap<Fn<?, ?>, ClassField> LAMBDA_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Class loading cache, avoiding repeated {@code Class.forName} calls.
      */
     private static final ConcurrentHashMap<String, Class<?>> CLASS_CACHE = new ConcurrentHashMap<>();
+
     /**
      * Cache for the {@code writeReplace} method used for lambda serialization, avoiding repeated method lookups.
      */
@@ -785,52 +794,28 @@ public class OGNL {
 
     /**
      * Cache statistics class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
+    @Getter
+    @RequiredArgsConstructor
     public static class CacheStats {
 
+        /**
+         * Number of cached lambda expressions.
+         */
         private final int lambdaCacheSize;
+
+        /**
+         * Number of cached class descriptors.
+         */
         private final int classCacheSize;
+
+        /**
+         * Number of cached method descriptors.
+         */
         private final int methodCacheSize;
-
-        /**
-         * Constructs a CacheStats instance.
-         *
-         * @param lambdaCacheSize The size of the lambda serialization cache.
-         * @param classCacheSize  The size of the class loading cache.
-         * @param methodCacheSize The size of the method lookup cache.
-         */
-        public CacheStats(int lambdaCacheSize, int classCacheSize, int methodCacheSize) {
-            this.lambdaCacheSize = lambdaCacheSize;
-            this.classCacheSize = classCacheSize;
-            this.methodCacheSize = methodCacheSize;
-        }
-
-        /**
-         * Gets the size of the lambda serialization cache.
-         *
-         * @return The lambda cache size.
-         */
-        public int getLambdaCacheSize() {
-            return lambdaCacheSize;
-        }
-
-        /**
-         * Gets the size of the class loading cache.
-         *
-         * @return The class cache size.
-         */
-        public int getClassCacheSize() {
-            return classCacheSize;
-        }
-
-        /**
-         * Gets the size of the method lookup cache.
-         *
-         * @return The method cache size.
-         */
-        public int getMethodCacheSize() {
-            return methodCacheSize;
-        }
 
         /**
          * Gets the total size of all caches.
@@ -855,6 +840,7 @@ public class OGNL {
                     methodCacheSize,
                     getTotalSize());
         }
+
     }
 
 }

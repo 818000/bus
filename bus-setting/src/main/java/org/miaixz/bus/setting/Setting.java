@@ -19,6 +19,15 @@
 */
 package org.miaixz.bus.setting;
 
+import java.io.File;
+import java.io.Serial;
+import java.net.URL;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+
 import org.miaixz.bus.core.center.function.SupplierX;
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.io.resource.Resource;
@@ -33,15 +42,6 @@ import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.setting.magic.AbstractSetting;
 import org.miaixz.bus.setting.magic.GroupedMap;
 import org.miaixz.bus.setting.metric.props.Props;
-
-import java.io.File;
-import java.io.Serial;
-import java.net.URL;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 /**
  * A utility class for handling {@code .setting} files, which are an enhanced version of Java's {@code .properties}
@@ -68,26 +68,32 @@ public class Setting extends AbstractSetting implements Map<String, String> {
      * The default character set (UTF-8).
      */
     public static final java.nio.charset.Charset DEFAULT_CHARSET = Charset.UTF_8;
+
     /**
      * The default file extension for settings files.
      */
     public static final String EXT_NAME = "setting";
+
     /**
      * The character set for this settings instance.
      */
     protected java.nio.charset.Charset charset;
+
     /**
      * Whether variable substitution is enabled.
      */
     protected boolean isUseVariable;
+
     /**
      * The resource representing the settings file.
      */
     protected Resource resource;
+
     /**
      * The underlying storage for key-value pairs, organized by group.
      */
     private GroupedMap groupedMap;
+
     /**
      * Whether to log a debug message when a requested key is not found.
      */
@@ -97,6 +103,7 @@ public class Setting extends AbstractSetting implements Map<String, String> {
      * The loader responsible for parsing the file.
      */
     private Loader loader;
+
     /**
      * The monitor for watching file changes to support auto-reloading.
      */

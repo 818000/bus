@@ -56,6 +56,7 @@ public class CompositeConverter implements Converter, Serializable {
      * Manages registered standard and custom converters.
      */
     private RegisterConverter registerConverter;
+
     /**
      * Handles conversion for special types like collections, maps, and arrays.
      */
@@ -82,7 +83,7 @@ public class CompositeConverter implements Converter, Serializable {
      * will be used for conversion.
      * <p>
      * <strong>Warning:</strong> Since this is a singleton, this registration is global.
-     * 
+     *
      *
      * @param converter The {@link MatcherConverter} to register.
      * @return This {@code CompositeConverter} instance.
@@ -96,7 +97,7 @@ public class CompositeConverter implements Converter, Serializable {
      * Registers a custom converter for a specific target type.
      * <p>
      * <strong>Warning:</strong> Since this is a singleton, this registration is global.
-     * 
+     *
      *
      * @param type      The target type for which this converter will be used.
      * @param converter The {@link Converter} to register.
@@ -210,6 +211,9 @@ public class CompositeConverter implements Converter, Serializable {
 
     /**
      * A static inner class that holds the singleton instance, ensuring lazy initialization and thread safety.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class SingletonHolder {
 
@@ -222,6 +226,7 @@ public class CompositeConverter implements Converter, Serializable {
             INSTANCE.registerConverter = new RegisterConverter(INSTANCE);
             INSTANCE.specialConverter = new SpecialConverter(INSTANCE);
         }
+
     }
 
 }

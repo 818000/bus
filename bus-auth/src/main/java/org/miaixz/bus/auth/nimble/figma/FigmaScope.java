@@ -21,11 +21,12 @@ package org.miaixz.bus.auth.nimble.figma;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 import org.miaixz.bus.auth.nimble.AuthorizeScope;
 
 /**
  * Figma authorization scopes.
- * 
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
@@ -65,10 +66,12 @@ public enum FigmaScope implements AuthorizeScope {
      * The scope string as defined by Figma.
      */
     private final String scope;
+
     /**
      * A description of what the scope grants access to.
      */
     private final String description;
+
     /**
      * Indicates if this scope is enabled by default.
      */

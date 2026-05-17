@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Enterprise payment to bank card model.
@@ -44,34 +44,42 @@ public class PayBank extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Partner trade number.
      */
     private String partner_trade_no;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Encrypted bank card number.
      */
     private String enc_bank_no;
+
     /**
      * Encrypted true name.
      */
     private String enc_true_name;
+
     /**
      * Bank code.
      */
     private String bank_code;
+
     /**
      * Amount.
      */
     private String amount;
+
     /**
      * Description.
      */

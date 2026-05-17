@@ -19,19 +19,19 @@
 */
 package org.miaixz.bus.tempus.pattern;
 
+import java.util.Calendar;
+
 import org.miaixz.bus.core.center.date.Month;
 import org.miaixz.bus.core.center.date.Week;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.CrontabException;
-
-import java.util.Calendar;
 
 /**
  * Enumeration of the parts of a cron expression. This enum defines the position and valid value range for each field in
  * a cron expression. The {@link #ordinal()} of each constant represents its position in the expression.
  * <p>
  * The order of the parts is as follows:
- * 
+ *
  * <pre>
  *         0       1    2        3         4       5         6
  *     [SECOND] MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK [YEAR]
@@ -81,10 +81,12 @@ public enum Part {
      * The corresponding {@link Calendar} field constant for this part.
      */
     private final int calendarField;
+
     /**
      * The minimum allowed value for this part (inclusive).
      */
     private final int min;
+
     /**
      * The maximum allowed value for this part (inclusive).
      */

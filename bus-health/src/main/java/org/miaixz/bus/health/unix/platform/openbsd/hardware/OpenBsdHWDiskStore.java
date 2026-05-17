@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -52,34 +52,42 @@ public final class OpenBsdHWDiskStore extends AbstractHWDiskStore {
      */
     private final Supplier<List<String>> iostat = Memoizer
             .memoize(OpenBsdHWDiskStore::querySystatIostat, Memoizer.defaultExpiration());
+
     /**
      * The currentQueueLength value.
      */
     private final long currentQueueLength = 0L;
+
     /**
      * The reads value.
      */
     private long reads = 0L;
+
     /**
      * The readBytes value.
      */
     private long readBytes = 0L;
+
     /**
      * The writes value.
      */
     private long writes = 0L;
+
     /**
      * The writeBytes value.
      */
     private long writeBytes = 0L;
+
     /**
      * The transferTime value.
      */
     private long transferTime = 0L;
+
     /**
      * The timeStamp value.
      */
     private long timeStamp = 0L;
+
     /**
      * The partitionList value.
      */

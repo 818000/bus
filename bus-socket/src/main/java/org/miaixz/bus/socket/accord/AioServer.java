@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,16 +19,6 @@
 */
 package org.miaixz.bus.socket.accord;
 
-import org.miaixz.bus.core.xyz.IoKit;
-import org.miaixz.bus.socket.Context;
-import org.miaixz.bus.socket.Handler;
-import org.miaixz.bus.socket.Message;
-import org.miaixz.bus.socket.Status;
-import org.miaixz.bus.socket.buffer.BufferPagePool;
-import org.miaixz.bus.socket.buffer.VirtualBuffer;
-import org.miaixz.bus.socket.metric.channel.AsynchronousChannelProvider;
-import org.miaixz.bus.logger.Logger;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketOption;
@@ -40,6 +30,16 @@ import java.nio.channels.CompletionHandler;
 import java.security.InvalidParameterException;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import org.miaixz.bus.core.xyz.IoKit;
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.socket.Context;
+import org.miaixz.bus.socket.Handler;
+import org.miaixz.bus.socket.Message;
+import org.miaixz.bus.socket.Status;
+import org.miaixz.bus.socket.buffer.BufferPagePool;
+import org.miaixz.bus.socket.buffer.VirtualBuffer;
+import org.miaixz.bus.socket.metric.channel.AsynchronousChannelProvider;
 
 /**
  * AIO Server Implementation.
@@ -53,27 +53,33 @@ public class AioServer {
      * Thread sequence number for naming.
      */
     private static long threadSeqNumber;
+
     /**
      * Server configuration context. All setXX() methods of AioServer are used to set configuration items in this
      * context.
      */
     private final Context context = new Context();
+
     /**
      * Asynchronous server socket channel.
      */
     private AsynchronousServerSocketChannel serverSocketChannel = null;
+
     /**
      * Asynchronous channel group for handling I/O events.
      */
     private AsynchronousChannelGroup asynchronousChannelGroup;
+
     /**
      * Whether to enable low memory mode.
      */
     private boolean lowMemory = true;
+
     /**
      * Write buffer pool.
      */
     private BufferPagePool writeBufferPool = null;
+
     /**
      * Read buffer pool.
      */

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -21,6 +21,8 @@ package org.miaixz.bus.health.unix.platform.solaris.software;
 
 import java.util.function.Supplier;
 
+import com.sun.jna.Pointer;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -29,8 +31,6 @@ import org.miaixz.bus.health.builtin.software.OSProcess;
 import org.miaixz.bus.health.builtin.software.common.AbstractOSThread;
 import org.miaixz.bus.health.unix.jna.SolarisLibc;
 import org.miaixz.bus.health.unix.platform.solaris.driver.PsInfo;
-
-import com.sun.jna.Pointer;
 
 /**
  * OSThread implementation
@@ -45,48 +45,59 @@ public class SolarisOSThread extends AbstractOSThread {
      * The threadId value.
      */
     private final int threadId;
+
     /**
      * The lwpsinfo value.
      */
     private final Supplier<SolarisLibc.SolarisLwpsInfo> lwpsinfo = Memoizer
             .memoize(this::queryLwpsInfo, Memoizer.defaultExpiration());
+
     /**
      * The prusage value.
      */
     private final Supplier<SolarisLibc.SolarisPrUsage> prusage = Memoizer
             .memoize(this::queryPrUsage, Memoizer.defaultExpiration());
+
     /**
      * The name value.
      */
     private String name;
+
     /**
      * The state value.
      */
     private OSProcess.State state = OSProcess.State.INVALID;
+
     /**
      * The startMemoryAddress value.
      */
     private long startMemoryAddress;
+
     /**
      * The contextSwitches value.
      */
     private long contextSwitches;
+
     /**
      * The kernelTime value.
      */
     private long kernelTime;
+
     /**
      * The userTime value.
      */
     private long userTime;
+
     /**
      * The startTime value.
      */
     private long startTime;
+
     /**
      * The upTime value.
      */
     private long upTime;
+
     /**
      * The priority value.
      */

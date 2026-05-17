@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,6 +24,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
+import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
+import com.sun.jna.platform.win32.COM.WbemcliUtil;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.LUID;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -40,15 +49,6 @@ import org.miaixz.bus.health.windows.driver.registry.*;
 import org.miaixz.bus.health.windows.driver.wmi.Win32OperatingSystem;
 import org.miaixz.bus.health.windows.driver.wmi.Win32Processor;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
-import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinNT.LUID;
-import com.sun.jna.platform.win32.COM.WbemcliUtil;
 
 /**
  * Microsoft Windows, commonly referred to as Windows, is a group of several proprietary graphical operating system
@@ -69,23 +69,28 @@ public class WindowsOperatingSystem extends AbstractOperatingSystem {
      * The IS_VISTA_OR_GREATER constant.
      */
     private static final boolean IS_VISTA_OR_GREATER = VersionHelpers.IsWindowsVistaOrGreater();
+
     /**
      * OSProcess code will need to know bitness of current process
      */
     private static final boolean X86 = isCurrentX86();
+
     /**
      * Windows event log name
      */
     private static final Supplier<String> systemLog = Memoizer
             .memoize(WindowsOperatingSystem::querySystemLog, TimeUnit.HOURS.toNanos(1));
+
     /**
      * The BOOTTIME constant.
      */
     private static final long BOOTTIME = querySystemBootTime();
+
     /**
      * The WOW constant.
      */
     private static final boolean WOW = isCurrentWow();
+
     /**
      * The installedAppsSupplier value.
      */
@@ -104,6 +109,7 @@ public class WindowsOperatingSystem extends AbstractOperatingSystem {
      */
     private final Supplier<Map<Integer, ProcessPerformanceData.PerfCounterBlock>> processMapFromRegistry = Memoizer
             .memoize(WindowsOperatingSystem::queryProcessMapFromRegistry, Memoizer.defaultExpiration());
+
     /**
      * The processMapFromPerfCounters value.
      */
@@ -118,6 +124,7 @@ public class WindowsOperatingSystem extends AbstractOperatingSystem {
      */
     private final Supplier<Map<Integer, ThreadPerformanceData.PerfCounterBlock>> threadMapFromRegistry = Memoizer
             .memoize(WindowsOperatingSystem::queryThreadMapFromRegistry, Memoizer.defaultExpiration());
+
     /**
      * The threadMapFromPerfCounters value.
      */

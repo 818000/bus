@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.http.metric.http;
 
+import java.io.IOException;
+import java.net.ProtocolException;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.http.Response;
-
-import java.io.IOException;
-import java.net.ProtocolException;
 
 /**
  * Represents the status line of an HTTP response, such as "HTTP/1.1 200 OK".
@@ -39,10 +39,12 @@ public class StatusLine {
      * The HTTP protocol, such as {@link Protocol#HTTP_1_1}.
      */
     public final Protocol protocol;
+
     /**
      * The HTTP status code, such as 200.
      */
     public final int code;
+
     /**
      * The HTTP status message, such as "OK".
      */

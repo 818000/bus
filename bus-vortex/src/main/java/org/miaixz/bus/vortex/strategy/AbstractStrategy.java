@@ -26,24 +26,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
-import org.miaixz.bus.core.net.Specifics;
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.net.PORT;
 import org.miaixz.bus.core.net.Protocol;
+import org.miaixz.bus.core.net.Specifics;
 import org.miaixz.bus.core.xyz.MapKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Strategy;
 import org.miaixz.bus.vortex.magic.ErrorCode;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.web.server.ServerWebExchange;
 
 /**
  * An abstract base class for {@link Strategy} implementations, providing a collection of common utility methods.
@@ -173,9 +174,11 @@ public abstract class AbstractStrategy implements Strategy {
 
         String forwardedHeader = headers.getFirst("Forwarded");
         if (StringKit.hasText(forwardedHeader)) {
+            String hostPrefix = "host" + Symbol.EQUAL;
             Optional<String> authority = Arrays.stream(forwardedHeader.split(Symbol.SEMICOLON)).map(String::trim)
-                    .filter(part -> part.toLowerCase().startsWith("host="))
-                    .map(part -> part.substring(5).trim().replace("\"", Normal.EMPTY)).findFirst();
+                    .filter(part -> part.toLowerCase().startsWith(hostPrefix))
+                    .map(part -> part.substring(hostPrefix.length()).trim().replace(Symbol.DOUBLE_QUOTES, Normal.EMPTY))
+                    .findFirst();
             if (authority.isPresent()) {
                 Logger.debug(true, "Vortex", "{} found in 'Forwarded' header", authority.get());
                 return authority.map(host -> appendPortIfMissing(host, protocol));
@@ -287,9 +290,13 @@ public abstract class AbstractStrategy implements Strategy {
 
         String forwardedHeader = headers.getFirst("Forwarded");
         if (StringKit.hasText(forwardedHeader)) {
+            String protoPrefix = "proto" + Symbol.EQUAL;
             Optional<String> proto = Arrays.stream(forwardedHeader.split(Symbol.SEMICOLON)).map(String::trim)
-                    .filter(part -> part.toLowerCase().startsWith("proto="))
-                    .map(part -> part.substring(6).trim().replace("\"", Normal.EMPTY)).findFirst();
+                    .filter(part -> part.toLowerCase().startsWith(protoPrefix))
+                    .map(
+                            part -> part.substring(protoPrefix.length()).trim()
+                                    .replace(Symbol.DOUBLE_QUOTES, Normal.EMPTY))
+                    .findFirst();
             if (proto.isPresent()) {
                 String protocol = proto.get();
                 Logger.debug(true, "Vortex", "Protocol: '{}' found in 'Forwarded' header", protocol);

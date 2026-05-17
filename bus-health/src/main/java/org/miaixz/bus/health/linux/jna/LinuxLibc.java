@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,14 +19,14 @@
 */
 package org.miaixz.bus.health.linux.jna;
 
-import org.miaixz.bus.health.unix.jna.CLibrary;
-
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Platform;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.linux.LibC;
+
+import org.miaixz.bus.health.unix.jna.CLibrary;
 
 /**
  * Linux C Library. This class should be considered non-API as it may be removed if/when its code is incorporated into
@@ -89,6 +89,9 @@ public interface LinuxLibc extends LibC, CLibrary {
 
     /**
      * JNA wrapper for the rusage structure.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FieldOrder({ "ru_utime_sec", "ru_utime_usec", "ru_stime_sec", "ru_stime_usec", "ru_maxrss", "ru_ixrss", "ru_idrss",
             "ru_isrss", "ru_minflt", "ru_majflt", "ru_nswap", "ru_inblock", "ru_oublock", "ru_msgsnd", "ru_msgrcv",
@@ -99,74 +102,92 @@ public interface LinuxLibc extends LibC, CLibrary {
          * User time seconds.
          */
         public NativeLong ru_utime_sec;
+
         /**
          * User time microseconds.
          */
         public NativeLong ru_utime_usec;
+
         /**
          * System time seconds.
          */
         public NativeLong ru_stime_sec;
+
         /**
          * System time microseconds.
          */
         public NativeLong ru_stime_usec;
+
         /**
          * Maximum resident set size.
          */
         public NativeLong ru_maxrss;
+
         /**
          * Shared memory size.
          */
         public NativeLong ru_ixrss;
+
         /**
          * Unshared data size.
          */
         public NativeLong ru_idrss;
+
         /**
          * Unshared stack size.
          */
         public NativeLong ru_isrss;
+
         /**
          * Minor page faults.
          */
         public NativeLong ru_minflt;
+
         /**
          * Major page faults.
          */
         public NativeLong ru_majflt;
+
         /**
          * Swap count.
          */
         public NativeLong ru_nswap;
+
         /**
          * Block input operations.
          */
         public NativeLong ru_inblock;
+
         /**
          * Block output operations.
          */
         public NativeLong ru_oublock;
+
         /**
          * Sent messages.
          */
         public NativeLong ru_msgsnd;
+
         /**
          * Received messages.
          */
         public NativeLong ru_msgrcv;
+
         /**
          * Received signals.
          */
         public NativeLong ru_nsignals;
+
         /**
          * Voluntary context switches.
          */
         public NativeLong ru_nvcsw;
+
         /**
          * Involuntary context switches.
          */
         public NativeLong ru_nivcsw;
+
     }
 
     /**
@@ -183,6 +204,9 @@ public interface LinuxLibc extends LibC, CLibrary {
      *     struct exit_status ut_exit; int ut_session; struct timeval ut_tv; int32_t ut_addr_v6[4]; char reserved[20];
      * }; }
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FieldOrder({ "ut_type", "ut_pid", "ut_line", "ut_id", "ut_user", "ut_host", "ut_exit", "ut_session", "ut_tv",
             "ut_addr_v6", "reserved" })
@@ -232,6 +256,7 @@ public interface LinuxLibc extends LibC, CLibrary {
          * The reserved value.
          */
         public byte[] reserved = new byte[20]; // Reserved for future use.
+
     }
 
     /**
@@ -239,6 +264,9 @@ public interface LinuxLibc extends LibC, CLibrary {
      * <p>
      * This class maps to the native Linux exit_status structure which is part of utmpx.
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FieldOrder({ "e_termination", "e_exit" })
     class Exit_status extends Structure {
@@ -251,6 +279,7 @@ public interface LinuxLibc extends LibC, CLibrary {
          * The e_exit value.
          */
         public short e_exit; // Process exit status
+
     }
 
     /**
@@ -258,6 +287,9 @@ public interface LinuxLibc extends LibC, CLibrary {
      * <p>
      * This class maps to the native Linux timeval structure: {@code struct timeval { int tv_sec; int tv_usec; }; }
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FieldOrder({ "tv_sec", "tv_usec" })
     class Ut_Tv extends Structure {
@@ -270,6 +302,7 @@ public interface LinuxLibc extends LibC, CLibrary {
          * The tv_usec value.
          */
         public int tv_usec; // microseconds
+
     }
 
 }

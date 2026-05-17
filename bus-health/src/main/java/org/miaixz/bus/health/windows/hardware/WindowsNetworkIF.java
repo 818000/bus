@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -23,6 +23,10 @@ import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.IPHlpAPI;
+import com.sun.jna.platform.win32.VersionHelpers;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.Parsing;
@@ -30,10 +34,6 @@ import org.miaixz.bus.health.builtin.hardware.NetworkIF;
 import org.miaixz.bus.health.builtin.hardware.common.AbstractNetworkIF;
 import org.miaixz.bus.health.builtin.jna.Struct;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.IPHlpAPI;
-import com.sun.jna.platform.win32.VersionHelpers;
 
 /**
  * WindowsNetworks class.
@@ -48,6 +48,7 @@ public final class WindowsNetworkIF extends AbstractNetworkIF {
      * The IS_VISTA_OR_GREATER constant.
      */
     private static final boolean IS_VISTA_OR_GREATER = VersionHelpers.IsWindowsVistaOrGreater();
+
     /**
      * The CONNECTOR_PRESENT_BIT constant.
      */
@@ -57,58 +58,72 @@ public final class WindowsNetworkIF extends AbstractNetworkIF {
      * The ifType value.
      */
     private int ifType;
+
     /**
      * The ndisPhysicalMediumType value.
      */
     private int ndisPhysicalMediumType;
+
     /**
      * The connectorPresent value.
      */
     private boolean connectorPresent;
+
     /**
      * The bytesRecv value.
      */
     private long bytesRecv;
+
     /**
      * The bytesSent value.
      */
     private long bytesSent;
+
     /**
      * The packetsRecv value.
      */
     private long packetsRecv;
+
     /**
      * The packetsSent value.
      */
     private long packetsSent;
+
     /**
      * The inErrors value.
      */
     private long inErrors;
+
     /**
      * The outErrors value.
      */
     private long outErrors;
+
     /**
      * The inDrops value.
      */
     private long inDrops;
+
     /**
      * The collisions value.
      */
     private long collisions;
+
     /**
      * The speed value.
      */
     private long speed;
+
     /**
      * The timeStamp value.
      */
     private long timeStamp;
+
     /**
      * The ifAlias value.
      */
     private String ifAlias;
+
     /**
      * The ifOperStatus value.
      */

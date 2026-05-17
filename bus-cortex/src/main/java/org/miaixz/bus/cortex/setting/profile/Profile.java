@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.cortex.setting.profile;
 
-import org.miaixz.bus.cortex.Setting;
-import org.miaixz.bus.cortex.Type;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.cortex.Setting;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Profile directory entry for the setting domain.
@@ -50,14 +50,17 @@ public class Profile extends Setting {
      * Legacy profile code kept only for compatibility and display. {@code id} remains the authoritative identifier.
      */
     private String code;
+
     /**
      * Display name.
      */
     private String name;
+
     /**
      * Display order.
      */
     private Integer order;
+
     /**
      * Whether the profile is built in.
      */

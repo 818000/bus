@@ -20,9 +20,8 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,8 +30,15 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The health check info class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class HealthCheckInfo implements Serializable {
 
     @Serial
@@ -123,6 +129,9 @@ public class HealthCheckInfo implements Serializable {
     /**
      * This desrializer can deserialize on object containing a HealthCheckItem or an array containing a single
      * HealthCheckItem.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class HealthCheckItemDeserializer extends JsonDeserializer<HealthCheckItem> {
 
@@ -143,6 +152,7 @@ public class HealthCheckInfo implements Serializable {
 
             return (healthCheckItem);
         }
+
     }
 
 }

@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.*;
-
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.*;
 
 /**
  * <p>
@@ -39,6 +39,9 @@ import jakarta.ws.rs.core.Response;
  * <a href="https://docs.gitlab.com/ee/api/pipelines.html">Pipelines API</a>
  * <a href="https://docs.gitlab.com/ee/api/pipeline_schedules.html">Pipeline Schedules API</a>
  * <a href="https://docs.gitlab.com/ee/api/pipeline_triggers.html">Pipeline Triggers API</a>
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class PipelineApi extends AbstractApi implements Constants {
 
@@ -81,7 +84,7 @@ public class PipelineApi extends AbstractApi implements Constants {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "pipelines");
-        return (response.readEntity(new GenericType<List<Pipeline>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -257,7 +260,7 @@ public class PipelineApi extends AbstractApi implements Constants {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "pipelines");
-        return (response.readEntity(new GenericType<List<Pipeline>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -434,6 +437,12 @@ public class PipelineApi extends AbstractApi implements Constants {
 
         // The create pipeline REST API expects the variable data in an unusual format, this
         // class is used to create the JSON for the POST data.
+        /**
+         * The create pipeline form class.
+         *
+         * @author Kimi Liu
+         * @since Java 21+
+         */
         class CreatePipelineForm {
 
             public String ref;
@@ -443,6 +452,7 @@ public class PipelineApi extends AbstractApi implements Constants {
                 this.ref = ref;
                 this.variables = variables;
             }
+
         }
 
         CreatePipelineForm pipelineForm = new CreatePipelineForm(ref, variables);
@@ -564,7 +574,7 @@ public class PipelineApi extends AbstractApi implements Constants {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "pipeline_schedules");
-        return (response.readEntity(new GenericType<List<PipelineSchedule>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -911,7 +921,7 @@ public class PipelineApi extends AbstractApi implements Constants {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "triggers");
-        return (response.readEntity(new GenericType<List<Trigger>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -1262,7 +1272,7 @@ public class PipelineApi extends AbstractApi implements Constants {
 
     /**
      * Get a Stream of bridges in a pipeline.
-     * 
+     *
      * <pre>
      * <code>GitLab Endpoint: GET /projects/:id/pipelines/:pipeline_id/bridges</code>
      * </pre>

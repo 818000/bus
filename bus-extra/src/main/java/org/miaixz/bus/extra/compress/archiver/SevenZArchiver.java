@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
+
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.ArrayKit;
 import org.miaixz.bus.core.xyz.FileKit;
@@ -51,6 +52,7 @@ public class SevenZArchiver implements Archiver {
      * The SeekableByteChannel used for writing, especially for in-memory operations.
      */
     private SeekableByteChannel channel;
+
     /**
      * The target OutputStream, used when archiving to a stream.
      */

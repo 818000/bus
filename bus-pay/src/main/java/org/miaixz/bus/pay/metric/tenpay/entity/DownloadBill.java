@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.tenpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Download Bill model.
@@ -44,22 +44,27 @@ public class DownloadBill extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Bill date.
      */
     private String bill_date;
+
     /**
      * Bill type.
      */
     private String bill_type;
+
     /**
      * Tar type.
      */

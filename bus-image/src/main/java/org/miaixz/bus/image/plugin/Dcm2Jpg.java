@@ -19,17 +19,6 @@
 */
 package org.miaixz.bus.image.plugin;
 
-import org.miaixz.bus.core.xyz.IoKit;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.image.galaxy.data.Attributes;
-import org.miaixz.bus.image.galaxy.io.ImageInputStream;
-import org.miaixz.bus.image.nimble.ICCProfile;
-import org.miaixz.bus.image.nimble.reader.ImageioReadParam;
-import org.miaixz.bus.logger.Logger;
-
-import javax.imageio.*;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +27,18 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
+
+import javax.imageio.*;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
+
+import org.miaixz.bus.core.xyz.IoKit;
+import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.image.galaxy.data.Attributes;
+import org.miaixz.bus.image.galaxy.io.ImageInputStream;
+import org.miaixz.bus.image.nimble.ICCProfile;
+import org.miaixz.bus.image.nimble.reader.ImageioReadParam;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * The {@code Dcm2Jpg} class provides functionality to convert DICOM images to other image formats like JPEG, PNG, etc.,
@@ -53,70 +54,87 @@ public class Dcm2Jpg {
      * The ImageReader for DICOM format.
      */
     private final ImageReader imageReader = ImageIO.getImageReadersByFormatName("DICOM").next();
+
     /**
      * Functional interface for the image reading process.
      */
     private ReadImage readImage;
+
     /**
      * The file suffix for the output image.
      */
     private String suffix;
+
     /**
      * The frame number to extract (1-based).
      */
     private int frame = 1;
+
     /**
      * The index of the VOI window to apply.
      */
     private int windowIndex;
+
     /**
      * The index of the VOI LUT to apply.
      */
     private int voiLUTIndex;
+
     /**
      * A flag indicating whether to prefer windowing over VOI LUTs.
      */
     private boolean preferWindow = true;
+
     /**
      * The window center for grayscale rendering.
      */
     private float windowCenter;
+
     /**
      * The window width for grayscale rendering.
      */
     private float windowWidth;
+
     /**
      * A flag to enable or disable auto-windowing.
      */
     private boolean autoWindowing = true;
+
     /**
      * A flag to ignore the Presentation LUT Shape attribute.
      */
     private boolean ignorePresentationLUTShape;
+
     /**
      * The DICOM Presentation State object.
      */
     private Attributes prState;
+
     /**
      * The ImageWriter for the target format.
      */
     private ImageWriter imageWriter;
+
     /**
      * The write parameters for the ImageWriter.
      */
     private ImageWriteParam imageWriteParam;
+
     /**
      * A bitmask to control the activation of overlays.
      */
     private int overlayActivationMask = 0xffff;
+
     /**
      * The grayscale value to use for rendering overlays.
      */
     private int overlayGrayscaleValue = 0xffff;
+
     /**
      * The RGB value to use for rendering overlays.
      */
     private int overlayRGBValue = 0xffffff;
+
     /**
      * The ICC Profile option to apply.
      */
@@ -463,6 +481,9 @@ public class Dcm2Jpg {
 
     /**
      * A functional interface for defining how to read a {@link BufferedImage} from a DICOM file.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private interface ReadImage {
 
@@ -474,6 +495,7 @@ public class Dcm2Jpg {
          * @throws IOException if an I/O error occurs.
          */
         BufferedImage apply(File src) throws IOException;
+
     }
 
 }

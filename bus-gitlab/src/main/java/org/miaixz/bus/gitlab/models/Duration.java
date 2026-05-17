@@ -20,20 +20,20 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+
 import org.miaixz.bus.logger.Logger;
 
 /**
  * This class represents a duration in time.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class Duration implements Serializable {
 

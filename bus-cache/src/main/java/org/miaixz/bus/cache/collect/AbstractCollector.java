@@ -19,7 +19,6 @@
 */
 package org.miaixz.bus.cache.collect;
 
-import jakarta.annotation.PreDestroy;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.*;
@@ -29,6 +28,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import jakarta.annotation.PreDestroy;
+
 import org.miaixz.bus.cache.Collector;
 import org.miaixz.bus.cache.magic.CachePair;
 import org.miaixz.bus.core.lang.Normal;
@@ -403,6 +405,9 @@ public abstract class AbstractCollector implements Collector, AutoCloseable {
      * Each {@code Tally} maps one cache pattern to its cumulative hit and request counts, plus an optimistic-locking
      * {@code version} field used by the CAS update loop.
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     protected static final class Tally {
 
@@ -497,6 +502,7 @@ public abstract class AbstractCollector implements Collector, AutoCloseable {
         public void setVersion(long version) {
             this.version = version;
         }
+
     }
 
 }

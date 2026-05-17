@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.mac.SystemB;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -37,9 +40,6 @@ import org.miaixz.bus.health.builtin.jna.Struct;
 import org.miaixz.bus.health.mac.SysctlKit;
 import org.miaixz.bus.logger.Logger;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.mac.SystemB;
-
 /**
  * Memory obtained by host_statistics (vm_stat) and sysctl.
  *
@@ -53,14 +53,17 @@ final class MacGlobalMemory extends AbstractGlobalMemory {
      * The total value.
      */
     private final Supplier<Long> total = Memoizer.memoize(MacGlobalMemory::queryPhysMem);
+
     /**
      * The pageSize value.
      */
     private final Supplier<Long> pageSize = Memoizer.memoize(MacGlobalMemory::queryPageSize);
+
     /**
      * The available value.
      */
     private final Supplier<Long> available = Memoizer.memoize(this::queryVmStats, Memoizer.defaultExpiration());
+
     /**
      * The vm value.
      */
@@ -155,8 +158,17 @@ final class MacGlobalMemory extends AbstractGlobalMemory {
      */
     @Override
     public List<PhysicalMemory> getPhysicalMemory() {
+        return parseSystemProfilerMemory(Executor.runNative("system_profiler SPMemoryDataType"));
+    }
+
+    /**
+     * Parses the output of {@code system_profiler SPMemoryDataType} into physical memory objects.
+     *
+     * @param lines the output lines from system profiler
+     * @return the parsed physical memory modules
+     */
+    static List<PhysicalMemory> parseSystemProfilerMemory(List<String> lines) {
         List<PhysicalMemory> pmList = new ArrayList<>();
-        List<String> sp = Executor.runNative("system_profiler SPMemoryDataType");
         int bank = 0;
         String bankLabel = Normal.UNKNOWN;
         long capacity = 0L;
@@ -165,12 +177,12 @@ final class MacGlobalMemory extends AbstractGlobalMemory {
         String memoryType = Normal.UNKNOWN;
         String partNumber = Normal.UNKNOWN;
         String serialNumber = Normal.UNKNOWN;
-        for (String line : sp) {
+        for (String line : lines) {
             if (line.trim().startsWith("BANK")) {
                 // Save previous bank
                 if (bank++ > 0) {
                     pmList.add(
-                            new PhysicalMemory(bankLabel, capacity, speed, manufacturer, memoryType, Normal.UNKNOWN,
+                            new PhysicalMemory(bankLabel, capacity, speed, manufacturer, memoryType, partNumber,
                                     serialNumber));
                 }
                 bankLabel = line.trim();
@@ -212,7 +224,53 @@ final class MacGlobalMemory extends AbstractGlobalMemory {
                 }
             }
         }
-        pmList.add(new PhysicalMemory(bankLabel, capacity, speed, manufacturer, memoryType, partNumber, serialNumber));
+        if (bank > 0 && capacity > 0) {
+            // Intel/socketed format: save the last bank
+            pmList.add(
+                    new PhysicalMemory(bankLabel, capacity, speed, manufacturer, memoryType, partNumber, serialNumber));
+        } else {
+            // Apple Silicon format: no BANK lines, parse top-level keys
+            for (String line : lines) {
+                String[] split = line.trim().split(Symbol.COLON);
+                if (split.length == 2) {
+                    String key = split[0].trim();
+                    String value = split[1].trim();
+                    switch (key) {
+                        case "Memory":
+                            capacity = Parsing.parseDecimalMemorySizeToBinary(value);
+                            break;
+
+                        case "Type":
+                            memoryType = value;
+                            break;
+
+                        case "Speed":
+                            speed = Parsing.parseHertz(split[1]);
+                            break;
+
+                        case "Manufacturer":
+                            manufacturer = value;
+                            break;
+
+                        case "Part Number":
+                            partNumber = value;
+                            break;
+
+                        case "Serial Number":
+                            serialNumber = value;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (capacity > 0) {
+                pmList.add(
+                        new PhysicalMemory(bankLabel, capacity, speed, manufacturer, memoryType, partNumber,
+                                serialNumber));
+            }
+        }
 
         return pmList;
     }

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -45,18 +45,22 @@ public final class BufferPage {
      * A lock to ensure thread-safe allocation and cleaning of buffers.
      */
     private final ReentrantLock lock = new ReentrantLock();
+
     /**
      * The underlying physical buffer for this page.
      */
     private final ByteBuffer buffer;
+
     /**
      * A queue of virtual buffers that are pending cleanup and recycling.
      */
     private final ConcurrentLinkedQueue<VirtualBuffer> cleanBuffers = new ConcurrentLinkedQueue<>();
+
     /**
      * A list of currently available (free) virtual buffers within this page.
      */
     private final List<VirtualBuffer> availableBuffers;
+
     /**
      * A flag indicating whether the buffer page is currently idle.
      */

@@ -25,17 +25,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.gitlab.models.ImportStatus.Status;
-import org.miaixz.bus.gitlab.models.Constants.*;
-import org.miaixz.bus.gitlab.support.JacksonJson;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import org.miaixz.bus.gitlab.models.Constants.*;
+import org.miaixz.bus.gitlab.models.ImportStatus.Status;
+import org.miaixz.bus.gitlab.support.JacksonJson;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The project class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Project implements Serializable {
 
     @Serial
@@ -1672,6 +1678,12 @@ public class Project implements Serializable {
     }
 
     // Enum for the merge_method of the Project instance.
+    /**
+     * The merge method enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum MergeMethod {
 
         MERGE, REBASE_MERGE, FF;
@@ -1692,6 +1704,7 @@ public class Project implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     @JsonIgnore

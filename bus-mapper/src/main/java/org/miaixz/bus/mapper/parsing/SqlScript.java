@@ -20,6 +20,7 @@
 package org.miaixz.bus.mapper.parsing;
 
 import org.apache.ibatis.builder.annotation.ProviderContext;
+
 import org.miaixz.bus.core.center.function.BiFunctionX;
 import org.miaixz.bus.core.center.function.SupplierX;
 import org.miaixz.bus.core.lang.Symbol;
@@ -64,7 +65,7 @@ public interface SqlScript {
      */
     static String caching(ProviderContext context, BiFunctionX<TableMeta, SqlScript, String> sqlScriptBuilder) {
         TableMeta entity = MapperFactory.of(context.getMapperType(), context.getMapperMethod());
-        SqlScript wrapper = SqlScriptWrapper.wrapSqlScript(context, entity, null);
+        SqlScript wrapper = SqlScriptWrapper.wrapSqlScript(context, entity, ignored -> "");
         return Caching.cache(
                 context,
                 entity,
@@ -396,6 +397,9 @@ public interface SqlScript {
 
     /**
      * A functional interface for supplying a string, ensuring it starts with a newline character.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     interface LRSupplier extends SupplierX<String> {
 

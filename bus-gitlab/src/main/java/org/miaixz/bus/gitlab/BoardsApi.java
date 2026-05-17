@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.Board;
-import org.miaixz.bus.gitlab.models.BoardList;
-
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.Board;
+import org.miaixz.bus.gitlab.models.BoardList;
 
 /**
  * This class implements the client side API for the GitLab Issue Boards API calls.
@@ -36,6 +36,8 @@ import jakarta.ws.rs.core.Response;
  * status code.
  *
  * @see <a href="https://docs.gitlab.com/ce/api/boards.html">GitLab Issue Boards API Documentaion</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class BoardsApi extends AbstractApi {
 
@@ -78,7 +80,7 @@ public class BoardsApi extends AbstractApi {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "boards");
-        return (response.readEntity(new GenericType<List<Board>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -281,7 +283,7 @@ public class BoardsApi extends AbstractApi {
                 "boards",
                 boardId,
                 "lists");
-        return (response.readEntity(new GenericType<List<BoardList>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -493,7 +495,7 @@ public class BoardsApi extends AbstractApi {
                 "groups",
                 getGroupIdOrPath(groupIdOrPath),
                 "boards");
-        return (response.readEntity(new GenericType<List<Board>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -689,7 +691,7 @@ public class BoardsApi extends AbstractApi {
                 "boards",
                 boardId,
                 "lists");
-        return (response.readEntity(new GenericType<List<BoardList>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -899,7 +901,7 @@ public class BoardsApi extends AbstractApi {
                 "groups",
                 getGroupIdOrPath(groupIdOrPath),
                 "epic_boards");
-        return (response.readEntity(new GenericType<List<Board>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -1017,7 +1019,7 @@ public class BoardsApi extends AbstractApi {
                 "epic_boards",
                 boardId,
                 "lists");
-        return (response.readEntity(new GenericType<List<BoardList>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 

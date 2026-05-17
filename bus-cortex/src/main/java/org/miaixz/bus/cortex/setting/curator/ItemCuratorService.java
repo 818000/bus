@@ -29,11 +29,11 @@ import org.miaixz.bus.cortex.Keying.SettingSpec;
 import org.miaixz.bus.cortex.builtin.SettingGenerator;
 import org.miaixz.bus.cortex.guard.CortexGuard;
 import org.miaixz.bus.cortex.guard.GuardContext;
+import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.setting.SettingEnforcer;
 import org.miaixz.bus.cortex.setting.SettingPublisher;
 import org.miaixz.bus.cortex.setting.item.*;
 import org.miaixz.bus.cortex.setting.item.revision.ItemRevision;
-import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.setting.item.revision.ItemRevisionStore;
 
 /**
@@ -48,26 +48,32 @@ public class ItemCuratorService {
      * Current-state store for setting entries.
      */
     private final StoreBackedItemStore entryStore;
+
     /**
      * ItemRevision-history store used for rollback and audits.
      */
     private final ItemRevisionStore revisionStore;
+
     /**
      * Effective-value resolver for external and internal reads.
      */
     private final ItemValueResolver resolver;
+
     /**
      * Publisher that coordinates current-state writes and history snapshots.
      */
     private final SettingPublisher publisher;
+
     /**
      * Optional centralized setting enforcer.
      */
     private final SettingEnforcer enforcer;
+
     /**
      * Optional shared Cortex guard.
      */
     private final CortexGuard cortexGuard;
+
     /**
      * Setting-domain key strategy.
      */

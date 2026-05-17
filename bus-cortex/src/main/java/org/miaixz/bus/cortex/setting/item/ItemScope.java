@@ -22,13 +22,13 @@ package org.miaixz.bus.cortex.setting.item;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.cortex.builtin.Label;
-import org.miaixz.bus.cortex.builtin.LabelMapper;
-import org.miaixz.bus.cortex.builtin.Selector;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.cortex.builtin.Label;
+import org.miaixz.bus.cortex.builtin.LabelMapper;
+import org.miaixz.bus.cortex.builtin.Selector;
 
 /**
  * Shared scope object for setting queries, exports, and maintenance operations.
@@ -58,38 +58,47 @@ public class ItemScope {
      * Namespace containing the target setting entries.
      */
     private String namespace_id;
+
     /**
      * Setting group filter.
      */
     private String group;
+
     /**
      * Optional profile filter representing the target environment.
      */
     private String profile_id;
+
     /**
      * Optional application identifier used to match application-bound settings.
      */
     private String app_id;
+
     /**
      * Optional label selector.
      */
     private Map<String, String> labels;
+
     /**
      * Optional advanced metadata selectors.
      */
     private List<Selector> selectors;
+
     /**
      * Optional request identifier propagated across control-plane operations.
      */
     private String requestId;
+
     /**
      * Whether deleted or tombstoned entries should be included.
      */
     private boolean includeDeleted;
+
     /**
      * Maximum number of entries to return.
      */
     private int limit = 100;
+
     /**
      * Number of matching entries to skip.
      */

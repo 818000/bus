@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 import org.miaixz.bus.pay.magic.Voucher;
 
 /**
@@ -43,14 +44,17 @@ public class QueryTrans2Pocket extends Voucher {
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Merchant's payment number.
      */
     private String partner_trade_no;
+
     /**
      * Merchant ID.
      */

@@ -28,8 +28,8 @@ import org.miaixz.bus.auth.*;
 import org.miaixz.bus.auth.cache.AuthCache;
 import org.miaixz.bus.auth.magic.Authorization;
 import org.miaixz.bus.auth.magic.Callback;
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Claims;
+import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.data.id.ID;
@@ -57,10 +57,12 @@ public abstract class AbstractProvider implements Provider {
      * The context object containing protocol-specific configurations.
      */
     protected Context context;
+
     /**
      * The protocol object defining protocol endpoints or configurations.
      */
     protected Complex complex;
+
     /**
      * The cache implementation used to store state or other temporary data.
      */

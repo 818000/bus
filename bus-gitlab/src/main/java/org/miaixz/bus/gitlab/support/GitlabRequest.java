@@ -24,11 +24,17 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Enumeration;
 
-import org.miaixz.bus.logger.Logger;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.miaixz.bus.logger.Logger;
+
+/**
+ * The gitlab request class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class GitlabRequest {
 
     /**

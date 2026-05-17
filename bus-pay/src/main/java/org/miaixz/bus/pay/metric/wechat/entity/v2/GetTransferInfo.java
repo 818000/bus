@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Query enterprise transfer to balance/bank card model.
@@ -44,14 +44,17 @@ public class GetTransferInfo extends Voucher {
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Partner trade number.
      */
     private String partner_trade_no;
+
     /**
      * Merchant ID.
      */

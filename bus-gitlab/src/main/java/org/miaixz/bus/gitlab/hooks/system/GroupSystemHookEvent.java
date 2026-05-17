@@ -20,11 +20,16 @@
 package org.miaixz.bus.gitlab.hooks.system;
 
 import java.io.Serial;
-
 import java.util.Date;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
+/**
+ * The group system hook event class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class GroupSystemHookEvent extends AbstractSystemHookEvent {
 
     @Serial

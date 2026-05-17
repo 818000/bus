@@ -26,15 +26,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import jakarta.ws.rs.core.Response;
+
 import org.miaixz.bus.gitlab.models.WikiAttachment;
 import org.miaixz.bus.gitlab.models.WikiPage;
-
-import jakarta.ws.rs.core.Response;
 import org.miaixz.bus.logger.Logger;
 
 /**
  * This class implements the client side API for the GitLab Wikis API. See
  * <a href="https://docs.gitlab.com/ce/api/wikis.html">Wikis API at GitLab</a> for more information.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class WikisApi extends AbstractApi {
 

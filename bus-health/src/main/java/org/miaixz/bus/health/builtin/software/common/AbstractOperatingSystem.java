@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -50,11 +50,13 @@ public abstract class AbstractOperatingSystem implements OperatingSystem {
      * The manufacturer value.
      */
     private final Supplier<String> manufacturer = Memoizer.memoize(this::queryManufacturer);
+
     /**
      * The familyVersionInfo value.
      */
     private final Supplier<Pair<String, OSVersionInfo>> familyVersionInfo = Memoizer
             .memoize(this::queryFamilyVersionInfo);
+
     /**
      * The bitness value.
      */

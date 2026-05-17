@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -21,12 +21,12 @@ package org.miaixz.bus.health.mac.software;
 
 import java.io.File;
 
+import com.sun.jna.platform.mac.SystemB.Statfs;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.builtin.software.OSFileStore;
 import org.miaixz.bus.health.builtin.software.common.AbstractOSFileStore;
 import org.miaixz.bus.health.mac.jna.SystemB;
-
-import com.sun.jna.platform.mac.SystemB.Statfs;
 
 /**
  * OSFileStore implementation
@@ -41,10 +41,12 @@ public class MacOSFileStore extends AbstractOSFileStore {
      * The logicalVolume value.
      */
     private String logicalVolume;
+
     /**
      * The description value.
      */
     private String description;
+
     /**
      * The fsType value.
      */
@@ -54,18 +56,22 @@ public class MacOSFileStore extends AbstractOSFileStore {
      * The freeSpace value.
      */
     private long freeSpace;
+
     /**
      * The usableSpace value.
      */
     private long usableSpace;
+
     /**
      * The totalSpace value.
      */
     private long totalSpace;
+
     /**
      * The freeInodes value.
      */
     private long freeInodes;
+
     /**
      * The totalInodes value.
      */

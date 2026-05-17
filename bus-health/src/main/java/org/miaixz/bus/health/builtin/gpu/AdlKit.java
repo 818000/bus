@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,14 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.builtin.jna.Adl;
-import org.miaixz.bus.logger.Logger;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.builtin.jna.Adl;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Optional runtime binding to the AMD Display Library (ADL) on Windows. All methods return sentinel values ({@code -1}
@@ -60,6 +60,9 @@ public final class AdlKit {
 
     /**
      * The Holder class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class Holder {
 
@@ -67,6 +70,7 @@ public final class AdlKit {
          * The LIB constant.
          */
         static final Adl.AdlLibrary LIB;
+
         /**
          * The LIBRARY_LOADED constant.
          */
@@ -105,6 +109,7 @@ public final class AdlKit {
             LIBRARY_LOADED = loaded;
             MALLOC_CB = cb;
         }
+
     }
 
     /**
@@ -119,6 +124,7 @@ public final class AdlKit {
      * The adaptersEnumerated value.
      */
     private static volatile boolean adaptersEnumerated = false;
+
     /**
      * The BUS_TO_INDEX constant.
      */

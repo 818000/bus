@@ -19,17 +19,18 @@
 */
 package org.miaixz.bus.starter.cortex;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import org.miaixz.bus.cache.Hybrid;
 import org.miaixz.bus.cache.Options;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.cortex.guard.token.TokenGuardConfig;
 import org.miaixz.bus.spring.GeniusBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Configuration properties for Bus Cortex starter wiring.
@@ -127,14 +128,17 @@ public class CortexProperties {
      * Bridge-specific starter properties.
      */
     private Bridge bridge = new Bridge();
+
     /**
      * Guard-specific starter properties.
      */
     private Guard guard = new Guard();
+
     /**
      * Audit-specific starter properties.
      */
     private Audit audit = new Audit();
+
     /**
      * Version-registry starter properties.
      */
@@ -209,6 +213,9 @@ public class CortexProperties {
 
     /**
      * Nested watch properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -229,6 +236,9 @@ public class CortexProperties {
 
     /**
      * Nested bridge properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -304,6 +314,9 @@ public class CortexProperties {
 
     /**
      * Nested guard properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -324,10 +337,14 @@ public class CortexProperties {
          * Default token guard configuration.
          */
         private Token token = new Token();
+
     }
 
     /**
      * Nested token-guard properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -343,6 +360,9 @@ public class CortexProperties {
 
     /**
      * Nested audit properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -358,10 +378,14 @@ public class CortexProperties {
          * Enables the default audit logger bean.
          */
         private boolean enabled = false;
+
     }
 
     /**
      * Nested version properties.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -377,6 +401,7 @@ public class CortexProperties {
          * Enables the version registry bean.
          */
         private boolean enabled = false;
+
     }
 
 }

@@ -19,13 +19,19 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
-import java.io.Serial;
 
+/**
+ * The system hook class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class SystemHook implements Serializable {
 
     @Serial
@@ -186,6 +192,12 @@ public class SystemHook implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The URL variable class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class UrlVariable implements Serializable {
 
         @Serial
@@ -205,6 +217,7 @@ public class SystemHook implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
 }

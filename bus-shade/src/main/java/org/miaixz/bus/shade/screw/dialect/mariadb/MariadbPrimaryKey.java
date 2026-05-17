@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.shade.screw.dialect.mariadb;
 
-import org.miaixz.bus.shade.screw.mapping.MappingField;
-import org.miaixz.bus.shade.screw.metadata.PrimaryKey;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.miaixz.bus.shade.screw.mapping.MappingField;
+import org.miaixz.bus.shade.screw.metadata.PrimaryKey;
 
 /**
  * MariaDB table primary key.
@@ -40,26 +40,31 @@ public class MariadbPrimaryKey implements PrimaryKey {
      */
     @MappingField(value = "TABLE_CAT")
     private String tableCat;
+
     /**
      * Table name.
      */
     @MappingField(value = "TABLE_NAME")
     private String tableName;
+
     /**
      * Primary key name.
      */
     @MappingField(value = "PK_NAME")
     private String pkName;
+
     /**
      * Table schema.
      */
     @MappingField(value = "TABLE_SCHEM")
     private String tableSchem;
+
     /**
      * Column name.
      */
     @MappingField(value = "COLUMN_NAME")
     private String columnName;
+
     /**
      * Key sequence.
      */

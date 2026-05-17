@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -41,26 +41,32 @@ public abstract class AbstractUsbDevice implements UsbDevice {
      * The name value.
      */
     private final String name;
+
     /**
      * The vendor value.
      */
     private final String vendor;
+
     /**
      * The vendorId value.
      */
     private final String vendorId;
+
     /**
      * The productId value.
      */
     private final String productId;
+
     /**
      * The serialNumber value.
      */
     private final String serialNumber;
+
     /**
      * The uniqueDeviceId value.
      */
     private final String uniqueDeviceId;
+
     /**
      * The connectedDevices value.
      */

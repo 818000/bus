@@ -20,19 +20,23 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The application settings class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class ApplicationSettings implements Serializable {
 
     @Serial

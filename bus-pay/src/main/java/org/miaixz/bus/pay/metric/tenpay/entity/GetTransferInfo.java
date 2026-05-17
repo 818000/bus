@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.tenpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Query Enterprise Payment model.
@@ -44,18 +44,22 @@ public class GetTransferInfo extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Merchant order number.
      */
     private String out_trade_no;
+
     /**
      * Transaction ID.
      */

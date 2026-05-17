@@ -28,17 +28,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.miaixz.bus.cortex.magic.runtime.CortexDiagnostics;
-import org.miaixz.bus.cortex.magic.runtime.CortexLifecycle;
-import org.miaixz.bus.cortex.magic.runtime.DiagnosticsSnapshot;
 import org.miaixz.bus.cortex.Instance;
 import org.miaixz.bus.cortex.Prober;
 import org.miaixz.bus.cortex.Status;
 import org.miaixz.bus.cortex.health.HttpProber;
 import org.miaixz.bus.cortex.health.TcpProber;
+import org.miaixz.bus.cortex.magic.runtime.CortexDiagnostics;
+import org.miaixz.bus.cortex.magic.runtime.CortexLifecycle;
+import org.miaixz.bus.cortex.magic.runtime.DiagnosticsSnapshot;
 import org.miaixz.bus.cortex.magic.watch.WatchManager;
-import org.miaixz.bus.cortex.registry.api.ApiRegistry;
 import org.miaixz.bus.cortex.registry.api.ApiAssets;
+import org.miaixz.bus.cortex.registry.api.ApiRegistry;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -53,54 +53,67 @@ public class HealthProbeScheduler implements AutoCloseable, CortexLifecycle, Cor
      * API registry providing runtime instances to probe.
      */
     private final ApiRegistry apiRegistry;
+
     /**
      * Watch manager notified when instance health state changes.
      */
     private final WatchManager watchManager;
+
     /**
      * Interval in milliseconds between probe cycles.
      */
     private final long intervalMs;
+
     /**
      * Probe timeout in milliseconds configured for health checks.
      */
     private final long timeoutMs;
+
     /**
      * Single-threaded scheduler running periodic health probes.
      */
     private final ScheduledExecutorService executor;
+
     /**
      * Worker pool executing instance probes concurrently.
      */
     private final ExecutorService workers;
+
     /**
      * HTTP prober using the configured timeout.
      */
     private final Prober httpProber;
+
     /**
      * TCP prober using the configured timeout.
      */
     private final Prober tcpProber;
+
     /**
      * Whether the periodic task has been started.
      */
     private final AtomicBoolean started = new AtomicBoolean();
+
     /**
      * Whether the scheduler has been permanently stopped.
      */
     private final AtomicBoolean stopped = new AtomicBoolean();
+
     /**
      * Number of probe cycles submitted by this scheduler.
      */
     private final AtomicLong probeCount = new AtomicLong();
+
     /**
      * Number of failed instance probe attempts.
      */
     private final AtomicLong failureCount = new AtomicLong();
+
     /**
      * Last time a probe cycle ran.
      */
     private volatile long lastProbeAt;
+
     /**
      * Most recent failure message captured by the scheduler.
      */

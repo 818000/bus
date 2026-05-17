@@ -19,10 +19,10 @@
 */
 package org.miaixz.bus.http;
 
+import java.io.IOException;
+
 import org.miaixz.bus.core.io.timout.Timeout;
 import org.miaixz.bus.http.bodys.ResponseBody;
-
-import java.io.IOException;
 
 /**
  * A call is a request that has been prepared for execution. A call can be canceled. As this object represents a single
@@ -116,6 +116,9 @@ public interface NewCall extends Cloneable {
 
     /**
      * A factory for creating {@link NewCall} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     interface Factory {
 

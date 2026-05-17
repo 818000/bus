@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.http.plugin.httpz;
 
+import java.io.IOException;
+
 import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.io.source.AssignSource;
 import org.miaixz.bus.core.io.source.BufferSource;
@@ -29,8 +31,6 @@ import org.miaixz.bus.http.Response;
 import org.miaixz.bus.http.bodys.ResponseBody;
 import org.miaixz.bus.http.metric.Interceptor;
 import org.miaixz.bus.http.metric.NewChain;
-
-import java.io.IOException;
 
 /**
  * An abstract {@link Interceptor} that adds a download progress listener to the response body. Subclasses must
@@ -65,6 +65,9 @@ public abstract class FileInterceptor implements Interceptor, ProgressListener {
 
     /**
      * A {@link ResponseBody} decorator that reports download progress as the body is being read.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class DownloadFileProgressResponseBody extends ResponseBody {
 
@@ -72,10 +75,12 @@ public abstract class FileInterceptor implements Interceptor, ProgressListener {
          * The original response body.
          */
         private final ResponseBody body;
+
         /**
          * The listener to notify of progress updates.
          */
         private final ProgressListener progressListener;
+
         /**
          * A buffered source to efficiently read from the response body.
          */

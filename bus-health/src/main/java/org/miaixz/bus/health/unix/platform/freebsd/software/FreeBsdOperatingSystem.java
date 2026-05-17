@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.sun.jna.ptr.NativeLongByReference;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -36,8 +38,6 @@ import org.miaixz.bus.health.unix.jna.FreeBsdLibc;
 import org.miaixz.bus.health.unix.platform.freebsd.BsdSysctlKit;
 import org.miaixz.bus.health.unix.platform.freebsd.driver.Who;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.ptr.NativeLongByReference;
 
 /**
  * FreeBSD is a free and open-source Unix-like operating system descended from the Berkeley Software Distribution (BSD),
@@ -56,6 +56,7 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
      */
     static final String PS_COMMAND_ARGS = Arrays.stream(PsKeywords.values()).map(Enum::name)
             .map(name -> name.toLowerCase(Locale.ROOT)).collect(Collectors.joining(Symbol.COMMA));
+
     /**
      * The BOOTTIME constant.
      */
@@ -362,10 +363,14 @@ public class FreeBsdOperatingSystem extends AbstractOperatingSystem {
      */
     /**
      * The PsKeywords enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum PsKeywords {
         STATE, PID, PPID, USER, UID, GROUP, GID, NLWP, PRI, VSZ, RSS, ETIMES, SYSTIME, TIME, COMM, MAJFLT, MINFLT,
         NVCSW, NIVCSW, ARGS // ARGS must always be last
+
     }
 
 }

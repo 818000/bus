@@ -20,14 +20,9 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import org.miaixz.bus.gitlab.models.Constants.IssueState;
-import org.miaixz.bus.gitlab.support.JacksonJson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,6 +31,15 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
+import org.miaixz.bus.gitlab.models.Constants.IssueState;
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The abstract issue class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public abstract class AbstractIssue implements Serializable {
 
     @Serial
@@ -411,6 +415,12 @@ public abstract class AbstractIssue implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The task completion status class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class TaskCompletionStatus implements Serializable {
 
         @Serial
@@ -439,6 +449,7 @@ public abstract class AbstractIssue implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
 }

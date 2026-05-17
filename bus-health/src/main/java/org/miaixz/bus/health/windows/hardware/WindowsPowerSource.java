@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,6 +24,12 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.win32.W32APITypeMapper;
+
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -33,12 +39,6 @@ import org.miaixz.bus.health.builtin.jna.ByRef;
 import org.miaixz.bus.health.builtin.jna.Struct;
 import org.miaixz.bus.health.windows.jna.Kernel32;
 import org.miaixz.bus.health.windows.jna.PowrProf;
-
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.Platform;
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * A Power Source
@@ -54,10 +54,12 @@ public final class WindowsPowerSource extends AbstractPowerSource {
      */
     private static final Guid.GUID GUID_DEVCLASS_BATTERY = Guid.GUID
             .fromString("{72631E54-78A4-11D0-BCF7-00AA00B7B32A}");
+
     /**
      * The CHAR_WIDTH constant.
      */
     private static final int CHAR_WIDTH = W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ? 2 : 1;
+
     /**
      * The X64 constant.
      */
@@ -67,22 +69,27 @@ public final class WindowsPowerSource extends AbstractPowerSource {
      * The BATTERY_SYSTEM_BATTERY constant.
      */
     private static final int BATTERY_SYSTEM_BATTERY = 0x80000000;
+
     /**
      * The BATTERY_IS_SHORT_TERM constant.
      */
     private static final int BATTERY_IS_SHORT_TERM = 0x20000000;
+
     /**
      * The BATTERY_POWER_ON_LINE constant.
      */
     private static final int BATTERY_POWER_ON_LINE = 0x00000001;
+
     /**
      * The BATTERY_DISCHARGING constant.
      */
     private static final int BATTERY_DISCHARGING = 0x00000002;
+
     /**
      * The BATTERY_CHARGING constant.
      */
     private static final int BATTERY_CHARGING = 0x00000004;
+
     /**
      * The BATTERY_CAPACITY_RELATIVE constant.
      */
@@ -92,10 +99,12 @@ public final class WindowsPowerSource extends AbstractPowerSource {
      * The IOCTL_BATTERY_QUERY_TAG constant.
      */
     private static final int IOCTL_BATTERY_QUERY_TAG = 0x294040;
+
     /**
      * The IOCTL_BATTERY_QUERY_STATUS constant.
      */
     private static final int IOCTL_BATTERY_QUERY_STATUS = 0x29404c;
+
     /**
      * The IOCTL_BATTERY_QUERY_INFORMATION constant.
      */

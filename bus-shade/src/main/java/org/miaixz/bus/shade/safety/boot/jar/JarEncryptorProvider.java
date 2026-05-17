@@ -29,6 +29,7 @@ import java.util.zip.Deflater;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.apache.commons.compress.archivers.jar.JarArchiveOutputStream;
+
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.shade.safety.Builder;
 import org.miaixz.bus.shade.safety.Complex;
@@ -53,6 +54,7 @@ public class JarEncryptorProvider extends EntryEncryptorProvider<JarArchiveEntry
      * The compression level to use for the output JAR archive.
      */
     private final int level;
+
     /**
      * The encryption mode, which can include flags like {@link Builder#FLAG_DANGER}.
      */

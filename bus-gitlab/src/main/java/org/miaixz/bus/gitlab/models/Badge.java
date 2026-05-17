@@ -20,16 +20,20 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The badge class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Badge implements Serializable {
 
     @Serial
@@ -104,6 +108,12 @@ public class Badge implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The badge kind enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum BadgeKind {
 
         PROJECT, GROUP;
@@ -124,6 +134,7 @@ public class Badge implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
 }

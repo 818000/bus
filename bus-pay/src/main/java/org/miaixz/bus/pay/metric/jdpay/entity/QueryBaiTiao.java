@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.jdpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Baitiao installment plan query interface model.
@@ -44,18 +44,22 @@ public class QueryBaiTiao extends Voucher {
      * Version number.
      */
     private String version;
+
     /**
      * Merchant number.
      */
     private String merchant;
+
     /**
      * Transaction number.
      */
     private String tradeNum;
+
     /**
      * Transaction amount.
      */
     private String amount;
+
     /**
      * Signature.
      */

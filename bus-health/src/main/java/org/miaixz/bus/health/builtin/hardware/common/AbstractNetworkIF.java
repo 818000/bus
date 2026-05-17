@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -50,42 +50,52 @@ public abstract class AbstractNetworkIF implements NetworkIF {
      * The vmMacAddrProps value.
      */
     private final Supplier<Properties> vmMacAddrProps = Memoizer.memoize(AbstractNetworkIF::queryVmMacAddrProps);
+
     /**
      * The networkInterface value.
      */
     private final NetworkInterface networkInterface;
+
     /**
      * The name value.
      */
     private final String name;
+
     /**
      * The displayName value.
      */
     private final String displayName;
+
     /**
      * The index value.
      */
     private final int index;
+
     /**
      * The mtu value.
      */
     private final long mtu;
+
     /**
      * The mac value.
      */
     private final String mac;
+
     /**
      * The ipv4 value.
      */
     private final String[] ipv4;
+
     /**
      * The subnetMasks value.
      */
     private final Short[] subnetMasks;
+
     /**
      * The ipv6 value.
      */
     private final String[] ipv6;
+
     /**
      * The prefixLengths value.
      */

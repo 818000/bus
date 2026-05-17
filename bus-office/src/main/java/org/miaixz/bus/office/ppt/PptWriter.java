@@ -25,6 +25,7 @@ import java.io.*;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.xslf.usermodel.*;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.FileKit;
@@ -42,10 +43,12 @@ public class PptWriter implements Closeable {
      * The underlying {@link XMLSlideShow} instance.
      */
     private final XMLSlideShow ppt;
+
     /**
      * The target file to write the presentation to.
      */
     protected File targetFile;
+
     /**
      * Flag indicating whether the writer has been closed.
      */

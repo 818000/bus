@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -46,34 +46,46 @@ public final class SysPath {
      * The CPU constant.
      */
     public static final String CPU = SYS + "devices/system/cpu/";
+
     /**
      * The DMI_ID constant.
      */
     public static final String DMI_ID = SYS + "devices/virtual/dmi/id/";
+
     /**
      * The NET constant.
      */
     public static final String NET = SYS + "class/net/";
+
     /**
      * The MODEL constant.
      */
     public static final String MODEL = SYS + "firmware/devicetree/base/model";
+
     /**
      * The POWER_SUPPLY constant.
      */
     public static final String POWER_SUPPLY = SYS + "class/power_supply";
+
     /**
      * The HWMON constant.
      */
     public static final String HWMON = SYS + "class/hwmon/";
+
     /**
      * The THERMAL constant.
      */
     public static final String THERMAL = SYS + "class/thermal/";
+
     /**
      * The CGROUP constant.
      */
     public static final String CGROUP = SYS + "fs/cgroup/";
+
+    /**
+     * The DRM constant.
+     */
+    public static final String DRM = SYS + "class/drm/";
 
     /**
      * Queries the sys config.

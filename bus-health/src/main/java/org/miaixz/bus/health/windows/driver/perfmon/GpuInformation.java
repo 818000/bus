@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -40,6 +40,7 @@ public final class GpuInformation {
      * The GPU_ENGINE constant.
      */
     static final String GPU_ENGINE = "GPU Engine";
+
     /**
      * The GPU_ADAPTER_MEMORY constant.
      */
@@ -48,6 +49,9 @@ public final class GpuInformation {
     /**
      * GPU Engine running time counter properties. Instance names have the form:
      * {@code pid_<PID>_luid_0x<HIGH>_0x<LOW>_phys_0_eng_<N>_engtype_<TYPE>}
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum GpuEngineProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -81,10 +85,14 @@ public final class GpuInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * GPU Adapter Memory counter properties. Instance names have the form: {@code luid_0x<HIGH>_0x<LOW>_phys_0}
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum GpuAdapterMemoryProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -114,6 +122,7 @@ public final class GpuInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**

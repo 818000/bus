@@ -19,14 +19,20 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.util.Map;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The epic issue class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class EpicIssue extends AbstractIssue {
 
     @Serial

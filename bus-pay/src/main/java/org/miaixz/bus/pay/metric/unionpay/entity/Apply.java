@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.unionpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * UnionPay Cloud QuickPass - Merchant Application model.
@@ -44,26 +44,32 @@ public class Apply extends Voucher {
      * Partner ID, i.e., the institution number.
      */
     private String partner;
+
     /**
      * Service name.
      */
     private String serviceName;
+
     /**
      * Signature type. Supports MD5 and RSA, defaults to MD5.
      */
     private String signType;
+
     /**
      * Character set, defaults to UTF-8.
      */
     private String charset;
+
     /**
      * Request data.
      */
     private String data;
+
     /**
      * Data type.
      */
     private String dataType;
+
     /**
      * Data signature.
      */

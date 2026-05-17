@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.tenpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Refund Query model.
@@ -44,34 +44,42 @@ public class RefundQuery extends Voucher {
      * Sub-merchant App ID.
      */
     private String sub_appid;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Sub-merchant ID.
      */
     private String sub_mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Refund ID.
      */
     private String refund_id;
+
     /**
      * Merchant refund number.
      */
     private String out_refund_no;
+
     /**
      * Transaction ID.
      */
     private String transaction_id;
+
     /**
      * Merchant order number.
      */

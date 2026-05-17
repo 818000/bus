@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -51,6 +51,7 @@ public abstract class MacOperatingSystem extends AbstractOperatingSystem {
      * The SYSTEM_LIBRARY_LAUNCH_AGENTS constant.
      */
     private static final String SYSTEM_LIBRARY_LAUNCH_AGENTS = "/System/Library/LaunchAgents";
+
     /**
      * The SYSTEM_LIBRARY_LAUNCH_DAEMONS constant.
      */
@@ -65,10 +66,12 @@ public abstract class MacOperatingSystem extends AbstractOperatingSystem {
      * The osXVersion value.
      */
     protected final String osXVersion;
+
     /**
      * The major value.
      */
     protected final int major;
+
     /**
      * The minor value.
      */

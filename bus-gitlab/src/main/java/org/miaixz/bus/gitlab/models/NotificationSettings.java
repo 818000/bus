@@ -19,15 +19,21 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
+/**
+ * The notification settings class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class NotificationSettings implements Serializable {
 
     @Serial
@@ -65,7 +71,12 @@ public class NotificationSettings implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
-    /** Notification level */
+    /**
+     * Notification level
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static enum Level {
 
         DISABLED, PARTICIPATING, WATCH, GLOBAL, MENTION, CUSTOM;
@@ -86,8 +97,15 @@ public class NotificationSettings implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
+    /**
+     * The events class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class Events implements Serializable {
 
         @Serial
@@ -206,6 +224,7 @@ public class NotificationSettings implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
 }

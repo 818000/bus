@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,16 +22,16 @@ package org.miaixz.bus.health.windows;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.logger.Logger;
-
+import com.sun.jna.platform.win32.COM.Wbemcli;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 import com.sun.jna.platform.win32.PdhUtil;
 import com.sun.jna.platform.win32.PdhUtil.PdhException;
 import com.sun.jna.platform.win32.VersionHelpers;
 import com.sun.jna.platform.win32.Win32Exception;
-import com.sun.jna.platform.win32.COM.Wbemcli;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Enables queries of Performance Counters using wild cards to filter instances
@@ -46,22 +46,27 @@ public final class PerfCounterQuery {
      * Multiple classes use these constants
      */
     public static final String TOTAL_INSTANCE = "_Total";
+
     /**
      * The TOTAL_OR_IDLE_INSTANCES constant.
      */
     public static final String TOTAL_OR_IDLE_INSTANCES = "_Total|Idle";
+
     /**
      * The TOTAL_INSTANCES constant.
      */
     public static final String TOTAL_INSTANCES = "*_Total";
+
     /**
      * The NOT_TOTAL_INSTANCE constant.
      */
     public static final String NOT_TOTAL_INSTANCE = "^" + TOTAL_INSTANCE;
+
     /**
      * The NOT_TOTAL_INSTANCES constant.
      */
     public static final String NOT_TOTAL_INSTANCES = "^" + TOTAL_INSTANCES;
+
     /**
      * The IS_VISTA_OR_GREATER constant.
      */
@@ -239,6 +244,9 @@ public final class PerfCounterQuery {
 
     /**
      * Contract for Counter Property Enums
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public interface PdhCounterProperty {
 
@@ -251,6 +259,7 @@ public final class PerfCounterQuery {
          * @return Returns the counter.
          */
         String getCounter();
+
     }
 
 }

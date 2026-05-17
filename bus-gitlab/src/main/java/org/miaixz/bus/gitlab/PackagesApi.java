@@ -22,13 +22,13 @@ package org.miaixz.bus.gitlab;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.Package;
-import org.miaixz.bus.gitlab.models.PackageFile;
-import org.miaixz.bus.gitlab.models.PackageFilter;
-
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.Package;
+import org.miaixz.bus.gitlab.models.PackageFile;
+import org.miaixz.bus.gitlab.models.PackageFilter;
 
 /**
  * <p>
@@ -37,6 +37,9 @@ import jakarta.ws.rs.core.Response;
  * </p>
  *
  * NOTE: This API is not available in the Community edition of GitLab.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class PackagesApi extends AbstractApi {
 
@@ -81,7 +84,7 @@ public class PackagesApi extends AbstractApi {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "packages");
-        return response.readEntity(new GenericType<List<Package>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -220,7 +223,7 @@ public class PackagesApi extends AbstractApi {
                 "packages",
                 packageId,
                 "package_files");
-        return response.readEntity(new GenericType<List<PackageFile>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 

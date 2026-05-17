@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.unionpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * UnionPay Cloud QuickPass - Bill Download model.
@@ -44,34 +44,42 @@ public class BillDownload extends Voucher {
      * Service name.
      */
     private String service;
+
     /**
      * Version number.
      */
     private String version;
+
     /**
      * Character set.
      */
     private String charset;
+
     /**
      * Bill date.
      */
     private String bill_date;
+
     /**
      * Bill type.
      */
     private String bill_type;
+
     /**
      * Signature type.
      */
     private String sign_type;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */

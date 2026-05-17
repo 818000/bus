@@ -22,6 +22,7 @@ package org.miaixz.bus.office.excel.cell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
+
 import org.miaixz.bus.office.excel.CellKit;
 
 /**
@@ -36,6 +37,7 @@ public class MergedCell {
      * The first cell in the merged region, i.e., the top-left cell.
      */
     private final Cell first;
+
     /**
      * The range of the merged cells.
      */

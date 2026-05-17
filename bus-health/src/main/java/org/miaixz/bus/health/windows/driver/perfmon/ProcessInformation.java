@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -84,6 +84,9 @@ public final class ProcessInformation {
 
     /**
      * Process performance counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum ProcessPerformanceProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -123,10 +126,14 @@ public final class ProcessInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Handle performance counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum HandleCountProperty implements PerfCounterQuery.PdhCounterProperty {
 
@@ -136,6 +143,7 @@ public final class ProcessInformation {
          * The instance value.
          */
         private final String instance;
+
         /**
          * The counter value.
          */
@@ -171,10 +179,14 @@ public final class ProcessInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Processor performance counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum IdleProcessorTimeProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -207,6 +219,7 @@ public final class ProcessInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
 }

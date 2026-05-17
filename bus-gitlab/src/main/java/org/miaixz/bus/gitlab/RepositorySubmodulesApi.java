@@ -19,9 +19,9 @@
 */
 package org.miaixz.bus.gitlab;
 
-import org.miaixz.bus.gitlab.models.Commit;
-
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.Commit;
 
 /**
  * <p>
@@ -30,6 +30,8 @@ import jakarta.ws.rs.core.Response;
  * </p>
  *
  * @see <a href="https://docs.gitlab.com/ee/api/repository_submodules.html">Repository Submodules API</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class RepositorySubmodulesApi extends AbstractApi {
 

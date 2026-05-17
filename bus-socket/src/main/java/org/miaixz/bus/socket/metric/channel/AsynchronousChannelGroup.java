@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -46,23 +46,28 @@ class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGrou
      * The maximum number of recursive callbacks allowed.
      */
     public static final int MAX_INVOKER = 8;
+
     /**
      * The worker responsible for write operations.
      */
     final Worker commonWorker;
     final Worker writeWorker;
+
     /**
      * The thread pool for handling read callbacks, which can also be used for business processing.
      */
     private final ExecutorService readExecutorService;
+
     /**
      * The thread pool for handling common I/O operations and write callbacks.
      */
     private final ExecutorService commonExecutorService;
+
     /**
      * An array of workers dedicated to read operations.
      */
     private final Worker[] readWorkers;
+
     /**
      * An atomic integer used as an index to distribute read tasks among {@code readWorkers}.
      */
@@ -237,6 +242,9 @@ class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGrou
     /**
      * A worker class that manages a {@link Selector} and processes its selected keys. Each worker runs in its own
      * thread.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Worker implements Runnable {
 
@@ -333,6 +341,7 @@ class AsynchronousChannelGroup extends java.nio.channels.AsynchronousChannelGrou
                 }
             }
         }
+
     }
 
 }

@@ -58,7 +58,7 @@ public interface RepeatableAnnotationCollector {
      * annotations, and the component type of that array is itself annotated with {@link Repeatable}.
      * <p>
      * Example:
-     * 
+     *
      * <pre><code>
      * // Container annotation
      * {@literal @}interface Annotations {
@@ -68,7 +68,7 @@ public interface RepeatableAnnotationCollector {
      * {@literal @}Repeatable(Annotations.class)
      * {@literal @}interface Item {}
      * </code></pre>
-     * 
+     *
      * Parsing any {@code Annotations} object will yield the {@code Item} annotation objects contained within its
      * {@code value} attribute.
      *
@@ -99,14 +99,14 @@ public interface RepeatableAnnotationCollector {
      * from all such matching attributes.
      * <p>
      * Example:
-     * 
+     *
      * <pre><code>
      * {@literal @}interface MyAnnotations {
      * 	Item1[] items1() default {};
      * 	Item2[] items2() default {};
      * }
      * </code></pre>
-     * 
+     *
      * Parsing any {@code MyAnnotations} object will yield {@code Item1} annotation objects from the {@code items1}
      * attribute, and {@code Item2} annotation objects from the {@code items2} attribute.
      *
@@ -179,6 +179,9 @@ public interface RepeatableAnnotationCollector {
 
     /**
      * A no-op implementation of {@code RepeatableAnnotationCollector} that returns only the original annotation.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class None implements RepeatableAnnotationCollector {
 
@@ -244,6 +247,9 @@ public interface RepeatableAnnotationCollector {
     /**
      * An abstract base class for {@code RepeatableAnnotationCollector} implementations. Provides common logic for
      * traversing and filtering annotations.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     abstract class AbstractCollector implements RepeatableAnnotationCollector {
 
@@ -381,6 +387,9 @@ public interface RepeatableAnnotationCollector {
      * A standard implementation of {@code RepeatableAnnotationCollector}. This collector identifies a method as
      * containing repeatable annotations if it is named {@code value}, returns an array of annotations, and the
      * component type of that array is itself annotated with {@link Repeatable}.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Standard extends AbstractCollector {
 
@@ -465,6 +474,9 @@ public interface RepeatableAnnotationCollector {
      * An implementation of {@code RepeatableAnnotationCollector} that uses a custom predicate. When resolving
      * annotation attributes, it determines whether an attribute contains repeatable annotations based on the provided
      * predicate. The collector will return all repeatable annotations from all matching attributes.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Condition extends AbstractCollector {
 
@@ -503,6 +515,9 @@ public interface RepeatableAnnotationCollector {
      * attribute as containing repeatable annotations if its type is an array of annotations, and the component type of
      * that array is itself annotated with {@link Repeatable}. The collector will return all repeatable annotations from
      * all such matching attributes.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Full extends AbstractCollector {
 

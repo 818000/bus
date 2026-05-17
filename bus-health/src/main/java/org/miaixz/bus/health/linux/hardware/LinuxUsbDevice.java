@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -21,6 +21,11 @@ package org.miaixz.bus.health.linux.hardware;
 
 import java.util.*;
 
+import com.sun.jna.platform.linux.Udev;
+import com.sun.jna.platform.linux.Udev.UdevDevice;
+import com.sun.jna.platform.linux.Udev.UdevEnumerate;
+import com.sun.jna.platform.linux.Udev.UdevListEntry;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.Immutable;
@@ -28,11 +33,6 @@ import org.miaixz.bus.health.builtin.hardware.UsbDevice;
 import org.miaixz.bus.health.builtin.hardware.common.AbstractUsbDevice;
 import org.miaixz.bus.health.linux.software.LinuxOperatingSystem;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.platform.linux.Udev;
-import com.sun.jna.platform.linux.Udev.UdevDevice;
-import com.sun.jna.platform.linux.Udev.UdevEnumerate;
-import com.sun.jna.platform.linux.Udev.UdevListEntry;
 
 /**
  * Linux Usb Device
@@ -47,26 +47,32 @@ public class LinuxUsbDevice extends AbstractUsbDevice {
      * The SUBSYSTEM_USB constant.
      */
     private static final String SUBSYSTEM_USB = "usb";
+
     /**
      * The DEVTYPE_USB_DEVICE constant.
      */
     private static final String DEVTYPE_USB_DEVICE = "usb_device";
+
     /**
      * The ATTR_PRODUCT constant.
      */
     private static final String ATTR_PRODUCT = "product";
+
     /**
      * The ATTR_MANUFACTURER constant.
      */
     private static final String ATTR_MANUFACTURER = "manufacturer";
+
     /**
      * The ATTR_VENDOR_ID constant.
      */
     private static final String ATTR_VENDOR_ID = "idVendor";
+
     /**
      * The ATTR_PRODUCT_ID constant.
      */
     private static final String ATTR_PRODUCT_ID = "idProduct";
+
     /**
      * The ATTR_SERIAL constant.
      */

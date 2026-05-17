@@ -19,16 +19,16 @@
 */
 package org.miaixz.bus.http.bodys;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.io.sink.BufferSink;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.http.UnoUrl;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An HTTP request body that represents form-encoded data.
@@ -45,6 +45,7 @@ public final class FormBody extends RequestBody {
      * The list of encoded field names.
      */
     private final List<String> encodedNames;
+
     /**
      * The list of encoded field values.
      */
@@ -180,6 +181,9 @@ public final class FormBody extends RequestBody {
 
     /**
      * A builder for creating {@link FormBody} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static final class Builder {
 
@@ -187,10 +191,12 @@ public final class FormBody extends RequestBody {
          * The list of field names.
          */
         private final List<String> names = new ArrayList<>();
+
         /**
          * The list of field values.
          */
         private final List<String> values = new ArrayList<>();
+
         /**
          * The character set for encoding.
          */
@@ -262,6 +268,7 @@ public final class FormBody extends RequestBody {
         public FormBody build() {
             return new FormBody(names, values);
         }
+
     }
 
 }

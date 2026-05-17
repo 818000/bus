@@ -19,9 +19,15 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import java.util.Date;
 import java.io.Serial;
+import java.util.Date;
 
+/**
+ * The access request class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class AccessRequest extends AbstractUser<AccessRequest> {
 
     @Serial

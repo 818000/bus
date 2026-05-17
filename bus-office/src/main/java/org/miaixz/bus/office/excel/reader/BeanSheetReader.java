@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Sheet;
+
 import org.miaixz.bus.core.bean.copier.CopyOptions;
 import org.miaixz.bus.core.xyz.BeanKit;
 
@@ -40,6 +41,7 @@ public class BeanSheetReader<T> implements SheetReader<List<T>> {
      * The bean class to convert each row to.
      */
     private final Class<T> beanClass;
+
     /**
      * The map sheet reader used to read the sheet.
      */

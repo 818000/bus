@@ -19,21 +19,26 @@
 */
 package org.miaixz.bus.vortex.routing.ws;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import jakarta.annotation.PreDestroy;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.cortex.Assets;
-import org.miaixz.bus.vortex.Context;
-import org.miaixz.bus.vortex.routing.Coordinator;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.reactive.socket.WebSocketSession;
 
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.xyz.UrlKit;
+import org.miaixz.bus.cortex.Assets;
+import org.miaixz.bus.extra.json.JsonKit;
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.vortex.Context;
+import org.miaixz.bus.vortex.routing.Coordinator;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An executor for managing and executing WebSocket connections and sessions.
@@ -56,6 +61,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since Java 21+
  */
 public class WsExecutor extends Coordinator<Object, ServerResponse> {
+
+    /**
+     * WebSocket scheme prefix.
+     */
+    private static final String WS_SCHEME = "ws" + Symbol.COLON + Symbol.FORWARDSLASH;
+
+    /**
+     * Secure WebSocket scheme prefix.
+     */
+    private static final String WSS_SCHEME = "wss" + Symbol.COLON + Symbol.FORWARDSLASH;
+
+    /**
+     * Pattern used to strip any WebSocket scheme prefix from configured hosts.
+     */
+    private static final String WS_SCHEME_PATTERN = "^(" + WS_SCHEME + Symbol.OR + WSS_SCHEME + ")";
 
     /**
      * Creates a WebSocket executor.
@@ -90,10 +110,16 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
         Assets assets = context.getAssets();
         String upstreamUrl = buildUpstreamUrl(assets);
 
-        String responseJson = String.format(
-                "{\"status\": \"websocket_ready\", " + "\"message\": \"WebSocket endpoint configured\", "
-                        + "\"upstream\": \"%s\", " + "\"note\": \"Use WebSocket client to connect to this endpoint\"}",
-                upstreamUrl);
+        String responseJson = JsonKit.toJsonString(
+                Map.of(
+                        "status",
+                        "websocket_ready",
+                        "message",
+                        "WebSocket endpoint configured",
+                        "upstream",
+                        upstreamUrl,
+                        "note",
+                        "Use WebSocket client to connect to this endpoint"));
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(responseJson);
     }
@@ -119,15 +145,15 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
 
         boolean isSecure = false;
 
-        if (assets.getHost() != null && assets.getHost().startsWith("wss://")) {
+        if (assets.getHost() != null && assets.getHost().startsWith(WSS_SCHEME)) {
             isSecure = true;
         }
 
-        urlBuilder.append(isSecure ? "wss://" : "ws://");
+        urlBuilder.append(isSecure ? WSS_SCHEME : WS_SCHEME);
 
         String host = assets.getHost();
         if (host != null) {
-            host = host.replaceFirst("^(ws://|wss://)", "");
+            host = host.replaceFirst(WS_SCHEME_PATTERN, Normal.EMPTY);
             urlBuilder.append(host);
         }
 
@@ -152,7 +178,7 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
             urlBuilder.append(assets.getUrl());
         }
 
-        return urlBuilder.toString();
+        return UrlKit.normalize(urlBuilder.toString(), false);
     }
 
     /**
@@ -169,7 +195,7 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
         activeSessions.put(sessionId, session);
 
         SessionMetadata metadata = new SessionMetadata(sessionId, System.currentTimeMillis(),
-                assets.getHost() + ":" + assets.getPort(), assets.getMethod());
+                assets.getHost() + Symbol.COLON + assets.getPort(), assets.getMethod());
 
         sessionMetadata.put(sessionId, metadata);
 
@@ -290,6 +316,9 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
 
     /**
      * Metadata for a WebSocket session.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class SessionMetadata {
 
@@ -297,14 +326,17 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
          * Gateway WebSocket session identifier.
          */
         private final String sessionId;
+
         /**
          * Connection timestamp in milliseconds since epoch.
          */
         private final long connectedAt;
+
         /**
          * Upstream WebSocket target URI.
          */
         private final String upstreamTarget;
+
         /**
          * Logical method associated with the upstream route.
          */
@@ -360,6 +392,7 @@ public class WsExecutor extends Coordinator<Object, ServerResponse> {
         public String getMethod() {
             return method;
         }
+
     }
 
 }

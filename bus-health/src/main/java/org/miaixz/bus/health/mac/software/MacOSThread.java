@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -36,26 +36,32 @@ public class MacOSThread extends AbstractOSThread {
      * The threadId value.
      */
     private final int threadId;
+
     /**
      * The state value.
      */
     private final OSProcess.State state;
+
     /**
      * The kernelTime value.
      */
     private final long kernelTime;
+
     /**
      * The userTime value.
      */
     private final long userTime;
+
     /**
      * The startTime value.
      */
     private final long startTime;
+
     /**
      * The upTime value.
      */
     private final long upTime;
+
     /**
      * The priority value.
      */

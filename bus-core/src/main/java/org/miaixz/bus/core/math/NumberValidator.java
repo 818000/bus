@@ -36,6 +36,7 @@ public class NumberValidator {
      * less than this value.
      */
     public static final double DOUBLE_EPSILON = 1e-6;
+
     /**
      * The tolerance value for float comparison. Two float values are considered equal if their absolute difference is
      * less than this value.
@@ -44,7 +45,7 @@ public class NumberValidator {
 
     /**
      * Checks if a float value is equal to zero within a small tolerance.
-     * 
+     *
      * @param val The float value.
      * @return {@code true} if the value is close to zero.
      */
@@ -54,7 +55,7 @@ public class NumberValidator {
 
     /**
      * Checks if a float value is not equal to zero within a small tolerance.
-     * 
+     *
      * @param val The float value.
      * @return {@code true} if the value is not close to zero.
      */
@@ -64,7 +65,7 @@ public class NumberValidator {
 
     /**
      * Checks if two float values are equal within a small tolerance.
-     * 
+     *
      * @param a The first float value.
      * @param b The second float value.
      * @return {@code true} if the values are close to each other.
@@ -75,7 +76,7 @@ public class NumberValidator {
 
     /**
      * Checks if two float values are not equal within a small tolerance.
-     * 
+     *
      * @param a The first float value.
      * @param b The second float value.
      * @return {@code true} if the values are not close to each other.
@@ -86,7 +87,7 @@ public class NumberValidator {
 
     /**
      * Checks if a double value is equal to zero within a small tolerance.
-     * 
+     *
      * @param val The double value.
      * @return {@code true} if the value is close to zero.
      */
@@ -96,7 +97,7 @@ public class NumberValidator {
 
     /**
      * Checks if a double value is not equal to zero within a small tolerance.
-     * 
+     *
      * @param val The double value.
      * @return {@code true} if the value is not close to zero.
      */
@@ -106,7 +107,7 @@ public class NumberValidator {
 
     /**
      * Checks if two double values are equal within a small tolerance.
-     * 
+     *
      * @param a The first double value.
      * @param b The second double value.
      * @return {@code true} if the values are close to each other.
@@ -117,7 +118,7 @@ public class NumberValidator {
 
     /**
      * Checks if two double values are not equal within a small tolerance.
-     * 
+     *
      * @param a The first double value.
      * @param b The second double value.
      * @return {@code true} if the values are not close to each other.

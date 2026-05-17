@@ -145,6 +145,9 @@ public interface CoverResult {
 
     /**
      * Represents the final state of an HTTP task.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum State {
 
@@ -177,6 +180,9 @@ public interface CoverResult {
 
     /**
      * An interface for consuming the HTTP response body in various formats.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     interface Body {
 
@@ -364,22 +370,27 @@ public interface CoverResult {
          * The final state of the task.
          */
         private State state;
+
         /**
          * The raw HTTP response, null if an error occurred before a response was received.
          */
         private Response response;
+
         /**
          * The exception that occurred, null if the task was successful.
          */
         private IOException error;
+
         /**
          * The executor for callbacks and conversions.
          */
         private CoverTasks.Executor executor;
+
         /**
          * The original HTTP task.
          */
         private CoverHttp<?> coverHttp;
+
         /**
          * The lazily-initialized body handler.
          */
@@ -387,7 +398,7 @@ public interface CoverResult {
 
         /**
          * Constructs a result with a final state (e.g., CANCELED).
-         * 
+         *
          * @param coverHttp The original HTTP task.
          * @param state     The final state.
          */
@@ -398,7 +409,7 @@ public interface CoverResult {
 
         /**
          * Constructs a result from a successful response.
-         * 
+         *
          * @param coverHttp The original HTTP task.
          * @param response  The raw HTTP response.
          * @param executor  The task executor.
@@ -410,7 +421,7 @@ public interface CoverResult {
 
         /**
          * Constructs a result with an executor, to be populated later.
-         * 
+         *
          * @param coverHttp The original HTTP task.
          * @param executor  The task executor.
          */
@@ -421,7 +432,7 @@ public interface CoverResult {
 
         /**
          * Constructs a result from a failure.
-         * 
+         *
          * @param coverHttp The original HTTP task.
          * @param state     The failure state.
          * @param error     The exception that caused the failure.
@@ -433,7 +444,7 @@ public interface CoverResult {
 
         /**
          * Sets the result to a failure state.
-         * 
+         *
          * @param state The failure state.
          * @param error The exception.
          */
@@ -444,7 +455,7 @@ public interface CoverResult {
 
         /**
          * Sets the result to a success state with a response.
-         * 
+         *
          * @param response The raw HTTP response.
          */
         public void response(Response response) {

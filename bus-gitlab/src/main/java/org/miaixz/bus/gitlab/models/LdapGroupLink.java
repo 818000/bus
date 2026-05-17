@@ -19,11 +19,17 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
-import java.io.Serial;
 
+/**
+ * The LDAP group link class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class LdapGroupLink implements Serializable {
 
     @Serial
