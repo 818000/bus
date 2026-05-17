@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.miaixz.bus.cache.reader.AbstractReader;
 import org.miaixz.bus.cache.reader.MultiCacheReader;
 import org.miaixz.bus.cache.reader.SingleCacheReader;
@@ -250,6 +251,9 @@ public class Module {
      * <p>
      * This pattern ensures lazy and thread-safe initialization without using explicit synchronization.
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class ModuleHolder {
 
@@ -257,6 +261,7 @@ public class Module {
          * The singleton instance of Module.
          */
         private static final Module INSTANCE = new Module();
+
     }
 
 }

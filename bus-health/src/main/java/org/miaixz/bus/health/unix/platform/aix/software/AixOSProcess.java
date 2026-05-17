@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -31,6 +31,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.unix.Resource;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_process_t;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -49,10 +53,6 @@ import org.miaixz.bus.health.unix.platform.aix.driver.PsInfo;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatCpu;
 import org.miaixz.bus.logger.Logger;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.unix.Resource;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_process_t;
-
 /**
  * OSProcess implementation
  *
@@ -67,19 +67,23 @@ public class AixOSProcess extends AbstractOSProcess {
      */
     private final Supplier<Long> affinityMask = Memoizer
             .memoize(PerfstatCpu::queryCpuAffinityMask, Memoizer.defaultExpiration());
+
     /**
      * The os value.
      */
     private final AixOperatingSystem os;
+
     /**
      * The bitness value.
      */
     private final Supplier<Integer> bitness = Memoizer.memoize(this::queryBitness);
+
     /**
      * The psinfo value.
      */
     private final Supplier<AixLibc.AixPsInfo> psinfo = Memoizer
             .memoize(this::queryPsInfo, Memoizer.defaultExpiration());
+
     /**
      * The cmdEnv value.
      */
@@ -90,86 +94,107 @@ public class AixOSProcess extends AbstractOSProcess {
      * The procCpu value.
      */
     private final Supplier<perfstat_process_t[]> procCpu;
+
     /**
      * The name value.
      */
     private String name;
+
     /**
      * The commandLineBackup value.
      */
     private String commandLineBackup;
+
     /**
      * The commandLine value.
      */
     private final Supplier<String> commandLine = Memoizer.memoize(this::queryCommandLine);
+
     /**
      * The user value.
      */
     private String user;
+
     /**
      * The userID value.
      */
     private String userID;
+
     /**
      * The group value.
      */
     private String group;
+
     /**
      * The groupID value.
      */
     private String groupID;
+
     /**
      * The parentProcessID value.
      */
     private int parentProcessID;
+
     /**
      * The threadCount value.
      */
     private int threadCount;
+
     /**
      * The priority value.
      */
     private int priority;
+
     /**
      * The virtualSize value.
      */
     private long virtualSize;
+
     /**
      * The residentSetSize value.
      */
     private long residentSetSize;
+
     /**
      * The privateResidentMemory value.
      */
     private long privateResidentMemory;
+
     /**
      * The kernelTime value.
      */
     private long kernelTime;
+
     /**
      * The userTime value.
      */
     private long userTime;
+
     /**
      * The startTime value.
      */
     private long startTime;
+
     /**
      * The upTime value.
      */
     private long upTime;
+
     /**
      * The bytesRead value.
      */
     private long bytesRead;
+
     /**
      * The bytesWritten value.
      */
     private long bytesWritten;
+
     /**
      * The path value.
      */
     private String path = Normal.EMPTY;
+
     /**
      * The state value.
      */

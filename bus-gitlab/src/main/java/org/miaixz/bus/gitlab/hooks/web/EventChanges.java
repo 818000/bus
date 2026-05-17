@@ -24,13 +24,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.gitlab.models.Assignee;
-import org.miaixz.bus.gitlab.support.JacksonJson;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+
+import org.miaixz.bus.gitlab.models.Assignee;
+import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.logger.Logger;
 
+/**
+ * The event changes class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public abstract class EventChanges {
 
     private ChangeContainer<Long> authorId;

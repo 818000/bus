@@ -23,11 +23,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
-import org.miaixz.bus.cortex.setting.item.Item;
-import org.miaixz.bus.cortex.setting.item.ItemQuery;
 import org.miaixz.bus.cortex.setting.curator.ItemCuratorService;
+import org.miaixz.bus.cortex.setting.item.Item;
+import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
 import org.miaixz.bus.cortex.setting.item.ItemExposure;
+import org.miaixz.bus.cortex.setting.item.ItemQuery;
 import org.miaixz.bus.cortex.setting.secret.SecretMasker;
 
 /**
@@ -42,10 +42,12 @@ public class ItemQueryService {
      * Curator application service used for read operations.
      */
     private final ItemCuratorService settingCuratorService;
+
     /**
      * Secret masker used for management-safe inspection payloads.
      */
     private final SecretMasker secretMasker;
+
     /**
      * Optional runtime overlay service consulted before durable setting resolution.
      */

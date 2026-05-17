@@ -23,6 +23,7 @@ import java.io.File;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
+
 import org.miaixz.bus.core.xyz.FileKit;
 import org.miaixz.bus.office.excel.SimpleAnchor;
 import org.miaixz.bus.office.excel.shape.ExcelPictureType;
@@ -40,6 +41,7 @@ public class PictureCellSetter implements CellSetter {
      * The picture data as a byte array.
      */
     private final byte[] pictureData;
+
     /**
      * The picture type.
      */

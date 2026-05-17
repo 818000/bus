@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+
 import org.miaixz.bus.core.xyz.CollKit;
 
 /**
@@ -43,10 +44,12 @@ public class RowGroup implements Serializable {
      * Group name.
      */
     private String name;
+
     /**
      * Cell style for this group.
      */
     private CellStyle style;
+
     /**
      * Child groups.
      */

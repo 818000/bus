@@ -20,8 +20,6 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,6 +28,9 @@ import org.miaixz.bus.gitlab.support.JacksonJson;
 
 /**
  * This class is part of the Release class model.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class Assets implements Serializable {
 
@@ -78,6 +79,12 @@ public class Assets implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The source class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class Source implements Serializable {
 
         @Serial
@@ -106,8 +113,15 @@ public class Assets implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
+    /**
+     * The link class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class Link implements Serializable {
 
         @Serial
@@ -154,6 +168,7 @@ public class Assets implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
 }

@@ -21,14 +21,15 @@ package org.miaixz.bus.cortex.setting.app;
 
 import java.util.List;
 
-import org.miaixz.bus.cortex.Setting;
-import org.miaixz.bus.cortex.Type;
-
 import jakarta.persistence.Transient;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.cortex.Setting;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Application directory entry for the setting domain.
@@ -53,6 +54,7 @@ public class App extends Setting {
      * Legacy application code kept only for compatibility and display. {@code id} remains the authoritative identifier.
      */
     private String code;
+
     /**
      * Display name.
      */

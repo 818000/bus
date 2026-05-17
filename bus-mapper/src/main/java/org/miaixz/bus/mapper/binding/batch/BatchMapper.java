@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.Param;
+
 import org.miaixz.bus.mapper.Caching;
 import org.miaixz.bus.mapper.provider.BatchProvider;
 
@@ -72,7 +73,7 @@ import org.miaixz.bus.mapper.provider.BatchProvider;
  * </p>
  *
  * <pre>{@code
- * 
+ *
  * public interface UserMapper extends BatchMapper<User> {
  * }
  *

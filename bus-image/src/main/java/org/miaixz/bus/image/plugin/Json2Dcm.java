@@ -19,7 +19,11 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.*;
+import java.util.List;
+
 import jakarta.json.Json;
+
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.UID;
@@ -29,9 +33,6 @@ import org.miaixz.bus.image.galaxy.io.ImageEncodingOptions;
 import org.miaixz.bus.image.galaxy.io.ImageInputStream;
 import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
 import org.miaixz.bus.image.metric.json.JSONReader;
-
-import java.io.*;
-import java.util.List;
 
 /**
  * The {@code Json2Dcm} class provides functionality to convert a DICOM JSON model into a DICOM Part 10 file. It reads a
@@ -47,50 +48,62 @@ public class Json2Dcm {
      * Descriptor for handling bulk data.
      */
     private final BasicBulkDataDescriptor bulkDataDescriptor = new BasicBulkDataDescriptor();
+
     /**
      * How to handle bulk data (e.g., as URI).
      */
     private ImageInputStream.IncludeBulkData includeBulkData = ImageInputStream.IncludeBulkData.URI;
+
     /**
      * Whether to concatenate bulk data files.
      */
     private boolean catBlkFiles = false;
+
     /**
      * Prefix for bulk data file names.
      */
     private String blkFilePrefix = "blk";
+
     /**
      * Suffix for bulk data file names.
      */
     private String blkFileSuffix;
+
     /**
      * Directory for storing bulk data files.
      */
     private File blkDirectory;
+
     /**
      * The Transfer Syntax UID for the output DICOM file.
      */
     private String tsuid;
+
     /**
      * Whether to include File Meta Information if it's not present.
      */
     private boolean withfmi;
+
     /**
      * Whether to exclude File Meta Information from the output.
      */
     private boolean nofmi;
+
     /**
      * Encoding options for the output DICOM file.
      */
     private ImageEncodingOptions encOpts = ImageEncodingOptions.DEFAULT;
+
     /**
      * A list of generated bulk data files.
      */
     private List<File> bulkDataFiles;
+
     /**
      * The File Meta Information of the dataset.
      */
     private Attributes fmi;
+
     /**
      * The main DICOM dataset.
      */

@@ -28,9 +28,9 @@ import java.util.Objects;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.cortex.*;
 import org.miaixz.bus.cortex.builtin.RegistryGenerator;
-import org.miaixz.bus.cortex.magic.identity.Sequence;
 import org.miaixz.bus.cortex.magic.event.CortexChangeLogStore;
 import org.miaixz.bus.cortex.magic.event.CortexChangeRecord;
+import org.miaixz.bus.cortex.magic.identity.Sequence;
 import org.miaixz.bus.cortex.magic.watch.WatchManager;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.logger.Logger;
@@ -48,14 +48,17 @@ public class StoreBackedRegistry<T extends Assets> extends AbstractRegistry<T> {
      * Durable storage adapter.
      */
     protected final RegistryStore<T> store;
+
     /**
      * Post-commit listeners.
      */
     private final List<Listener<RegistryChange<T>>> listeners;
+
     /**
      * Sequence source used for ordered registry change events.
      */
     private final Sequence sequence;
+
     /**
      * Optional reliable change log used as a first-stage outbox.
      */

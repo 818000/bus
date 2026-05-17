@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -27,6 +27,8 @@ import org.miaixz.bus.health.Parsing;
 import org.miaixz.bus.health.builtin.software.ApplicationInfo;
 
 /**
+ * The linux installed apps class.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
@@ -36,6 +38,7 @@ public final class LinuxInstalledApps {
      * The PIPE_PATTERN constant.
      */
     private static final Pattern PIPE_PATTERN = Pattern.compile("\\|");
+
     /**
      * The PACKAGE_MANAGER_COMMANDS constant.
      */

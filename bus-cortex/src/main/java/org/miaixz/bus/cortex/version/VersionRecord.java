@@ -21,11 +21,11 @@ package org.miaixz.bus.cortex.version;
 
 import java.util.List;
 
-import org.miaixz.bus.cortex.Nature;
-import org.miaixz.bus.cortex.Type;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.miaixz.bus.cortex.Nature;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Version-domain release record independent from registry assets.
@@ -41,34 +41,42 @@ public class VersionRecord extends Nature {
      * Release version identifier.
      */
     private String version;
+
     /**
      * Release track key.
      */
     private String track;
+
     /**
      * Lifecycle status of this release version.
      */
     private VersionStatus versionStatus;
+
     /**
      * Human-readable release title.
      */
     private String title;
+
     /**
      * Human-readable release description.
      */
     private String description;
+
     /**
      * Artifacts attached to this release.
      */
     private List<ReleaseArtifact> artifacts;
+
     /**
      * JSON metadata for release-specific details.
      */
     private String metadata;
+
     /**
      * Creation timestamp in epoch milliseconds.
      */
     private Long created;
+
     /**
      * Publication timestamp in epoch milliseconds.
      */

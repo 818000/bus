@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -25,18 +25,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.miaixz.bus.core.lang.Charset;
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.Builder;
-import org.miaixz.bus.health.Config;
-import org.miaixz.bus.health.builtin.software.OSFileStore;
-import org.miaixz.bus.health.builtin.software.common.AbstractFileSystem;
-import org.miaixz.bus.health.mac.CFKit;
-import org.miaixz.bus.health.mac.SysctlKit;
-import org.miaixz.bus.logger.Logger;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.mac.CoreFoundation;
@@ -51,6 +39,18 @@ import com.sun.jna.platform.mac.IOKit.IORegistryEntry;
 import com.sun.jna.platform.mac.IOKitUtil;
 import com.sun.jna.platform.mac.SystemB;
 import com.sun.jna.platform.mac.SystemB.Statfs;
+
+import org.miaixz.bus.core.lang.Charset;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.Builder;
+import org.miaixz.bus.health.Config;
+import org.miaixz.bus.health.builtin.software.OSFileStore;
+import org.miaixz.bus.health.builtin.software.common.AbstractFileSystem;
+import org.miaixz.bus.health.mac.CFKit;
+import org.miaixz.bus.health.mac.SysctlKit;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * The Mac File System contains {@link OSFileStore}s which are a storage pool, device, partition, volume, concrete file
@@ -67,16 +67,19 @@ public class MacFileSystem extends AbstractFileSystem {
      */
     protected static final List<PathMatcher> FS_PATH_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._MAC_FS_PATH_EXCLUDES);
+
     /**
      * The FS_PATH_INCLUDES constant.
      */
     protected static final List<PathMatcher> FS_PATH_INCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._MAC_FS_PATH_INCLUDES);
+
     /**
      * The FS_VOLUME_EXCLUDES constant.
      */
     protected static final List<PathMatcher> FS_VOLUME_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._MAC_FS_VOLUME_EXCLUDES);
+
     /**
      * The FS_VOLUME_INCLUDES constant.
      */
@@ -94,86 +97,107 @@ public class MacFileSystem extends AbstractFileSystem {
      * The MNT_RDONLY constant.
      */
     protected static final int MNT_RDONLY = 0x00000001;
+
     /**
      * The MNT_SYNCHRONOUS constant.
      */
     protected static final int MNT_SYNCHRONOUS = 0x00000002;
+
     /**
      * The MNT_NOEXEC constant.
      */
     protected static final int MNT_NOEXEC = 0x00000004;
+
     /**
      * The MNT_NOSUID constant.
      */
     protected static final int MNT_NOSUID = 0x00000008;
+
     /**
      * The MNT_NODEV constant.
      */
     protected static final int MNT_NODEV = 0x00000010;
+
     /**
      * The MNT_UNION constant.
      */
     protected static final int MNT_UNION = 0x00000020;
+
     /**
      * The MNT_ASYNC constant.
      */
     protected static final int MNT_ASYNC = 0x00000040;
+
     /**
      * The MNT_CPROTECT constant.
      */
     protected static final int MNT_CPROTECT = 0x00000080;
+
     /**
      * The MNT_EXPORTED constant.
      */
     protected static final int MNT_EXPORTED = 0x00000100;
+
     /**
      * The MNT_QUARANTINE constant.
      */
     protected static final int MNT_QUARANTINE = 0x00000400;
+
     /**
      * The MNT_LOCAL constant.
      */
     protected static final int MNT_LOCAL = 0x00001000;
+
     /**
      * The MNT_QUOTA constant.
      */
     protected static final int MNT_QUOTA = 0x00002000;
+
     /**
      * The MNT_ROOTFS constant.
      */
     protected static final int MNT_ROOTFS = 0x00004000;
+
     /**
      * The MNT_DOVOLFS constant.
      */
     protected static final int MNT_DOVOLFS = 0x00008000;
+
     /**
      * The MNT_DONTBROWSE constant.
      */
     protected static final int MNT_DONTBROWSE = 0x00100000;
+
     /**
      * The MNT_IGNORE_OWNERSHIP constant.
      */
     protected static final int MNT_IGNORE_OWNERSHIP = 0x00200000;
+
     /**
      * The MNT_AUTOMOUNTED constant.
      */
     protected static final int MNT_AUTOMOUNTED = 0x00400000;
+
     /**
      * The MNT_JOURNALED constant.
      */
     protected static final int MNT_JOURNALED = 0x00800000;
+
     /**
      * The MNT_NOUSERXATTR constant.
      */
     protected static final int MNT_NOUSERXATTR = 0x01000000;
+
     /**
      * The MNT_DEFWRITE constant.
      */
     protected static final int MNT_DEFWRITE = 0x02000000;
+
     /**
      * The MNT_MULTILABEL constant.
      */
     protected static final int MNT_MULTILABEL = 0x04000000;
+
     /**
      * The MNT_NOATIME constant.
      */

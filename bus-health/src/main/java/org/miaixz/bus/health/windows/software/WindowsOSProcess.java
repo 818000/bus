@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -24,6 +24,13 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.Advapi32Util.Account;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.lang.tuple.Pair;
@@ -44,13 +51,6 @@ import org.miaixz.bus.health.windows.driver.wmi.Win32Process;
 import org.miaixz.bus.health.windows.driver.wmi.Win32Process.CommandLineProperty;
 import org.miaixz.bus.health.windows.driver.wmi.Win32ProcessCached;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.platform.win32.Advapi32Util.Account;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * OSProcess implementation
@@ -75,6 +75,7 @@ public class WindowsOSProcess extends AbstractOSProcess {
      * The IS_VISTA_OR_GREATER constant.
      */
     private static final boolean IS_VISTA_OR_GREATER = VersionHelpers.IsWindowsVistaOrGreater();
+
     /**
      * The IS_WINDOWS7_OR_GREATER constant.
      */
@@ -85,103 +86,128 @@ public class WindowsOSProcess extends AbstractOSProcess {
      * The os value.
      */
     private final WindowsOperatingSystem os;
+
     /**
      * The groupInfo value.
      */
     private final Supplier<Pair<String, String>> groupInfo = Memoizer.memoize(this::queryGroupInfo);
+
     /**
      * The cwdCmdEnv value.
      */
     private final Supplier<Triplet<String, String, Map<String, String>>> cwdCmdEnv = Memoizer
             .memoize(this::queryCwdCommandlineEnvironment);
+
     /**
      * The currentWorkingDirectory value.
      */
     private final Supplier<String> currentWorkingDirectory = Memoizer.memoize(this::queryCwd);
+
     /**
      * The tcb value.
      */
     private Map<Integer, ThreadPerformanceData.PerfCounterBlock> tcb;
+
     /**
      * The name value.
      */
     private String name;
+
     /**
      * The userInfo value.
      */
     private final Supplier<Pair<String, String>> userInfo = Memoizer.memoize(this::queryUserInfo);
+
     /**
      * The path value.
      */
     private String path = Normal.EMPTY;
+
     /**
      * The state value.
      */
     private OSProcess.State state = OSProcess.State.INVALID;
+
     /**
      * The parentProcessID value.
      */
     private int parentProcessID;
+
     /**
      * The threadCount value.
      */
     private int threadCount;
+
     /**
      * The priority value.
      */
     private int priority;
+
     /**
      * The virtualSize value.
      */
     private long virtualSize;
+
     /**
      * The workingSetSize value.
      */
     private long workingSetSize;
+
     /**
      * The privateWorkingSetSize value.
      */
     private long privateWorkingSetSize;
+
     /**
      * The kernelTime value.
      */
     private long kernelTime;
+
     /**
      * The userTime value.
      */
     private long userTime;
+
     /**
      * The startTime value.
      */
     private long startTime;
+
     /**
      * The commandLine value.
      */
     private final Supplier<String> commandLine = Memoizer.memoize(this::queryCommandLine);
+
     /**
      * The args value.
      */
     private final Supplier<List<String>> args = Memoizer.memoize(this::queryArguments);
+
     /**
      * The upTime value.
      */
     private long upTime;
+
     /**
      * The bytesRead value.
      */
     private long bytesRead;
+
     /**
      * The bytesWritten value.
      */
     private long bytesWritten;
+
     /**
      * The openFiles value.
      */
     private long openFiles;
+
     /**
      * The bitness value.
      */
     private int bitness;
+
     /**
      * The pageFaults value.
      */

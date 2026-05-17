@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.session.RowBounds;
+
 import org.miaixz.bus.core.lang.Optional;
 import org.miaixz.bus.mapper.Caching;
 import org.miaixz.bus.mapper.provider.ConditionProvider;
@@ -34,6 +35,7 @@ import org.miaixz.bus.mapper.provider.ConditionProvider;
  * @param <T> The type of the entity class.
  * @param <E> An object that conforms to the Condition data structure, such as {@link Condition} or an MBG-generated
  *            Condition object.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */

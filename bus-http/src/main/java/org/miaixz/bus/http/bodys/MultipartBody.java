@@ -19,6 +19,11 @@
 */
 package org.miaixz.bus.http.bodys;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.miaixz.bus.core.io.ByteString;
 import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.io.sink.BufferSink;
@@ -26,11 +31,6 @@ import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.http.Headers;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * A MIME multipart request body.
@@ -49,30 +49,37 @@ public class MultipartBody extends RequestBody {
      * The colon-space separator.
      */
     private static final byte[] COLONSPACE = { Symbol.C_COLON, Symbol.C_SPACE };
+
     /**
      * The carriage return-line feed separator.
      */
     private static final byte[] CRLF = { Symbol.C_CR, Symbol.C_LF };
+
     /**
      * The double-dash separator.
      */
     private static final byte[] DASHDASH = { Symbol.C_MINUS, Symbol.C_MINUS };
+
     /**
      * The boundary separator.
      */
     private final ByteString boundary;
+
     /**
      * The original media type.
      */
     private final MediaType originalType;
+
     /**
      * The full media type, including the boundary.
      */
     private final MediaType contentType;
+
     /**
      * The list of parts.
      */
     private final List<Part> parts;
+
     /**
      * The content length.
      */
@@ -283,6 +290,9 @@ public class MultipartBody extends RequestBody {
 
     /**
      * A part of a multipart body.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static final class Part {
 
@@ -290,6 +300,7 @@ public class MultipartBody extends RequestBody {
          * The headers of the part.
          */
         final Headers headers;
+
         /**
          * The body of the part.
          */
@@ -395,10 +406,14 @@ public class MultipartBody extends RequestBody {
         public RequestBody body() {
             return body;
         }
+
     }
 
     /**
      * A builder for creating {@link MultipartBody} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static final class Builder {
 
@@ -406,10 +421,12 @@ public class MultipartBody extends RequestBody {
          * The boundary separator.
          */
         private final ByteString boundary;
+
         /**
          * The list of parts.
          */
         private final List<Part> parts = new ArrayList<>();
+
         /**
          * The media type.
          */
@@ -525,6 +542,7 @@ public class MultipartBody extends RequestBody {
             }
             return new MultipartBody(boundary, type, parts);
         }
+
     }
 
 }

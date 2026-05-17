@@ -19,11 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.models.Constants.IssueOrderBy;
 import org.miaixz.bus.gitlab.models.Constants.IssueScope;
@@ -32,13 +37,11 @@ import org.miaixz.bus.gitlab.models.Constants.SortOrder;
 import org.miaixz.bus.gitlab.support.ISO8601;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
 /**
  * This class is used to filter issues when getting lists of them.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class IssueFilter implements Serializable {
 
@@ -410,7 +413,7 @@ public class IssueFilter implements Serializable {
      * Add iids to the 'not' filter entry.
      *
      * @param iids the iids to add to the filter
-     * 
+     *
      * @return the reference to this IssueFilter instance
      */
     public IssueFilter withoutIids(String... iids) {
@@ -511,6 +514,12 @@ public class IssueFilter implements Serializable {
                         .withParam("iteration_title", iterationTitle).withParam("not", toStringMap(not), false);
     }
 
+    /**
+     * The issue field enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum IssueField {
 
         ASSIGNEE_ID, ASSIGNEE_USERNAME, AUTHOR_ID, AUTHOR_USERNAME, IIDS, ITERATION_ID, ITERATION_TITLE, LABELS,
@@ -532,6 +541,7 @@ public class IssueFilter implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     private Map<String, Object> toStringMap(Map<IssueField, Object> map) {

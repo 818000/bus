@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.cache.builtin;
 
-import org.miaixz.bus.cache.Builder;
-import org.miaixz.bus.core.lang.Assert;
-import org.miaixz.bus.core.xyz.StringKit;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import org.miaixz.bus.cache.Builder;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
  * A utility class for evaluating cache expressions used in key generation and conditional caching.
@@ -231,7 +231,9 @@ public class SpelCalculator {
         return null;
     }
 
-    /** Locate an operator string outside string literals. Returns -1 if not found. */
+    /**
+     * Locate an operator string outside string literals. Returns -1 if not found.
+     */
     private static int indexOfOperator(String expr, String op) {
         boolean inStr = false;
         char strChar = 0;
@@ -250,7 +252,9 @@ public class SpelCalculator {
         return -1;
     }
 
-    /** Split on {@code +} outside string literals. */
+    /**
+     * Split on {@code +} outside string literals.
+     */
     private static List<String> splitOnPlus(String expr) {
         List<String> parts = new ArrayList<>();
         boolean inStr = false;

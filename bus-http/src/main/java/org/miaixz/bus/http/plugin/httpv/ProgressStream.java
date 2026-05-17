@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.http.plugin.httpv;
 
-import org.miaixz.bus.http.Callback;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executor;
+
+import org.miaixz.bus.http.Callback;
 
 /**
  * An {@link InputStream} decorator that monitors the progress of data being read. It wraps an existing InputStream and
@@ -38,26 +38,32 @@ public class ProgressStream extends InputStream {
      * The original, underlying input stream.
      */
     private final InputStream input;
+
     /**
      * The callback to be invoked with progress updates.
      */
     private final Callback<Progress> onProcess;
+
     /**
      * The executor on which the progress callback will be executed.
      */
     private final Executor callbackExecutor;
+
     /**
      * The minimum number of bytes that must be read before a progress update is triggered.
      */
     private final long stepBytes;
+
     /**
      * An internal counter to track progress steps.
      */
     private long step;
+
     /**
      * The object that holds the current progress state (total and transferred bytes).
      */
     private final Progress progress;
+
     /**
      * A flag to ensure the final "done" progress update is only sent once.
      */

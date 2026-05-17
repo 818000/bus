@@ -19,9 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import org.miaixz.bus.gitlab.support.JacksonJson;
 import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The group access token class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class GroupAccessToken extends ImpersonationToken {
 
     @Serial

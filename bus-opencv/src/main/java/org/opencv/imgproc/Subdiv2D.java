@@ -1,9 +1,26 @@
-//
-// This file is auto-generated. Please don't modify it!
-//
+/*
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
+ ~                                                                           ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
+ ~ you may not use this file except in compliance with the License.          ~
+ ~ You may obtain a copy of the License at                                   ~
+ ~                                                                           ~
+ ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
+ ~                                                                           ~
+ ~ Unless required by applicable law or agreed to in writing, software       ~
+ ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
+ ~ See the License for the specific language governing permissions and       ~
+ ~ limitations under the License.                                            ~
+ ~                                                                           ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+*/
 package org.opencv.imgproc;
 
 import java.util.List;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat4;
 import org.opencv.core.MatOfFloat6;
@@ -15,6 +32,9 @@ import org.opencv.utils.Converters;
 
 // C++: class Subdiv2D
 
+/**
+ * The subdiv 2 d class.
+ */
 public class Subdiv2D {
 
     protected final long nativeObj;
@@ -356,7 +376,6 @@ public class Subdiv2D {
      * Returns next edge around the edge origin.
      *
      * @param edge Subdivision edge ID.
-     *
      * @return an integer which is next edge ID around the edge origin: eOnext on the picture above if e is the input
      *         edge).
      */
@@ -404,7 +423,6 @@ public class Subdiv2D {
      *
      * @param edge  Subdivision edge ID.
      * @param orgpt Output vertex location.
-     *
      * @return vertex ID.
      */
     public int edgeOrg(int edge, Point orgpt) {
@@ -421,7 +439,6 @@ public class Subdiv2D {
      * Returns the edge origin.
      *
      * @param edge Subdivision edge ID.
-     *
      * @return vertex ID.
      */
     public int edgeOrg(int edge) {
@@ -437,7 +454,6 @@ public class Subdiv2D {
      *
      * @param edge  Subdivision edge ID.
      * @param dstpt Output vertex location.
-     *
      * @return vertex ID.
      */
     public int edgeDst(int edge, Point dstpt) {
@@ -454,7 +470,6 @@ public class Subdiv2D {
      * Returns the edge destination.
      *
      * @param edge Subdivision edge ID.
-     *
      * @return vertex ID.
      */
     public int edgeDst(int edge) {

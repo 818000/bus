@@ -19,10 +19,8 @@
 */
 package org.miaixz.bus.logger.metric.tinylog;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.xyz.ArrayKit;
-import org.miaixz.bus.core.xyz.StringKit;
-import org.miaixz.bus.logger.magic.AbstractProvider;
+import java.io.Serial;
+
 import org.tinylog.Level;
 import org.tinylog.configuration.Configuration;
 import org.tinylog.format.AdvancedMessageFormatter;
@@ -30,7 +28,10 @@ import org.tinylog.format.MessageFormatter;
 import org.tinylog.provider.LoggingProvider;
 import org.tinylog.provider.ProviderRegistry;
 
-import java.io.Serial;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.xyz.ArrayKit;
+import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.logger.magic.AbstractProvider;
 
 /**
  * A logger provider implementation that wraps the tinylog logging framework.
@@ -48,15 +49,18 @@ public class TinyLoggingProvider extends AbstractProvider {
      * the current class name.
      */
     private static final int DEPTH = 5;
+
     /**
      * The underlying tinylog logging provider.
      */
     private static final LoggingProvider provider = ProviderRegistry.getLoggingProvider();
+
     /**
      * The message formatter for formatting log messages.
      */
     private static final MessageFormatter formatter = new AdvancedMessageFormatter(Configuration.getLocale(),
             Configuration.isEscapingEnabled());
+
     /**
      * The minimum logging level.
      */

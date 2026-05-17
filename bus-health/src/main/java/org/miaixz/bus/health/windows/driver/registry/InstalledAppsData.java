@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -26,14 +26,16 @@ import static com.sun.jna.platform.win32.WinReg.HKEY_LOCAL_MACHINE;
 
 import java.util.*;
 
-import org.miaixz.bus.health.builtin.software.ApplicationInfo;
-import org.miaixz.bus.health.windows.RegistryKit;
-
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 
+import org.miaixz.bus.health.builtin.software.ApplicationInfo;
+import org.miaixz.bus.health.windows.RegistryKit;
+
 /**
+ * The installed apps data class.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
@@ -50,6 +52,7 @@ public final class InstalledAppsData {
      * The REGISTRY_PATHS constant.
      */
     private static final Map<WinReg.HKEY, List<String>> REGISTRY_PATHS = new HashMap<>();
+
     /**
      * The ACCESS_FLAGS constant.
      */

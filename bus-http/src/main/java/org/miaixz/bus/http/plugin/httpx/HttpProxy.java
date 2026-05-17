@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.http.plugin.httpx;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.http.secure.Authenticator;
 import org.miaixz.bus.http.secure.Credentials;
-
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 
 /**
  * Represents the configuration for an HTTP proxy server. This class holds the address, port, credentials, and type of
@@ -39,18 +39,22 @@ public class HttpProxy {
      * The proxy server's hostname or IP address.
      */
     public final String hostAddress;
+
     /**
      * The proxy server's port number.
      */
     public final int port;
+
     /**
      * The username for proxy authentication. Can be null if no authentication is required.
      */
     public final String user;
+
     /**
      * The password for proxy authentication. Can be null if no authentication is required.
      */
     public final String password;
+
     /**
      * The type of proxy (e.g., HTTP, SOCKS).
      */

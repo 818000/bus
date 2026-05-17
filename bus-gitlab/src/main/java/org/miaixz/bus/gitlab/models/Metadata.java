@@ -19,13 +19,19 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serial;
-
+/**
+ * The metadata class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Metadata implements Serializable {
 
     @Serial
@@ -73,6 +79,12 @@ public class Metadata implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The kas class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public static class Kas {
 
         private Boolean enabled;
@@ -110,6 +122,7 @@ public class Metadata implements Serializable {
         public String toString() {
             return (JacksonJson.toJsonString(this));
         }
+
     }
 
 }

@@ -19,16 +19,24 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The membership source type enum.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public enum MembershipSourceType {
 
     PROJECT,
 
-    /** Representing a group */
+    /**
+     * Representing a group
+     */
     NAMESPACE;
 
     private static JacksonJsonEnumHelper<MembershipSourceType> enumHelper = new JacksonJsonEnumHelper<>(

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -69,6 +69,9 @@ public interface SystemConfiguration extends Library {
 
     /**
      * A reference to an SCNetworkInterface object.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class SCNetworkInterfaceRef extends CFTypeRef {
 
@@ -87,6 +90,7 @@ public interface SystemConfiguration extends Library {
         public SCNetworkInterfaceRef(Pointer p) {
             super(p);
         }
+
     }
 
 }

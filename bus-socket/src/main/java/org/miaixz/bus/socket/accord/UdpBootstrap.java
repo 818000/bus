@@ -19,15 +19,15 @@
 */
 package org.miaixz.bus.socket.accord;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
+
 import org.miaixz.bus.socket.Context;
 import org.miaixz.bus.socket.Handler;
 import org.miaixz.bus.socket.Message;
 import org.miaixz.bus.socket.Worker;
 import org.miaixz.bus.socket.buffer.BufferPagePool;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.DatagramChannel;
 
 /**
  * A bootstrap class for creating and configuring UDP services.
@@ -41,18 +41,22 @@ public class UdpBootstrap {
      * The service context, containing configuration settings.
      */
     private final Context context = new Context();
+
     /**
      * The worker responsible for handling I/O operations.
      */
     private Worker worker;
+
     /**
      * Flag indicating whether the worker was created internally by this bootstrap.
      */
     private boolean innerWorker = false;
+
     /**
      * The buffer pool for write operations.
      */
     private BufferPagePool writeBufferPool = null;
+
     /**
      * The buffer pool for read operations.
      */

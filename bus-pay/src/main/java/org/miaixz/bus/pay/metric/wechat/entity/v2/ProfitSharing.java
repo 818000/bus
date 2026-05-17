@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Profit sharing model. Supports: single profit sharing request, multiple profit sharing requests, adding profit
@@ -45,42 +45,52 @@ public class ProfitSharing extends Voucher {
      * Sub-merchant App ID.
      */
     private String sub_appid;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Sub-merchant ID.
      */
     private String sub_mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */
     private String sign_type;
+
     /**
      * WeChat transaction ID.
      */
     private String transaction_id;
+
     /**
      * Merchant order number.
      */
     private String out_order_no;
+
     /**
      * Receivers for profit sharing.
      */
     private String receivers;
+
     /**
      * Receiver for profit sharing.
      */
     private String receiver;
+
     /**
      * Description of profit sharing.
      */

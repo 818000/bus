@@ -19,12 +19,13 @@
 */
 package org.miaixz.bus.proxy.invoker;
 
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.miaixz.bus.core.xyz.ObjectKit;
 
-import java.lang.reflect.Method;
+import org.miaixz.bus.core.xyz.ObjectKit;
 
 /**
  * An implementation of {@link ProxyChain} that adapts an AspectJ {@link ProceedingJoinPoint}. This allows AspectJ join
@@ -35,9 +36,14 @@ import java.lang.reflect.Method;
  */
 public class InvocationInvoker implements ProxyChain {
 
-    /** The underlying AspectJ join point. */
+    /**
+     * The underlying AspectJ join point.
+     */
     private final ProceedingJoinPoint joinPoint;
-    /** The lazily initialized method from the join point. */
+
+    /**
+     * The lazily initialized method from the join point.
+     */
     private Method method;
 
     /**

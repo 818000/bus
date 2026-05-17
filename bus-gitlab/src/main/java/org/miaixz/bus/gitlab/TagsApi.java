@@ -26,21 +26,23 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+
 import org.miaixz.bus.gitlab.models.AccessLevel;
 import org.miaixz.bus.gitlab.models.ProtectedTag;
 import org.miaixz.bus.gitlab.models.Release;
 import org.miaixz.bus.gitlab.models.Tag;
-
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
 import org.miaixz.bus.logger.Logger;
 
 /**
  * This class provides an entry point to all the GitLab Tags and Protected Tags API calls.
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ce/api/tags.html">Tags API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/protected_tags.html">Protected Tags API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class TagsApi extends AbstractApi {
 

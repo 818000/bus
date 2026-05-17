@@ -19,15 +19,15 @@
 */
 package org.miaixz.bus.http.cache;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.http.Builder;
 import org.miaixz.bus.http.Headers;
 import org.miaixz.bus.http.Request;
 import org.miaixz.bus.http.Response;
 import org.miaixz.bus.http.metric.Internal;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Given a request and a cached response, this class determines whether to use the network, the cache, or both.
@@ -97,6 +97,9 @@ public class CacheStrategy {
 
     /**
      * A factory for creating {@link CacheStrategy} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class Factory {
 
@@ -331,6 +334,7 @@ public class CacheStrategy {
         private boolean isFreshnessLifetimeHeuristic() {
             return cacheResponse.cacheControl().maxAgeSeconds() == -1 && expires == null;
         }
+
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.socket.plugin;
 
+import java.nio.channels.AsynchronousChannelGroup;
+
+import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.socket.Session;
 import org.miaixz.bus.socket.Status;
 import org.miaixz.bus.socket.accord.AioClient;
-import org.miaixz.bus.logger.Logger;
-
-import java.nio.channels.AsynchronousChannelGroup;
 
 /**
  * A plugin that provides automatic reconnection functionality for clients upon disconnection.
@@ -38,10 +38,12 @@ class ReconnectPlugin extends AbstractPlugin {
      * The asynchronous channel group to be used for reconnection, if provided.
      */
     private final AsynchronousChannelGroup asynchronousChannelGroup;
+
     /**
      * The AIO client instance that this plugin manages for reconnection.
      */
     private final AioClient client;
+
     /**
      * A flag indicating whether the plugin has been explicitly shut down.
      */

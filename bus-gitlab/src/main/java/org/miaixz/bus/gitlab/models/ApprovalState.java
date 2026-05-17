@@ -20,13 +20,17 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
+/**
+ * The approval state class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class ApprovalState implements Serializable {
 
     @Serial

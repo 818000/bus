@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.unionpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * UnionPay Cloud QuickPass - Auth Code to OpenID model.
@@ -44,42 +44,52 @@ public class AuthCodeToOpenId extends Voucher {
      * Service name.
      */
     private String service;
+
     /**
      * Version number.
      */
     private String version;
+
     /**
      * Character set.
      */
     private String charset;
+
     /**
      * Signature type.
      */
     private String sign_type;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Sub-merchant App ID.
      */
     private String sub_appid;
+
     /**
      * Authorization code.
      */
     private String auth_code;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Agent signature number.
      */
     private String sign_agentno;
+
     /**
      * Group number.
      */

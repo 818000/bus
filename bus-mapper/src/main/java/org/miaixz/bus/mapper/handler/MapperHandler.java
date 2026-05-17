@@ -25,6 +25,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+
 import org.miaixz.bus.core.Handler;
 
 /**
@@ -35,7 +36,7 @@ import org.miaixz.bus.core.Handler;
  * </p>
  *
  * Predefined Order Values
- * 
+ *
  * <ul>
  * <li><b>-1000</b> - OperationHandler (SQL safety check, highest priority)</li>
  * <li><b>100</b> - TablePrefixHandler (table prefix modification)</li>
@@ -46,16 +47,19 @@ import org.miaixz.bus.core.Handler;
  * </ul>
  *
  * Custom Handler Order
- * 
- * <pre>{@code
+ *
+ * <pre>
+ * {@code
  * public class MyCustomHandler implements MapperHandler {
- * 
- *     @Override
+ *
+ * &#64;author Kimi Liu
+ *     &#64;Override
  *     public int getOrder() {
  *         return 150; // Execute between TablePrefixHandler and TenantHandler
  *     }
  * }
- * }</pre>
+ * }
+ * </pre>
  *
  * @param <T> The type of the object being handled.
  * @author Kimi Liu

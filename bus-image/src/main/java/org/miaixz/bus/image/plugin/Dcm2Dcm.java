@@ -19,6 +19,16 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.UID;
@@ -35,16 +45,6 @@ import org.miaixz.bus.image.nimble.codec.Transcoder;
 import org.miaixz.bus.image.nimble.codec.TransferSyntaxType;
 import org.miaixz.bus.logger.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * The {@code Dcm2Dcm} class provides functionality to transcode DICOM files from one transfer syntax to another. It
  * supports both modern transcoding via {@link Transcoder} and a legacy approach.
@@ -58,30 +58,37 @@ public class Dcm2Dcm {
      * List of compression parameters.
      */
     private final List<Property> params = new ArrayList<>();
+
     /**
      * The target Transfer Syntax UID.
      */
     private String tsuid;
+
     /**
      * The target Transfer Syntax type.
      */
     private TransferSyntaxType tstype;
+
     /**
      * Flag to retain the original File Meta Information.
      */
     private boolean retainfmi;
+
     /**
      * Flag to exclude the File Meta Information from the output.
      */
     private boolean nofmi;
+
     /**
      * Flag to use the legacy transcoding method.
      */
     private boolean legacy;
+
     /**
      * Encoding options for writing the DICOM file.
      */
     private ImageEncodingOptions encOpts = ImageEncodingOptions.DEFAULT;
+
     /**
      * The maximum number of threads to use for transcoding.
      */

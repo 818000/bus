@@ -1,29 +1,56 @@
+/*
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
+ ~                                                                           ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
+ ~ you may not use this file except in compliance with the License.          ~
+ ~ You may obtain a copy of the License at                                   ~
+ ~                                                                           ~
+ ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
+ ~                                                                           ~
+ ~ Unless required by applicable law or agreed to in writing, software       ~
+ ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
+ ~ See the License for the specific language governing permissions and       ~
+ ~ limitations under the License.                                            ~
+ ~                                                                           ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+*/
 package org.opencv.core;
 
 //javadoc: KeyPoint
+/**
+ * The key point class.
+ */
 public class KeyPoint {
 
     /**
      * Coordinates of the keypoint.
      */
     public Point pt;
+
     /**
      * Diameter of the useful keypoint adjacent area.
      */
     public float size;
+
     /**
      * Computed orientation of the keypoint (-1 if not applicable).
      */
     public float angle;
+
     /**
      * The response, by which the strongest keypoints have been selected. Can be used for further sorting or
      * subsampling.
      */
     public float response;
+
     /**
      * Octave (pyramid layer), from which the keypoint has been extracted.
      */
     public int octave;
+
     /**
      * Object ID, that can be used to cluster keypoints by an object they belong to.
      */

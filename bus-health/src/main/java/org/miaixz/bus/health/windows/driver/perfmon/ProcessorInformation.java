@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.jna.platform.win32.VersionHelpers;
+
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.lang.tuple.Pair;
 import org.miaixz.bus.health.windows.PerfCounterQuery;
 import org.miaixz.bus.health.windows.PerfCounterWildcardQuery;
-
-import com.sun.jna.platform.win32.VersionHelpers;
 
 /**
  * Utility to query Processor performance counter
@@ -146,6 +146,9 @@ public final class ProcessorInformation {
 
     /**
      * System interrupts counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum InterruptsProperty implements PerfCounterQuery.PdhCounterProperty {
 
@@ -155,6 +158,7 @@ public final class ProcessorInformation {
          * The instance value.
          */
         private final String instance;
+
         /**
          * The counter value.
          */
@@ -190,10 +194,14 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Processor Frequency counters. Requires Win7 or greater
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum ProcessorFrequencyProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -225,10 +233,14 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Processor performance counters from the WMI formatted data table.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum ProcessorPerformanceProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -260,10 +272,14 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Processor performance counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum ProcessorTickCountProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -299,10 +315,14 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * Processor performance counters including utility counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum ProcessorUtilityTickCountProperty implements PerfCounterWildcardQuery.PdhCounterWildcardProperty {
 
@@ -344,10 +364,14 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
     /**
      * System performance counters
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum SystemTickCountProperty implements PerfCounterQuery.PdhCounterProperty {
 
@@ -358,6 +382,7 @@ public final class ProcessorInformation {
          * The instance value.
          */
         private final String instance;
+
         /**
          * The counter value.
          */
@@ -393,6 +418,7 @@ public final class ProcessorInformation {
         public String getCounter() {
             return counter;
         }
+
     }
 
 }

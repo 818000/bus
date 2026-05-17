@@ -19,12 +19,18 @@
 */
 package org.miaixz.bus.gitlab.services;
 
-import org.miaixz.bus.gitlab.models.GitLabForm;
+import java.io.Serial;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.io.Serial;
+import org.miaixz.bus.gitlab.models.GitLabForm;
 
+/**
+ * The slack service class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class SlackService extends NotificationService {
 
     @Serial

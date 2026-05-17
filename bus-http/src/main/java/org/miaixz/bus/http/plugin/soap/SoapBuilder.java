@@ -19,7 +19,19 @@
 */
 package org.miaixz.bus.http.plugin.soap;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import jakarta.xml.soap.*;
+
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Symbol;
@@ -30,16 +42,6 @@ import org.miaixz.bus.core.xyz.*;
 import org.miaixz.bus.http.Httpz;
 import org.miaixz.bus.http.Response;
 import org.miaixz.bus.http.SoapX;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * A builder for creating and sending SOAP messages.
@@ -56,30 +58,37 @@ public class SoapBuilder {
      * The SOAP protocol version (SOAP 1.1: text/xml, SOAP 1.2: application/soap+xml).
      */
     private final Protocol protocol;
+
     /**
      * The namespace URI to be applied to the method.
      */
     private final String namespaceURI;
+
     /**
      * A map to store header information.
      */
     private final Map<String, String> headers = new HashMap<>();
+
     /**
      * The URL of the web service.
      */
     private String url;
+
     /**
      * The SOAP message.
      */
     private SOAPMessage message;
+
     /**
      * The message factory for creating SOAP messages.
      */
     private MessageFactory factory;
+
     /**
      * The SOAP body element representing the method.
      */
     private SOAPBodyElement methodEle;
+
     /**
      * The default character encoding.
      */

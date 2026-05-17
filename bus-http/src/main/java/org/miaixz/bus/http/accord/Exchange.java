@@ -19,6 +19,10 @@
 */
 package org.miaixz.bus.http.accord;
 
+import java.io.IOException;
+import java.net.ProtocolException;
+import java.net.SocketException;
+
 import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.io.sink.AssignSink;
 import org.miaixz.bus.core.io.sink.Sink;
@@ -38,10 +42,6 @@ import org.miaixz.bus.http.metric.http.HttpCodec;
 import org.miaixz.bus.http.socket.RealWebSocket;
 import org.miaixz.bus.logger.Logger;
 
-import java.io.IOException;
-import java.net.ProtocolException;
-import java.net.SocketException;
-
 /**
  * Transmits a single HTTP request and a response pair. This layers connection management and events on
  * {@link HttpCodec}, which handles the actual I/O.
@@ -55,22 +55,27 @@ public final class Exchange {
      * The transmitter for this exchange, which manages the connection and events.
      */
     final Transmitter transmitter;
+
     /**
      * The call that initiated this exchange.
      */
     final NewCall call;
+
     /**
      * The event listener for this exchange.
      */
     final EventListener eventListener;
+
     /**
      * The finder for this exchange, which locates a connection.
      */
     final ExchangeFinder finder;
+
     /**
      * The codec for this exchange, which handles HTTP-level protocol details.
      */
     final HttpCodec codec;
+
     /**
      * True if the request body need not complete before the response body starts.
      */
@@ -386,10 +391,14 @@ public final class Exchange {
 
     /**
      * A request body that fires events when it completes.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private final class RequestBodySink extends AssignSink {
 
         private boolean completed;
+
         /**
          * The exact number of bytes to be written, or -1L if that is unknown.
          */
@@ -473,10 +482,14 @@ public final class Exchange {
             completed = true;
             return bodyComplete(bytesReceived, false, true, e);
         }
+
     }
 
     /**
      * A response body that fires events when it completes.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     final class ResponseBodySource extends AssignSource {
 
@@ -557,6 +570,7 @@ public final class Exchange {
             completed = true;
             return bodyComplete(bytesReceived, true, false, e);
         }
+
     }
 
 }

@@ -19,14 +19,14 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v3;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Model for the individual certificate information within the platform certificates download response.
@@ -48,14 +48,17 @@ public class CertificateInfo implements Serializable {
      * The serial number of the certificate.
      */
     private String serial_no;
+
     /**
      * The effective time of the certificate.
      */
     private String effective_time;
+
     /**
      * The expiration time of the certificate.
      */
     private String expire_time;
+
     /**
      * The encrypted certificate details.
      */

@@ -19,17 +19,23 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import org.miaixz.bus.gitlab.support.ISO8601;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.ISO8601;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The iteration filter class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class IterationFilter implements Serializable {
 
     @Serial
@@ -156,6 +162,12 @@ public class IterationFilter implements Serializable {
         return (this);
     }
 
+    /**
+     * The iteration filter state enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum IterationFilterState {
 
         OPENED, UPCOMING, CURRENT, CLOSED, ALL;
@@ -177,8 +189,15 @@ public class IterationFilter implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
+    /**
+     * The iteration filter in enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum IterationFilterIn {
 
         TITLE, CADENCE_TITLE;
@@ -200,6 +219,7 @@ public class IterationFilter implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
 }

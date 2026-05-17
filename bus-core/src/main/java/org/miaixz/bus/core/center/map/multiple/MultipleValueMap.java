@@ -36,21 +36,20 @@ import org.miaixz.bus.core.xyz.CollKit;
  * {@link #putValue(Object, Object)}), the implementing class ensures consistency of the collection type. However, if
  * the underlying map's {@code put} or {@code putAll} methods are used directly with arbitrary {@code Collection} types,
  * the consistency of the value collection type cannot be guaranteed.
- * 
+ *
  * <p>
  * <strong>Modifying Value Collections:</strong> When a value collection is retrieved via {@link #get(Object)} or
  * {@link #getValues(Object)}, modifications to this returned collection will directly affect the
  * {@code MultipleValueMap} instance, and vice versa. Therefore, when iterating over the map or its value collections,
  * if write operations are performed, care must be taken to avoid potential {@link ConcurrentModificationException}s.
- * 
  *
  * @param <K> The type of keys in the map.
  * @param <V> The type of values stored in the collections.
- * @author Kimi Liu
  * @see AbstractCollValueMap
  * @see CollectionValueMap
  * @see ListValueMap
  * @see SetValueMap
+ * @author Kimi Liu
  * @since Java 21+
  */
 public interface MultipleValueMap<K, V> extends Map<K, Collection<V>> {
@@ -60,7 +59,7 @@ public interface MultipleValueMap<K, V> extends Map<K, Collection<V>> {
      * <p>
      * Note: This operation removes any old collection of values associated with the key. If you intend to append values
      * to an existing collection, use {@link #putAllValues(Object, Collection)} instead.
-     * 
+     *
      *
      * @param key   The key with which the specified value collection is to be associated.
      * @param value The new collection of values to be associated with the specified key.
@@ -75,7 +74,7 @@ public interface MultipleValueMap<K, V> extends Map<K, Collection<V>> {
      * <p>
      * Note: This operation replaces any old collection of values associated with the keys. If you intend to append
      * values to existing collections, use {@link #putAllValues(Map)} instead.
-     * 
+     *
      *
      * @param map The map whose mappings are to be placed in this map.
      */

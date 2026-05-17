@@ -26,6 +26,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.ResourceKit;
@@ -33,9 +37,6 @@ import org.miaixz.bus.image.galaxy.data.Attributes;
 import org.miaixz.bus.image.galaxy.data.Code;
 import org.miaixz.bus.image.galaxy.data.Sequence;
 import org.miaixz.bus.image.galaxy.data.VR;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Represents a DICOM Information Object Definition (IOD), which specifies the modules and attributes for a particular
@@ -47,6 +48,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class IOD extends ArrayList<IOD.DataElement> {
 
+    /**
+     * The serial version uid value.
+     */
     @Serial
     private static final long serialVersionUID = 2852255015270L;
 
@@ -54,10 +58,12 @@ public class IOD extends ArrayList<IOD.DataElement> {
      * The type of the IOD, typically for a sequence item.
      */
     private DataElementType type;
+
     /**
      * The condition under which this IOD (as a sequence item) is required.
      */
     private Condition condition;
+
     /**
      * The line number in the source XML file where this IOD was defined.
      */
@@ -182,6 +188,9 @@ public class IOD extends ArrayList<IOD.DataElement> {
 
     /**
      * Defines the DICOM data element types, which specify the requirement level for an attribute in an IOD.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum DataElementType {
         /**
@@ -200,11 +209,15 @@ public class IOD extends ArrayList<IOD.DataElement> {
          * Type 3 (Optional): The attribute is optional.
          */
         TYPE_3
+
     }
 
     /**
      * Represents a single data element definition within an IOD, including its tag, VR, type, value multiplicity (VM),
      * and any conditions for its inclusion.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class DataElement implements Serializable {
 
@@ -214,23 +227,49 @@ public class IOD extends ArrayList<IOD.DataElement> {
         @Serial
         private static final long serialVersionUID = 2852255091391L;
 
-        /** The DICOM tag of the data element. */
+        /**
+         * The DICOM tag of the data element.
+         */
         public final int tag;
-        /** The Value Representation (VR) of the data element. */
+
+        /**
+         * The Value Representation (VR) of the data element.
+         */
         public final VR vr;
-        /** The requirement type (e.g., mandatory, optional). */
+
+        /**
+         * The requirement type (e.g., mandatory, optional).
+         */
         public final DataElementType type;
-        /** The minimum value multiplicity. */
+
+        /**
+         * The minimum value multiplicity.
+         */
         public final int minVM;
-        /** The maximum value multiplicity. */
+
+        /**
+         * The maximum value multiplicity.
+         */
         public final int maxVM;
-        /** The specific value index this definition applies to (for multi-valued attributes). */
+
+        /**
+         * The specific value index this definition applies to (for multi-valued attributes).
+         */
         public final int valueNumber;
-        /** The condition under which this data element is required. */
+
+        /**
+         * The condition under which this data element is required.
+         */
         private Condition condition;
-        /** The defined values or item IODs for this element. */
+
+        /**
+         * The defined values or item IODs for this element.
+         */
         private Object values;
-        /** The line number in the source XML file where this element was defined. */
+
+        /**
+         * The line number in the source XML file where this element was defined.
+         */
         private int lineNumber = -1;
 
         /**
@@ -375,12 +414,20 @@ public class IOD extends ArrayList<IOD.DataElement> {
     /**
      * Abstract base class for defining conditions under which a data element or sequence item is mandatory. This is
      * used to model conditional DICOM types like 1C and 2C.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public abstract static class Condition {
 
-        /** An optional identifier for the condition, used for referencing. */
+        /**
+         * An optional identifier for the condition, used for referencing.
+         */
         protected String id;
-        /** A flag to invert the logic of the condition (NOT). */
+
+        /**
+         * A flag to invert the logic of the condition (NOT).
+         */
         protected boolean not;
 
         /**
@@ -453,10 +500,15 @@ public class IOD extends ArrayList<IOD.DataElement> {
 
     /**
      * Abstract base class for conditions that are composed of multiple child conditions (e.g., AND, OR).
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     abstract static class CompositeCondition extends Condition {
 
-        /** The list of child conditions. */
+        /**
+         * The list of child conditions.
+         */
         protected final ArrayList<Condition> childs = new ArrayList<>();
 
         /**
@@ -499,10 +551,14 @@ public class IOD extends ArrayList<IOD.DataElement> {
         public boolean isEmpty() {
             return childs.isEmpty();
         }
+
     }
 
     /**
      * A composite condition that is met if all its child conditions are met (logical AND).
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class And extends CompositeCondition {
 
@@ -519,10 +575,14 @@ public class IOD extends ArrayList<IOD.DataElement> {
             }
             return !not;
         }
+
     }
 
     /**
      * A composite condition that is met if at least one of its child conditions is met (logical OR).
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class Or extends CompositeCondition {
 
@@ -539,16 +599,25 @@ public class IOD extends ArrayList<IOD.DataElement> {
             }
             return not;
         }
+
     }
 
     /**
      * A condition that checks for the presence of a specific DICOM tag.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class Present extends Condition {
 
-        /** The DICOM tag to check for presence. */
+        /**
+         * The DICOM tag to check for presence.
+         */
         protected final int tag;
-        /** The path of sequence tags to navigate to the item where the tag should be present. */
+
+        /**
+         * The path of sequence tags to navigate to the item where the tag should be present.
+         */
         protected final int[] itemPath;
 
         /**
@@ -584,20 +653,35 @@ public class IOD extends ArrayList<IOD.DataElement> {
             }
             return attrs;
         }
+
     }
 
     /**
      * A condition that checks if the value of an attribute is a member of a specified set of values.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class MemberOf extends Present {
 
-        /** The VR of the attribute to check. */
+        /**
+         * The VR of the attribute to check.
+         */
         private final VR vr;
-        /** The index of the value to check in a multi-valued attribute. */
+
+        /**
+         * The index of the value to check in a multi-valued attribute.
+         */
         private final int valueIndex;
-        /** Flag indicating how to match if the attribute is not present. */
+
+        /**
+         * Flag indicating how to match if the attribute is not present.
+         */
         private final boolean matchNotPresent;
-        /** The set of values to check against. */
+
+        /**
+         * The set of values to check against.
+         */
         private Object values;
 
         /**
@@ -746,38 +830,77 @@ public class IOD extends ArrayList<IOD.DataElement> {
             }
             return false;
         }
+
     }
 
     /**
      * A private SAX handler for parsing XML-based IOD definitions into an {@link IOD} object. It processes elements
      * like {@code <DataElement>}, {@code <Item>}, and various condition types like {@code <And>}, {@code <Present>},
      * and {@code <MemberOf>}.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class SAXHandler extends DefaultHandler {
 
-        /** StringBuilder for collecting character data. */
+        /**
+         * StringBuilder for collecting character data.
+         */
         private final StringBuilder sb = new StringBuilder();
-        /** List for collecting parsed string values. */
+
+        /**
+         * List for collecting parsed string values.
+         */
         private final List<String> values = new ArrayList<>();
-        /** List for collecting parsed Code objects. */
+
+        /**
+         * List for collecting parsed Code objects.
+         */
         private final List<Code> codes = new ArrayList<>();
-        /** Stack for tracking the current IOD being built (for nested items). */
+
+        /**
+         * Stack for tracking the current IOD being built (for nested items).
+         */
         private final LinkedList<IOD> iodStack = new LinkedList<>();
-        /** Stack for tracking the current Condition being built (for nested conditions). */
+
+        /**
+         * Stack for tracking the current Condition being built (for nested conditions).
+         */
         private final LinkedList<Condition> conditionStack = new LinkedList<>();
-        /** Map for resolving IOD references by ID. */
+
+        /**
+         * Map for resolving IOD references by ID.
+         */
         private final Map<String, IOD> id2iod = new HashMap<>();
-        /** Map for resolving Condition references by ID. */
+
+        /**
+         * Map for resolving Condition references by ID.
+         */
         private final Map<String, Condition> id2cond = new HashMap<>();
-        /** Flag to enable character processing. */
+
+        /**
+         * Flag to enable character processing.
+         */
         private boolean processCharacters;
-        /** Flag indicating the current context is for an element's condition. */
+
+        /**
+         * Flag indicating the current context is for an element's condition.
+         */
         private boolean elementConditions;
-        /** Flag indicating the current context is for an item's condition. */
+
+        /**
+         * Flag indicating the current context is for an item's condition.
+         */
         private boolean itemConditions;
-        /** Stores the ID reference for elements like Item or If. */
+
+        /**
+         * Stores the ID reference for elements like Item or If.
+         */
         private String idref;
-        /** SAX locator for tracking line numbers. */
+
+        /**
+         * SAX locator for tracking line numbers.
+         */
         private Locator locator;
 
         /**
@@ -789,11 +912,25 @@ public class IOD extends ArrayList<IOD.DataElement> {
             iodStack.add(iod);
         }
 
+        /**
+         * Sets the document locator.
+         *
+         * @param locator the locator.
+         */
         @Override
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
         }
 
+        /**
+         * Executes the start element operation.
+         *
+         * @param uri       the uri.
+         * @param localName the local name.
+         * @param qName     the q name.
+         * @param atts      the atts.
+         * @throws SAXException if the operation cannot be completed.
+         */
         @Override
         public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes atts)
                 throws SAXException {
@@ -914,6 +1051,14 @@ public class IOD extends ArrayList<IOD.DataElement> {
             codes.add(new Code(codeValue, codingSchemeDesignator, codingSchemeVersion, codeMeaning));
         }
 
+        /**
+         * Executes the end element operation.
+         *
+         * @param uri       the uri.
+         * @param localName the local name.
+         * @param qName     the q name.
+         * @throws SAXException if the operation cannot be completed.
+         */
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             switch (qName) {
@@ -945,6 +1090,13 @@ public class IOD extends ArrayList<IOD.DataElement> {
             idref = null;
         }
 
+        /**
+         * Executes the characters operation.
+         *
+         * @param ch     the ch.
+         * @param start  the start.
+         * @param length the length.
+         */
         @Override
         public void characters(char[] ch, int start, int length) {
             if (processCharacters)
@@ -1242,6 +1394,7 @@ public class IOD extends ArrayList<IOD.DataElement> {
             } else
                 conditionStack.getLast().addChild(cond.trim());
         }
+
     }
 
 }

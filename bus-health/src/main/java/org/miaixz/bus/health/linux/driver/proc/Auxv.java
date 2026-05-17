@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -40,14 +40,17 @@ public final class Auxv {
      * end of vector
      */
     public static final int AT_NULL = 0;
+
     /**
      * system page size
      */
     public static final int AT_PAGESZ = 6;
+
     /**
      * arch dependent hints at CPU capabilities
      */
     public static final int AT_HWCAP = 16;
+
     /**
      * frequency at which times() increments
      */

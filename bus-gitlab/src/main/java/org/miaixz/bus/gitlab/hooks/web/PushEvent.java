@@ -19,10 +19,16 @@
 */
 package org.miaixz.bus.gitlab.hooks.web;
 
-import org.miaixz.bus.gitlab.support.JacksonJson;
-
 import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The push event class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class PushEvent extends AbstractPushEvent implements Event {
 
     @Serial

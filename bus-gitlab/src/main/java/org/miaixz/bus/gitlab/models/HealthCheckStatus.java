@@ -19,11 +19,17 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The health check status enum.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public enum HealthCheckStatus {
 
     OK, FAILED;

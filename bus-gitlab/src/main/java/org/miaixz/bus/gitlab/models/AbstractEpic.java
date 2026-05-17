@@ -19,21 +19,27 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The abstract epic class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class AbstractEpic<E extends AbstractEpic<E>> extends AbstractMinimalEpic<E> implements Serializable {
 
     @Serial
@@ -169,6 +175,12 @@ public class AbstractEpic<E extends AbstractEpic<E>> extends AbstractMinimalEpic
         this.endDate = endDate;
     }
 
+    /**
+     * The epic state enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum EpicState {
 
         OPENED, CLOSED, ALL;
@@ -189,6 +201,7 @@ public class AbstractEpic<E extends AbstractEpic<E>> extends AbstractMinimalEpic
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     public Date getCreatedAt() {

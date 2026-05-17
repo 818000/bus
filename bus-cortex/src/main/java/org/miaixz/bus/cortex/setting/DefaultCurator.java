@@ -29,14 +29,14 @@ import org.miaixz.bus.cortex.Curator;
 import org.miaixz.bus.cortex.Listener;
 import org.miaixz.bus.cortex.Vector;
 import org.miaixz.bus.cortex.Watch;
-import org.miaixz.bus.cortex.setting.curator.ItemCuratorService;
-import org.miaixz.bus.cortex.setting.delivery.RuntimeItemOverlayService;
-import org.miaixz.bus.cortex.setting.item.Item;
-import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
-import org.miaixz.bus.cortex.setting.item.GrayRequestContext;
-import org.miaixz.bus.cortex.setting.item.ItemQuery;
 import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.magic.watch.WatchManager;
+import org.miaixz.bus.cortex.setting.curator.ItemCuratorService;
+import org.miaixz.bus.cortex.setting.delivery.RuntimeItemOverlayService;
+import org.miaixz.bus.cortex.setting.item.GrayRequestContext;
+import org.miaixz.bus.cortex.setting.item.Item;
+import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
+import org.miaixz.bus.cortex.setting.item.ItemQuery;
 
 /**
  * Default consumer-facing curator implementation.
@@ -50,14 +50,17 @@ public class DefaultCurator implements Curator {
      * Application service that backs setting reads, writes, and history operations.
      */
     private final ItemCuratorService settingCuratorService;
+
     /**
      * Watch manager used to register and remove setting subscriptions.
      */
     private final WatchManager watchManager;
+
     /**
      * Namespace identifier served by this curator instance.
      */
     private final String namespace_id;
+
     /**
      * Optional runtime overlay service consulted before durable setting resolution.
      */

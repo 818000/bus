@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.health.windows.driver.wmi;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.windows.WmiQueryHandler;
-
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.windows.WmiQueryHandler;
 
 /**
  * Utility to query WMI classes in Storage namespace assocaited with Storage Pools
@@ -110,31 +110,47 @@ public final class MSFTStorage {
 
     /**
      * Properties to identify the storage pool. The Object ID uniquely defines the pool.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum StoragePoolProperty {
         FRIENDLYNAME, OBJECTID
+
     }
 
     /**
      * Properties to link a storage pool with a physical disk. OSHI parses these references to strings that can match
      * the object IDs.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum StoragePoolToPhysicalDiskProperty {
         STORAGEPOOL, PHYSICALDISK
+
     }
 
     /**
      * Properties for a physical disk. The Object ID uniquely defines the disk.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum PhysicalDiskProperty {
         FRIENDLYNAME, PHYSICALLOCATION, OBJECTID
+
     }
 
     /**
      * Properties for a virtual disk. The Object ID uniquely defines the disk.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum VirtualDiskProperty {
         FRIENDLYNAME, OBJECTID
+
     }
 
 }

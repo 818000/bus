@@ -25,17 +25,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.*;
-
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
+import org.miaixz.bus.gitlab.models.*;
+
 /**
  * This class provides an entry point to all the GitLab API Issue calls.
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ce/api/issues.html">Issues API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/issue_links.html">Issue Links API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/issues_statistics.html">Issues Statistics API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class IssuesApi extends AbstractApi implements Constants {
 
@@ -82,9 +84,9 @@ public class IssuesApi extends AbstractApi implements Constants {
      * <pre>
      * <code>GitLab Endpoint: GET /issues</code>
      * </pre>
-     * 
+     *
      * r
-     * 
+     *
      * @param itemsPerPage the number of issues per page
      * @return the Pager of issues in the specified range
      * @throws GitLabApiException if any exception occurs
@@ -1065,7 +1067,7 @@ public class IssuesApi extends AbstractApi implements Constants {
                 "issues",
                 issueIid,
                 "closed_by");
-        return (response.readEntity(new GenericType<List<MergeRequest>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -1311,7 +1313,7 @@ public class IssuesApi extends AbstractApi implements Constants {
                 "issues",
                 issueIid,
                 "participants");
-        return (response.readEntity(new GenericType<List<Participant>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 

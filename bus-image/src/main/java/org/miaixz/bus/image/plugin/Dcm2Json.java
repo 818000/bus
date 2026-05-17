@@ -19,19 +19,20 @@
 */
 package org.miaixz.bus.image.plugin;
 
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
-import jakarta.json.stream.JsonGenerator;
-import org.miaixz.bus.image.galaxy.data.VR;
-import org.miaixz.bus.image.galaxy.io.BasicBulkDataDescriptor;
-import org.miaixz.bus.image.galaxy.io.ImageInputStream;
-import org.miaixz.bus.image.metric.json.JSONWriter;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonGenerator;
+
+import org.miaixz.bus.image.galaxy.data.VR;
+import org.miaixz.bus.image.galaxy.io.BasicBulkDataDescriptor;
+import org.miaixz.bus.image.galaxy.io.ImageInputStream;
+import org.miaixz.bus.image.metric.json.JSONWriter;
 
 /**
  * The {@code Dcm2Json} class provides functionality to convert a DICOM file into its JSON representation according to
@@ -46,30 +47,37 @@ public class Dcm2Json {
      * Describes how to handle bulk data.
      */
     private final BasicBulkDataDescriptor bulkDataDescriptor = new BasicBulkDataDescriptor();
+
     /**
      * Whether to format the JSON output with indentation.
      */
     private boolean indent = false;
+
     /**
      * Specifies how to include bulk data in the output.
      */
     private ImageInputStream.IncludeBulkData includeBulkData = ImageInputStream.IncludeBulkData.URI;
+
     /**
      * Whether to concatenate bulk data into a single file.
      */
     private boolean catBlkFiles = false;
+
     /**
      * The prefix for bulk data file names.
      */
     private String blkFilePrefix = "blk";
+
     /**
      * The suffix for bulk data file names.
      */
     private String blkFileSuffix;
+
     /**
      * The directory to store bulk data files.
      */
     private File blkDirectory;
+
     /**
      * Whether to encode numeric VRs (DS, IS, SV, UV) as JSON numbers instead of strings.
      */

@@ -23,15 +23,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.Application;
-
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
+import org.miaixz.bus.gitlab.models.Application;
+
 /**
  * This class implements the client side API for the GitLab Applications API. See
  * <a href="https://docs.gitlab.com/ce/api/applications.html">Applications API at GitLab</a> for more information.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class ApplicationsApi extends AbstractApi {
 
@@ -70,7 +73,7 @@ public class ApplicationsApi extends AbstractApi {
                 jakarta.ws.rs.core.Response.Status.OK,
                 getPageQueryParams(page, perPage),
                 "applications");
-        return (response.readEntity(new GenericType<List<Application>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 

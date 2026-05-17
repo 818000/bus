@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.core.net;
 
-import org.miaixz.bus.core.lang.Optional;
-
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.miaixz.bus.core.lang.Optional;
 
 /**
  * A constants enum for service port numbers, covering a wide range of Java microservices, middleware, big data, ESB,
@@ -209,6 +209,20 @@ public enum PORT {
      * A conventional port for JMX monitoring of Cassandra databases.
      */
     _7199(7199, "Cassandra JMX", "A conventional port for JMX monitoring of Cassandra databases."),
+
+    /**
+     * <b>Temporal</b>: 7233
+     * <p>
+     * The default gRPC frontend service port for Temporal.
+     */
+    _7233(7233, "Temporal", "The default gRPC frontend service port for Temporal."),
+
+    /**
+     * <b>Temporal</b>: 7234
+     * <p>
+     * An additional service port for Temporal.
+     */
+    _7234(7234, "Temporal", "An additional service port for Temporal."),
 
     /**
      * <b>Neo4j Bolt</b>: 7687
@@ -523,10 +537,12 @@ public enum PORT {
      * Stores the integer port number (e.g., 22, 8080).
      */
     private final int port;
+
     /**
      * Stores the common name of the service (e.g., "SSH", "MongoDB").
      */
     private final String name;
+
     /**
      * Stores the detailed description of the port's purpose.
      */
@@ -536,6 +552,7 @@ public enum PORT {
      * A static map for efficient lookup of PORT by port number. This is lazily initialized on the first call to get().
      */
     private static volatile Map<Integer, PORT> PORT_MAP;
+
     /**
      * A private static lock object used for thread-safe lazy initialization of the {@code portMap}.
      */

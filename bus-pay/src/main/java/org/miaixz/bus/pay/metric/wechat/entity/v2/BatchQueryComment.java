@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Batch Query Comment model.
@@ -44,30 +44,37 @@ public class BatchQueryComment extends Voucher {
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */
     private String sign_type;
+
     /**
      * Begin time.
      */
     private String begin_time;
+
     /**
      * End time.
      */
     private String end_time;
+
     /**
      * Offset.
      */
     private String offset;
+
     /**
      * Limit.
      */

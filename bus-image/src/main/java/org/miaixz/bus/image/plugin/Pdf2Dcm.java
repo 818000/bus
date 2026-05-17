@@ -19,6 +19,17 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.Locale;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.UID;
@@ -28,15 +39,6 @@ import org.miaixz.bus.image.galaxy.data.VR;
 import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
 import org.miaixz.bus.image.galaxy.io.SAXReader;
 import org.miaixz.bus.logger.Logger;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * The {@code Pdf2Dcm} class provides functionality to encapsulate various file types (e.g., PDF, STL, CDA) into a DICOM
@@ -51,6 +53,7 @@ public class Pdf2Dcm {
      * The maximum file size allowed for encapsulation (2GB - 2 bytes).
      */
     private static final long MAX_FILE_SIZE = 0x7FFFFFFE;
+
     /**
      * The standard DICOM element dictionary.
      */
@@ -70,10 +73,12 @@ public class Pdf2Dcm {
      * A set of static metadata to be merged into every created DICOM object.
      */
     private static Attributes staticMetadata;
+
     /**
      * The content type of the source file (e.g., PDF, STL).
      */
     private static FileContentType fileContentType;
+
     /**
      * A flag to include the Encapsulated Document Length tag.
      */
@@ -216,6 +221,9 @@ public class Pdf2Dcm {
 
     /**
      * An enumeration of supported file content types for encapsulation, each associated with a sample metadata file.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum FileContentType {
 
@@ -288,21 +296,46 @@ public class Pdf2Dcm {
         public String getSampleMetadataFile() {
             return sampleMetadataFile;
         }
+
     }
 
     /**
      * A file visitor to recursively find and convert files in a directory.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Pdf2DcmFileVisitor extends SimpleFileVisitor<Path> {
 
+        /**
+         * The src path value.
+         */
         private final Path srcPath;
+
+        /**
+         * The dest path value.
+         */
         private final Path destPath;
 
+        /**
+         * Creates a new instance.
+         *
+         * @param srcPath  the src path.
+         * @param destPath the dest path.
+         */
         Pdf2DcmFileVisitor(Path srcPath, Path destPath) {
             this.srcPath = srcPath;
             this.destPath = destPath;
         }
 
+        /**
+         * Executes the visit file operation.
+         *
+         * @param srcFilePath the src file path.
+         * @param attrs       the attrs.
+         * @return the operation result.
+         * @throws IOException if the operation cannot be completed.
+         */
         @Override
         public FileVisitResult visitFile(Path srcFilePath, BasicFileAttributes attrs) throws IOException {
             Path destFilePath = resolveDestFilePath(srcFilePath);
@@ -346,6 +379,12 @@ public class Pdf2Dcm {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * Executes the resolve dest file path operation.
+         *
+         * @param srcFilePath the src file path.
+         * @return the operation result.
+         */
         private Path resolveDestFilePath(Path srcFilePath) {
             int srcPathNameCount = srcPath.getNameCount();
             int srcFilePathNameCount = srcFilePath.getNameCount() - 1;
@@ -354,6 +393,7 @@ public class Pdf2Dcm {
 
             return destPath.resolve(srcFilePath.subpath(srcPathNameCount, srcFilePathNameCount));
         }
+
     }
 
 }

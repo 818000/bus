@@ -19,13 +19,19 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
-import java.io.Serial;
 
+/**
+ * The job class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Job implements Serializable {
 
     @Serial

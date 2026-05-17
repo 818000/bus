@@ -19,6 +19,11 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.concurrent.TimeUnit;
+
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.image.Device;
 import org.miaixz.bus.image.Status;
@@ -38,11 +43,6 @@ import org.miaixz.bus.image.metric.pdu.ExtendedNegotiation;
 import org.miaixz.bus.image.metric.pdu.PresentationContext;
 import org.miaixz.bus.logger.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.concurrent.TimeUnit;
-
 /**
  * The {@code MoveSCU} class implements a Service Class User (SCU) for the DICOM C-MOVE service. It sends a C-MOVE
  * request to a Service Class Provider (SCP) to initiate the transfer of DICOM instances to a specified destination
@@ -57,54 +57,67 @@ public class MoveSCU extends Device implements AutoCloseable {
      * Default filter for attributes to be read from an input file.
      */
     private static final int[] DEF_IN_FILTER = { Tag.SOPInstanceUID, Tag.StudyInstanceUID, Tag.SeriesInstanceUID };
+
     /**
      * The Application Entity for this SCU.
      */
     private final ApplicationEntity ae = new ApplicationEntity("MOVESCU");
+
     /**
      * The local network connection configuration.
      */
     private final Connection conn = new Connection();
+
     /**
      * The remote network connection configuration.
      */
     private final Connection remote = new Connection();
+
     /**
      * The A-ASSOCIATE-RQ message to be sent.
      */
     private final transient AAssociateRQ rq = new AAssociateRQ();
+
     /**
      * The query keys for the C-MOVE request.
      */
     private final Attributes keys = new Attributes();
+
     /**
      * The overall status of the C-MOVE operation.
      */
     private final transient Status state;
+
     /**
      * The priority of the C-MOVE request.
      */
     private int priority;
+
     /**
      * The AE Title of the destination for the C-STORE sub-operations.
      */
     private String destination;
+
     /**
      * The information model for the query.
      */
     private InformationModel model;
+
     /**
      * A filter for attributes to be included from an input file.
      */
     private int[] inFilter = DEF_IN_FILTER;
+
     /**
      * The active DICOM association.
      */
     private transient Association as;
+
     /**
      * The number of milliseconds after which to cancel the request.
      */
     private int cancelAfter;
+
     /**
      * A flag to release the association eagerly on cancellation.
      */
@@ -371,6 +384,9 @@ public class MoveSCU extends Device implements AutoCloseable {
 
     /**
      * Enumeration of the supported DICOM Information Models for C-MOVE.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum InformationModel {
 
@@ -403,6 +419,7 @@ public class MoveSCU extends Device implements AutoCloseable {
          * The SOP Class UID for the information model.
          */
         final String cuid;
+
         /**
          * The default query/retrieve level for the model.
          */
@@ -427,6 +444,7 @@ public class MoveSCU extends Device implements AutoCloseable {
         public String getCuid() {
             return cuid;
         }
+
     }
 
 }

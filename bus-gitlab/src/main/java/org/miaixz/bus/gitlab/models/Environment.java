@@ -19,16 +19,22 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
+/**
+ * The environment class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Environment implements Serializable {
 
     @Serial
@@ -107,6 +113,12 @@ public class Environment implements Serializable {
         this.autoStopAt = autoStopAt;
     }
 
+    /**
+     * The environment state enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum EnvironmentState {
 
         AVAILABLE, STOPPED;
@@ -128,6 +140,7 @@ public class Environment implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     @Override

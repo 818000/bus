@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.miaixz.bus.core.basic.normal.Errors;
 import org.miaixz.bus.core.lang.I18n;
 import org.miaixz.bus.core.lang.Keys;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Represents an exception related to I/O operations or other relevant system issues.
@@ -50,6 +50,7 @@ public class RelevantException extends IOException {
      * The error code associated with this exception.
      */
     protected String errcode;
+
     /**
      * The error message associated with this exception.
      */

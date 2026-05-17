@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,16 +19,16 @@
 */
 package org.miaixz.bus.socket.plugin;
 
-import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.socket.Session;
-import org.miaixz.bus.socket.Status;
-import org.miaixz.bus.socket.metric.HashedWheelTimer;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.socket.Session;
+import org.miaixz.bus.socket.Status;
+import org.miaixz.bus.socket.metric.HashedWheelTimer;
 
 /**
  * A plugin for managing heartbeats in a socket communication session.
@@ -47,18 +47,22 @@ public abstract class HeartPlugin<T> extends AbstractPlugin<T> {
      * Default callback for handling session timeouts, which closes the session immediately.
      */
     private static final TimeoutCallback DEFAULT_TIMEOUT_CALLBACK = (session, lastTime) -> session.close(true);
+
     /**
      * A map to store the last activity timestamp for each session.
      */
     private Map<Session, Long> sessionMap = new HashMap<>();
+
     /**
      * The frequency at which heartbeats are sent, in milliseconds.
      */
     private long heartRate;
+
     /**
      * The maximum time (in milliseconds) a session can be inactive before being considered timed out.
      */
     private long timeout;
+
     /**
      * The callback to execute when a session times out.
      */
@@ -222,6 +226,9 @@ public abstract class HeartPlugin<T> extends AbstractPlugin<T> {
 
     /**
      * Callback interface for handling session timeouts.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public interface TimeoutCallback {
 
@@ -232,6 +239,7 @@ public abstract class HeartPlugin<T> extends AbstractPlugin<T> {
          * @param lastTime the last activity timestamp of the session
          */
         void callback(Session session, long lastTime);
+
     }
 
 }

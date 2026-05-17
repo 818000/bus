@@ -31,6 +31,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+
 import org.miaixz.bus.core.io.file.FileName;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.EnumValue;
@@ -58,10 +59,12 @@ public class CommonsFtp extends AbstractFtp {
      * The underlying FTP client from Apache Commons Net.
      */
     private FTPClient client;
+
     /**
      * The connection lifecycle (ACTIVE or PASSIVE).
      */
     private EnumValue.Lifecycle lifecycle;
+
     /**
      * Whether to return to the current working directory after an operation is completed.
      */

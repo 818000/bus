@@ -29,35 +29,59 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.SAXException;
+
 import org.miaixz.bus.core.xyz.ResourceKit;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.galaxy.data.Attributes;
 import org.miaixz.bus.image.galaxy.data.Sequence;
 import org.miaixz.bus.image.galaxy.data.VR;
 import org.miaixz.bus.image.galaxy.io.ContentHandlerAdapter;
-import org.xml.sax.SAXException;
 
 /**
+ * Represents the RecordFactory type.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
 public class RecordFactory {
 
+    /**
+     * The in use value.
+     */
     private static final int IN_USE = 0xffff;
 
+    /**
+     * The record keys value.
+     */
     private EnumMap<RecordType, int[]> recordKeys;
 
+    /**
+     * The record types value.
+     */
     private HashMap<String, RecordType> recordTypes;
 
+    /**
+     * The private record ui ds value.
+     */
     private HashMap<String, String> privateRecordUIDs;
 
+    /**
+     * The private record keys value.
+     */
     private HashMap<String, int[]> privateRecordKeys;
 
+    /**
+     * Executes the lazy load default configuration operation.
+     */
     private void lazyLoadDefaultConfiguration() {
         if (recordTypes == null)
             loadDefaultConfiguration();
     }
 
+    /**
+     * Loads the default configuration.
+     */
     public void loadDefaultConfiguration() {
         try {
             loadConfiguration(ResourceKit.getResourceUrl("RecordFactory.xml", RecordFactory.class).toString());
@@ -66,6 +90,14 @@ public class RecordFactory {
         }
     }
 
+    /**
+     * Loads the configuration.
+     *
+     * @param uri the uri.
+     * @throws ParserConfigurationException if the operation cannot be completed.
+     * @throws SAXException                 if the operation cannot be completed.
+     * @throws IOException                  if the operation cannot be completed.
+     */
     public void loadConfiguration(String uri) throws ParserConfigurationException, SAXException, IOException {
         Attributes attrs = parseXML(uri);
         Sequence sq = attrs.getSequence(Tag.DirectoryRecordSequence);
@@ -113,6 +145,15 @@ public class RecordFactory {
         this.privateRecordKeys = privateRecordKeys;
     }
 
+    /**
+     * Parses the xml.
+     *
+     * @param uri the uri.
+     * @return the operation result.
+     * @throws ParserConfigurationException if the operation cannot be completed.
+     * @throws SAXException                 if the operation cannot be completed.
+     * @throws IOException                  if the operation cannot be completed.
+     */
     private Attributes parseXML(String uri) throws ParserConfigurationException, SAXException, IOException {
         Attributes attrs = new Attributes();
         SAXParserFactory f = SAXParserFactory.newInstance();
@@ -121,6 +162,12 @@ public class RecordFactory {
         return attrs;
     }
 
+    /**
+     * Gets the record type.
+     *
+     * @param cuid the cuid.
+     * @return the record type.
+     */
     public RecordType getRecordType(String cuid) {
         if (cuid == null)
             throw new NullPointerException();
@@ -129,6 +176,13 @@ public class RecordFactory {
         return recordType != null ? recordType : RecordType.PRIVATE;
     }
 
+    /**
+     * Sets the record type.
+     *
+     * @param cuid the cuid.
+     * @param type the type.
+     * @return the operation result.
+     */
     public RecordType setRecordType(String cuid, RecordType type) {
         if (cuid == null || type == null)
             throw new NullPointerException();
@@ -136,6 +190,12 @@ public class RecordFactory {
         return recordTypes.put(cuid, type);
     }
 
+    /**
+     * Sets the record keys.
+     *
+     * @param type the type.
+     * @param keys the keys.
+     */
     public void setRecordKeys(RecordType type, int[] keys) {
         if (type == null)
             throw new NullPointerException();
@@ -145,11 +205,23 @@ public class RecordFactory {
         recordKeys.put(type, keys);
     }
 
+    /**
+     * Gets the record keys.
+     *
+     * @param type the type.
+     * @return the record keys.
+     */
     public int[] getRecordKeys(RecordType type) {
         lazyLoadDefaultConfiguration();
         return recordKeys.get(type);
     }
 
+    /**
+     * Gets the private record uid.
+     *
+     * @param cuid the cuid.
+     * @return the private record uid.
+     */
     public String getPrivateRecordUID(String cuid) {
         if (cuid == null)
             throw new NullPointerException();
@@ -159,6 +231,13 @@ public class RecordFactory {
         return uid != null ? uid : cuid;
     }
 
+    /**
+     * Sets the private record uid.
+     *
+     * @param cuid the cuid.
+     * @param uid  the uid.
+     * @return the operation result.
+     */
     public String setPrivateRecordUID(String cuid, String uid) {
         if (cuid == null || uid == null)
             throw new NullPointerException();
@@ -167,6 +246,13 @@ public class RecordFactory {
         return privateRecordUIDs.put(cuid, uid);
     }
 
+    /**
+     * Sets the private record keys.
+     *
+     * @param uid  the uid.
+     * @param keys the keys.
+     * @return the operation result.
+     */
     public int[] setPrivateRecordKeys(String uid, int[] keys) {
         if (uid == null)
             throw new NullPointerException();
@@ -177,12 +263,30 @@ public class RecordFactory {
         return privateRecordKeys.put(uid, tmp);
     }
 
+    /**
+     * Creates the record.
+     *
+     * @param dataset the dataset.
+     * @param fmi     the fmi.
+     * @param fileIDs the file i ds.
+     * @return the operation result.
+     */
     public Attributes createRecord(Attributes dataset, Attributes fmi, String[] fileIDs) {
         String cuid = fmi.getString(Tag.MediaStorageSOPClassUID, null);
         RecordType type = getRecordType(cuid);
         return createRecord(type, type == RecordType.PRIVATE ? getPrivateRecordUID(cuid) : null, dataset, fmi, fileIDs);
     }
 
+    /**
+     * Creates the record.
+     *
+     * @param type       the type.
+     * @param privRecUID the priv rec uid.
+     * @param dataset    the dataset.
+     * @param fmi        the fmi.
+     * @param fileIDs    the file i ds.
+     * @return the operation result.
+     */
     public Attributes createRecord(
             RecordType type,
             String privRecUID,
@@ -229,6 +333,12 @@ public class RecordFactory {
         return rec;
     }
 
+    /**
+     * Copies the concept mod.
+     *
+     * @param srcSeq the src seq.
+     * @param rec    the rec.
+     */
     private void copyConceptMod(Sequence srcSeq, Attributes rec) {
         Sequence dstSeq = null;
         for (Attributes item : srcSeq) {

@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Auth Code to OpenID model.
@@ -44,26 +44,32 @@ public class AuthCodeToOpenId extends Voucher {
      * Sub-merchant App ID.
      */
     private String sub_appid;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Sub-merchant ID.
      */
     private String sub_mch_id;
+
     /**
      * Authorization code.
      */
     private String auth_code;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Signature type.
      */

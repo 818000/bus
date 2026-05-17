@@ -19,12 +19,14 @@
 */
 package org.miaixz.bus.starter.notify;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.miaixz.bus.spring.GeniusBuilder;
 import jakarta.annotation.Resource;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+
+import org.miaixz.bus.spring.GeniusBuilder;
 
 /**
  * Auto-configuration class for message notification, responsible for setting up notification-related beans.
@@ -34,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  *
  * <p>
  * <strong>Usage Example:</strong>
- * 
+ *
  * <pre>{@code
  * // In application.yml:
  * bus:

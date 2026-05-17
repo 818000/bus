@@ -21,8 +21,10 @@ package org.miaixz.bus.starter.sensitive;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.miaixz.bus.spring.GeniusBuilder;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import org.miaixz.bus.spring.GeniusBuilder;
 
 /**
  * Configuration properties for data desensitization and encryption/decryption.
@@ -52,6 +54,9 @@ public class SensitiveProperties {
 
     /**
      * Nested class for encryption settings.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -66,10 +71,14 @@ public class SensitiveProperties {
          * The encryption algorithm type (e.g., AES, DES).
          */
         private String type;
+
     }
 
     /**
      * Nested class for decryption settings.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -84,6 +93,7 @@ public class SensitiveProperties {
          * The decryption algorithm type (e.g., AES, DES).
          */
         private String type;
+
     }
 
 }

@@ -26,6 +26,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+
 import org.miaixz.bus.core.basic.entity.Message;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
@@ -38,16 +44,10 @@ import org.miaixz.bus.notify.magic.ErrorCode;
 import org.miaixz.bus.notify.magic.Notice;
 import org.miaixz.bus.notify.metric.AbstractProvider;
 
-import jakarta.activation.DataHandler;
-import jakarta.activation.DataSource;
-import jakarta.activation.FileDataSource;
-import jakarta.mail.*;
-import jakarta.mail.internet.*;
-
 /**
  * Generic email service provider implementation.
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 21+
  */
 public class GenericEmailProvider extends AbstractProvider<GenericNotice, Context> {

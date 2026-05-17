@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,15 +19,6 @@
 */
 package org.miaixz.bus.socket.accord;
 
-import org.miaixz.bus.core.lang.exception.InternalException;
-import org.miaixz.bus.core.xyz.IoKit;
-import org.miaixz.bus.socket.*;
-import org.miaixz.bus.socket.buffer.BufferPage;
-import org.miaixz.bus.socket.buffer.VirtualBuffer;
-import org.miaixz.bus.socket.buffer.WriteBuffer;
-import org.miaixz.bus.socket.metric.channel.AsynchronousChannelProvider;
-import org.miaixz.bus.logger.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -36,6 +27,15 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.xyz.IoKit;
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.socket.*;
+import org.miaixz.bus.socket.buffer.BufferPage;
+import org.miaixz.bus.socket.buffer.VirtualBuffer;
+import org.miaixz.bus.socket.buffer.WriteBuffer;
+import org.miaixz.bus.socket.metric.channel.AsynchronousChannelProvider;
 
 /**
  * Represents a TCP session for AIO (Asynchronous I/O).
@@ -67,27 +67,33 @@ public class TcpSession extends Session {
      * The underlying asynchronous socket channel for communication.
      */
     private final AsynchronousSocketChannel channel;
+
     /**
      * The buffer for handling outgoing data.
      */
     private final WriteBuffer byteBuf;
+
     /**
      * The server or client context.
      */
     private final Context context;
+
     /**
      * A supplier for providing read buffers.
      */
     private final Supplier<VirtualBuffer> readBufferSupplier;
+
     /**
      * The buffer for reading incoming data. Its size is determined by the `setReadBufferSize` setting in
      * AioClient/AioServer.
      */
     private VirtualBuffer readBuffer;
+
     /**
      * The buffer for writing outgoing data.
      */
     private VirtualBuffer writeBuffer;
+
     /**
      * The input stream for synchronous reading.
      */
@@ -453,6 +459,9 @@ public class TcpSession extends Session {
 
     /**
      * An inner class providing a synchronous InputStream for the session.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private class InnerInputStream extends InputStream {
 
@@ -538,6 +547,7 @@ public class TcpSession extends Session {
                 TcpSession.this.inputStream = null;
             }
         }
+
     }
 
     /**

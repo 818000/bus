@@ -19,6 +19,13 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.*;
+import java.net.Socket;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.GeneralSecurityException;
+import java.util.List;
+
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.StreamKit;
@@ -26,13 +33,6 @@ import org.miaixz.bus.image.Device;
 import org.miaixz.bus.image.metric.Connection;
 import org.miaixz.bus.image.metric.hl7.MLLPConnection;
 import org.miaixz.bus.image.metric.hl7.MLLPRelease;
-
-import java.io.*;
-import java.net.Socket;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.GeneralSecurityException;
-import java.util.List;
 
 /**
  * The {@code HL7Snd} class is a client for sending HL7 messages over an MLLP (Minimal Lower Layer Protocol) connection.
@@ -47,6 +47,7 @@ public class HL7Snd extends Device {
      * The local network connection configuration.
      */
     private final Connection conn = new Connection();
+
     /**
      * The remote network connection configuration.
      */
@@ -56,10 +57,12 @@ public class HL7Snd extends Device {
      * The MLLP release protocol version.
      */
     private MLLPRelease mllpRelease;
+
     /**
      * The underlying socket for the connection.
      */
     private Socket sock;
+
     /**
      * The MLLP connection handler.
      */
@@ -167,6 +170,9 @@ public class HL7Snd extends Device {
 
     /**
      * A {@link SimpleFileVisitor} that sends each visited file as an HL7 message.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class HL7Send extends SimpleFileVisitor<Path> {
 
@@ -183,6 +189,7 @@ public class HL7Snd extends Device {
             send(readFromFile(file));
             return FileVisitResult.CONTINUE;
         }
+
     }
 
 }

@@ -22,7 +22,6 @@ package org.miaixz.bus.spring.http;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.miaixz.bus.logger.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -33,6 +32,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Gson JSON converter configurer, integrated with Spring MVC.
@@ -160,6 +161,9 @@ public class GsonMessageConverter extends AbstractHttpMessageConverter {
     /**
      * Custom {@link com.google.gson.TypeAdapterFactory} that restricts deserialization to types within a specified
      * package prefix (autoTypePrefix).
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class AutoTypeAdapterFactory implements com.google.gson.TypeAdapterFactory {
 
@@ -196,6 +200,7 @@ public class GsonMessageConverter extends AbstractHttpMessageConverter {
             }
             return null; // Delegate to default adapter
         }
+
     }
 
 }

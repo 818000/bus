@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.socket.plugin;
 
-import org.miaixz.bus.logger.Logger;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.miaixz.bus.logger.Logger;
 
 /**
  * A plugin that rejects connections from IP addresses on a blacklist.
@@ -84,6 +84,9 @@ public final class BlackListPlugin<T> extends AbstractPlugin<T> {
 
     /**
      * Defines a rule for blacklisting IP addresses.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public interface BlackListRule {
 
@@ -94,6 +97,7 @@ public final class BlackListPlugin<T> extends AbstractPlugin<T> {
          * @return {@code true} if the connection is allowed, {@code false} if it should be rejected
          */
         boolean access(InetSocketAddress address);
+
     }
 
 }

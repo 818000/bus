@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.http.metric.anget;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.ListKit;
 import org.miaixz.bus.core.xyz.PatternKit;
-
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Represents a Network Operating System (NOS), typically parsed from a User-Agent string.
@@ -38,6 +38,7 @@ public class NOS extends UserAgent {
      * Constant for an unknown operating system.
      */
     public static final NOS UNKNOWN = new NOS(Normal.UNKNOWN, null);
+
     /**
      * A list of supported operating systems.
      */

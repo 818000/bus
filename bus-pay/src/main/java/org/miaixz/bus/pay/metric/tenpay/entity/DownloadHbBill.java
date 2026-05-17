@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.tenpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Download Red Packet Bill model.
@@ -44,10 +44,12 @@ public class DownloadHbBill extends Voucher {
      * Signature.
      */
     private String sign;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Bill date.
      */

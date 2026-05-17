@@ -21,10 +21,10 @@ package org.miaixz.bus.shade.screw.engine;
 
 import java.io.Serializable;
 
-import org.miaixz.bus.core.lang.Normal;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.miaixz.bus.core.lang.Normal;
 
 /**
  * Enumeration of supported template types for document generation.
@@ -45,12 +45,14 @@ public enum TemplateType implements Serializable {
     @Getter
     @Setter
     private String templateDir;
+
     /**
      * The implementation class for the template engine.
      */
     @Getter
     @Setter
     private Class<? extends TemplateEngine> implClass;
+
     /**
      * The file extension for templates of this type.
      */

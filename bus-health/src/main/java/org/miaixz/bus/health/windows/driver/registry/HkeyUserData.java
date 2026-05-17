@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,10 +22,6 @@ package org.miaixz.bus.health.windows.driver.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.builtin.software.OSSession;
-import org.miaixz.bus.logger.Logger;
-
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
@@ -33,6 +29,10 @@ import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEY;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.builtin.software.OSSession;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Utility to read session data from HKEY_USERS
@@ -47,18 +47,22 @@ public final class HkeyUserData {
      * The PATH_DELIMITER constant.
      */
     private static final String PATH_DELIMITER = "\\";
+
     /**
      * The DEFAULT_DEVICE constant.
      */
     private static final String DEFAULT_DEVICE = "Console";
+
     /**
      * The VOLATILE_ENV_SUBKEY constant.
      */
     private static final String VOLATILE_ENV_SUBKEY = "Volatile Environment";
+
     /**
      * The CLIENTNAME constant.
      */
     private static final String CLIENTNAME = "CLIENTNAME";
+
     /**
      * The SESSIONNAME constant.
      */

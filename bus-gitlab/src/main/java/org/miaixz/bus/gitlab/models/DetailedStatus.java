@@ -19,13 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
-import java.io.Serial;
 
 /**
  * This class is part of the Pipeline message.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class DetailedStatus implements Serializable {
 

@@ -19,13 +19,19 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.util.Date;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.io.Serial;
-
+/**
+ * The epic class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Epic extends AbstractEpic<Epic> {
 
     @Serial

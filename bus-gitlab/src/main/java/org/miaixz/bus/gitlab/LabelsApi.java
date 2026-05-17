@@ -23,15 +23,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.Label;
-
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.Label;
 
 /**
  * This class provides an entry point to all the GitLab API project and group label calls.
  *
  * @see <a href="https://docs.gitlab.com/ce/api/labels.html">Labels API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/group_labels.html">Group Labels API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class LabelsApi extends AbstractApi {
 
@@ -113,7 +115,7 @@ public class LabelsApi extends AbstractApi {
     /**
      * Create a project label. A Label instance is used to set the label properties. withXXX() methods are provided to
      * set the properties of the label to create:
-     * 
+     *
      * <pre>
      * <code>
      *   // name and color properties are required
@@ -149,7 +151,7 @@ public class LabelsApi extends AbstractApi {
     /**
      * Update the specified project label. The name, color, and description can be updated. A Label instance is used to
      * set the properties of the label to update, withXXX() methods are provided to set the properties to update:
-     * 
+     *
      * <pre>
      * <code>
      *   Label labelUpdates = new Label()
@@ -313,7 +315,7 @@ public class LabelsApi extends AbstractApi {
     /**
      * Create a group label. A Label instance is used to set the label properties. withXXX() methods are provided to set
      * the properties of the label to create:
-     * 
+     *
      * <pre>
      * <code>
      *   Label labelProperties = new Label()
@@ -347,7 +349,7 @@ public class LabelsApi extends AbstractApi {
     /**
      * Update the specified label. The name, color, and description can be updated. A Label instance is used to set the
      * properties of the label to update, withXXX() methods are provided to set the properties to update:
-     * 
+     *
      * <pre>
      * <code>
      *   Label labelUpdates = new Label()

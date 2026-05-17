@@ -23,15 +23,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import jakarta.ws.rs.core.Response;
+
 import org.miaixz.bus.gitlab.models.Link;
 import org.miaixz.bus.gitlab.models.ReleaseLinkParams;
 
-import jakarta.ws.rs.core.Response;
-
 /**
  * This class provides an entry point to all the GitLab ReleaseLinks API calls.
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ce/api/releases/links.html">ReleaseLinks API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class ReleaseLinksApi extends AbstractApi {
 

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -32,6 +32,8 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.sun.jna.platform.unix.Resource;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Regex;
@@ -45,8 +47,6 @@ import org.miaixz.bus.health.linux.ProcPath;
 import org.miaixz.bus.health.linux.driver.proc.ProcessStat;
 import org.miaixz.bus.health.linux.jna.LinuxLibc;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.platform.unix.Resource;
 
 /**
  * OSProcess implementation
@@ -80,115 +80,143 @@ public class LinuxOSProcess extends AbstractOSProcess {
      * The os value.
      */
     private final LinuxOperatingSystem os;
+
     /**
      * The commandLine value.
      */
     private final Supplier<String> commandLine = Memoizer.memoize(this::queryCommandLine);
+
     /**
      * The arguments value.
      */
     private final Supplier<List<String>> arguments = Memoizer.memoize(this::queryArguments);
+
     /**
      * The environmentVariables value.
      */
     private final Supplier<Map<String, String>> environmentVariables = Memoizer
             .memoize(this::queryEnvironmentVariables);
+
     /**
      * The path value.
      */
     private String path = Normal.EMPTY;
+
     /**
      * The bitness value.
      */
     private final Supplier<Integer> bitness = Memoizer.memoize(this::queryBitness);
+
     /**
      * The userID value.
      */
     private String userID;
+
     /**
      * The user value.
      */
     private final Supplier<String> user = Memoizer.memoize(this::queryUser);
+
     /**
      * The groupID value.
      */
     private String groupID;
+
     /**
      * The group value.
      */
     private final Supplier<String> group = Memoizer.memoize(this::queryGroup);
+
     /**
      * The name value.
      */
     private String name;
+
     /**
      * The state value.
      */
     private State state = State.INVALID;
+
     /**
      * The parentProcessID value.
      */
     private int parentProcessID;
+
     /**
      * The threadCount value.
      */
     private int threadCount;
+
     /**
      * The priority value.
      */
     private int priority;
+
     /**
      * The virtualSize value.
      */
     private long virtualSize;
+
     /**
      * The residentSetSize value.
      */
     private long residentSetSize;
+
     /**
      * The privateResidentMemory value.
      */
     private long privateResidentMemory;
+
     /**
      * The kernelTime value.
      */
     private long kernelTime;
+
     /**
      * The userTime value.
      */
     private long userTime;
+
     /**
      * The startTime value.
      */
     private long startTime;
+
     /**
      * The upTime value.
      */
     private long upTime;
+
     /**
      * The bytesRead value.
      */
     private long bytesRead;
+
     /**
      * The bytesWritten value.
      */
     private long bytesWritten;
+
     /**
      * The minorFaults value.
      */
     private long minorFaults;
+
     /**
      * The majorFaults value.
      */
     private long majorFaults;
+
     /**
      * The contextSwitches value.
      */
     private long contextSwitches;
+
     /**
      * The voluntaryContextSwitches value.
      */
     private long voluntaryContextSwitches;
+
     /**
      * The involuntaryContextSwitches value.
      */
@@ -842,6 +870,9 @@ public class LinuxOSProcess extends AbstractOSProcess {
     /**
      * Enum used to update attributes. The order field represents the 1-indexed numeric order of the stat in
      * /proc/pid/stat per the man file.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private enum ProcPidStat {
 
@@ -872,6 +903,7 @@ public class LinuxOSProcess extends AbstractOSProcess {
         public int getOrder() {
             return this.order;
         }
+
     }
 
 }

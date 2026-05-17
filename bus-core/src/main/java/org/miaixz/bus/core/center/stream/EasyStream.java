@@ -39,7 +39,7 @@ import org.miaixz.bus.core.xyz.*;
  *
  * <p>
  * Intermediate Operations and Terminal Operations
- * 
+ *
  * <p>
  * Stream operations are divided into <em>intermediate operations</em> and <em>terminal operations</em>. A stream only
  * truly executes its previous <em>intermediate operations</em> when a <em>terminal operation</em> is performed.
@@ -60,7 +60,7 @@ import org.miaixz.bus.core.xyz.*;
  *
  * <p>
  * Sequential Streams and Parallel Streams
- * 
+ *
  * Streams are divided into two types: <em>sequential streams</em> and <em>parallel streams</em>:
  * <ul>
  * <li>Sequential Streams: All operations on the stream are performed by the current thread.</li>
@@ -70,8 +70,8 @@ import org.miaixz.bus.core.xyz.*;
  * Different types of streams can be converted to each other using {@link #sequential()} or {@link #parallel()}.
  *
  * @param <T> the type of the elements in the stream
- * @author Kimi Liu
  * @see java.util.stream.Stream
+ * @author Kimi Liu
  * @since Java 21+
  */
 public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
@@ -204,7 +204,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * <p>
      * For example, {@code FastStream.iterate(0, i -> i + 1)} can create an infinite stream starting from 0 and
      * incrementing by 1. Use {@link EasyStream#limit(long)} to limit the number of elements.
-     * 
+     *
      *
      * @param <T>  the type of the elements
      * @param seed the initial element
@@ -222,7 +222,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * <p>
      * For example, {@code FastStream.iterate(0, i -> i < 3, i -> ++i)} can create a stream containing elements 0, 1, 2.
      * Use {@link EasyStream#limit(long)} to limit the number of elements.
-     * 
+     *
      *
      * @param <T>     the type of the elements
      * @param seed    the initial element
@@ -245,7 +245,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * graph or tree nodes in a flattened manner, and parallel streams can be used to improve efficiency.
      * <p>
      * Example:
-     * 
+     *
      * <pre>{@code
      * Tree root = // Build tree structure
      * // Search for all nodes at level 3 in the tree structure and sort by weight
@@ -274,7 +274,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * graph or tree nodes in a flattened manner, and parallel streams can be used to improve efficiency.
      * <p>
      * Example:
-     * 
+     *
      * <pre>{@code
      * Tree root = // Build tree structure
      * // Search for all nodes at level 3 in the tree structure and sort by weight
@@ -314,7 +314,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * <p>
      * Concatenating from repetitive sequential streams may lead to deep call chains or even
      * {@code StackOverflowException}.
-     * 
+     *
      *
      * @param <T> the type of the elements
      * @param a   the first stream
@@ -489,6 +489,8 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
      * A builder for {@code EasyStream} instances.
      *
      * @param <T> the type of the elements
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public interface Builder<T> extends Consumer<T>, org.miaixz.bus.core.Builder<EasyStream<T>> {
 
@@ -503,6 +505,7 @@ public class EasyStream<T> extends EnhancedWrappedStream<T, EasyStream<T>> {
             accept(t);
             return this;
         }
+
     }
 
 }

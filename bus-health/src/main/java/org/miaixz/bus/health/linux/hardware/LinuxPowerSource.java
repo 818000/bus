@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -23,6 +23,12 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.sun.jna.platform.linux.Udev;
+import com.sun.jna.platform.linux.Udev.UdevContext;
+import com.sun.jna.platform.linux.Udev.UdevDevice;
+import com.sun.jna.platform.linux.Udev.UdevEnumerate;
+import com.sun.jna.platform.linux.Udev.UdevListEntry;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.health.Builder;
@@ -31,12 +37,6 @@ import org.miaixz.bus.health.builtin.hardware.PowerSource;
 import org.miaixz.bus.health.builtin.hardware.common.AbstractPowerSource;
 import org.miaixz.bus.health.linux.SysPath;
 import org.miaixz.bus.health.linux.software.LinuxOperatingSystem;
-
-import com.sun.jna.platform.linux.Udev;
-import com.sun.jna.platform.linux.Udev.UdevContext;
-import com.sun.jna.platform.linux.Udev.UdevDevice;
-import com.sun.jna.platform.linux.Udev.UdevEnumerate;
-import com.sun.jna.platform.linux.Udev.UdevListEntry;
 
 /**
  * A Power Source
@@ -49,6 +49,9 @@ public final class LinuxPowerSource extends AbstractPowerSource {
 
     /**
      * The Prop enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum Prop {
         POWER_SUPPLY_NAME, POWER_SUPPLY_STATUS, POWER_SUPPLY_CAPACITY, POWER_SUPPLY_PRESENT, POWER_SUPPLY_ONLINE,
@@ -58,11 +61,15 @@ public final class LinuxPowerSource extends AbstractPowerSource {
         POWER_SUPPLY_MODEL_NAME, POWER_SUPPLY_MANUFACTURER, POWER_SUPPLY_SERIAL_NUMBER, POWER_SUPPLY_TEMP,
         POWER_SUPPLY_TIME_TO_EMPTY_NOW, POWER_SUPPLY_TIME_TO_FULL_NOW, POWER_SUPPLY_MANUFACTURE_YEAR,
         POWER_SUPPLY_MANUFACTURE_MONTH, POWER_SUPPLY_MANUFACTURE_DAY
+
     }
 
     /**
      * Initialization-on-demand holder: the map is only constructed if the non-udev path is reached, avoiding
      * unnecessary work on systems where udev is available.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class PropByName {
 
@@ -75,6 +82,7 @@ public final class LinuxPowerSource extends AbstractPowerSource {
                 MAP.put(p.name(), p);
             }
         }
+
     }
 
     /**

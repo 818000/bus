@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.jdpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Refund application interface model.
@@ -44,50 +44,62 @@ public class Refund extends Voucher {
      * Version number.
      */
     private String version;
+
     /**
      * Merchant number.
      */
     private String merchant;
+
     /**
      * Transaction number.
      */
     private String tradeNum;
+
     /**
      * Original transaction number.
      */
     private String oTradeNum;
+
     /**
      * Refund amount.
      */
     private String amount;
+
     /**
      * Currency.
      */
     private String currency;
+
     /**
      * Transaction time.
      */
     private String tradeTime;
+
     /**
      * Asynchronous notification URL.
      */
     private String notifyUrl;
+
     /**
      * Note.
      */
     private String note;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Device information.
      */
     private String device;
+
     /**
      * Terminal information ID.
      */
     private String termInfoId;
+
     /**
      * Certificate.
      */

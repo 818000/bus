@@ -20,16 +20,20 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.miaixz.bus.gitlab.support.ISO8601;
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+/**
+ * The changelog payload class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class ChangelogPayload implements Serializable {
 
     @Serial

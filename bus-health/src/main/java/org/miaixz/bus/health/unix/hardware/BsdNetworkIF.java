@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -44,34 +44,42 @@ public final class BsdNetworkIF extends AbstractNetworkIF {
      * The bytesRecv value.
      */
     private long bytesRecv;
+
     /**
      * The bytesSent value.
      */
     private long bytesSent;
+
     /**
      * The packetsRecv value.
      */
     private long packetsRecv;
+
     /**
      * The packetsSent value.
      */
     private long packetsSent;
+
     /**
      * The inErrors value.
      */
     private long inErrors;
+
     /**
      * The outErrors value.
      */
     private long outErrors;
+
     /**
      * The inDrops value.
      */
     private long inDrops;
+
     /**
      * The collisions value.
      */
     private long collisions;
+
     /**
      * The timeStamp value.
      */

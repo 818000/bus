@@ -49,7 +49,7 @@ import org.miaixz.bus.core.lang.Symbol;
  * metadata management
  *
  * Usage Examples:
- * 
+ *
  * <pre>
  * // Maven integration (recommended):
  * {@code <java classname="org.miaixz.bus.Nativex"
@@ -65,10 +65,11 @@ import org.miaixz.bus.core.lang.Symbol;
  * }
  * </pre>
  *
- * @author Kimi Liu
- * @since Java 21+
  * @see <a href="https://graalvm.org/latest/reference/native-image/BuildConfiguration/">GraalVM Native Image
  *      Configuration</a>
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class Nativex {
 
@@ -452,6 +453,9 @@ public class Nativex {
 
     /**
      * Project metadata holder class for Java 8 compatibility.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class Metadata {
 
@@ -476,6 +480,7 @@ public class Nativex {
         public String getVersion() {
             return version;
         }
+
     }
 
     /**
@@ -493,16 +498,19 @@ public class Nativex {
         String content = Files.readString(pomPath);
 
         Pattern groupIdPattern = Pattern.compile("<groupId>([^<]+)</groupId>");
-        Pattern artifactIdPattern = Pattern.compile("<artifactId>bus-all</artifactId>\\s*<version>([^<]+)</version>");
+        Pattern artifactIdPattern = Pattern.compile("<artifactId>bus-all</artifactId>");
+        Pattern versionPattern = Pattern.compile("<version>([^<]+)</version>");
 
         Matcher groupIdMatcher = groupIdPattern.matcher(content);
         Matcher artifactIdMatcher = artifactIdPattern.matcher(content);
+        Matcher versionMatcher = versionPattern.matcher(content);
 
         if (!groupIdMatcher.find() || !artifactIdMatcher.find()) {
             throw new IOException("Could not extract project metadata from POM file");
         }
 
-        return new Metadata(groupIdMatcher.group(1).trim(), "bus-all", artifactIdMatcher.group(1).trim());
+        String version = versionMatcher.find() ? versionMatcher.group(1).trim() : null;
+        return new Metadata(groupIdMatcher.group(1).trim(), "bus-all", version);
     }
 
     /**

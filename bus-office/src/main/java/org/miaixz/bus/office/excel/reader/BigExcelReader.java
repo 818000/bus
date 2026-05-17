@@ -25,16 +25,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.xyz.FileKit;
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.office.Builder;
+import org.miaixz.bus.office.excel.ExcelSaxKit;
+import org.miaixz.bus.office.excel.RowKit;
 import org.miaixz.bus.office.excel.WorkbookKit;
 import org.miaixz.bus.office.excel.sax.ExcelSaxReader;
 import org.miaixz.bus.office.excel.sax.handler.RowHandler;
-import org.miaixz.bus.office.excel.ExcelSaxKit;
-import org.miaixz.bus.office.excel.RowKit;
 
 /**
  * Streaming Excel reader for large datasets.
@@ -46,6 +47,9 @@ public class BigExcelReader implements AutoCloseable {
 
     /**
      * Lightweight signal exception for normal end-of-read flow.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class EndOfReadException extends RuntimeException {
 
@@ -69,24 +73,29 @@ public class BigExcelReader implements AutoCloseable {
         public synchronized Throwable fillInStackTrace() {
             return this;
         }
+
     }
 
     /**
      * Source file when reading from file.
      */
     private final File sourceFile;
+
     /**
      * Source stream when reading from stream.
      */
     private InputStream sourceStream;
+
     /**
      * Sheet selector, -1 means all sheets.
      */
     private final String idOrRidOrSheetName;
+
     /**
      * Read configuration.
      */
     private ExcelReadConfig config = new ExcelReadConfig();
+
     /**
      * Closed flag.
      */
@@ -767,6 +776,9 @@ public class BigExcelReader implements AutoCloseable {
 
     /**
      * Batch row callback.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FunctionalInterface
     public interface BatchRowHandler {
@@ -777,10 +789,14 @@ public class BigExcelReader implements AutoCloseable {
          * @param rows row batch.
          */
         void handle(List<List<Object>> rows);
+
     }
 
     /**
      * Context-aware batch callback.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @FunctionalInterface
     public interface ContextBatchRowHandler {
@@ -791,6 +807,7 @@ public class BigExcelReader implements AutoCloseable {
          * @param batch row batch with sheet metadata.
          */
         void handle(RowBatch batch);
+
     }
 
     /**
@@ -800,9 +817,12 @@ public class BigExcelReader implements AutoCloseable {
      * @param startRowIndex first row index in this batch
      * @param endRowIndex   last row index in this batch
      * @param rows          row batch data
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public record RowBatch(ExcelReadState.SheetContext sheet, long startRowIndex, long endRowIndex,
             List<List<Object>> rows) {
+
     }
 
 }

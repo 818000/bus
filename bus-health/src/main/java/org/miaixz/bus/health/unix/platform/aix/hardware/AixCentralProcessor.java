@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,6 +22,11 @@ package org.miaixz.bus.health.unix.platform.aix.hardware;
 import java.util.*;
 import java.util.function.Supplier;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_cpu_t;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_cpu_total_t;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_partition_config_t;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
 import org.miaixz.bus.core.lang.tuple.Pair;
@@ -36,11 +41,6 @@ import org.miaixz.bus.health.unix.platform.aix.driver.Lssrad;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatConfig;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatCpu;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_cpu_t;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_cpu_total_t;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_partition_config_t;
-
 /**
  * A CPU
  *
@@ -54,20 +54,24 @@ final class AixCentralProcessor extends AbstractCentralProcessor {
      * Jiffies per second, used for process time counters.
      */
     private static final long USER_HZ = Parsing.parseLongOrDefault(Executor.getFirstAnswer("getconf CLK_TCK"), 100L);
+
     /**
      * The SBITS constant.
      */
     private static final int SBITS = querySbits();
+
     /**
      * The cpuTotal value.
      */
     private final Supplier<perfstat_cpu_total_t> cpuTotal = Memoizer
             .memoize(PerfstatCpu::queryCpuTotal, Memoizer.defaultExpiration());
+
     /**
      * The cpuProc value.
      */
     private final Supplier<perfstat_cpu_t[]> cpuProc = Memoizer
             .memoize(PerfstatCpu::queryCpu, Memoizer.defaultExpiration());
+
     /**
      * The config value.
      */

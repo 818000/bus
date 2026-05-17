@@ -19,13 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
 /**
  * Enum to model the type of link between issues or epics
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public enum LinkType {
 

@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.function.Predicate;
 
+import com.jcraft.jsch.*;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.ChannelSftp.LsEntrySelector;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.CollKit;
@@ -38,10 +42,6 @@ import org.miaixz.bus.extra.ftp.AbstractFtp;
 import org.miaixz.bus.extra.ftp.FtpConfig;
 import org.miaixz.bus.extra.ssh.Connector;
 import org.miaixz.bus.extra.ssh.JschKit;
-
-import com.jcraft.jsch.*;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.ChannelSftp.LsEntrySelector;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -63,6 +63,7 @@ public class JschSftp extends AbstractFtp {
      * The underlying JSch session.
      */
     private Session session;
+
     /**
      * The underlying JSch SFTP channel.
      */
@@ -923,6 +924,9 @@ public class JschSftp extends AbstractFtp {
 
     /**
      * Enumeration of file transfer modes supported by JSch.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum Mode {
         /**
@@ -937,6 +941,7 @@ public class JschSftp extends AbstractFtp {
          * Append mode: If the target file exists, the transferred file will be appended to the end of it.
          */
         APPEND
+
     }
 
 }

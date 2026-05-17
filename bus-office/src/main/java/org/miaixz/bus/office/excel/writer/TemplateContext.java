@@ -28,12 +28,13 @@ import java.util.regex.Pattern;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.xyz.*;
-import org.miaixz.bus.office.excel.cell.VirtualCell;
 import org.miaixz.bus.office.excel.CellKit;
 import org.miaixz.bus.office.excel.SheetKit;
+import org.miaixz.bus.office.excel.cell.VirtualCell;
 
 /**
  * Template context, which records the cells where variables are located in the template.
@@ -55,6 +56,7 @@ public class TemplateContext {
      * </ol>
      */
     private static final Pattern VAR_PATTERN = Pattern.compile("(?<!\\\\)\\{([.$_a-zA-Z]+\\d*[.$_a-zA-Z]*)}");
+
     /**
      * Regular expression for escaped variables.
      */

@@ -1,9 +1,31 @@
+/*
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+ ~                                                                           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
+ ~                                                                           ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
+ ~ you may not use this file except in compliance with the License.          ~
+ ~ You may obtain a copy of the License at                                   ~
+ ~                                                                           ~
+ ~      https://www.apache.org/licenses/LICENSE-2.0                          ~
+ ~                                                                           ~
+ ~ Unless required by applicable law or agreed to in writing, software       ~
+ ~ distributed under the License is distributed on an "AS IS" BASIS,         ~
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  ~
+ ~ See the License for the specific language governing permissions and       ~
+ ~ limitations under the License.                                            ~
+ ~                                                                           ~
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+*/
 package org.opencv.core;
 
 import java.nio.ByteBuffer;
 
 // C++: class Mat
 //javadoc: Mat
+/**
+ * The mat class.
+ */
 public class Mat extends CleanableMat {
 
     public Mat(long addr) {
@@ -464,7 +486,7 @@ public class Mat extends CleanableMat {
 
     /**
      * Element-wise multiplication with scale factor
-     * 
+     *
      * @param m     operand with with which to perform element-wise multiplication
      * @param scale scale factor
      * @return reference to a new Mat object
@@ -475,7 +497,7 @@ public class Mat extends CleanableMat {
 
     /**
      * Element-wise multiplication
-     * 
+     *
      * @param m operand with with which to perform element-wise multiplication
      * @return reference to a new Mat object
      */
@@ -485,7 +507,7 @@ public class Mat extends CleanableMat {
 
     /**
      * Matrix multiplication
-     * 
+     *
      * @param m operand with with which to perform matrix multiplication
      * @see Core#gemm(Mat, Mat, double, Mat, double, Mat, int)
      * @return reference to a new Mat object
@@ -722,6 +744,9 @@ public class Mat extends CleanableMat {
     //
 
     // javadoc: Mat::type()
+    /**
+     * The type method.
+     */
     public int type() {
         return n_type(nativeObj);
     }
@@ -1108,6 +1133,9 @@ public class Mat extends CleanableMat {
         }
     }
 
+    /**
+     * The tuple 2 class.
+     */
     public static class Tuple2<T> {
 
         public Tuple2(T _0, T _1) {
@@ -1125,8 +1153,12 @@ public class Mat extends CleanableMat {
 
         private final T _0;
         private final T _1;
+
     }
 
+    /**
+     * The tuple 3 class.
+     */
     public static class Tuple3<T> {
 
         public Tuple3(T _0, T _1, T _2) {
@@ -1150,8 +1182,12 @@ public class Mat extends CleanableMat {
         private final T _0;
         private final T _1;
         private final T _2;
+
     }
 
+    /**
+     * The tuple 4 class.
+     */
     public static class Tuple4<T> {
 
         public Tuple4(T _0, T _1, T _2, T _3) {
@@ -1181,8 +1217,12 @@ public class Mat extends CleanableMat {
         private final T _1;
         private final T _2;
         private final T _3;
+
     }
 
+    /**
+     * The atable interface.
+     */
     public interface Atable<T> {
 
         T getV();
@@ -1200,8 +1240,12 @@ public class Mat extends CleanableMat {
         Tuple4<T> getV4c();
 
         void setV4c(Tuple4<T> v);
+
     }
 
+    /**
+     * The atable base class.
+     */
     private static class AtableBase {
 
         protected AtableBase(Mat mat, int row, int col) {
@@ -1218,8 +1262,12 @@ public class Mat extends CleanableMat {
 
         protected final Mat mat;
         protected final int[] indices;
+
     }
 
+    /**
+     * The atable byte class.
+     */
     private static class AtableByte extends AtableBase implements Atable<Byte> {
 
         public AtableByte(Mat mat, int row, int col) {
@@ -1281,8 +1329,12 @@ public class Mat extends CleanableMat {
             byte[] data = new byte[] { v._0, v._1, v._2, v._3 };
             mat.put(indices, data);
         }
+
     }
 
+    /**
+     * The atable double class.
+     */
     private static class AtableDouble extends AtableBase implements Atable<Double> {
 
         public AtableDouble(Mat mat, int row, int col) {
@@ -1344,8 +1396,12 @@ public class Mat extends CleanableMat {
             double[] data = new double[] { v._0, v._1, v._2, v._3 };
             mat.put(indices, data);
         }
+
     }
 
+    /**
+     * The atable float class.
+     */
     private static class AtableFloat extends AtableBase implements Atable<Float> {
 
         public AtableFloat(Mat mat, int row, int col) {
@@ -1407,8 +1463,12 @@ public class Mat extends CleanableMat {
             double[] data = new double[] { v._0, v._1, v._2, v._3 };
             mat.put(indices, data);
         }
+
     }
 
+    /**
+     * The atable integer class.
+     */
     private static class AtableInteger extends AtableBase implements Atable<Integer> {
 
         public AtableInteger(Mat mat, int row, int col) {
@@ -1470,8 +1530,12 @@ public class Mat extends CleanableMat {
             int[] data = new int[] { v._0, v._1, v._2, v._3 };
             mat.put(indices, data);
         }
+
     }
 
+    /**
+     * The atable short class.
+     */
     private static class AtableShort extends AtableBase implements Atable<Short> {
 
         public AtableShort(Mat mat, int row, int col) {
@@ -1533,6 +1597,7 @@ public class Mat extends CleanableMat {
             short[] data = new short[] { v._0, v._1, v._2, v._3 };
             mat.put(indices, data);
         }
+
     }
 
     // javadoc:Mat::getNativeObjAddr()
@@ -1856,4 +1921,5 @@ public class Mat extends CleanableMat {
     private static native double[] nGetIdx(long self, int[] idx);
 
     private static native String nDump(long self);
+
 }

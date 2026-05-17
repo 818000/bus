@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -25,15 +25,15 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.builtin.jna.Nvml;
-import org.miaixz.bus.logger.Logger;
-
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import org.miaixz.bus.core.lang.annotation.ThreadSafe;
+import org.miaixz.bus.health.builtin.jna.Nvml;
+import org.miaixz.bus.logger.Logger;
 
 /**
  * Optional runtime binding to the NVIDIA Management Library (NVML). All methods return sentinel values ({@code -1} or
@@ -60,6 +60,9 @@ public final class NvmlKit {
 
     /**
      * The Holder class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class Holder {
 
@@ -67,6 +70,7 @@ public final class NvmlKit {
          * The LIB constant.
          */
         static final Nvml.NvmlLibrary LIB;
+
         /**
          * The LIBRARY_LOADED constant.
          */
@@ -85,6 +89,7 @@ public final class NvmlKit {
             LIB = lib;
             LIBRARY_LOADED = loaded;
         }
+
     }
 
     // Lazy device enumeration state — written once on first successful enumeration, read-only thereafter.
@@ -94,6 +99,7 @@ public final class NvmlKit {
      * The devicesEnumerated value.
      */
     private static volatile boolean devicesEnumerated = false;
+
     /**
      * The DEVICE_BUS_IDS constant.
      */

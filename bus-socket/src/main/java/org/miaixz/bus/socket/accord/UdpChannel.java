@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org sandao and other contributors.         ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -19,13 +19,6 @@
 */
 package org.miaixz.bus.socket.accord;
 
-import org.miaixz.bus.logger.Logger;
-import org.miaixz.bus.socket.Context;
-import org.miaixz.bus.socket.Session;
-import org.miaixz.bus.socket.Worker;
-import org.miaixz.bus.socket.buffer.BufferPage;
-import org.miaixz.bus.socket.buffer.VirtualBuffer;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -34,6 +27,13 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.socket.Context;
+import org.miaixz.bus.socket.Session;
+import org.miaixz.bus.socket.Worker;
+import org.miaixz.bus.socket.buffer.BufferPage;
+import org.miaixz.bus.socket.buffer.VirtualBuffer;
 
 /**
  * Wraps the underlying UDP channel and provides communication and session management.
@@ -47,26 +47,32 @@ public class UdpChannel {
      * The service context, containing configuration settings.
      */
     public final Context context;
+
     /**
      * The buffer page for write operations.
      */
     private final BufferPage writeBufferPage;
+
     /**
      * The underlying UDP channel.
      */
     private final DatagramChannel channel;
+
     /**
      * A queue for pending outgoing messages.
      */
     private ConcurrentLinkedQueue<ResponseUnit> responseTasks;
+
     /**
      * The worker responsible for handling I/O operations.
      */
     private Worker worker;
+
     /**
      * The selection key for this channel's registration with a selector.
      */
     private SelectionKey selectionKey;
+
     /**
      * Holds a response unit that failed to send and needs to be retried.
      */
@@ -258,6 +264,9 @@ public class UdpChannel {
 
     /**
      * A data holder for a pending response, containing the session and the data to be sent.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     static final class ResponseUnit {
 
@@ -265,6 +274,7 @@ public class UdpChannel {
          * The session to which the data should be sent.
          */
         private final UdpSession session;
+
         /**
          * The data to be sent.
          */

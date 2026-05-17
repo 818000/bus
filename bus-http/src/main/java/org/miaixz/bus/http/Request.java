@@ -19,17 +19,17 @@
 */
 package org.miaixz.bus.http;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.net.HTTP;
-import org.miaixz.bus.http.bodys.RequestBody;
-import org.miaixz.bus.http.cache.CacheControl;
-
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.net.HTTP;
+import org.miaixz.bus.http.bodys.RequestBody;
+import org.miaixz.bus.http.cache.CacheControl;
 
 /**
  * An HTTP request, encapsulating all information for a single request, including the URL, method, headers, body, and
@@ -47,22 +47,27 @@ public final class Request {
      * The URL for this request.
      */
     final UnoUrl url;
+
     /**
      * The HTTP method (e.g., GET, POST).
      */
     final String method;
+
     /**
      * The request headers.
      */
     final Headers headers;
+
     /**
      * The request body, which may be null.
      */
     final RequestBody body;
+
     /**
      * A map of tags for attaching metadata.
      */
     final Map<Class<?>, Object> tags;
+
     /**
      * The cache control directives, lazily initialized.
      */
@@ -209,6 +214,9 @@ public final class Request {
 
     /**
      * A builder for creating and modifying {@link Request} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static class Builder {
 
@@ -216,18 +224,22 @@ public final class Request {
          * The URL for the request.
          */
         UnoUrl url;
+
         /**
          * The HTTP method.
          */
         String method;
+
         /**
          * The request headers builder.
          */
         Headers.Builder headers;
+
         /**
          * The request body.
          */
         RequestBody body;
+
         /**
          * A map of tags (mutable or empty).
          */
@@ -515,6 +527,7 @@ public final class Request {
                 throw new IllegalStateException("url == null");
             return new Request(this);
         }
+
     }
 
 }

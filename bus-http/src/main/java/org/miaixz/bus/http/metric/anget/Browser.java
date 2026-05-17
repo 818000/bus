@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.http.metric.anget;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.ListKit;
 import org.miaixz.bus.core.xyz.PatternKit;
-
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Represents a browser, parsed from a User-Agent string.
@@ -38,6 +38,7 @@ public class Browser extends UserAgent {
      * Constant for an unknown browser.
      */
     public static final Browser UNKNOWN = new Browser(Normal.UNKNOWN, null, null);
+
     /**
      * A regex pattern for matching other browser versions.
      */

@@ -19,14 +19,15 @@
 */
 package org.miaixz.bus.http.accord;
 
-import org.miaixz.bus.core.lang.Symbol;
-import org.miaixz.bus.core.net.tls.TlsVersion;
-import org.miaixz.bus.http.secure.CipherSuite;
-
-import javax.net.ssl.SSLSocket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import javax.net.ssl.SSLSocket;
+
+import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.net.tls.TlsVersion;
+import org.miaixz.bus.http.secure.CipherSuite;
 
 /**
  * Specifies the configuration for a socket connection over which HTTP is transported. For {@code https:} URLs, this
@@ -70,6 +71,7 @@ public final class ConnectionSuite {
             CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
             CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
             CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA, };
+
     /**
      * A TLS connection with extensions like SNI and ALPN available.
      */
@@ -248,6 +250,9 @@ public final class ConnectionSuite {
 
     /**
      * A builder for creating {@link ConnectionSuite} instances.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public static final class Builder {
 
@@ -384,6 +389,7 @@ public final class ConnectionSuite {
         public ConnectionSuite build() {
             return new ConnectionSuite(this);
         }
+
     }
 
 }

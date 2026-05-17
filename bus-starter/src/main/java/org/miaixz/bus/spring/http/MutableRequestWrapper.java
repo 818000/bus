@@ -23,6 +23,16 @@ import java.io.*;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.lang.MediaType;
 import org.miaixz.bus.core.lang.Normal;
@@ -34,15 +44,6 @@ import org.miaixz.bus.core.xyz.UrlKit;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.spring.options.WrapperRuntimeOptions;
-
-import jakarta.servlet.ReadListener;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Request wrapper that caches the request body content and provides XSS protection.
@@ -58,11 +59,13 @@ import lombok.Setter;
  * <p>
  * <strong>Usage Example:</strong>
  *
- * <pre>{@code
+ * <pre>
+ * {@code
  * // In a Servlet Vector:
  * public class XSSFilter implements Vector {
  *
- *     @Override
+ * &#64;author Kimi Liu
+ *     &#64;Override
  *     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
  *             throws IOException, ServletException {
  *         // Wrap the request
@@ -71,7 +74,8 @@ import lombok.Setter;
  *         chain.doFilter(wrappedRequest, response);
  *     }
  * }
- * }</pre>
+ * }
+ * </pre>
  *
  * @author Kimi Liu
  * @since Java 21+
@@ -268,6 +272,9 @@ public class MutableRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * A custom {@link ServletInputStream} wrapper that allows the request body content to be read multiple times.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -325,6 +332,7 @@ public class MutableRequestWrapper extends HttpServletRequestWrapper {
         public int read() throws IOException {
             return this.inputStream.read();
         }
+
     }
 
 }

@@ -19,9 +19,9 @@
 */
 package org.miaixz.bus.http.metric.http;
 
-import org.miaixz.bus.core.net.HTTP;
-
 import java.util.Arrays;
+
+import org.miaixz.bus.core.net.HTTP;
 
 /**
  * Settings describe characteristics of the sending peer, which are used by the receiving peer. Settings are scoped to
@@ -36,10 +36,12 @@ public final class Http2Settings {
      * The total number of settings.
      */
     public static final int COUNT = 10;
+
     /**
      * The array of setting values.
      */
     private final int[] values = new int[COUNT];
+
     /**
      * A bitfield of which settings are set.
      */

@@ -19,21 +19,32 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
+/**
+ * The issue event class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class IssueEvent implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2852257573191L;
 
-    /** Enum to use for specifying the state events resource type. */
+    /**
+     * Enum to use for specifying the state events resource type.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum ResourceType {
 
         ISSUE;
@@ -55,6 +66,7 @@ public class IssueEvent implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     private Long id;

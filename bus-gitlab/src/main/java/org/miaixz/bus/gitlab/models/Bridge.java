@@ -20,13 +20,17 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 
+/**
+ * The bridge class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Bridge implements Serializable {
 
     @Serial

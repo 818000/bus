@@ -22,6 +22,8 @@ package org.miaixz.bus.core;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import lombok.RequiredArgsConstructor;
+
 import org.miaixz.bus.core.convert.Convert;
 import org.miaixz.bus.core.io.resource.PropertySource;
 import org.miaixz.bus.core.lang.Assert;
@@ -32,8 +34,6 @@ import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.reflect.JdkProxy;
 import org.miaixz.bus.core.xyz.FieldKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * A utility for binding properties from a {@link PropertySource} to an object or class. It can also resolve
@@ -83,22 +83,27 @@ public class Binder {
      * The prefix for placeholders.
      */
     private final String placeholderPrefix;
+
     /**
      * The suffix for placeholders.
      */
     private final String placeholderSuffix;
+
     /**
      * The simple prefix for nested placeholders.
      */
     private final String simplePrefix;
+
     /**
      * The separator for default values in placeholders.
      */
     private final String valueSeparator;
+
     /**
      * A flag to indicate whether to ignore unresolvable placeholders.
      */
     private final boolean ignoreUnresolvablePlaceholders;
+
     /**
      * The source of properties.
      */

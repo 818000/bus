@@ -19,9 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
-import org.miaixz.bus.gitlab.support.JacksonJson;
 import java.io.Serial;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The epic in link class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class EpicInLink extends AbstractEpic<EpicInLink> {
 
     @Serial

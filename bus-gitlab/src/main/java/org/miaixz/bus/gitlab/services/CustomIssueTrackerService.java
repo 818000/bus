@@ -19,10 +19,16 @@
 */
 package org.miaixz.bus.gitlab.services;
 
-import org.miaixz.bus.gitlab.models.GitLabForm;
-
 import java.io.Serial;
 
+import org.miaixz.bus.gitlab.models.GitLabForm;
+
+/**
+ * The custom issue tracker service class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class CustomIssueTrackerService extends NotificationService {
 
     @Serial

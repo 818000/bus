@@ -25,18 +25,18 @@ import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.cortex.Keying;
 import org.miaixz.bus.cortex.Keying.SettingSpec;
 import org.miaixz.bus.cortex.builtin.SettingGenerator;
-import org.miaixz.bus.cortex.setting.item.revision.ItemRevisionStore;
-import org.miaixz.bus.cortex.setting.item.StoreBackedItemStore;
-import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
-import org.miaixz.bus.cortex.setting.item.Item;
-import org.miaixz.bus.cortex.setting.item.ItemNormalizer;
-import org.miaixz.bus.cortex.setting.item.ItemRevisionNumbers;
-import org.miaixz.bus.cortex.setting.item.revision.ItemRevision;
-import org.miaixz.bus.cortex.setting.secret.SecretCodec;
-import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.magic.event.CortexChangeLogStore;
 import org.miaixz.bus.cortex.magic.event.CortexChangeRecord;
+import org.miaixz.bus.cortex.magic.identity.CortexIdentity;
 import org.miaixz.bus.cortex.magic.watch.WatchManager;
+import org.miaixz.bus.cortex.setting.item.Item;
+import org.miaixz.bus.cortex.setting.item.ItemBindingProjection;
+import org.miaixz.bus.cortex.setting.item.ItemNormalizer;
+import org.miaixz.bus.cortex.setting.item.ItemRevisionNumbers;
+import org.miaixz.bus.cortex.setting.item.StoreBackedItemStore;
+import org.miaixz.bus.cortex.setting.item.revision.ItemRevision;
+import org.miaixz.bus.cortex.setting.item.revision.ItemRevisionStore;
+import org.miaixz.bus.cortex.setting.secret.SecretCodec;
 import org.miaixz.bus.extra.json.JsonKit;
 import org.miaixz.bus.logger.Logger;
 
@@ -52,14 +52,17 @@ public class SettingPublisher {
      * Watch-event source name used for durable setting mutations.
      */
     public static final String SETTING_DURABLE_SOURCE = "setting-durable";
+
     /**
      * Watch-event type emitted after a durable publish.
      */
     private static final String DURABLE_PUBLISH_EVENT = "durable-publish";
+
     /**
      * Watch-event type emitted after a rollback publish.
      */
     private static final String ROLLBACK_EVENT = "rollback";
+
     /**
      * Watch-event type emitted after durable deletion.
      */
@@ -69,26 +72,32 @@ public class SettingPublisher {
      * Current-state setting store.
      */
     private final StoreBackedItemStore entryStore;
+
     /**
      * ItemRevision history store.
      */
     private final ItemRevisionStore revisionStore;
+
     /**
      * Watch manager notified after publish and delete operations.
      */
     private final WatchManager watchManager;
+
     /**
      * Secret codec used when the entry stores encrypted content.
      */
     private final SecretCodec secretCodec;
+
     /**
      * Maximum number of retained revisions per setting entry.
      */
     private final int maxRevisions;
+
     /**
      * Optional reliable change log used as a first-stage outbox.
      */
     private final CortexChangeLogStore changeLogStore;
+
     /**
      * Setting-domain key strategy.
      */

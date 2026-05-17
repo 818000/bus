@@ -44,7 +44,7 @@ import org.miaixz.bus.core.net.url.UrlQuery;
  *
  * <p>
  * A Uniform Resource Locator describes the specific location of a resource on a particular server. URL composition:
- * 
+ *
  * <pre>
  *   protocol://hostname[:port]/path/[:parameters][?query]#Fragment
  * </pre>
@@ -520,7 +520,7 @@ public class UrlKit {
      * Encapsulates the Data URI Scheme, with data in Base64 format. The Data URI scheme allows embedding small data
      * directly into web pages inline, avoiding external file loading. Commonly used for embedding images in web pages.
      * Data URI format specification:
-     * 
+     *
      * <pre>
      *     data:[&lt;mime type&gt;][;charset=&lt;charset&gt;][;&lt;encoding&gt;],&lt;encoded data&gt;
      * </pre>
@@ -536,7 +536,7 @@ public class UrlKit {
     /**
      * Encapsulates the Data URI Scheme. The Data URI scheme allows embedding small data directly into web pages inline,
      * avoiding external file loading. Commonly used for embedding images in web pages. Data URI format specification:
-     * 
+     *
      * <pre>
      *     data:[&lt;mime type&gt;][;charset=&lt;charset&gt;][;&lt;encoding&gt;],&lt;encoded data&gt;
      * </pre>
@@ -553,7 +553,7 @@ public class UrlKit {
     /**
      * Encapsulates the Data URI Scheme. The Data URI scheme allows embedding small data directly into web pages inline,
      * avoiding external file loading. Commonly used for embedding images in web pages. Data URI format specification:
-     * 
+     *
      * <pre>
      *     data:[&lt;mime type&gt;][;charset=&lt;charset&gt;][;&lt;encoding&gt;],&lt;encoded data&gt;
      * </pre>

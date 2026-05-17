@@ -19,18 +19,18 @@
 */
 package org.miaixz.bus.notify.metric.dingtalk;
 
-import org.miaixz.bus.notify.magic.Notice;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import org.miaixz.bus.notify.magic.Notice;
+
 /**
  * Notice for DingTalk notification messages.
  *
- * @author Justubborn
+ * @author Kimi Liu
  * @since Java 21+
  */
 @Getter
@@ -44,23 +44,28 @@ public class DingTalkNotice extends Notice {
      * The agent ID of the application.
      */
     private String agentId;
+
     /**
      * A comma-separated list of recipient user IDs. Maximum list length: 100.
      */
     private String userIdList;
+
     /**
      * A comma-separated list of recipient department IDs. Maximum list length: 20. All users within these departments
      * (including sub-departments) will receive the message.
      */
     private String deptIdList;
+
     /**
      * Indicates whether to send the message to all users in the enterprise. {@code true} or {@code false}.
      */
     private boolean toAllUser;
+
     /**
      * A comma-separated list of user IDs in the whitelist.
      */
     private String whiteList;
+
     /**
      * The message content in JSON string format.
      */

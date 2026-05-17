@@ -21,6 +21,11 @@ package org.miaixz.bus.extra.mq.provider.jms;
 
 import java.io.IOException;
 
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.TextMessage;
+
 import org.miaixz.bus.core.lang.exception.MQueueException;
 import org.miaixz.bus.core.xyz.ByteKit;
 import org.miaixz.bus.core.xyz.IoKit;
@@ -28,11 +33,6 @@ import org.miaixz.bus.extra.mq.Consumer;
 import org.miaixz.bus.extra.mq.Message;
 import org.miaixz.bus.extra.mq.MessageHandler;
 import org.miaixz.bus.logger.Logger;
-
-import jakarta.jms.BytesMessage;
-import jakarta.jms.JMSException;
-import jakarta.jms.MessageConsumer;
-import jakarta.jms.TextMessage;
 
 /**
  * JMS (Java Message Service) message consumer implementation.
@@ -163,6 +163,8 @@ public class JmsConsumer implements Consumer {
      *
      * @param topic      The message topic, typically representing the consumer group in this context.
      * @param jmsMessage The raw Jakarta JMS message instance.
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private record JmsMessage(String topic, jakarta.jms.Message jmsMessage) implements Message {
 
@@ -200,6 +202,7 @@ public class JmsConsumer implements Consumer {
                 throw new MQueueException(e);
             }
         }
+
     }
 
 }

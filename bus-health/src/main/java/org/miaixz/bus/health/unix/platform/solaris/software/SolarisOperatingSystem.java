@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -26,6 +26,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.sun.jna.platform.unix.solaris.Kstat2;
+import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -43,9 +46,6 @@ import org.miaixz.bus.health.unix.platform.solaris.KstatKit;
 import org.miaixz.bus.health.unix.platform.solaris.KstatKit.KstatChain;
 import org.miaixz.bus.health.unix.platform.solaris.driver.Who;
 
-import com.sun.jna.platform.unix.solaris.Kstat2;
-import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
-
 /**
  * Solaris is a non-free Unix operating system originally developed by Sun Microsystems. It superseded the company's
  * earlier SunOS in 1993. In 2010, after the Sun acquisition by Oracle, it was renamed Oracle Solaris.
@@ -60,23 +60,28 @@ public class SolarisOperatingSystem extends AbstractOperatingSystem {
      * This static field identifies if the kstat2 library (available in Solaris 11.4 or greater) can be loaded.
      */
     public static final boolean HAS_KSTAT2;
+
     /**
      * The VERSION constant.
      */
     private static final String VERSION;
+
     /**
      * The BUILD_NUMBER constant.
      */
     private static final String BUILD_NUMBER;
+
     /**
      * The ALLOW_KSTAT2 constant.
      */
     private static final boolean ALLOW_KSTAT2 = Config.get(Config._UNIX_SOLARIS_ALLOWKSTAT2, true);
+
     /**
      * The BOOT_UPTIME constant.
      */
     private static final Supplier<Pair<Long, Long>> BOOT_UPTIME = Memoizer
             .memoize(SolarisOperatingSystem::queryBootAndUptime, Memoizer.defaultExpiration());
+
     /**
      * The BOOTTIME constant.
      */

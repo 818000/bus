@@ -19,13 +19,14 @@
 */
 package org.miaixz.bus.http.secure;
 
-import javax.security.auth.x500.X500Principal;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.security.auth.x500.X500Principal;
 
 /**
  * An in-memory index of trusted root certificates. This class holds a cache of CA certificates, indexed by their
@@ -36,7 +37,9 @@ import java.util.Set;
  */
 public class BasicTrustRootIndex implements TrustRootIndex {
 
-    /** A map from a certificate's subject X.500 principal to the certificate itself. */
+    /**
+     * A map from a certificate's subject X.500 principal to the certificate itself.
+     */
     private final Map<X500Principal, Set<X509Certificate>> subjectToCaCerts;
 
     /**

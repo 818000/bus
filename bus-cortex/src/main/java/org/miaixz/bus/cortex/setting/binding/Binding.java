@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.cortex.setting.binding;
 
-import org.miaixz.bus.core.basic.entity.Namespace;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.core.basic.entity.Namespace;
 
 /**
  * Relation row between one setting resource and an application or profile target.
@@ -48,10 +48,12 @@ public class Binding extends Namespace {
      * table, while service-level code may treat it as the owner id.
      */
     private String item_id;
+
     /**
      * Binding kind. Allowed values are {@code APP} and {@code PROFILE}.
      */
     private String type;
+
     /**
      * Referenced target identifier.
      */

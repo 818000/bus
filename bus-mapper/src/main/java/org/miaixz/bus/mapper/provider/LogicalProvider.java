@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.ibatis.builder.annotation.ProviderContext;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -635,6 +636,9 @@ public class LogicalProvider {
 
     /**
      * An SQL script interface that adds logical deletion conditions.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private interface LogicalSqlScript extends SqlScript {
 
@@ -665,6 +669,7 @@ public class LogicalProvider {
                 return " AND " + columnNotEqualsValueCondition(logicalColumn, deleteValue(logicalColumn)) + Symbol.LF;
             }
         }
+
     }
 
 }

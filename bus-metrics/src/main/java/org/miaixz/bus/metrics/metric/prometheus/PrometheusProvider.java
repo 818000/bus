@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.metrics.metric.prometheus;
 
-import io.prometheus.metrics.core.metrics.Counter;
-import io.prometheus.metrics.core.metrics.Gauge;
-import io.prometheus.metrics.core.metrics.Histogram;
-import io.prometheus.metrics.core.metrics.Summary;
-import io.prometheus.metrics.model.registry.PrometheusRegistry;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.ToDoubleFunction;
+
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.metrics.Builder;
 import org.miaixz.bus.metrics.Provider;
@@ -35,10 +35,11 @@ import org.miaixz.bus.metrics.metric.indigenous.NativeSloTracker;
 import org.miaixz.bus.metrics.observe.slo.SloTracker;
 import org.miaixz.bus.metrics.observe.tag.Tag;
 
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.ToDoubleFunction;
+import io.prometheus.metrics.core.metrics.Counter;
+import io.prometheus.metrics.core.metrics.Gauge;
+import io.prometheus.metrics.core.metrics.Histogram;
+import io.prometheus.metrics.core.metrics.Summary;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
 
 /**
  * Provider implementation backed by the Prometheus Java client SDK.
@@ -53,10 +54,14 @@ import java.util.function.ToDoubleFunction;
  */
 public class PrometheusProvider implements Provider {
 
-    /** The Prometheus registry used to register all metric instruments. */
+    /**
+     * The Prometheus registry used to register all metric instruments.
+     */
     private final PrometheusRegistry registry;
 
-    /** Creates a PrometheusProvider backed by the default Prometheus registry. */
+    /**
+     * Creates a PrometheusProvider backed by the default Prometheus registry.
+     */
     public PrometheusProvider() {
         this(PrometheusRegistry.defaultRegistry);
     }
@@ -143,7 +148,9 @@ public class PrometheusProvider implements Provider {
         Counter c = Counter.builder().name(prometheusName(name)).labelNames(labelNames(tags)).register(registry);
         return new org.miaixz.bus.metrics.metric.Counter() {
 
-            /** Increments the counter by 1. */
+            /**
+             * Increments the counter by 1.
+             */
             @Override
             public void increment() {
                 c.labelValues(labelValues(finalTags)).inc();
@@ -186,7 +193,9 @@ public class PrometheusProvider implements Provider {
         NativeMeter nm = new NativeMeter();
         return new org.miaixz.bus.metrics.metric.Meter() {
 
-            /** Increments the meter by 1. */
+            /**
+             * Increments the meter by 1.
+             */
             @Override
             public void increment() {
                 increment(1);
@@ -269,14 +278,18 @@ public class PrometheusProvider implements Provider {
         org.miaixz.bus.metrics.metric.Meter successes = meter(name + ".successes", tags);
         return new org.miaixz.bus.metrics.metric.RatePair() {
 
-            /** Records a successful operation, incrementing both total and success meters. */
+            /**
+             * Records a successful operation, incrementing both total and success meters.
+             */
             @Override
             public void recordSuccess() {
                 total.increment();
                 successes.increment();
             }
 
-            /** Records a failed operation, incrementing both total and error meters. */
+            /**
+             * Records a failed operation, incrementing both total and error meters.
+             */
             @Override
             public void recordError() {
                 total.increment();
@@ -583,10 +596,14 @@ public class PrometheusProvider implements Provider {
             long startNs = System.nanoTime();
             return new org.miaixz.bus.metrics.metric.LlmSample() {
 
-                /** Nanosecond timestamp of the first token; -1 if not yet recorded. */
+                /**
+                 * Nanosecond timestamp of the first token; -1 if not yet recorded.
+                 */
                 private volatile long firstTokenNs = -1;
 
-                /** Records the nanosecond timestamp of the first token received. */
+                /**
+                 * Records the nanosecond timestamp of the first token received.
+                 */
                 @Override
                 public void recordFirstToken() {
                     firstTokenNs = System.nanoTime();
@@ -663,37 +680,49 @@ public class PrometheusProvider implements Provider {
         return new NativeSloTracker();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.Counter> counters() {
         return Collections.emptyList();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.Meter> meters() {
         return Collections.emptyList();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.Gauge> gauges() {
         return Collections.emptyList();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.Timer> timers() {
         return Collections.emptyList();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.Histogram> histograms() {
         return Collections.emptyList();
     }
 
-    /** Returns an empty iterable; Prometheus registry enumeration is not supported. */
+    /**
+     * Returns an empty iterable; Prometheus registry enumeration is not supported.
+     */
     @Override
     public Iterable<org.miaixz.bus.metrics.metric.LlmTimer> llmTimers() {
         return Collections.emptyList();

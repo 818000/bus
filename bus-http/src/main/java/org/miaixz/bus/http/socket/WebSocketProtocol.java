@@ -39,22 +39,27 @@ public final class WebSocketProtocol {
      * A frame's FIN bit.
      */
     static final int B0_FLAG_FIN = 0b10000000;
+
     /**
      * A frame's RSV1 bit.
      */
     static final int B0_FLAG_RSV1 = 0b01000000;
+
     /**
      * A frame's RSV2 bit.
      */
     static final int B0_FLAG_RSV2 = 0b00100000;
+
     /**
      * A frame's RSV3 bit.
      */
     static final int B0_FLAG_RSV3 = 0b00010000;
+
     /**
      * The opcode mask for a frame's first byte.
      */
     static final int B0_MASK_OPCODE = 0b00001111;
+
     /**
      * A bit in the opcode that indicates a control frame.
      */
@@ -64,6 +69,7 @@ public final class WebSocketProtocol {
      * A frame's MASK bit.
      */
     static final int B1_FLAG_MASK = 0b10000000;
+
     /**
      * The payload length mask for a frame's second byte.
      */
@@ -73,22 +79,27 @@ public final class WebSocketProtocol {
      * Opcode for a continuation frame.
      */
     static final int OPCODE_CONTINUATION = 0x0;
+
     /**
      * Opcode for a text frame.
      */
     static final int OPCODE_TEXT = 0x1;
+
     /**
      * Opcode for a binary frame.
      */
     static final int OPCODE_BINARY = 0x2;
+
     /**
      * Opcode for a close control frame.
      */
     static final int OPCODE_CONTROL_CLOSE = 0x8;
+
     /**
      * Opcode for a ping control frame.
      */
     static final int OPCODE_CONTROL_PING = 0x9;
+
     /**
      * Opcode for a pong control frame.
      */
@@ -98,26 +109,32 @@ public final class WebSocketProtocol {
      * The maximum payload length of a frame that can be expressed in the 7-bit length field.
      */
     static final long PAYLOAD_BYTE_MAX = 125L;
+
     /**
      * The maximum length of a close message in bytes.
      */
     static final long CLOSE_MESSAGE_MAX = PAYLOAD_BYTE_MAX - 2;
+
     /**
      * A special value in the 7-bit length field that indicates the length is in the following 2 bytes.
      */
     static final int PAYLOAD_SHORT = 126;
+
     /**
      * The maximum payload length that can be expressed in the 16-bit length field.
      */
     static final long PAYLOAD_SHORT_MAX = 0xffffL;
+
     /**
      * A special value in the 7-bit length field that indicates the length is in the following 8 bytes.
      */
     static final int PAYLOAD_LONG = 127;
+
     /**
      * A close code indicating that an endpoint is "going away".
      */
     static final int CLOSE_CLIENT_GOING_AWAY = 1001;
+
     /**
      * A reserved close code that MUST NOT be set in a close frame.
      */
@@ -129,7 +146,7 @@ public final class WebSocketProtocol {
 
     /**
      * Applies a WebSocket mask to the given data.
-     * 
+     *
      * @param cursor The cursor pointing to the data to be masked/unmasked.
      * @param key    The 4-byte mask key.
      */
@@ -147,7 +164,7 @@ public final class WebSocketProtocol {
 
     /**
      * Returns a human-readable error message for an invalid close code, or null if the code is valid.
-     * 
+     *
      * @param code The close code.
      * @return An error message string or null.
      */
@@ -163,7 +180,7 @@ public final class WebSocketProtocol {
 
     /**
      * Validates a WebSocket close code.
-     * 
+     *
      * @param code The close code to validate.
      * @throws IllegalArgumentException if the code is invalid.
      */
@@ -175,7 +192,7 @@ public final class WebSocketProtocol {
 
     /**
      * Computes the `Sec-WebSocket-Accept` header value from a client's key.
-     * 
+     *
      * @param key The `Sec-WebSocket-Key` from the client.
      * @return The corresponding `Sec-WebSocket-Accept` value for the server's response.
      */

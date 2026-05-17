@@ -29,30 +29,51 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.miaixz.bus.image.nimble.Photometric;
-import org.miaixz.bus.image.nimble.codec.BytesWithImageImageDescriptor;
-import org.miaixz.bus.image.nimble.codec.ImageDescriptor;
-import org.miaixz.bus.logger.Logger;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import org.miaixz.bus.image.nimble.Photometric;
+import org.miaixz.bus.image.nimble.codec.BytesWithImageImageDescriptor;
+import org.miaixz.bus.image.nimble.codec.ImageDescriptor;
+import org.miaixz.bus.logger.Logger;
+
 /**
+ * Represents the NativeJLSImageWriter type.
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
 public class NativeJLSImageWriter extends ImageWriter {
 
+    /**
+     * Creates a new instance.
+     *
+     * @param originatingProvider the originating provider.
+     */
     NativeJLSImageWriter(ImageWriterSpi originatingProvider) {
         super(originatingProvider);
     }
 
+    /**
+     * Gets the default write param.
+     *
+     * @return the default write param.
+     */
     @Override
     public ImageWriteParam getDefaultWriteParam() {
         return new JPEGLSImageWriteParam(getLocale());
     }
 
+    /**
+     * Executes the write operation.
+     *
+     * @param streamMetadata the stream metadata.
+     * @param image          the image.
+     * @param param          the param.
+     * @throws IOException if the operation cannot be completed.
+     */
     @Override
     public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
         if (output == null) {
@@ -142,21 +163,49 @@ public class NativeJLSImageWriter extends ImageWriter {
         }
     }
 
+    /**
+     * Gets the default stream metadata.
+     *
+     * @param param the param.
+     * @return the default stream metadata.
+     */
     @Override
     public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
         return null;
     }
 
+    /**
+     * Gets the default image metadata.
+     *
+     * @param imageType the image type.
+     * @param param     the param.
+     * @return the default image metadata.
+     */
     @Override
     public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param) {
         return null;
     }
 
+    /**
+     * Executes the convert stream metadata operation.
+     *
+     * @param inData the in data.
+     * @param param  the param.
+     * @return the operation result.
+     */
     @Override
     public IIOMetadata convertStreamMetadata(IIOMetadata inData, ImageWriteParam param) {
         return null;
     }
 
+    /**
+     * Executes the convert image metadata operation.
+     *
+     * @param inData    the in data.
+     * @param imageType the image type.
+     * @param param     the param.
+     * @return the operation result.
+     */
     @Override
     public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType, ImageWriteParam param) {
         return null;

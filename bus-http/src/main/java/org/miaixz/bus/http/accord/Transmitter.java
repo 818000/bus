@@ -19,6 +19,16 @@
 */
 package org.miaixz.bus.http.accord;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+import java.net.Socket;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.miaixz.bus.core.io.timout.AsyncTimeout;
 import org.miaixz.bus.core.io.timout.Timeout;
 import org.miaixz.bus.core.xyz.IoKit;
@@ -29,15 +39,6 @@ import org.miaixz.bus.http.metric.Internal;
 import org.miaixz.bus.http.metric.NewChain;
 import org.miaixz.bus.http.metric.http.HttpCodec;
 import org.miaixz.bus.http.secure.CertificatePinner;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Bridges the application layer with the network layer, managing the lifecycle of a single call. This class exposes
@@ -52,6 +53,7 @@ public class Transmitter {
     private final RealConnectionPool connectionPool;
     private final NewCall call;
     private final EventListener eventListener;
+
     /**
      * The connection that carries the request and response. Guarded by connectionPool.
      */
@@ -59,6 +61,7 @@ public class Transmitter {
     private Object callStackTrace;
     private Request request;
     private ExchangeFinder exchangeFinder;
+
     /**
      * The exchange that is currently in progress. Guarded by connectionPool.
      */
@@ -406,6 +409,9 @@ public class Transmitter {
 
     /**
      * A weak reference to a transmitter, used to detect connection leaks.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     static final class TransmitterReference extends WeakReference<Transmitter> {
 
@@ -419,6 +425,7 @@ public class Transmitter {
             super(referent);
             this.callStackTrace = callStackTrace;
         }
+
     }
 
 }

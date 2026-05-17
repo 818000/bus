@@ -19,10 +19,16 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import java.io.Serial;
 
+/**
+ * The trigger class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Trigger implements Serializable {
 
     @Serial

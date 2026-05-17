@@ -21,16 +21,17 @@ package org.miaixz.bus.gitlab;
 
 import java.util.List;
 
-import org.miaixz.bus.gitlab.models.AwardEmoji;
-
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.AwardEmoji;
 
 /**
  * This class implements the client side API for the GitLab Award Emoji API calls.
  *
  * @see <a href="https://docs.gitlab.com/ce/api/award_emoji.html">GitLab Award Emoji API Documentaion</a>
- * @since v4.8.31
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class AwardEmojiApi extends AbstractApi {
 
@@ -59,7 +60,7 @@ public class AwardEmojiApi extends AbstractApi {
                 "issues",
                 issueIid,
                 "award_emoji");
-        return response.readEntity(new GenericType<List<AwardEmoji>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -85,7 +86,7 @@ public class AwardEmojiApi extends AbstractApi {
                 "merge_requests",
                 mergeRequestIid,
                 "award_emoji");
-        return response.readEntity(new GenericType<List<AwardEmoji>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -110,7 +111,7 @@ public class AwardEmojiApi extends AbstractApi {
                 "snippets",
                 snippetId,
                 "award_emoji");
-        return response.readEntity(new GenericType<List<AwardEmoji>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -139,7 +140,7 @@ public class AwardEmojiApi extends AbstractApi {
                 "notes",
                 noteId,
                 "award_emoji");
-        return response.readEntity(new GenericType<List<AwardEmoji>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -186,7 +187,7 @@ public class AwardEmojiApi extends AbstractApi {
                 "notes",
                 noteId,
                 "award_emoji");
-        return response.readEntity(new GenericType<List<AwardEmoji>>() {
+        return response.readEntity(new GenericType<>() {
         });
     }
 
@@ -458,11 +459,8 @@ public class AwardEmojiApi extends AbstractApi {
      * @return an AwardEmoji instance for the added award emoji
      * @throws GitLabApiException if any exception occurs
      */
-    public AwardEmoji addMergeRequestAwardEmoji(
-            Object projectIdOrPath,
-            Integer mergeRequestIid,
-            Integer noteId,
-            String name) throws GitLabApiException {
+    public AwardEmoji addMergeRequestAwardEmoji(Object projectIdOrPath, Long mergeRequestIid, Long noteId, String name)
+            throws GitLabApiException {
         GitLabApiForm form = new GitLabApiForm().withParam("name", name, true);
         Response response = post(
                 Response.Status.CREATED,

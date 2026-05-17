@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -25,6 +25,10 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_partition_config_t;
+import com.sun.jna.platform.unix.aix.Perfstat.perfstat_process_t;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -42,10 +46,6 @@ import org.miaixz.bus.health.unix.platform.aix.driver.Who;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatConfig;
 import org.miaixz.bus.health.unix.platform.aix.driver.perfstat.PerfstatProcess;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_partition_config_t;
-import com.sun.jna.platform.unix.aix.Perfstat.perfstat_process_t;
-
 /**
  * AIX (Advanced Interactive eXecutive) is a series of proprietary Unix operating systems developed and sold by IBM for
  * several of its computer platforms.
@@ -60,15 +60,18 @@ public class AixOperatingSystem extends AbstractOperatingSystem {
      * The BOOTTIME constant.
      */
     private static final long BOOTTIME = querySystemBootTimeMillis() / 1000L;
+
     /**
      * The config value.
      */
     private final Supplier<perfstat_partition_config_t> config = Memoizer.memoize(PerfstatConfig::queryConfig);
+
     /**
      * The procCpu value.
      */
     private final Supplier<perfstat_process_t[]> procCpu = Memoizer
             .memoize(PerfstatProcess::queryProcesses, Memoizer.defaultExpiration());
+
     /**
      * The installedAppsSupplier value.
      */

@@ -19,6 +19,13 @@
 */
 package org.miaixz.bus.vortex.filter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+
 import org.miaixz.bus.core.Order;
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -30,14 +37,9 @@ import org.miaixz.bus.vortex.Context;
 import org.miaixz.bus.vortex.Strategy;
 import org.miaixz.bus.vortex.magic.ErrorCode;
 import org.miaixz.bus.vortex.strategy.StrategyFactory;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
+
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The primary {@link WebFilter} that acts as the main entry point and orchestrator for the Vortex gateway.
@@ -158,6 +160,9 @@ public class PrimaryFilter extends AbstractFilter {
      * {@code PrimaryChain} instance (with an incremented index) to it. This process continues until the end of the
      * strategy list is reached, at which point it delegates control back to the main Spring WebFlux
      * {@link WebFilterChain}.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public class Chain implements Strategy.Chain {
 
@@ -165,10 +170,12 @@ public class PrimaryFilter extends AbstractFilter {
          * The current position in the strategy list that this chain link is responsible for executing.
          */
         private final int index;
+
         /**
          * The complete, ordered list of strategies to be executed for the current request.
          */
         private final List<Strategy> list;
+
         /**
          * The original WebFlux filter chain, to be invoked after all strategies in this primary chain have been
          * executed.
@@ -223,6 +230,7 @@ public class PrimaryFilter extends AbstractFilter {
             }
             return this.chain.filter(exchange);
         }
+
     }
 
     /**

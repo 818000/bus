@@ -22,6 +22,8 @@ package org.miaixz.bus.mapper.builder;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import lombok.RequiredArgsConstructor;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Optional;
 import org.miaixz.bus.core.lang.loader.spi.NormalSpiLoader;
@@ -92,7 +94,11 @@ public interface ClassMetaResolver extends Order {
 
     /**
      * Represents a combination of a Mapper interface and a method, used as a cache key.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
+    @RequiredArgsConstructor
     class MapperTypeMethod {
 
         /**
@@ -104,17 +110,6 @@ public interface ClassMetaResolver extends Order {
          * The Mapper interface method.
          */
         private final Method mapperMethod;
-
-        /**
-         * Constructs a new MapperTypeMethod.
-         *
-         * @param mapperType   The Mapper interface class.
-         * @param mapperMethod The Mapper interface method.
-         */
-        public MapperTypeMethod(Class<?> mapperType, Method mapperMethod) {
-            this.mapperType = mapperType;
-            this.mapperMethod = mapperMethod;
-        }
 
         /**
          * Compares this MapperTypeMethod with another object for equality.
@@ -152,10 +147,14 @@ public interface ClassMetaResolver extends Order {
             return (mapperType != null ? mapperType.getSimpleName() + "." : "")
                     + (mapperMethod != null ? mapperMethod.getName() : "");
         }
+
     }
 
     /**
      * Manages instances of entity class finders.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class ClassFinderInstance {
 
@@ -170,12 +169,20 @@ public interface ClassMetaResolver extends Order {
 
         /**
          * Initialization-on-demand holder idiom.
+         *
+         * @author Kimi Liu
+         * @since Java 21+
          */
         private static class ClassMetaResolverHolder {
 
+            /**
+             * SPI-loaded resolver instances used by the resolver chain.
+             */
             private static final List<ClassMetaResolver> INSTANCES = NormalSpiLoader
                     .loadList(false, ClassMetaResolver.class);
+
         }
+
     }
 
 }

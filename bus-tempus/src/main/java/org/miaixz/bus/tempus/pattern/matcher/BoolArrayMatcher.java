@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.tempus.pattern.matcher;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.xyz.CollKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A {@link PartMatcher} that uses a boolean array to represent a list of integer values from a cron expression.
@@ -39,6 +39,7 @@ public class BoolArrayMatcher implements PartMatcher {
      * The minimum value defined in the cron expression for this part.
      */
     protected final int minValue;
+
     /**
      * A boolean array where the index represents the value and {@code true} indicates a match.
      */

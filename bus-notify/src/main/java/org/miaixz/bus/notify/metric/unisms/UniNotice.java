@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.notify.metric.unisms;
 
-import org.miaixz.bus.notify.Context;
-import org.miaixz.bus.notify.magic.Notice;
-
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.notify.Context;
+import org.miaixz.bus.notify.magic.Notice;
 
 /**
  * Notice for Uni SMS service.
@@ -48,10 +48,12 @@ public class UniNotice extends Notice {
      * The name of the template variable.
      */
     private String templateName;
+
     /**
      * The retry interval in milliseconds.
      */
     private int retryInterval;
+
     /**
      * The maximum number of retries.
      */

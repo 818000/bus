@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.cortex.setting.namespace;
 
-import org.miaixz.bus.cortex.Setting;
-import org.miaixz.bus.cortex.Type;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.cortex.Setting;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Namespace directory entry for the setting domain.
@@ -50,6 +50,7 @@ public class Namespace extends Setting {
      * Legacy namespace code kept only for compatibility and display. {@code id} remains the authoritative identifier.
      */
     private String code;
+
     /**
      * Display name.
      */

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -38,34 +38,42 @@ public class HWPartition {
      * The identification value.
      */
     private final String identification;
+
     /**
      * The name value.
      */
     private final String name;
+
     /**
      * The type value.
      */
     private final String type;
+
     /**
      * The uuid value.
      */
     private final String uuid;
+
     /**
      * The label value.
      */
     private final String label;
+
     /**
      * The size value.
      */
     private final long size;
+
     /**
      * The major value.
      */
     private final int major;
+
     /**
      * The minor value.
      */
     private final int minor;
+
     /**
      * The mountPoint value.
      */

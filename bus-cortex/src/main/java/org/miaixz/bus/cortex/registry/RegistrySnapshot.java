@@ -21,11 +21,11 @@ package org.miaixz.bus.cortex.registry;
 
 import java.util.List;
 
-import org.miaixz.bus.cortex.Assets;
-import org.miaixz.bus.cortex.Type;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.miaixz.bus.cortex.Assets;
+import org.miaixz.bus.cortex.Type;
 
 /**
  * Snapshot payload used by vortex full and incremental synchronization.
@@ -48,38 +48,47 @@ public class RegistrySnapshot {
      * Namespace included in this snapshot.
      */
     private String namespace_id;
+
     /**
      * Type scopes included in this snapshot.
      */
     private List<Type> types = List.of();
+
     /**
      * Lower modified watermark used for incremental queries.
      */
     private long since;
+
     /**
      * Upper modified watermark observed while building the snapshot.
      */
     private long watermark;
+
     /**
      * Snapshot identifier used by bridge and export flows.
      */
     private String snapshotId;
+
     /**
      * Snapshot checksum used for integrity validation.
      */
     private String checksum;
+
     /**
      * Snapshot source marker.
      */
     private String source;
+
     /**
      * Human-readable summary of the snapshot contents.
      */
     private String summary;
+
     /**
      * Snapshot creation timestamp.
      */
     private long timestamp;
+
     /**
      * Assets carried by this snapshot.
      */

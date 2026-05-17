@@ -28,8 +28,8 @@ import org.miaixz.bus.auth.Context;
 import org.miaixz.bus.auth.Registry;
 import org.miaixz.bus.auth.magic.Authorization;
 import org.miaixz.bus.auth.magic.Callback;
-import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.magic.Claims;
+import org.miaixz.bus.auth.magic.ErrorCode;
 import org.miaixz.bus.auth.nimble.AbstractProvider;
 import org.miaixz.bus.cache.CacheX;
 import org.miaixz.bus.core.basic.entity.Message;
@@ -43,7 +43,7 @@ import org.miaixz.bus.http.Httpx;
 
 /**
  * VK login provider.
- * 
+ *
  * @author Kimi Liu
  * @since Java 21+
  */
@@ -96,7 +96,7 @@ public class VKProvider extends AbstractProvider {
 
     /**
      * Retrieves the access token after authorization.
-     * 
+     *
      * @param callback the callback data
      * @return the access token object
      */

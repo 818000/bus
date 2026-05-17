@@ -19,10 +19,10 @@
 */
 package org.miaixz.bus.tempus.timings;
 
-import org.miaixz.bus.tempus.crontab.TimerCrontab;
-import org.miaixz.bus.logger.Logger;
-
 import java.util.function.Consumer;
+
+import org.miaixz.bus.logger.Logger;
+import org.miaixz.bus.tempus.crontab.TimerCrontab;
 
 /**
  * A hierarchical timing wheel, commonly used for managing delayed tasks. A timing wheel is a circular data structure
@@ -53,14 +53,17 @@ public class TimingWheel {
      * The array of slots, where each slot is a list of tasks.
      */
     private final TimerTaskList[] timerTaskLists;
+
     /**
      * The handler for processing expired task lists.
      */
     private final Consumer<TimerTaskList> consumer;
+
     /**
      * The current time of the wheel, aligned to the nearest {@code tickMs}.
      */
     private long currentTime;
+
     /**
      * The next-level (overflow) timing wheel for tasks with delays beyond this wheel's interval.
      */

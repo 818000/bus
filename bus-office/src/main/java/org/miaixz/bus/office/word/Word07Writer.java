@@ -28,6 +28,7 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.ArrayKit;
@@ -46,10 +47,12 @@ public class Word07Writer implements Closeable {
      * The underlying {@link XWPFDocument} instance.
      */
     private final XWPFDocument doc;
+
     /**
      * The target file to write the document to.
      */
     protected File targetFile;
+
     /**
      * Flag indicating whether the writer has been closed.
      */

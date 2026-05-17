@@ -20,13 +20,9 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import org.miaixz.bus.gitlab.models.Constants.TodoAction;
-import org.miaixz.bus.gitlab.models.Constants.TodoState;
-import org.miaixz.bus.gitlab.models.Constants.TodoType;
-import org.miaixz.bus.gitlab.support.JacksonJson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParser;
@@ -36,8 +32,18 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.Serial;
 
+import org.miaixz.bus.gitlab.models.Constants.TodoAction;
+import org.miaixz.bus.gitlab.models.Constants.TodoState;
+import org.miaixz.bus.gitlab.models.Constants.TodoType;
+import org.miaixz.bus.gitlab.support.JacksonJson;
+
+/**
+ * The todo class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class Todo implements Serializable {
 
     @Serial
@@ -164,6 +170,12 @@ public class Todo implements Serializable {
 
     // This deserializer will determine the target type and deserialize to the correct class (either MergeRequest or
     // Issue).
+    /**
+     * The target deserializer class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     private static class TargetDeserializer extends JsonDeserializer<Object> {
 
         @Override
@@ -179,6 +191,7 @@ public class Todo implements Serializable {
                 return mapper.treeToValue(root, Issue.class);
             }
         }
+
     }
 
 }

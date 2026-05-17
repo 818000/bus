@@ -20,17 +20,21 @@
 package org.miaixz.bus.gitlab.models;
 
 import java.io.Serial;
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import org.miaixz.bus.gitlab.support.JacksonJson;
-import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import org.miaixz.bus.gitlab.support.JacksonJson;
+import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
+
+/**
+ * The award emoji class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class AwardEmoji implements Serializable {
 
     @Serial
@@ -105,6 +109,12 @@ public class AwardEmoji implements Serializable {
         return (JacksonJson.toJsonString(this));
     }
 
+    /**
+     * The awardable type enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     public enum AwardableType {
 
         ISSUE, MERGE_REQUEST, NOTE, SNIPPET;
@@ -126,6 +136,7 @@ public class AwardEmoji implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
 }

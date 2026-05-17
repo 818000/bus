@@ -19,6 +19,10 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.security.GeneralSecurityException;
+
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.image.Device;
 import org.miaixz.bus.image.metric.Connection;
@@ -26,10 +30,6 @@ import org.miaixz.bus.image.metric.hl7.HL7Message;
 import org.miaixz.bus.image.metric.hl7.HL7Segment;
 import org.miaixz.bus.image.metric.hl7.MLLPConnection;
 import org.miaixz.bus.image.metric.hl7.MLLPRelease;
-
-import java.io.IOException;
-import java.net.Socket;
-import java.security.GeneralSecurityException;
 
 /**
  * The {@code HL7Pix} class is a client for the IHE Patient Identifier Cross-referencing (PIX) profile. It sends an HL7
@@ -44,22 +44,27 @@ public class HL7Pix extends Device {
      * The local network connection configuration.
      */
     private final Connection conn = new Connection();
+
     /**
      * The remote network connection configuration.
      */
     private final Connection remote = new Connection();
+
     /**
      * The MLLP release protocol version.
      */
     private MLLPRelease mllpRelease;
+
     /**
      * The sending application and facility, formatted as application^facility.
      */
     private String sendingApplication = "hl7pix^miaixz";
+
     /**
      * The receiving application and facility, formatted as application^facility.
      */
     private String receivingApplication = "";
+
     /**
      * The character set to be specified in the MSH-18 field.
      */
@@ -69,6 +74,7 @@ public class HL7Pix extends Device {
      * The underlying socket for the connection.
      */
     private Socket sock;
+
     /**
      * The MLLP connection handler.
      */

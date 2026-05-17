@@ -19,16 +19,22 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.miaixz.bus.gitlab.support.JacksonJson;
 import org.miaixz.bus.gitlab.support.JacksonJsonEnumHelper;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import java.io.Serial;
-
+/**
+ * The import status class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class ImportStatus implements Serializable {
 
     @Serial
@@ -36,6 +42,9 @@ public class ImportStatus implements Serializable {
 
     /**
      * Enum representing the status of the import.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     public enum Status {
 
@@ -57,6 +66,7 @@ public class ImportStatus implements Serializable {
         public String toString() {
             return (enumHelper.toString(this));
         }
+
     }
 
     private Long id;

@@ -19,10 +19,10 @@
 */
 package org.miaixz.bus.http.secure;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
-
-import javax.security.auth.x500.X500Principal;
 
 /**
  * A parser for X.500 distinguished names as specified in RFC 2253. This parser can extract specific attribute values
@@ -37,26 +37,32 @@ public final class DistinguishedNameParser {
      * The distinguished name string.
      */
     private final String dn;
+
     /**
      * The length of the DN string.
      */
     private final int length;
+
     /**
      * The current parsing position.
      */
     private int pos;
+
     /**
      * The beginning position of the current token.
      */
     private int beg;
+
     /**
      * The end position of the current token.
      */
     private int end;
+
     /**
      * The current position within the character array being built.
      */
     private int cur;
+
     /**
      * The character array of the distinguished name.
      */
@@ -75,7 +81,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Finds the next attribute type (e.g., "cn", "o").
-     * 
+     *
      * @return The attribute type string.
      */
     private String nextAT() {
@@ -132,7 +138,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Parses a quoted attribute value.
-     * 
+     *
      * @return The unescaped value.
      */
     private String quotedAV() {
@@ -166,7 +172,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Parses a hex-encoded attribute value.
-     * 
+     *
      * @return The hex string value.
      */
     private String hexAV() {
@@ -214,7 +220,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Parses an escaped attribute value.
-     * 
+     *
      * @return The unescaped value.
      */
     private String escapedAV() {
@@ -261,7 +267,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Gets an escaped character.
-     * 
+     *
      * @return The unescaped character.
      */
     private char getEscaped() {
@@ -294,7 +300,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Decodes a UTF-8 character that was escaped as a hex sequence.
-     * 
+     *
      * @return The decoded character.
      */
     private char getUTF8() {
@@ -339,7 +345,7 @@ public final class DistinguishedNameParser {
 
     /**
      * Converts a two-character hex string at the given position to a byte.
-     * 
+     *
      * @param position The starting position of the two hex characters.
      * @return The integer value of the byte.
      */

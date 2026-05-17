@@ -29,10 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.miaixz.bus.cache.magic.CacheExpire;
+
 import lombok.Getter;
 import lombok.Setter;
+
 import org.miaixz.bus.cache.CacheX;
+import org.miaixz.bus.cache.magic.CacheExpire;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.MapKit;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -553,6 +555,9 @@ public class MemoryCache<K, V> implements CacheX<K, V> {
 
     /**
      * A singleton scheduler for handling periodic cache maintenance tasks.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private enum CacheScheduler {
 
@@ -598,10 +603,14 @@ public class MemoryCache<K, V> implements CacheX<K, V> {
         public void schedule(Runnable task, long delay) {
             this.scheduler.scheduleAtFixedRate(task, delay, delay, TimeUnit.MILLISECONDS);
         }
+
     }
 
     /**
      * An internal class to hold the cached value along with its metadata.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Getter
     @Setter
@@ -657,6 +666,7 @@ public class MemoryCache<K, V> implements CacheX<K, V> {
             }
             return globalExpireAfterAccess > 0 && currentTime > this.lastAccessTime + globalExpireAfterAccess;
         }
+
     }
 
 }

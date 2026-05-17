@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.tenpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Query Red Packet Info model.
@@ -44,26 +44,32 @@ public class GetHbInfo extends Voucher {
      * Send type.
      */
     private String send_type;
+
     /**
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Merchant bill number.
      */
     private String mch_billno;
+
     /**
      * List ID.
      */
     private String listid;
+
     /**
      * Sub-merchant ID.
      */
     private String sub_mch_id;
+
     /**
      * Signature.
      */

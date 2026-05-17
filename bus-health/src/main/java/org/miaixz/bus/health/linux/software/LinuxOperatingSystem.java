@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -25,6 +25,10 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Supplier;
 
+import com.sun.jna.Native;
+import com.sun.jna.platform.linux.LibC;
+import com.sun.jna.platform.linux.Udev;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
@@ -44,10 +48,6 @@ import org.miaixz.bus.health.linux.driver.proc.UpTime;
 import org.miaixz.bus.health.linux.jna.LinuxLibc;
 import org.miaixz.bus.logger.Logger;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.linux.LibC;
-import com.sun.jna.platform.linux.Udev;
-
 /**
  * Linux is a family of open source Unix-like operating systems based on the Linux kernel, an operating system kernel
  * first released on September 17, 1991, by Linus Torvalds. Linux is typically packaged in a Linux distribution.
@@ -62,10 +62,12 @@ public class LinuxOperatingSystem extends AbstractOperatingSystem {
      * This static field identifies if the udev library can be loaded.
      */
     public static final boolean HAS_UDEV;
+
     /**
      * This static field identifies if the gettid function is in the c library.
      */
     public static final boolean HAS_GETTID;
+
     /**
      * This static field identifies if the syscall for gettid returns sane results.
      */
@@ -75,34 +77,42 @@ public class LinuxOperatingSystem extends AbstractOperatingSystem {
      * The BOOTTIME constant.
      */
     static final long BOOTTIME;
+
     /**
      * The OS_RELEASE_LOG constant.
      */
     private static final String OS_RELEASE_LOG = "os-release: {}";
+
     /**
      * The LSB_RELEASE_A_LOG constant.
      */
     private static final String LSB_RELEASE_A_LOG = "lsb_release -a: {}";
+
     /**
      * The LSB_RELEASE_LOG constant.
      */
     private static final String LSB_RELEASE_LOG = "lsb-release: {}";
+
     /**
      * The RELEASE_DELIM constant.
      */
     private static final String RELEASE_DELIM = " release ";
+
     /**
      * The DOUBLE_QUOTES constant.
      */
     private static final String DOUBLE_QUOTES = "(?:^\")|(?:\"$)";
+
     /**
      * Jiffies per second, used for process time counters.
      */
     private static final long USER_HZ;
+
     /**
      * The PAGE_SIZE constant.
      */
     private static final long PAGE_SIZE;
+
     /**
      * OS Name for manufacturer
      */

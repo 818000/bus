@@ -19,13 +19,14 @@
 */
 package org.miaixz.bus.http.metric.anget;
 
+import java.util.regex.Pattern;
+
 import lombok.Getter;
 import lombok.Setter;
+
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.xyz.PatternKit;
 import org.miaixz.bus.core.xyz.StringKit;
-
-import java.util.regex.Pattern;
 
 /**
  * Represents a User-Agent, providing information about the browser, engine, OS, and device.
@@ -41,34 +42,42 @@ public class UserAgent {
      * Whether the device is a mobile platform.
      */
     private boolean mobile;
+
     /**
      * The browser type.
      */
     private Browser browser;
+
     /**
      * The device type.
      */
     private Device device;
+
     /**
      * The operating system type.
      */
     private NOS nos;
+
     /**
      * The engine type.
      */
     private Engine engine;
+
     /**
      * The browser version.
      */
     private String version;
+
     /**
      * The engine version.
      */
     private String engineVersion;
+
     /**
      * The name of the User-Agent component.
      */
     private String name;
+
     /**
      * The regex pattern for matching this component.
      */

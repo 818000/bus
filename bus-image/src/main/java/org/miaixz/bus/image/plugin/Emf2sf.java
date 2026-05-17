@@ -19,16 +19,16 @@
 */
 package org.miaixz.bus.image.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
+
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.image.Tag;
 import org.miaixz.bus.image.builtin.MultiframeExtractor;
 import org.miaixz.bus.image.galaxy.data.Attributes;
 import org.miaixz.bus.image.galaxy.io.ImageInputStream;
 import org.miaixz.bus.image.galaxy.io.ImageOutputStream;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.DecimalFormat;
 
 /**
  * The {@code Emf2sf} class provides functionality to extract individual frames from an Enhanced Multi-frame (EMF) DICOM
@@ -43,14 +43,17 @@ public class Emf2sf {
      * The core component for extracting frames.
      */
     private final MultiframeExtractor extractor = new MultiframeExtractor();
+
     /**
      * An array of specific frame numbers to extract (1-based). If null, all frames are extracted.
      */
     private int[] frames;
+
     /**
      * A formatter for the output filenames.
      */
     private DecimalFormat outFileFormat;
+
     /**
      * The directory where the single-frame files will be saved.
      */

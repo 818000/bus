@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -49,6 +49,9 @@ public interface CoreFoundation extends com.sun.jna.platform.mac.CoreFoundation 
     /**
      * Enum of values used for {@link CFDateFormatterStyle} in {@link #CFDateFormatterCreate}. Use
      * {@link CFDateFormatterStyle#index} for the expected integer value corresponding to the C-style enum.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     enum CFDateFormatterStyle {
 
@@ -81,6 +84,7 @@ public interface CoreFoundation extends com.sun.jna.platform.mac.CoreFoundation 
         public CFIndex index() {
             return new CFIndex(this.ordinal());
         }
+
     }
 
     /**

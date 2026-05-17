@@ -30,12 +30,13 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.springframework.boot.loader.net.protocol.jar.Handler;
+
 import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.shade.safety.Builder;
 import org.miaixz.bus.shade.safety.algorithm.Key;
 import org.miaixz.bus.shade.safety.provider.DecryptorProvider;
 import org.miaixz.bus.shade.safety.provider.EncryptorProvider;
-import org.springframework.boot.loader.net.protocol.jar.Handler;
 
 /**
  * A custom {@link Handler} for URLs that intercepts connections to JAR entries and wraps them with
@@ -51,14 +52,17 @@ public class BootURLHandler extends Handler {
      * The provider responsible for decrypting input streams.
      */
     private final DecryptorProvider decryptorProvider;
+
     /**
      * The provider responsible for encrypting output streams.
      */
     private final EncryptorProvider encryptorProvider;
+
     /**
      * The cryptographic key used for encryption and decryption.
      */
     private final Key key;
+
     /**
      * A set of indexed resource paths that are known to be encrypted and require special handling.
      */

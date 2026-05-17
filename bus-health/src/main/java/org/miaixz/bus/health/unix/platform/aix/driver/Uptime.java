@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -39,10 +39,12 @@ public final class Uptime {
      * The MINUTE_MS constant.
      */
     private static final long MINUTE_MS = 60L * 1000L;
+
     /**
      * The HOUR_MS constant.
      */
     private static final long HOUR_MS = 60L * MINUTE_MS;
+
     /**
      * The DAY_MS constant.
      */

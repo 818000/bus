@@ -19,17 +19,23 @@
 */
 package org.miaixz.bus.gitlab.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.miaixz.bus.gitlab.models.Constants.DeploymentOrderBy;
 import org.miaixz.bus.gitlab.models.Constants.DeploymentStatus;
 import org.miaixz.bus.gitlab.models.Constants.SortOrder;
 import org.miaixz.bus.gitlab.support.ISO8601;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serial;
-
+/**
+ * The deployment filter class.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
+ */
 public class DeploymentFilter implements Serializable {
 
     @Serial

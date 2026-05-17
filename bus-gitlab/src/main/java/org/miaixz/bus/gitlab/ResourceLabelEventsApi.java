@@ -23,14 +23,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.LabelEvent;
-
 import jakarta.ws.rs.core.Response;
+
+import org.miaixz.bus.gitlab.models.LabelEvent;
 
 /**
  * This class provides an entry point to all the GitLab Resource label events API
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ce/api/resource_label_events.html">Resource label events API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class ResourceLabelEventsApi extends AbstractApi {
 

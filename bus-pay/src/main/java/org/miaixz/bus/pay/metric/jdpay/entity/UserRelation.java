@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.jdpay.entity;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * User relationship model.
@@ -44,14 +44,17 @@ public class UserRelation extends Voucher {
      * Version number.
      */
     private String version;
+
     /**
      * Merchant number.
      */
     private String merchant;
+
     /**
      * User ID.
      */
     private String userId;
+
     /**
      * Signature.
      */

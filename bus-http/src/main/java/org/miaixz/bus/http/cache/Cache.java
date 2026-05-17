@@ -19,6 +19,16 @@
 */
 package org.miaixz.bus.http.cache;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.Flushable;
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.*;
+
 import org.miaixz.bus.core.io.ByteString;
 import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.io.sink.AssignSink;
@@ -42,16 +52,6 @@ import org.miaixz.bus.http.bodys.ResponseBody;
 import org.miaixz.bus.http.metric.http.StatusLine;
 import org.miaixz.bus.http.secure.CipherSuite;
 import org.miaixz.bus.http.socket.Handshake;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.Flushable;
-import java.io.IOException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.util.*;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -72,6 +72,7 @@ public class Cache implements Closeable, Flushable {
     private int networkCount;
     private int hitCount;
     private int requestCount;
+
     /**
      * The internal cache implementation for use by the HTTP client.
      */
@@ -606,6 +607,9 @@ public class Cache implements Closeable, Flushable {
 
     /**
      * An immutable snapshot of the metadata of a cached response.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class Entry {
 
@@ -842,10 +846,14 @@ public class Cache implements Closeable, Flushable {
                     .handshake(handshake).sentRequestAtMillis(sentRequestMillis)
                     .receivedResponseAtMillis(receivedResponseMillis).build();
         }
+
     }
 
     /**
      * A response body sourced from the cache.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static class CacheResponseBody extends ResponseBody {
 
@@ -923,10 +931,14 @@ public class Cache implements Closeable, Flushable {
         public BufferSource source() {
             return bodySource;
         }
+
     }
 
     /**
      * A cache request that writes to the cache.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private final class CacheRequestImpl implements CacheRequest {
 
@@ -1001,6 +1013,7 @@ public class Cache implements Closeable, Flushable {
         public Sink body() {
             return body;
         }
+
     }
 
 }

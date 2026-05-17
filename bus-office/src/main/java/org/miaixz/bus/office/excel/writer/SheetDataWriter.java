@@ -32,13 +32,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+
 import org.miaixz.bus.core.center.map.multiple.Table;
 import org.miaixz.bus.core.xyz.*;
+import org.miaixz.bus.office.excel.CellKit;
 import org.miaixz.bus.office.excel.RowGroup;
+import org.miaixz.bus.office.excel.RowKit;
 import org.miaixz.bus.office.excel.cell.editors.CellEditor;
 import org.miaixz.bus.office.excel.style.StyleSet;
-import org.miaixz.bus.office.excel.CellKit;
-import org.miaixz.bus.office.excel.RowKit;
 
 /**
  * Sheet data writer. This object only encapsulates writing data to a Sheet and does not flush to a file.
@@ -52,18 +53,22 @@ public class SheetDataWriter {
      * The sheet being written to.
      */
     private final Sheet sheet;
+
     /**
      * Excel output configuration.
      */
     private final ExcelWriteConfig config;
+
     /**
      * The current row, used to mark the initial writable row and the current row after partial writing.
      */
     private final AtomicInteger currentRow;
+
     /**
      * Style set, defining styles for different data types.
      */
     private StyleSet styleSet;
+
     /**
      * Header item to column number mapping cache. This cache is updated each time a header is written. This cache is
      * used to find the header position when the user writes multiple times.

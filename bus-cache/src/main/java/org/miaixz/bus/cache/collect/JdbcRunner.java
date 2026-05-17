@@ -19,11 +19,13 @@
 */
 package org.miaixz.bus.cache.collect;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.lang.reflect.Proxy;
 import java.sql.*;
 import java.util.*;
+
+import javax.sql.DataSource;
+
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -45,7 +47,9 @@ import org.miaixz.bus.logger.Logger;
  */
 class JdbcRunner {
 
-    /** The underlying data source from which all connections are obtained. */
+    /**
+     * The underlying data source from which all connections are obtained.
+     */
     private final DataSource dataSource;
 
     /**
@@ -211,10 +215,15 @@ class JdbcRunner {
      * The connection is wrapped via a dynamic proxy that turns {@code close()} into a no-op, so that try-with-resources
      * blocks do not terminate the underlying connection and thereby destroy the in-memory database state (H2, SQLite).
      * </p>
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class SingleConnectionSource implements DataSource {
 
-        /** The single persistent connection (wrapped in a no-close proxy). */
+        /**
+         * The single persistent connection (wrapped in a no-close proxy).
+         */
         private final Connection connection;
 
         /**
@@ -321,6 +330,7 @@ class JdbcRunner {
         public boolean isWrapperFor(Class<?> iface) {
             return false;
         }
+
     }
 
 }

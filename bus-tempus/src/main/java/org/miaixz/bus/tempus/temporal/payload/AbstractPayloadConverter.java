@@ -19,14 +19,14 @@
 */
 package org.miaixz.bus.tempus.temporal.payload;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.miaixz.bus.core.lang.Charset;
 import org.miaixz.bus.core.xyz.ClassKit;
 import org.miaixz.bus.core.xyz.MethodKit;
 import org.miaixz.bus.logger.Logger;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * Base implementation for Temporal payload converters with automatic JSON framework detection.
@@ -440,6 +440,9 @@ public abstract class AbstractPayloadConverter implements PayloadConverter {
 
     /**
      * Holds the lazily initialized default adapter to avoid eager framework detection during class loading.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     private static final class DefaultPayloadAdapterHolder {
 
@@ -453,6 +456,7 @@ public abstract class AbstractPayloadConverter implements PayloadConverter {
          */
         private DefaultPayloadAdapterHolder() {
         }
+
     }
 
 }

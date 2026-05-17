@@ -19,13 +19,13 @@
 */
 package org.miaixz.bus.pay.metric.wechat.entity.v2;
 
-import org.miaixz.bus.pay.magic.Voucher;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import org.miaixz.bus.pay.magic.Voucher;
 
 /**
  * Query Red Packet Record model.
@@ -44,18 +44,22 @@ public class GetHbInfo extends Voucher {
      * Random string.
      */
     private String nonce_str;
+
     /**
      * Signature.
      */
     private String sign;
+
     /**
      * Merchant bill number.
      */
     private String mch_billno;
+
     /**
      * Merchant ID.
      */
     private String mch_id;
+
     /**
      * Bill type.
      */

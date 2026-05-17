@@ -27,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
+import lombok.Getter;
+
 import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -34,8 +36,6 @@ import org.miaixz.bus.logger.Logger;
 import org.miaixz.bus.shade.screw.Builder;
 import org.miaixz.bus.shade.screw.metadata.Column;
 import org.miaixz.bus.shade.screw.metadata.PrimaryKey;
-
-import lombok.Getter;
 
 /**
  * Abstract base class for database query implementations. Provides common functionality such as connection management,
@@ -50,6 +50,7 @@ public abstract class AbstractDatabaseQuery implements DatabaseQuery {
      * Cache for storing retrieved column information to avoid redundant database queries.
      */
     protected final Map<String, List<Column>> columnsCaching = new ConcurrentHashMap<>();
+
     /**
      * The JDBC data source used to obtain database connections.
      */

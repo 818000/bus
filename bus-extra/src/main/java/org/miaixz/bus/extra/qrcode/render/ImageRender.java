@@ -23,12 +23,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.BitMatrix;
+
 import org.miaixz.bus.extra.image.ImageKit;
 import org.miaixz.bus.extra.image.Images;
 import org.miaixz.bus.extra.qrcode.QrConfig;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.common.BitMatrix;
 
 /**
  * QR code image renderer.
@@ -42,6 +42,7 @@ public class ImageRender implements BitMatrixRender {
      * The QR code configuration used for rendering.
      */
     private final QrConfig config;
+
     /**
      * The image type (e.g., "png", "jpg").
      */

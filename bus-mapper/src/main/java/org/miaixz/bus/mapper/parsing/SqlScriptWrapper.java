@@ -22,6 +22,7 @@ package org.miaixz.bus.mapper.parsing;
 import java.util.List;
 
 import org.apache.ibatis.builder.annotation.ProviderContext;
+
 import org.miaixz.bus.core.lang.loader.spi.NormalSpiLoader;
 import org.miaixz.bus.mapper.Order;
 
@@ -60,6 +61,9 @@ public interface SqlScriptWrapper extends Order {
 
     /**
      * A holder class that manages {@link SqlScriptWrapper} SPI implementations.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     class Holder {
 
@@ -67,6 +71,7 @@ public interface SqlScriptWrapper extends Order {
          * A list of {@link SqlScriptWrapper} implementations loaded via SPI.
          */
         static final List<SqlScriptWrapper> sqlScriptWrappers = NormalSpiLoader.loadList(false, SqlScriptWrapper.class);
+
     }
 
 }

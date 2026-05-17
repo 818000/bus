@@ -23,18 +23,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.miaixz.bus.gitlab.models.*;
-
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 
+import org.miaixz.bus.gitlab.models.*;
+
 /**
  * This class implements the client side API for the GitLab merge request calls.
- * 
+ *
  * @see <a href="https://docs.gitlab.com/ce/api/merge_requests.html">Merge requests API at GitLab</a>
  * @see <a href="https://docs.gitlab.com/ce/api/merge_request_approvals.html">Merge request approvals API at GitLab</a>
+ * @author Kimi Liu
+ * @since Java 21+
  */
 public class MergeRequestApi extends AbstractApi {
 
@@ -89,7 +91,7 @@ public class MergeRequestApi extends AbstractApi {
             response = get(Response.Status.OK, queryParams, "merge_requests");
         }
 
-        return (response.readEntity(new GenericType<List<MergeRequest>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -178,7 +180,7 @@ public class MergeRequestApi extends AbstractApi {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "merge_requests");
-        return (response.readEntity(new GenericType<List<MergeRequest>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -257,7 +259,7 @@ public class MergeRequestApi extends AbstractApi {
                 "projects",
                 getProjectIdOrPath(projectIdOrPath),
                 "merge_requests");
-        return (response.readEntity(new GenericType<List<MergeRequest>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -464,7 +466,7 @@ public class MergeRequestApi extends AbstractApi {
                 "merge_requests",
                 mergeRequestIid,
                 "commits");
-        return (response.readEntity(new GenericType<List<Commit>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -1487,7 +1489,7 @@ public class MergeRequestApi extends AbstractApi {
                 "merge_requests",
                 mergeRequestIid,
                 "participants");
-        return (response.readEntity(new GenericType<List<Participant>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 
@@ -1567,7 +1569,7 @@ public class MergeRequestApi extends AbstractApi {
                 "merge_requests",
                 mergeRequestIid,
                 "closes_issues");
-        return (response.readEntity(new GenericType<List<Issue>>() {
+        return (response.readEntity(new GenericType<>() {
         }));
     }
 

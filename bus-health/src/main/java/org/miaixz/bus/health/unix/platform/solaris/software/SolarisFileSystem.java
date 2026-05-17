@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
+
 import org.miaixz.bus.core.center.regex.Pattern;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -36,8 +38,6 @@ import org.miaixz.bus.health.builtin.software.OSFileStore;
 import org.miaixz.bus.health.builtin.software.common.AbstractFileSystem;
 import org.miaixz.bus.health.unix.platform.solaris.KstatKit;
 import org.miaixz.bus.health.unix.platform.solaris.KstatKit.KstatChain;
-
-import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
 
 /**
  * The Solaris File System contains {@link OSFileStore}s which are a storage pool, device, partition, volume, concrete
@@ -55,21 +55,25 @@ public class SolarisFileSystem extends AbstractFileSystem {
      */
     private static final Supplier<Pair<Long, Long>> FILE_DESC = Memoizer
             .memoize(SolarisFileSystem::queryFileDescriptors, Memoizer.defaultExpiration());
+
     /**
      * The FS_PATH_EXCLUDES constant.
      */
     private static final List<PathMatcher> FS_PATH_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._UNIX_SOLARIS_FS_PATH_EXCLUDES);
+
     /**
      * The FS_PATH_INCLUDES constant.
      */
     private static final List<PathMatcher> FS_PATH_INCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._UNIX_SOLARIS_FS_PATH_INCLUDES);
+
     /**
      * The FS_VOLUME_EXCLUDES constant.
      */
     private static final List<PathMatcher> FS_VOLUME_EXCLUDES = Builder
             .loadAndParseFileSystemConfig(Config._UNIX_SOLARIS_FS_VOLUME_EXCLUDES);
+
     /**
      * The FS_VOLUME_INCLUDES constant.
      */

@@ -1,7 +1,7 @@
 /*
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
  ~                                                                           ~
- ~ Copyright (c) 2015-2026 miaixz.org OSHI and other contributors.           ~
+ ~ Copyright (c) 2015-2026 miaixz.org and other contributors.                ~
  ~                                                                           ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");           ~
  ~ you may not use this file except in compliance with the License.          ~
@@ -22,6 +22,15 @@ package org.miaixz.bus.health.windows;
 import java.util.Locale;
 import java.util.Objects;
 
+import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
+import com.sun.jna.platform.win32.Pdh;
+import com.sun.jna.platform.win32.PdhMsg;
+import com.sun.jna.platform.win32.VersionHelpers;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinError;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.annotation.Immutable;
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
@@ -31,15 +40,6 @@ import org.miaixz.bus.health.Parsing;
 import org.miaixz.bus.health.builtin.jna.ByRef.CloseableLONGLONGByReference;
 import org.miaixz.bus.health.builtin.jna.Struct.CloseablePdhRawCounter;
 import org.miaixz.bus.logger.Logger;
-
-import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
-import com.sun.jna.platform.win32.Pdh;
-import com.sun.jna.platform.win32.PdhMsg;
-import com.sun.jna.platform.win32.VersionHelpers;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinError;
-import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 
 /**
  * Helper class to centralize the boilerplate portions of PDH counter setup and allow applications to easily add, query,
@@ -55,10 +55,12 @@ public final class PerfDataKit {
      * The PZERO constant.
      */
     private static final DWORD_PTR PZERO = new DWORD_PTR(0);
+
     /**
      * The PDH_FMT_RAW constant.
      */
     private static final DWORDByReference PDH_FMT_RAW = new DWORDByReference(new DWORD(Pdh.PDH_FMT_RAW));
+
     /**
      * The PDH constant.
      */
@@ -230,6 +232,9 @@ public final class PerfDataKit {
 
     /**
      * Encapsulates the three string components of a performance counter
+     *
+     * @author Kimi Liu
+     * @since Java 21+
      */
     @Immutable
     public static final class PerfCounter {
@@ -238,14 +243,17 @@ public final class PerfDataKit {
          * The object value.
          */
         private final String object;
+
         /**
          * The instance value.
          */
         private final String instance;
+
         /**
          * The counter value.
          */
         private final String counter;
+
         /**
          * The baseCounter value.
          */
@@ -364,6 +372,7 @@ public final class PerfDataKit {
         public int hashCode() {
             return Objects.hash(object, instance, counter, baseCounter);
         }
+
     }
 
 }

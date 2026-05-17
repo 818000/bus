@@ -22,12 +22,13 @@ package org.miaixz.bus.starter.metrics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.miaixz.bus.core.lang.Normal;
-import org.miaixz.bus.spring.GeniusBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.spring.GeniusBuilder;
 
 /**
  * Configuration properties for bus-metrics. Bound to prefix {@code bus.metrics}.
@@ -97,6 +98,12 @@ public class MetricsProperties {
      */
     private Cortex cortex = new Cortex();
 
+    /**
+     * The cardinality class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     @Getter
     @Setter
     public static class Cardinality {
@@ -105,16 +112,25 @@ public class MetricsProperties {
          * Default max distinct values per tag key (for unregistered keys).
          */
         private int defaultMax = 100;
+
         /**
          * Tag keys that are always denied.
          */
         private List<String> denyList = List.of("user_id", "trace_id", "request_id");
+
         /**
          * Per-key rules.
          */
         private List<CardinalityRule> rules = new ArrayList<>();
+
     }
 
+    /**
+     * The cardinality rule class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     @Getter
     @Setter
     public static class CardinalityRule {
@@ -123,22 +139,32 @@ public class MetricsProperties {
          * Tag key this rule applies to.
          */
         private String tag;
+
         /**
          * Policy: "first-n", "top-n", or "deny".
          */
         private String policy = "first-n";
+
         /**
          * Max distinct values (for first-n and top-n).
          */
         private int max = 100;
+
     }
 
+    /**
+     * The slo definition class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     @Getter
     @Setter
     public static class SloDefinition {
 
         private String name;
         private String metric;
+
         /**
          * "latency" or "availability".
          */
@@ -147,16 +173,30 @@ public class MetricsProperties {
         private double percentile = 0.99;
         private double target = 0.999;
         private int windowMinutes = 30;
+
     }
 
+    /**
+     * The rate window class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     @Getter
     @Setter
     public static class RateWindow {
 
         private boolean enabled = true;
         private int tickIntervalSeconds = 5;
+
     }
 
+    /**
+     * The cortex class.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
     @Getter
     @Setter
     public static class Cortex {
@@ -166,6 +206,7 @@ public class MetricsProperties {
         private String serverAddr = Normal.EMPTY;
         private String namespace = "default";
         private String serviceId = Normal.EMPTY;
+
     }
 
 }
