@@ -19,29 +19,26 @@
 */
 package org.miaixz.bus.starter.mapper;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import org.miaixz.bus.mapper.runtime.MapperOptions;
-import org.miaixz.bus.spring.GeniusBuilder;
+import org.apache.ibatis.session.Configuration;
 
 /**
- * Spring Boot configuration properties for MyBatis Mapper.
+ * A callback interface for customizing the MyBatis {@link Configuration} object that is auto-configured by this
+ * starter.
  * <p>
- * The pure option model is inherited from {@link MapperOptions}; this starter type only keeps the Spring Boot binding
- * entry point. Resource resolution, bean registration, and schema scanning are intentionally handled by
- * {@link MapperConfiguration} so this class remains a thin configuration holder.
+ * Beans of this type will be automatically detected and their {@link #customize(Configuration)} method will be called
+ * before the {@link org.apache.ibatis.session.SqlSessionFactory} is created.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@ConfigurationProperties(prefix = GeniusBuilder.MAPPER)
-public class MapperProperties extends MapperOptions {
+@FunctionalInterface
+public interface MyBatisConfigCustomizer {
 
     /**
-     * Constructs a new MapperProperties instance for Spring Boot property binding.
+     * Customizes the given {@link Configuration} object.
+     *
+     * @param configuration The {@link Configuration} object to be customized.
      */
-    public MapperProperties() {
-        // No initialization required.
-    }
+    void customize(Configuration configuration);
 
 }
