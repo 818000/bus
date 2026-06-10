@@ -25,9 +25,6 @@
  ********************************************************************************/
 package org.aoju.bus.storage.provider;
 
-import io.minio.*;
-import io.minio.errors.*;
-import io.minio.messages.Item;
 import org.aoju.bus.core.lang.Assert;
 import org.aoju.bus.core.lang.MediaType;
 import org.aoju.bus.core.toolkit.IoKit;
@@ -37,16 +34,20 @@ import org.aoju.bus.storage.Builder;
 import org.aoju.bus.storage.Context;
 import org.aoju.bus.storage.magic.Message;
 import org.aoju.bus.storage.magic.Property;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.Path;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * 存储服务-MinIO
@@ -56,7 +57,7 @@ import java.util.stream.StreamSupport;
  */
 public class MinioOssProvider extends AbstractProvider {
 
-    private MinioClient client;
+    private final S3Client client;
 
     public MinioOssProvider(Context context) {
         this.context = context;
@@ -66,21 +67,16 @@ public class MinioOssProvider extends AbstractProvider {
         Assert.notBlank(this.context.getAccessKey(), "[accessKey] not defined");
         Assert.notBlank(this.context.getSecretKey(), "[secretKey] not defined");
         Assert.notNull(this.context.isSecure(), "[secure] not defined");
-        Assert.notBlank(StringKit.toString(this.context.getReadTimeout()), "[readTimeout] not defined");
-        Assert.notBlank(StringKit.toString(this.context.getConnectTimeout()), "[connectTimeout] not defined");
-        Assert.notBlank(StringKit.toString(this.context.getWriteTimeout()), "[writeTimeout] not defined");
-        Assert.notBlank(StringKit.toString(this.context.getReadTimeout()), "[readTimeout] not defined");
 
-        this.client = MinioClient.builder()
-                .endpoint(this.context.getEndpoint())
-                .credentials(this.context.getAccessKey(), this.context.getSecretKey())
+        this.client = S3Client.builder()
+                .endpointOverride(URI.create(this.context.getEndpoint()))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(this.context.getAccessKey(), this.context.getSecretKey())))
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build())
+                .region(Region.US_EAST_1)
                 .build();
-
-        this.client.setTimeout(
-                Duration.ofSeconds(this.context.getConnectTimeout() != 0 ? this.context.getConnectTimeout() : 10).toMillis(),
-                Duration.ofSeconds(this.context.getWriteTimeout() != 60 ? this.context.getWriteTimeout() : 60).toMillis(),
-                Duration.ofSeconds(this.context.getReadTimeout() != 0 ? this.context.getReadTimeout() : 10).toMillis()
-        );
     }
 
     @Override
@@ -91,7 +87,8 @@ public class MinioOssProvider extends AbstractProvider {
     @Override
     public Message download(String bucket, String fileName) {
         try {
-            InputStream inputStream = this.client.getObject(GetObjectArgs.builder().bucket(bucket).object(fileName).build());
+            InputStream inputStream = this.client.getObject(
+                    GetObjectRequest.builder().bucket(bucket).key(fileName).build());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
@@ -111,7 +108,8 @@ public class MinioOssProvider extends AbstractProvider {
     public Message download(String bucket, String fileName, File file) {
         Logger.debug("下载{}-{}", bucket, fileName);
         try {
-            InputStream inputStream = this.client.getObject(GetObjectArgs.builder().bucket(bucket).object(fileName).build());
+            InputStream inputStream = this.client.getObject(
+                    GetObjectRequest.builder().bucket(bucket).key(fileName).build());
             OutputStream outputStream = new FileOutputStream(file);
             IoKit.copy(inputStream, outputStream);
             return Message.builder()
@@ -134,43 +132,22 @@ public class MinioOssProvider extends AbstractProvider {
 
     @Override
     public Message list() {
-        Iterable<Result<Item>> iterable = this.client.listObjects(ListObjectsArgs.builder().bucket(this.context.getBucket()).build());
+        ListObjectsV2Response listResponse = this.client.listObjectsV2(
+                ListObjectsV2Request.builder().bucket(this.context.getBucket()).build());
         return Message.builder()
                 .errcode(Builder.ErrorCode.SUCCESS.getCode())
                 .errmsg(Builder.ErrorCode.SUCCESS.getMsg())
-                .data(StreamSupport
-                        .stream(iterable.spliterator(), true)
-                        .map(itemResult -> {
-                            try {
-                                Property storageItem = new Property();
-                                Item item = itemResult.get();
-                                storageItem.setName(item.objectName());
-                                storageItem.setSize(StringKit.toString(item.size()));
-                                Map<String, Object> extend = new HashMap<>();
-                                extend.put("tag", item.etag());
-                                extend.put("storageClass", item.storageClass());
-                                extend.put("lastModified", item.lastModified());
-                                storageItem.setExtend(extend);
-                                return storageItem;
-                            } catch (NoSuchAlgorithmException |
-                                     InsufficientDataException |
-                                     IOException |
-                                     InvalidKeyException |
-                                     ErrorResponseException |
-                                     InternalException e) {
-                                return Message.builder()
-                                        .errcode(Builder.ErrorCode.FAILURE.getCode())
-                                        .errmsg(Builder.ErrorCode.FAILURE.getMsg())
-                                        .build();
-                            } catch (ServerException e) {
-                                throw new RuntimeException(e);
-                            } catch (InvalidResponseException e) {
-                                throw new RuntimeException(e);
-                            } catch (XmlParserException e) {
-                                throw new RuntimeException(e);
-                            }
-                        })
-                        .collect(Collectors.toList()))
+                .data(listResponse.contents().stream().map(item -> {
+                    Property storageItem = new Property();
+                    storageItem.setName(item.key());
+                    storageItem.setSize(StringKit.toString(item.size()));
+                    Map<String, Object> extend = new HashMap<>();
+                    extend.put("tag", item.eTag());
+                    extend.put("storageClass", item.storageClassAsString());
+                    extend.put("lastModified", item.lastModified());
+                    storageItem.setExtend(extend);
+                    return storageItem;
+                }).collect(Collectors.toList()))
                 .build();
     }
 
@@ -201,12 +178,13 @@ public class MinioOssProvider extends AbstractProvider {
         Logger.debug("上传{}-{}", bucket, fileName);
         try {
             String contentType = getContentType(fileName);
-            this.client.putObject(PutObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(fileName)
-                    .stream(content, content.available(), -1)
-                    .contentType(contentType)
-                    .build());
+            this.client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(fileName)
+                            .contentType(contentType)
+                            .build(),
+                    RequestBody.fromInputStream(content, content.available()));
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
                     .errmsg(Builder.ErrorCode.SUCCESS.getMsg())
@@ -236,10 +214,11 @@ public class MinioOssProvider extends AbstractProvider {
     @Override
     public Message remove(String bucket, String fileName) {
         try {
-            this.client.removeObject(RemoveObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(fileName)
-                    .build());
+            this.client.deleteObject(
+                    DeleteObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(fileName)
+                            .build());
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
                     .errmsg(Builder.ErrorCode.SUCCESS.getMsg())
@@ -258,8 +237,12 @@ public class MinioOssProvider extends AbstractProvider {
         return remove(bucket, path.toString());
     }
 
-
-    // 辅助方法：根据文件扩展名获取 MIME 类型
+    /**
+     * 根据文件扩展名获取 MIME 类型
+     *
+     * @param fileName 文件名称
+     * @return MIME 类型
+     */
     private String getContentType(String fileName) {
         if (fileName == null) {
             return MediaType.APPLICATION_OCTET_STREAM;
@@ -281,4 +264,5 @@ public class MinioOssProvider extends AbstractProvider {
             default -> MediaType.APPLICATION_OCTET_STREAM;
         };
     }
+
 }

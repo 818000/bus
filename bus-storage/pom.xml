@@ -45,8 +45,7 @@
         <aliyun.oss.version>3.16.0</aliyun.oss.version>
         <baidu.bos.version>0.10.243</baidu.bos.version>
         <huawei.oss.version>3.22.12</huawei.oss.version>
-        <aws.oss.version>1.12.403</aws.oss.version>
-        <minio.oss.version>8.5.1</minio.oss.version>
+        <aws.oss.version>2.25.27</aws.oss.version>
         <qiniu.oss.version>7.12.1</qiniu.oss.version>
         <qcloud.oss.version>5.6.133</qcloud.oss.version>
         <upyun.oss.version>4.2.3</upyun.oss.version>
@@ -107,15 +106,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
             <version>${aws.oss.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>${minio.oss.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
