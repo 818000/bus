@@ -86,8 +86,6 @@ public class StorageProviderService {
 //            return new BaiduYunBosProvider(context);
         } else if (Registry.HUAWEI.equals(type)) {
             return new HuaweiObsProvider(context);
-        } else if (Registry.JD.equals(type)) {
-            return new JdYunOssProvider(context);
         } else if (Registry.MINIO.equals(type)) {
             return new MinioOssProvider(context);
         } else if (Registry.QINIU.equals(type)) {

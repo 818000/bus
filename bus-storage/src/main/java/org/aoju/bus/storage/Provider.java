@@ -123,6 +123,10 @@ public interface Provider {
      */
     Message upload(String bucket, String fileName, InputStream content);
 
+    default Message upload(String bucket, String fileName, InputStream content,long size) {
+        return null;
+    };
+
     /**
      * 上传文件到指定的 bucket
      *

@@ -37,6 +37,7 @@ import org.aoju.bus.storage.magic.Property;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.ContentStreamProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -175,16 +176,22 @@ public class MinioOssProvider extends AbstractProvider {
 
     @Override
     public Message upload(String bucket, String fileName, InputStream content) {
+        return null;
+    }
+
+    @Override
+    public Message upload(String bucket, String fileName, InputStream content,long size) {
         Logger.debug("上传{}-{}", bucket, fileName);
         try {
             String contentType = getContentType(fileName);
+            Logger.info("上传大小-{}", content.available());
             this.client.putObject(
                     PutObjectRequest.builder()
                             .bucket(bucket)
                             .key(fileName)
                             .contentType(contentType)
                             .build(),
-                    RequestBody.fromInputStream(content, content.available()));
+                    RequestBody.fromInputStream(content, size));
             return Message.builder()
                     .errcode(Builder.ErrorCode.SUCCESS.getCode())
                     .errmsg(Builder.ErrorCode.SUCCESS.getMsg())
