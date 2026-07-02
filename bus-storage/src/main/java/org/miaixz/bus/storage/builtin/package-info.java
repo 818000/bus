@@ -18,40 +18,9 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.storage
+ * Provides built-in storage support classes.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-module bus.storage {
-
-    requires java.net.http;
-
-    requires bus.cache;
-    requires bus.core;
-    requires bus.crypto;
-    requires bus.extra;
-    requires bus.gitlab;
-    requires bus.http;
-    requires bus.logger;
-
-    requires static lombok;
-    requires static com.github.sardine;
-    requires static com.hierynomus.smbj;
-    requires static org.reactivestreams;
-    requires static software.amazon.awssdk.auth;
-    requires static software.amazon.awssdk.core;
-    requires static software.amazon.awssdk.awscore;
-    requires static software.amazon.awssdk.http;
-    requires static software.amazon.awssdk.http.auth;
-    requires static software.amazon.awssdk.regions;
-    requires static software.amazon.awssdk.services.s3;
-    requires static software.amazon.awssdk.utils;
-
-    exports org.miaixz.bus.storage;
-    exports org.miaixz.bus.storage.builtin;
-    exports org.miaixz.bus.storage.cache;
-    exports org.miaixz.bus.storage.magic;
-    exports org.miaixz.bus.storage.metric;
-
-}
+package org.miaixz.bus.storage.builtin;
