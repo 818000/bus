@@ -17,42 +17,43 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.sensitive;
+package org.miaixz.bus.storage.builtin;
 
-import jakarta.annotation.Resource;
+import java.io.FilterInputStream;
+import java.io.IOException;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
-
-import org.miaixz.bus.spring.GeniusBuilder;
+import org.miaixz.bus.http.Response;
 
 /**
- * Auto-configuration for data desensitization and encryption/decryption.
- * <p>
- * This class enables the {@link SensitiveProperties} and imports the necessary advice beans,
- * {@link SensitiveRequestBodyAdvice} and {@link SensitiveResponseBodyAdvice}, to activate the sensitive data handling
- * functionality for Spring MVC controllers.
+ * Input stream that keeps the response open until callers close the stream.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@EnableConfigurationProperties(value = { SensitiveProperties.class })
-@ConditionalOnProperty(prefix = GeniusBuilder.SENSITIVE, name = "enabled", havingValue = "true", matchIfMissing = true)
-@Import({ SensitiveRequestBodyAdvice.class, SensitiveResponseBodyAdvice.class })
-public class SensitiveConfiguration {
+public class ResponseBodyInputStream extends FilterInputStream {
 
     /**
-     * Constructs a new SensitiveConfiguration instance.
+     * The response backing this stream.
      */
-    public SensitiveConfiguration() {
-        // No initialization required.
+    private final Response response;
+
+    /**
+     * Constructs a response body stream.
+     *
+     * @param response The response containing the body stream.
+     */
+    public ResponseBodyInputStream(final Response response) {
+        super(response.body().byteStream());
+        this.response = response;
     }
 
-    /**
-     * Injected sensitive data configuration properties.
-     */
-    @Resource
-    private SensitiveProperties properties;
+    @Override
+    public void close() throws IOException {
+        try {
+            super.close();
+        } finally {
+            response.close();
+        }
+    }
 
 }
