@@ -17,42 +17,10 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.starter.sensitive;
-
-import jakarta.annotation.Resource;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
-
-import org.miaixz.bus.spring.GeniusBuilder;
-
 /**
- * Auto-configuration for data desensitization and encryption/decryption.
- * <p>
- * This class enables the {@link SensitiveProperties} and imports the necessary advice beans,
- * {@link SensitiveRequestBodyAdvice} and {@link SensitiveResponseBodyAdvice}, to activate the sensitive data handling
- * functionality for Spring MVC controllers.
+ * Provides built-in storage support classes.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-@EnableConfigurationProperties(value = { SensitiveProperties.class })
-@ConditionalOnProperty(prefix = GeniusBuilder.SENSITIVE, name = "enabled", havingValue = "true", matchIfMissing = true)
-@Import({ SensitiveRequestBodyAdvice.class, SensitiveResponseBodyAdvice.class })
-public class SensitiveConfiguration {
-
-    /**
-     * Constructs a new SensitiveConfiguration instance.
-     */
-    public SensitiveConfiguration() {
-        // No initialization required.
-    }
-
-    /**
-     * Injected sensitive data configuration properties.
-     */
-    @Resource
-    private SensitiveProperties properties;
-
-}
+package org.miaixz.bus.storage.builtin;
