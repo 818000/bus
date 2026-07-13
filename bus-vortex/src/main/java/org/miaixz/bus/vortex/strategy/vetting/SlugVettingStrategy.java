@@ -17,52 +17,52 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex.routing.llm;
+package org.miaixz.bus.vortex.strategy.vetting;
 
-import reactor.core.publisher.Flux;
+import org.springframework.web.server.ServerWebExchange;
+
+import org.miaixz.bus.core.Order;
+import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.vortex.Args;
+import org.miaixz.bus.vortex.Context;
+import org.miaixz.bus.vortex.magic.ErrorCode;
+import org.miaixz.bus.vortex.strategy.VettingStrategy;
+
 import reactor.core.publisher.Mono;
 
 /**
- * Interface for Large Language Model (LLM) providers.
- * <p>
- * This interface defines the contract for LLM providers that can handle chat completion requests in both streaming and
- * non-streaming modes. Implementations should support the OpenAIProvider Chat Completions API format.
+ * Performs public slug request vetting.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public interface LlmProvider {
+@org.springframework.core.annotation.Order(Order.SECOND)
+public class SlugVettingStrategy extends VettingStrategy {
 
     /**
-     * Gets the type of this provider (e.g., "vllm", "ollama", "openai").
+     * Returns this strategy's dynamic protocol.
      *
-     * @return The provider type.
+     * @return slug protocol number
      */
-    String getType();
+    @Override
+    public Integer protocol() {
+        return Args.PROTOCOL_SLUG;
+    }
 
     /**
-     * Gets the base URL of the LLM service.
+     * Validates public slug request state, then delegates shared validation and header cleanup to the base strategy.
      *
-     * @return The base URL.
+     * @param exchange current exchange
+     * @param context  request context
+     * @return completion signal
      */
-    String getUrl();
-
-    /**
-     * Sends a streaming chat completion request to the LLM service.
-     * <p>
-     * The response is returned as Server-Sent Events (SSE), where each data chunk carries a delta content token.
-     *
-     * @param request The LLM request containing messages, model, and parameters.
-     * @return A {@link Flux} emitting SSE-formatted response chunks.
-     */
-    Flux<String> stream(LlmRequest request);
-
-    /**
-     * Sends a non-streaming chat completion request to the LLM service.
-     *
-     * @param request The LLM request containing messages, model, and parameters.
-     * @return A {@link Mono} emitting the complete response.
-     */
-    Mono<LlmResponse> chat(LlmRequest request);
+    @Override
+    protected Mono<Void> validateAndEnrich(ServerWebExchange exchange, Context context) {
+        return Mono.fromRunnable(() -> {
+            if (context == null || context.getHttpMethod() == null) {
+                throw new ValidateException(ErrorCode._100802);
+            }
+        }).then(super.validateAndEnrich(exchange, context));
+    }
 
 }
