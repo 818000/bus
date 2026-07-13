@@ -17,52 +17,51 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.vortex.routing.llm;
+package org.miaixz.bus.vortex.routing;
 
-import reactor.core.publisher.Flux;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+
+import org.miaixz.bus.vortex.Context;
+import org.miaixz.bus.vortex.Router;
+import org.miaixz.bus.vortex.routing.slug.SlugExecutor;
+
 import reactor.core.publisher.Mono;
 
 /**
- * Interface for Large Language Model (LLM) providers.
- * <p>
- * This interface defines the contract for LLM providers that can handle chat completion requests in both streaming and
- * non-streaming modes. Implementations should support the OpenAIProvider Chat Completions API format.
+ * Router for public slug forwarding requests.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public interface LlmProvider {
+public class SlugRouter implements Router<ServerRequest, ServerResponse> {
 
     /**
-     * Gets the type of this provider (e.g., "vllm", "ollama", "openai").
-     *
-     * @return The provider type.
+     * Executor responsible for public slug forwarding.
      */
-    String getType();
+    private final SlugExecutor executor;
 
     /**
-     * Gets the base URL of the LLM service.
+     * Creates a slug router.
      *
-     * @return The base URL.
+     * @param executor slug executor
      */
-    String getUrl();
+    public SlugRouter(SlugExecutor executor) {
+        this.executor = executor;
+    }
 
     /**
-     * Sends a streaming chat completion request to the LLM service.
-     * <p>
-     * The response is returned as Server-Sent Events (SSE), where each data chunk carries a delta content token.
+     * Routes the request using the current context.
      *
-     * @param request The LLM request containing messages, model, and parameters.
-     * @return A {@link Flux} emitting SSE-formatted response chunks.
+     * @param request server request
+     * @return downstream response
      */
-    Flux<String> stream(LlmRequest request);
-
-    /**
-     * Sends a non-streaming chat completion request to the LLM service.
-     *
-     * @param request The LLM request containing messages, model, and parameters.
-     * @return A {@link Mono} emitting the complete response.
-     */
-    Mono<LlmResponse> chat(LlmRequest request);
+    @Override
+    public Mono<ServerResponse> route(ServerRequest request) {
+        return Mono.deferContextual(contextView -> {
+            final Context context = contextView.get(Context.class);
+            return this.executor.execute(context, request);
+        });
+    }
 
 }
