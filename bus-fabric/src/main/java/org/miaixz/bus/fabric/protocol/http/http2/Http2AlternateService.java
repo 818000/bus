@@ -19,11 +19,13 @@
 */
 package org.miaixz.bus.fabric.protocol.http.http2;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * HTTP/2 ALTSVC payload value.
@@ -36,15 +38,12 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
 public record Http2AlternateService(String origin, String value) {
 
     /**
-     * Origin length field size.
-     */
-    private static final int ORIGIN_LENGTH_BYTES = Short.BYTES;
-
-    /**
      * Creates an ALTSVC payload value.
      */
     public Http2AlternateService {
-        if (origin == null || value == null || origin.getBytes(StandardCharsets.UTF_8).length > 0xffff) {
+        origin = Assert.notNull(origin, () -> new ValidateException("Invalid HTTP/2 alternate service metadata"));
+        value = Assert.notNull(value, () -> new ValidateException("Invalid HTTP/2 alternate service metadata"));
+        if (ByteString.encodeUtf8(origin).size() > Normal._65535) {
             throw new ValidateException("Invalid HTTP/2 alternate service metadata");
         }
     }
@@ -67,39 +66,77 @@ public record Http2AlternateService(String origin, String value) {
      * @param streamId frame stream id
      * @return alternate service
      */
-    static Http2AlternateService decode(final ByteBuffer payload, final int streamId) {
-        if (payload == null || payload.remaining() < ORIGIN_LENGTH_BYTES) {
+    static Http2AlternateService decode(final ByteString payload, final int streamId) {
+        final ByteString checkedPayload = Assert
+                .notNull(payload, () -> new ProtocolException("Invalid HTTP/2 ALTSVC payload"));
+        if (checkedPayload.size() < Normal._2) {
             throw new ProtocolException("Invalid HTTP/2 ALTSVC payload");
         }
-        final ByteBuffer view = payload.asReadOnlyBuffer();
-        final int originLength = view.getShort() & 0xffff;
-        if (originLength > view.remaining()) {
+        final int originLength = unsignedShort(checkedPayload);
+        if (originLength > checkedPayload.size() - Normal._2) {
             throw new ProtocolException("Invalid HTTP/2 ALTSVC origin length");
         }
-        final byte[] originBytes = new byte[originLength];
-        view.get(originBytes);
-        final byte[] valueBytes = new byte[view.remaining()];
-        view.get(valueBytes);
-        final Http2AlternateService service = new Http2AlternateService(new String(originBytes, StandardCharsets.UTF_8),
-                new String(valueBytes, StandardCharsets.UTF_8));
+        final int valueOffset = Normal._2 + originLength;
+        final ByteString originBytes = checkedPayload.substring(Normal._2, valueOffset);
+        final ByteString valueBytes = checkedPayload.substring(valueOffset);
+        return fromBytes(originBytes, valueBytes, streamId);
+    }
+
+    /**
+     * Creates an ALTSVC value from decoded byte fields.
+     *
+     * @param originBytes origin bytes
+     * @param valueBytes  value bytes
+     * @param streamId    frame stream id
+     * @return alternate service
+     */
+    private static Http2AlternateService fromBytes(
+            final ByteString originBytes,
+            final ByteString valueBytes,
+            final int streamId) {
+        final Http2AlternateService service = new Http2AlternateService(originBytes.utf8(), valueBytes.utf8());
         validateStreamContext(streamId, service);
         return service;
     }
 
     /**
-     * Encodes this value as an ALTSVC payload.
+     * Decodes an ALTSVC frame payload from a core buffer.
+     *
+     * @param payload  payload
+     * @param streamId frame stream id
+     * @return alternate service
+     */
+    static Http2AlternateService decode(final Buffer payload, final int streamId) {
+        final Buffer checkedPayload = Assert
+                .notNull(payload, () -> new ProtocolException("Invalid HTTP/2 ALTSVC payload"));
+        final long payloadSize = checkedPayload.size();
+        if (payloadSize < Normal._2) {
+            throw new ProtocolException("Invalid HTTP/2 ALTSVC payload");
+        }
+        final int originLength = unsignedShort(checkedPayload);
+        if (originLength > payloadSize - Normal._2) {
+            throw new ProtocolException("Invalid HTTP/2 ALTSVC origin length");
+        }
+        final long valueOffset = Normal._2 + (long) originLength;
+        return fromBytes(
+                readByteString(checkedPayload, Normal._2, originLength),
+                readByteString(checkedPayload, valueOffset, payloadSize - valueOffset),
+                streamId);
+    }
+
+    /**
+     * Encodes this value as immutable ALTSVC payload bytes.
      *
      * @return payload
      */
-    public ByteBuffer encode() {
-        final byte[] originBytes = origin.getBytes(StandardCharsets.UTF_8);
-        final byte[] valueBytes = value.getBytes(StandardCharsets.UTF_8);
-        final ByteBuffer payload = ByteBuffer.allocate(ORIGIN_LENGTH_BYTES + originBytes.length + valueBytes.length);
-        payload.putShort((short) originBytes.length);
-        payload.put(originBytes);
-        payload.put(valueBytes);
-        payload.flip();
-        return payload.asReadOnlyBuffer();
+    public ByteString encodeBytes() {
+        final ByteString originBytes = ByteString.encodeUtf8(origin);
+        final ByteString valueBytes = ByteString.encodeUtf8(value);
+        final Buffer payload = new Buffer();
+        payload.writeShort(originBytes.size());
+        payload.write(originBytes);
+        payload.write(valueBytes);
+        return payload.readByteString();
     }
 
     /**
@@ -109,15 +146,53 @@ public record Http2AlternateService(String origin, String value) {
      * @param service  service value
      */
     static void validateStreamContext(final int streamId, final Http2AlternateService service) {
-        if (streamId < 0) {
+        final Http2AlternateService checkedService = Assert
+                .notNull(service, () -> new ProtocolException("Invalid HTTP/2 ALTSVC payload"));
+        if (streamId < Normal._0) {
             throw new ProtocolException("Invalid HTTP/2 ALTSVC stream id");
         }
-        if (streamId == 0 && service.origin().isEmpty()) {
+        if (streamId == Normal._0 && checkedService.origin().isEmpty()) {
             throw new ProtocolException("HTTP/2 ALTSVC origin is required on the connection stream");
         }
-        if (streamId > 0 && !service.origin().isEmpty()) {
+        if (streamId > Normal._0 && !checkedService.origin().isEmpty()) {
             throw new ProtocolException("HTTP/2 ALTSVC origin must be empty on a stream frame");
         }
+    }
+
+    /**
+     * Reads the big-endian unsigned origin length from immutable bytes.
+     *
+     * @param payload payload
+     * @return unsigned length
+     */
+    private static int unsignedShort(final ByteString payload) {
+        return ((payload.getByte(Normal._0) & Builder.UNSIGNED_BYTE_MASK) << Normal._8)
+                | (payload.getByte(Normal._1) & Builder.UNSIGNED_BYTE_MASK);
+    }
+
+    /**
+     * Reads the big-endian unsigned origin length from a buffer without consuming it.
+     *
+     * @param payload payload
+     * @return unsigned length
+     */
+    private static int unsignedShort(final Buffer payload) {
+        return ((payload.getByte(Normal._0) & Builder.UNSIGNED_BYTE_MASK) << Normal._8)
+                | (payload.getByte(Normal._1) & Builder.UNSIGNED_BYTE_MASK);
+    }
+
+    /**
+     * Reads an immutable byte slice without consuming the source buffer.
+     *
+     * @param payload   payload
+     * @param offset    slice offset
+     * @param byteCount slice byte count
+     * @return byte string
+     */
+    private static ByteString readByteString(final Buffer payload, final long offset, final long byteCount) {
+        final Buffer view = new Buffer();
+        payload.copyTo(view, offset, byteCount);
+        return view.readByteString();
     }
 
 }

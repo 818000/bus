@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.fabric.protocol.sse;
 
+import static org.miaixz.bus.fabric.Builder.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -28,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -37,12 +40,12 @@ import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Call;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Message;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
 import org.miaixz.bus.fabric.protocol.Itinerary;
@@ -56,6 +59,10 @@ import org.miaixz.bus.fabric.protocol.sse.event.SseRetry;
  * @since Java 21+
  */
 public final class SseX {
+
+    /**
+     * Runtime option key for default timeout.
+     */
 
     /**
      * Immutable execution snapshot.
@@ -75,12 +82,10 @@ public final class SseX {
     private SseX(final Builder builder) {
         final Context current = require(builder.context, "Context");
         final EventObserver currentObserver = builder.observer == null ? EventObserver.noop() : builder.observer;
-        final Listener<? super SseSession> currentListener = Wiring
-                .safe(Wiring.compose(current.listener(), builder.listener), currentObserver);
         this.snapshot = new SseSnapshot(current, builder.uri, Address.from(builder.uri), builder.headers.build(),
                 builder.timeout, builder.retry, builder.lastEventId, builder.autoReconnect, builder.responseHandler,
-                builder.guard, currentObserver, builder.callback == null ? Wiring.callback() : builder.callback,
-                builder.handler == null ? noopHandler() : builder.handler, currentListener);
+                builder.guard, builder.filter, currentObserver, builder.callback,
+                builder.handler == null ? noopHandler() : builder.handler, builder.listener);
         this.runner = new SseRunner(snapshot);
     }
 
@@ -222,10 +227,7 @@ public final class SseX {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -241,7 +243,7 @@ public final class SseX {
         try {
             final URI parsed = new URI(value.trim());
             final String scheme = parsed.getScheme();
-            if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+            if (!Protocol.HTTP.name.equalsIgnoreCase(scheme) && !Protocol.HTTPS.name.equalsIgnoreCase(scheme)) {
                 throw new ProtocolException("SSE URL must use http or https");
             }
             Address.from(parsed);
@@ -259,10 +261,10 @@ public final class SseX {
      * @return duration
      */
     private static Duration validateDuration(final Duration duration, final String name) {
-        if (duration == null || duration.isNegative()) {
-            throw new ValidateException(name + " must be non-null and non-negative");
-        }
-        return duration;
+        final Duration checked = Assert
+                .notNull(duration, () -> new ValidateException(name + " must be non-null and non-negative"));
+        Assert.isFalse(checked.isNegative(), () -> new ValidateException(name + " must be non-null and non-negative"));
+        return checked;
     }
 
     /**
@@ -332,6 +334,11 @@ public final class SseX {
         private GuardRule guard;
 
         /**
+         * Message filter.
+         */
+        private Filter filter;
+
+        /**
          * Observer.
          */
         private EventObserver observer;
@@ -369,16 +376,16 @@ public final class SseX {
         private Builder(final Context context) {
             this.context = context;
             this.headers = Headers.builder();
-            final Timeout configured = context.options().get("timeout", Timeout.class);
+            final Timeout configured = context.options().get(OPTION_TIMEOUT, Timeout.class);
             this.timeout = configured == null ? Timeout.defaults() : configured;
             this.retry = SseRetry.defaults();
             this.autoReconnect = true;
             this.responseHandler = (status, headers) -> {
             };
             this.observer = EventObserver.noop();
-            this.callback = Wiring.callback();
+            this.callback = null;
             this.handler = noopHandler();
-            this.listener = Wiring.noop();
+            this.listener = null;
             this.openHandler = session -> {
             };
             this.errorHandler = cause -> {
@@ -579,6 +586,17 @@ public final class SseX {
         }
 
         /**
+         * Sets message filter.
+         *
+         * @param filter filter
+         * @return this builder
+         */
+        public Builder filter(final Filter filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        /**
          * Sets observer.
          *
          * @param observer observer
@@ -596,7 +614,7 @@ public final class SseX {
          * @return this builder
          */
         public Builder callback(final Callback<SseSession> callback) {
-            this.callback = callback == null ? Wiring.callback() : callback;
+            this.callback = callback;
             return this;
         }
 
@@ -607,7 +625,7 @@ public final class SseX {
          * @return this builder
          */
         public Builder listener(final Listener<? super SseSession> listener) {
-            this.listener = listener == null ? Wiring.noop() : listener;
+            this.listener = listener;
             return this;
         }
 
@@ -617,9 +635,7 @@ public final class SseX {
          * @return exchange
          */
         public SseX build() {
-            if (uri == null) {
-                throw new ValidateException("SSE target must be set");
-            }
+            Assert.notNull(uri, () -> new ValidateException("SSE target must be set"));
             return new SseX(this);
         }
 
@@ -676,11 +692,21 @@ public final class SseX {
         private Builder composeCallback() {
             this.callback = new Callback<>() {
 
+                /**
+                 * Forwards a successful open session to the configured open handler.
+                 *
+                 * @param value opened SSE session
+                 */
                 @Override
                 public void success(final SseSession value) {
                     openHandler.accept(value);
                 }
 
+                /**
+                 * Forwards an open failure to the configured error handler.
+                 *
+                 * @param cause failure cause
+                 */
                 @Override
                 public void failure(final Throwable cause) {
                     errorHandler.accept(cause);

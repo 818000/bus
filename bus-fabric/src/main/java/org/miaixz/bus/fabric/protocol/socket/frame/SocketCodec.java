@@ -19,10 +19,11 @@
 */
 package org.miaixz.bus.fabric.protocol.socket.frame;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.codec.frame.Frame;
 import org.miaixz.bus.fabric.codec.frame.FrameCodec;
@@ -46,10 +47,7 @@ public final class SocketCodec {
      * @param codec frame codec
      */
     private SocketCodec(final FrameCodec codec) {
-        if (codec == null) {
-            throw new ValidateException("Frame codec must not be null");
-        }
-        this.codec = codec;
+        this.codec = Assert.notNull(codec, () -> new ValidateException("Frame codec must not be null"));
     }
 
     /**
@@ -68,12 +66,12 @@ public final class SocketCodec {
      * @param input input
      * @return frames
      */
-    public List<SocketFrame> decode(final ByteBuffer input) {
-        if (input == null) {
-            throw new ValidateException("Socket codec input must not be null");
-        }
-        final ArrayList<SocketFrame> frames = new ArrayList<>();
-        for (final Frame frame : codec.decode(input.duplicate())) {
+    public List<SocketFrame> decode(final Buffer input) {
+        final Buffer checkedInput = Assert
+                .notNull(input, () -> new ValidateException("Socket codec input must not be null"));
+        final List<Frame> decoded = codec.decode(checkedInput);
+        final ArrayList<SocketFrame> frames = new ArrayList<>(decoded.size());
+        for (final Frame frame : decoded) {
             frames.add(SocketFrame.of(frame.payload()));
         }
         return List.copyOf(frames);
@@ -82,14 +80,15 @@ public final class SocketCodec {
     /**
      * Encodes a socket frame.
      *
-     * @param frame frame
-     * @return encoded bytes
+     * @param frame  frame
+     * @param output output buffer
      */
-    public ByteBuffer encode(final SocketFrame frame) {
-        if (frame == null) {
-            throw new ValidateException("Socket frame must not be null");
-        }
-        return codec.encode(Frame.of(frame.payload())).asReadOnlyBuffer();
+    public void encode(final SocketFrame frame, final Buffer output) {
+        final SocketFrame checkedFrame = Assert
+                .notNull(frame, () -> new ValidateException("Socket frame must not be null"));
+        final Buffer checkedOutput = Assert
+                .notNull(output, () -> new ValidateException("Socket codec output must not be null"));
+        codec.encode(Frame.of(checkedFrame.payload()), checkedOutput);
     }
 
     /**

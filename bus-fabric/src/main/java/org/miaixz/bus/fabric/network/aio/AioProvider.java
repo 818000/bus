@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Listener;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.network.tcp.TcpServer;
 import org.miaixz.bus.fabric.protocol.socket.SocketOptions;
 
@@ -96,20 +96,23 @@ public interface AioProvider {
     }
 
     /**
-     * Opens a server with no-op lifecycle listener.
+     * Opens a server with the default lifecycle listener.
      *
      * @param address address
      * @param group   group
      * @return TCP server
      */
     default TcpServer openServer(final Address address, final AioGroup group) {
-        return openServer(address, group, Wiring.noop());
+        return openServer(address, group, null);
     }
 
 }
 
 /**
  * System provider implementation.
+ *
+ * @author Kimi Liu
+ * @since Java 21+
  */
 final class SystemAioProvider implements AioProvider {
 
@@ -149,11 +152,9 @@ final class SystemAioProvider implements AioProvider {
      */
     @Override
     public AioChannel openChannel(final AioGroup group, final SocketOptions options) {
-        if (group == null) {
-            throw new ValidateException("AIO group must not be null");
-        }
+        final AioGroup checkedGroup = Assert.notNull(group, () -> new ValidateException("AIO group must not be null"));
         try {
-            return new AioChannel(AsynchronousSocketChannel.open(group.channelGroup), group.dispatcher(),
+            return new AioChannel(AsynchronousSocketChannel.open(checkedGroup.channelGroup), checkedGroup.dispatcher(),
                     options == null ? SocketOptions.defaults() : options);
         } catch (final IOException e) {
             throw new SocketException("Unable to open AIO channel", e);
@@ -188,14 +189,11 @@ final class SystemAioProvider implements AioProvider {
             final AioGroup group,
             final Listener<Object> listener,
             final SocketOptions options) {
-        if (address == null) {
-            throw new ValidateException("Server address must not be null");
-        }
-        if (group == null) {
-            throw new ValidateException("AIO group must not be null");
-        }
+        final Address checkedAddress = Assert
+                .notNull(address, () -> new ValidateException("Server address must not be null"));
+        final AioGroup checkedGroup = Assert.notNull(group, () -> new ValidateException("AIO group must not be null"));
         try {
-            return new TcpServer(address, listener, group.dispatcher(),
+            return new TcpServer(checkedAddress, listener, checkedGroup.dispatcher(),
                     options == null ? SocketOptions.defaults() : options);
         } catch (final RuntimeException e) {
             throw new InternalException("Unable to open TCP server", e);

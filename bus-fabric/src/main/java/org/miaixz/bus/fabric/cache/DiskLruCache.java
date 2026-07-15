@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.miaixz.bus.core.instance.Instances;
 import org.miaixz.bus.core.io.sink.BufferSink;
@@ -31,16 +30,19 @@ import org.miaixz.bus.core.io.sink.FaultHideSink;
 import org.miaixz.bus.core.io.sink.Sink;
 import org.miaixz.bus.core.io.source.BufferSource;
 import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.xyz.FileKit;
 import org.miaixz.bus.core.xyz.IoKit;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.runtime.dispatch.Dispatcher;
 import org.miaixz.bus.fabric.runtime.resource.ResourceScope;
 import org.miaixz.bus.logger.Logger;
 
 /**
  * A cache that uses a limited amount of space on a filesystem. Each cache entry has a string key and a fixed number of
- * values. Each key must match the regex {@code [a-z0-9_-]{1,64}}. Values are byte sequences, accessible as streams or
+ * values. Each key must match the regex {@code [a-z0-9_-]{1,120}}. Values are byte sequences, accessible as streams or
  * files.
  * <p>
  * Each value must be between {@code 0} and {@code Integer.MAX_VALUE} bytes in length.
@@ -49,41 +51,6 @@ import org.miaixz.bus.logger.Logger;
  * @since Java 21+
  */
 public class DiskLruCache implements Closeable, Flushable {
-
-    /**
-     * Primary journal file containing replayable cache mutations.
-     */
-    static final String JOURNAL_FILE = "journal";
-
-    /**
-     * Temporary journal file used while rewriting the primary journal atomically.
-     */
-    static final String JOURNAL_FILE_TEMP = "journal.tmp";
-
-    /**
-     * Backup journal file used to recover from an interrupted rewrite.
-     */
-    static final String JOURNAL_FILE_BACKUP = "journal.bkp";
-
-    /**
-     * Header marker that identifies files owned by this cache implementation.
-     */
-    static final String MAGIC = "libcore.io.DiskLruCache";
-
-    /**
-     * Journal format version supported by this cache.
-     */
-    static final String VERSION_1 = Symbol.ONE;
-
-    /**
-     * Sequence guard used when an edit is allowed regardless of the current committed snapshot.
-     */
-    static final long ANY_SEQUENCE_NUMBER = -1;
-
-    /**
-     * Key pattern written into journal lines and mapped to cache value files.
-     */
-    static final Pattern LEGAL_KEY_PATTERN = Pattern.compile("[a-z0-9_-]{1,120}");
 
     /**
      * Filesystem abstraction used by tests and alternate cache storage implementations.
@@ -190,10 +157,13 @@ public class DiskLruCache implements Closeable, Flushable {
      */
     private final Runnable cleanupRunnable = new Runnable() {
 
+        /**
+         * Runs deferred cache trimming and journal rebuild work.
+         */
         @Override
         public void run() {
             synchronized (DiskLruCache.this) {
-                if (!initialized | closed) {
+                if (!initialized || closed) {
                     return; // Nothing to do.
                 }
 
@@ -262,9 +232,9 @@ public class DiskLruCache implements Closeable, Flushable {
         this.diskFile = diskFile;
         this.directory = directory;
         this.appVersion = appVersion;
-        this.journalFile = new File(directory, JOURNAL_FILE);
-        this.journalFileTmp = new File(directory, JOURNAL_FILE_TEMP);
-        this.journalFileBackup = new File(directory, JOURNAL_FILE_BACKUP);
+        this.journalFile = new File(directory, Builder.DISK_LRU_CACHE_JOURNAL_FILE);
+        this.journalFileTmp = new File(directory, Builder.DISK_LRU_CACHE_JOURNAL_FILE_TEMP);
+        this.journalFileBackup = new File(directory, Builder.DISK_LRU_CACHE_JOURNAL_FILE_BACKUP);
         this.valueCount = valueCount;
         this.maxSize = maxSize;
         this.executor = executor;
@@ -283,12 +253,8 @@ public class DiskLruCache implements Closeable, Flushable {
      * @return the disk cache.
      */
     public static DiskLruCache create(DiskFile diskFile, File directory, int appVersion, int valueCount, long maxSize) {
-        if (maxSize <= 0) {
-            throw new IllegalArgumentException("maxSize <= 0");
-        }
-        if (valueCount <= 0) {
-            throw new IllegalArgumentException("valueCount <= 0");
-        }
+        Assert.isTrue(maxSize > 0, "maxSize <= 0");
+        Assert.isTrue(valueCount > 0, "valueCount <= 0");
 
         final ResourceScope scope = ResourceScope.create();
         final Dispatcher dispatcher = scope.add(Dispatcher.create());
@@ -550,14 +516,14 @@ public class DiskLruCache implements Closeable, Flushable {
      * @throws IOException if an I/O error occurs.
      */
     public Editor edit(String key) throws IOException {
-        return edit(key, ANY_SEQUENCE_NUMBER);
+        return edit(key, Normal.__1);
     }
 
     /**
      * Opens an editor only when the caller's expected snapshot sequence still matches the entry.
      *
      * @param key                    entry key
-     * @param expectedSequenceNumber expected committed sequence, or {@link #ANY_SEQUENCE_NUMBER}
+     * @param expectedSequenceNumber expected committed sequence, or {@link #Builder.DISK_LRU_CACHE_ANY_SEQUENCE_NUMBER}
      * @return editor, or {@code null} when the entry is stale, locked, or temporarily unhealthy
      * @throws IOException when journal access fails
      */
@@ -567,8 +533,7 @@ public class DiskLruCache implements Closeable, Flushable {
         checkNotClosed();
         validateKey(key);
         Entry entry = lruEntries.get(key);
-        if (expectedSequenceNumber != ANY_SEQUENCE_NUMBER
-                && (null == entry || entry.sequenceNumber != expectedSequenceNumber)) {
+        if (expectedSequenceNumber != Normal.__1 && (null == entry || entry.sequenceNumber != expectedSequenceNumber)) {
             return null; // Snapshot is stale.
         }
         if (null != entry && null != entry.currentEditor) {
@@ -685,7 +650,7 @@ public class DiskLruCache implements Closeable, Flushable {
 
         redundantOpCount++;
         entry.currentEditor = null;
-        if (entry.readable | success) {
+        if (entry.readable || success) {
             entry.readable = true;
             Journal.writeClean(journalWriter, entry);
             if (success) {
@@ -885,7 +850,7 @@ public class DiskLruCache implements Closeable, Flushable {
      * @param key cache key
      */
     private void validateKey(String key) {
-        Matcher matcher = LEGAL_KEY_PATTERN.matcher(key);
+        Matcher matcher = Builder.DISK_LRU_CACHE_LEGAL_KEY_PATTERN.matcher(key);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("keys must match regex [a-z0-9_-]{1,120}: \"" + key + "\"");
         }
@@ -1015,11 +980,25 @@ public class DiskLruCache implements Closeable, Flushable {
          */
         DiskFile SYSTEM = Instances.get(DiskFile.class.getName() + ".system", () -> new DiskFile() {
 
+            /**
+             * Opens a source for a file.
+             *
+             * @param file source file
+             * @return file source
+             * @throws FileNotFoundException when the file cannot be opened
+             */
             @Override
             public Source source(File file) throws FileNotFoundException {
                 return IoKit.source(file);
             }
 
+            /**
+             * Opens a replacing sink for a file, creating the parent directory when needed.
+             *
+             * @param file target file
+             * @return file sink
+             * @throws FileNotFoundException when the file cannot be opened
+             */
             @Override
             public Sink sink(File file) throws FileNotFoundException {
                 try {
@@ -1034,11 +1013,18 @@ public class DiskLruCache implements Closeable, Flushable {
                             true,
                             e.getClass().getSimpleName());
                     // Maybe the parent directory doesn't exist? Try creating it first.
-                    file.getParentFile().mkdirs();
+                    FileKit.mkdir(file.getParentFile());
                     return IoKit.sink(file);
                 }
             }
 
+            /**
+             * Opens an appending sink for a file, creating the parent directory when needed.
+             *
+             * @param file target file
+             * @return appending file sink
+             * @throws FileNotFoundException when the file cannot be opened
+             */
             @Override
             public Sink appendingSink(File file) throws FileNotFoundException {
                 try {
@@ -1053,11 +1039,17 @@ public class DiskLruCache implements Closeable, Flushable {
                             true,
                             e.getClass().getSimpleName());
                     // Maybe the parent directory doesn't exist? Try creating it first.
-                    file.getParentFile().mkdirs();
+                    FileKit.mkdir(file.getParentFile());
                     return IoKit.appendingSink(file);
                 }
             }
 
+            /**
+             * Deletes a file and treats existing undeleted files as failures.
+             *
+             * @param file file to delete
+             * @throws IOException when deletion fails
+             */
             @Override
             public void delete(File file) throws IOException {
                 // If delete() fails, make sure it's because the file didn't exist!
@@ -1066,16 +1058,35 @@ public class DiskLruCache implements Closeable, Flushable {
                 }
             }
 
+            /**
+             * Returns whether a file exists.
+             *
+             * @param file file
+             * @return true when the file exists
+             */
             @Override
             public boolean exists(File file) {
                 return file.exists();
             }
 
+            /**
+             * Returns the file length.
+             *
+             * @param file file
+             * @return file length
+             */
             @Override
             public long size(File file) {
                 return file.length();
             }
 
+            /**
+             * Renames one file to another after removing the target.
+             *
+             * @param from source file
+             * @param to   target file
+             * @throws IOException when the rename fails
+             */
             @Override
             public void rename(File from, File to) throws IOException {
                 delete(to);
@@ -1084,6 +1095,12 @@ public class DiskLruCache implements Closeable, Flushable {
                 }
             }
 
+            /**
+             * Deletes all files below a directory.
+             *
+             * @param directory directory to clear
+             * @throws IOException when the directory cannot be read or a child cannot be deleted
+             */
             @Override
             public void deleteContents(File directory) throws IOException {
                 File[] files = directory.listFiles();
@@ -1592,26 +1609,6 @@ public class DiskLruCache implements Closeable, Flushable {
     private static final class Journal {
 
         /**
-         * Clean entry marker.
-         */
-        static final String CLEAN = "CLEAN";
-
-        /**
-         * Dirty entry marker.
-         */
-        static final String DIRTY = "DIRTY";
-
-        /**
-         * Removed entry marker.
-         */
-        static final String REMOVE = "REMOVE";
-
-        /**
-         * Read entry marker.
-         */
-        static final String READ = "READ";
-
-        /**
          * Hidden constructor for the journal codec namespace.
          */
         private Journal() {
@@ -1633,7 +1630,7 @@ public class DiskLruCache implements Closeable, Flushable {
             final String appVersionString = source.readUtf8LineStrict();
             final String valueCountString = source.readUtf8LineStrict();
             final String blank = source.readUtf8LineStrict();
-            if (!MAGIC.equals(magic) || !VERSION_1.equals(version)
+            if (!Builder.DISK_LRU_CACHE_MAGIC.equals(magic) || !Symbol.ONE.equals(version)
                     || !Integer.toString(appVersion).equals(appVersionString)
                     || !Integer.toString(valueCount).equals(valueCountString) || !Normal.EMPTY.equals(blank)) {
                 throw new IOException("unexpected journal header: [" + magic + ", " + version + ", " + valueCountString
@@ -1651,8 +1648,8 @@ public class DiskLruCache implements Closeable, Flushable {
          */
         static void writeHeader(final BufferSink writer, final int appVersion, final int valueCount)
                 throws IOException {
-            writer.writeUtf8(MAGIC).writeByte(Symbol.C_LF);
-            writer.writeUtf8(VERSION_1).writeByte(Symbol.C_LF);
+            writer.writeUtf8(Builder.DISK_LRU_CACHE_MAGIC).writeByte(Symbol.C_LF);
+            writer.writeUtf8(Symbol.ONE).writeByte(Symbol.C_LF);
             writer.writeDecimalLong(appVersion).writeByte(Symbol.C_LF);
             writer.writeDecimalLong(valueCount).writeByte(Symbol.C_LF);
             writer.writeByte(Symbol.C_LF);
@@ -1675,13 +1672,14 @@ public class DiskLruCache implements Closeable, Flushable {
             final int secondSpace = line.indexOf(Symbol.C_SPACE, keyBegin);
             final String command = line.substring(0, firstSpace);
             final String key = secondSpace == -1 ? line.substring(keyBegin) : line.substring(keyBegin, secondSpace);
-            if (REMOVE.equals(command) && secondSpace == -1) {
+            if (Builder.DISK_LRU_CACHE_REMOVE.equals(command) && secondSpace == -1) {
                 return new Line(command, key, null);
             }
-            if (CLEAN.equals(command) && secondSpace != -1) {
+            if (Builder.DISK_LRU_CACHE_CLEAN.equals(command) && secondSpace != -1) {
                 return new Line(command, key, line.substring(secondSpace + 1).split(Symbol.SPACE));
             }
-            if ((DIRTY.equals(command) || READ.equals(command)) && secondSpace == -1) {
+            if ((Builder.DISK_LRU_CACHE_DIRTY.equals(command) || Builder.DISK_LRU_CACHE_READ.equals(command))
+                    && secondSpace == -1) {
                 return new Line(command, key, null);
             }
             throw new IOException("unexpected journal line: " + line);
@@ -1695,7 +1693,8 @@ public class DiskLruCache implements Closeable, Flushable {
          * @throws IOException when writing fails
          */
         static void writeDirty(final BufferSink writer, final String key) throws IOException {
-            writer.writeUtf8(DIRTY).writeByte(Symbol.C_SPACE).writeUtf8(key).writeByte(Symbol.C_LF);
+            writer.writeUtf8(Builder.DISK_LRU_CACHE_DIRTY).writeByte(Symbol.C_SPACE).writeUtf8(key)
+                    .writeByte(Symbol.C_LF);
         }
 
         /**
@@ -1706,7 +1705,7 @@ public class DiskLruCache implements Closeable, Flushable {
          * @throws IOException when writing fails
          */
         static void writeClean(final BufferSink writer, final State entry) throws IOException {
-            writer.writeUtf8(CLEAN).writeByte(Symbol.C_SPACE).writeUtf8(entry.key);
+            writer.writeUtf8(Builder.DISK_LRU_CACHE_CLEAN).writeByte(Symbol.C_SPACE).writeUtf8(entry.key);
             entry.writeLengths(writer);
             writer.writeByte(Symbol.C_LF);
         }
@@ -1719,7 +1718,8 @@ public class DiskLruCache implements Closeable, Flushable {
          * @throws IOException when writing fails
          */
         static void writeRemove(final BufferSink writer, final String key) throws IOException {
-            writer.writeUtf8(REMOVE).writeByte(Symbol.C_SPACE).writeUtf8(key).writeByte(Symbol.C_LF);
+            writer.writeUtf8(Builder.DISK_LRU_CACHE_REMOVE).writeByte(Symbol.C_SPACE).writeUtf8(key)
+                    .writeByte(Symbol.C_LF);
         }
 
         /**
@@ -1730,7 +1730,8 @@ public class DiskLruCache implements Closeable, Flushable {
          * @throws IOException when writing fails
          */
         static void writeRead(final BufferSink writer, final String key) throws IOException {
-            writer.writeUtf8(READ).writeByte(Symbol.C_SPACE).writeUtf8(key).writeByte(Symbol.C_LF);
+            writer.writeUtf8(Builder.DISK_LRU_CACHE_READ).writeByte(Symbol.C_SPACE).writeUtf8(key)
+                    .writeByte(Symbol.C_LF);
         }
 
         /**
@@ -1748,7 +1749,7 @@ public class DiskLruCache implements Closeable, Flushable {
              * @return true for clean
              */
             boolean clean() {
-                return CLEAN.equals(command);
+                return Builder.DISK_LRU_CACHE_CLEAN.equals(command);
             }
 
             /**
@@ -1757,7 +1758,7 @@ public class DiskLruCache implements Closeable, Flushable {
              * @return true for dirty
              */
             boolean dirty() {
-                return DIRTY.equals(command);
+                return Builder.DISK_LRU_CACHE_DIRTY.equals(command);
             }
 
             /**
@@ -1766,7 +1767,7 @@ public class DiskLruCache implements Closeable, Flushable {
              * @return true for removed
              */
             boolean remove() {
-                return REMOVE.equals(command);
+                return Builder.DISK_LRU_CACHE_REMOVE.equals(command);
             }
 
             /**
@@ -1775,7 +1776,7 @@ public class DiskLruCache implements Closeable, Flushable {
              * @return true for read
              */
             boolean read() {
-                return READ.equals(command);
+                return Builder.DISK_LRU_CACHE_READ.equals(command);
             }
 
         }

@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.fabric.protocol.http.agent;
 
+import org.miaixz.bus.core.xyz.StringKit;
+
 /**
  * Parsed User-Agent classification.
  *
@@ -106,7 +108,7 @@ public final class UserAgent {
      * @return parsed User-Agent, or null when blank
      */
     public static UserAgent parse(final String text) {
-        if (text == null || text.isBlank()) {
+        if (StringKit.isBlank(text)) {
             return null;
         }
         final Browser browser = Browser.parse(text);
@@ -208,6 +210,11 @@ public final class UserAgent {
         return mobile;
     }
 
+    /**
+     * Returns the original User-Agent value.
+     *
+     * @return User-Agent value
+     */
     @Override
     public String toString() {
         return value;

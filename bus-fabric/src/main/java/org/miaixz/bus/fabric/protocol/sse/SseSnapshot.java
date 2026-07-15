@@ -23,14 +23,15 @@ import java.net.URI;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
 import org.miaixz.bus.fabric.protocol.sse.event.SseRetry;
@@ -48,6 +49,7 @@ import org.miaixz.bus.fabric.protocol.sse.event.SseRetry;
  * @param autoReconnect   whether the runner should reopen the stream after retryable disconnects
  * @param responseHandler callback receiving the opening HTTP status and headers
  * @param guard           optional policy guard for stream messages
+ * @param filter          optional message filter for stream open and events
  * @param observer        observer receiving SSE lifecycle events
  * @param callback        callback receiving the opened SSE session or failure
  * @param handler         application event handler
@@ -57,7 +59,7 @@ import org.miaixz.bus.fabric.protocol.sse.event.SseRetry;
  */
 record SseSnapshot(Context context, URI uri, Address address, Headers headers, Timeout timeout, SseRetry retry,
         String lastEventId, boolean autoReconnect, BiConsumer<Integer, Headers> responseHandler, GuardRule guard,
-        EventObserver observer, Callback<SseSession> callback, Consumer<SseEvent> handler,
+        Filter filter, EventObserver observer, Callback<SseSession> callback, Consumer<SseEvent> handler,
         Listener<? super SseSession> listener) {
 
     /**
@@ -72,9 +74,7 @@ record SseSnapshot(Context context, URI uri, Address address, Headers headers, T
         retry = copyRetry(require(retry, "SSE retry"));
         responseHandler = require(responseHandler, "SSE response handler");
         observer = EventObserver.safe(require(observer, "Observer"));
-        callback = Wiring.safeCallback(require(callback, "Callback"), observer);
         handler = require(handler, "SSE handler");
-        listener = Wiring.safe(require(listener, "Listener"), observer);
     }
 
     /**
@@ -98,10 +98,7 @@ record SseSnapshot(Context context, URI uri, Address address, Headers headers, T
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

@@ -19,35 +19,43 @@
 */
 package org.miaixz.bus.fabric.network.aio;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.TimeoutException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.xyz.ExceptionKit;
+import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Status;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.network.Conduit;
 import org.miaixz.bus.fabric.network.Connection;
 import org.miaixz.bus.fabric.network.Destination;
 import org.miaixz.bus.fabric.network.dns.DnsResolver;
 import org.miaixz.bus.fabric.network.dns.DnsResult;
 import org.miaixz.bus.fabric.network.tcp.TcpServer;
+import org.miaixz.bus.fabric.observe.EventObserver;
+import org.miaixz.bus.fabric.observe.ObservationMarker;
 import org.miaixz.bus.fabric.protocol.socket.SocketOptions;
 import org.miaixz.bus.fabric.runtime.dispatch.Dispatcher;
+import org.miaixz.bus.fabric.runtime.lifecycle.LifecycleScope;
 
 /**
  * Default AIO network adapter for client connections and TCP servers.
@@ -116,12 +124,12 @@ public final class AioNetwork implements AutoCloseable {
      */
     private AioNetwork(final AioGroup group, final AioProvider provider, final DnsResolver resolver,
             final Listener<Object> listener, final SocketOptions socketOptions) {
-        this.group = require(group, "AIO group");
-        this.provider = require(provider, "AIO provider");
-        this.resolver = require(resolver, "DNS resolver");
+        this.group = Assert.notNull(group, () -> new ValidateException("AIO group must not be null"));
+        this.provider = Assert.notNull(provider, () -> new ValidateException("AIO provider must not be null"));
+        this.resolver = Assert.notNull(resolver, () -> new ValidateException("DNS resolver must not be null"));
         this.managed = new ConcurrentLinkedDeque<>();
         this.closed = new AtomicBoolean();
-        this.listener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+        this.listener = safe(listener);
         this.socketOptions = socketOptions == null ? SocketOptions.defaults() : socketOptions;
     }
 
@@ -144,8 +152,8 @@ public final class AioNetwork implements AutoCloseable {
         AioGroup group = null;
         try {
             final SocketOptions current = socketOptions == null ? SocketOptions.defaults() : socketOptions;
-            group = AioGroup.create(current.threadNum());
-            return new AioNetwork(group, AioProvider.system(), DnsResolver.system(), Wiring.noop(), current);
+            group = AioGroup.create(current.ioThreads());
+            return new AioNetwork(group, AioProvider.system(), DnsResolver.system(), null, current);
         } catch (final RuntimeException e) {
             if (group != null) {
                 group.shutdown();
@@ -175,9 +183,8 @@ public final class AioNetwork implements AutoCloseable {
         AioGroup group = null;
         try {
             final SocketOptions current = socketOptions == null ? SocketOptions.defaults() : socketOptions;
-            group = AioGroup.create(current.threadNum());
-            return new AioNetwork(group, AioProvider.system(), DnsResolver.system(),
-                    listener == null ? Wiring.noop() : listener, current);
+            group = AioGroup.create(current.ioThreads());
+            return new AioNetwork(group, AioProvider.system(), DnsResolver.system(), listener, current);
         } catch (final RuntimeException e) {
             if (group != null) {
                 group.shutdown();
@@ -212,9 +219,10 @@ public final class AioNetwork implements AutoCloseable {
         AioGroup group = null;
         try {
             final SocketOptions current = socketOptions == null ? SocketOptions.defaults() : socketOptions;
-            group = AioGroup.create(current.threadNum());
-            return new AioNetwork(group, AioProvider.system(), require(resolver, "DNS resolver"),
-                    listener == null ? Wiring.noop() : listener, current);
+            group = AioGroup.create(current.ioThreads());
+            return new AioNetwork(group, AioProvider.system(),
+                    Assert.notNull(resolver, () -> new ValidateException("DNS resolver must not be null")), listener,
+                    current);
         } catch (final RuntimeException e) {
             if (group != null) {
                 group.shutdown();
@@ -255,9 +263,12 @@ public final class AioNetwork implements AutoCloseable {
         AioGroup group = null;
         try {
             final SocketOptions current = socketOptions == null ? SocketOptions.defaults() : socketOptions;
-            group = AioGroup.create(current.threadNum(), require(dispatcher, "Dispatcher"));
-            return new AioNetwork(group, AioProvider.system(), require(resolver, "DNS resolver"),
-                    listener == null ? Wiring.noop() : listener, current);
+            group = AioGroup.create(
+                    current.ioThreads(),
+                    Assert.notNull(dispatcher, () -> new ValidateException("Dispatcher must not be null")));
+            return new AioNetwork(group, AioProvider.system(),
+                    Assert.notNull(resolver, () -> new ValidateException("DNS resolver must not be null")), listener,
+                    current);
         } catch (final RuntimeException e) {
             if (group != null) {
                 group.shutdown();
@@ -292,7 +303,7 @@ public final class AioNetwork implements AutoCloseable {
      * @return connection future
      */
     public CompletableFuture<Connection> connect(final Address address, final Timeout timeout) {
-        return connect(address, timeout, Wiring.noop());
+        return connect(address, timeout, null);
     }
 
     /**
@@ -307,18 +318,15 @@ public final class AioNetwork implements AutoCloseable {
             final Address address,
             final Timeout timeout,
             final Listener<Object> listener) {
-        if (address == null) {
-            throw new ValidateException("Address must not be null");
-        }
-        if (timeout == null) {
-            throw new ValidateException("Timeout must not be null");
-        }
-        final Listener<Object> current = Wiring.safe(Wiring.compose(this.listener, listener), null);
-        final DnsResult result = resolver.resolve(address.host());
+        final Address checkedAddress = Assert.notNull(address, () -> new ValidateException("Address must not be null"));
+        final Timeout checkedTimeout = Assert.notNull(timeout, () -> new ValidateException("Timeout must not be null"));
+        final Listener<Object> current = compose(this.listener, listener);
+        final DnsResult result = resolver.resolve(checkedAddress.host());
         if (result.empty()) {
-            return CompletableFuture.failedFuture(new SocketException("Unable to resolve host " + address.host()));
+            return CompletableFuture
+                    .failedFuture(new SocketException("Unable to resolve host " + checkedAddress.host()));
         }
-        return connectCandidate(address, timeout, current, result.addresses(), 0, null);
+        return connectCandidate(checkedAddress, checkedTimeout, current, result.addresses(), Normal._0, null);
     }
 
     /**
@@ -340,7 +348,7 @@ public final class AioNetwork implements AutoCloseable {
             final int index,
             final Throwable failure) {
         if (index >= addresses.size()) {
-            final Throwable root = unwrap(failure);
+            final Throwable root = ExceptionKit.unwrap(failure);
             if (root instanceof TimeoutException timedOut) {
                 listener.failure(this, timedOut);
                 return CompletableFuture.failedFuture(timedOut);
@@ -357,20 +365,19 @@ public final class AioNetwork implements AutoCloseable {
         channel.connect(socket, timeout).whenComplete((ignored, cause) -> {
             if (cause != null) {
                 managed.remove(channel);
-                closeQuietly(channel);
-                connectCandidate(address, timeout, listener, addresses, index + 1, unwrap(cause))
+                IoKit.closeQuietly(channel);
+                connectCandidate(address, timeout, listener, addresses, index + Normal._1, ExceptionKit.unwrap(cause))
                         .whenComplete((connection, next) -> {
                             if (next == null) {
                                 opened.complete(connection);
                             } else {
-                                opened.completeExceptionally(unwrap(next));
+                                opened.completeExceptionally(ExceptionKit.unwrap(next));
                             }
                         });
                 return;
             }
             final Connection connection = new AioConnection(
                     Destination.of(address.protocol(), address, socketOptions.toOptions()), channel, listener);
-            listener.open(connection);
             opened.complete(connection);
         });
         return opened;
@@ -384,7 +391,7 @@ public final class AioNetwork implements AutoCloseable {
      * @return server
      */
     public TcpServer server(final Address address, final Handler handler) {
-        return server(address, handler, Wiring.noop());
+        return server(address, handler, null);
     }
 
     /**
@@ -396,15 +403,13 @@ public final class AioNetwork implements AutoCloseable {
      * @return server
      */
     public TcpServer server(final Address address, final Handler handler, final Listener<Object> listener) {
-        if (address == null) {
-            throw new ValidateException("Server address must not be null");
-        }
-        if (handler == null) {
-            throw new ValidateException("Server handler must not be null");
-        }
+        final Address checkedAddress = Assert
+                .notNull(address, () -> new ValidateException("Server address must not be null"));
+        final Handler checkedHandler = Assert
+                .notNull(handler, () -> new ValidateException("Server handler must not be null"));
         final TcpServer server = provider
-                .openServer(address, group, Wiring.compose(this.listener, listener), socketOptions);
-        server.accept(handler);
+                .openServer(checkedAddress, group, compose(this.listener, listener), socketOptions);
+        server.accept(checkedHandler);
         managed.add(server);
         return server;
     }
@@ -437,45 +442,28 @@ public final class AioNetwork implements AutoCloseable {
     }
 
     /**
-     * Requires a non-null reference.
+     * Composes the network listener with a per-operation listener.
      *
-     * @param value value
-     * @param name  name
-     * @param <T>   value type
-     * @return value
+     * @param first  first listener
+     * @param second second listener
+     * @return safe composed listener
      */
-    private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
+    private static Listener<Object> compose(final Listener<Object> first, final Listener<Object> second) {
+        final Listener<Object> left = first == null ? NoopListener.INSTANCE : first;
+        if (second == null) {
+            return left;
         }
-        return value;
+        return safe(new CompositeListener(left, second));
     }
 
     /**
-     * Closes a channel without masking connection failures.
+     * Protects listener callbacks from escaping.
      *
-     * @param channel channel
+     * @param listener listener
+     * @return safe listener
      */
-    private static void closeQuietly(final AioChannel channel) {
-        try {
-            channel.close();
-        } catch (final RuntimeException ignored) {
-            // Keep original connection failure.
-        }
-    }
-
-    /**
-     * Unwraps asynchronous failures.
-     *
-     * @param cause cause
-     * @return unwrapped cause
-     */
-    private static Throwable unwrap(final Throwable cause) {
-        Throwable current = cause;
-        while (current instanceof CompletionException && current.getCause() != null) {
-            current = current.getCause();
-        }
-        return current;
+    private static Listener<Object> safe(final Listener<Object> listener) {
+        return listener == null ? NoopListener.INSTANCE : new SafeListener(listener);
     }
 
     /**
@@ -499,14 +487,9 @@ public final class AioNetwork implements AutoCloseable {
         private final Conduit conduit;
 
         /**
-         * Lifecycle listener.
+         * Lifecycle scope.
          */
-        private final Listener<Object> listener;
-
-        /**
-         * Lifecycle state.
-         */
-        private volatile Status state = Status.OPENED;
+        private final LifecycleScope scope;
 
         /**
          * Creates a connection.
@@ -516,10 +499,19 @@ public final class AioNetwork implements AutoCloseable {
          * @param listener    lifecycle listener
          */
         private AioConnection(final Destination destination, final AioChannel aio, final Listener<Object> listener) {
-            this.destination = require(destination, "Connection destination");
-            this.aio = require(aio, "AIO channel");
-            this.conduit = new AioConduit(aio);
-            this.listener = Wiring.safe(listener, null);
+            this.destination = Assert
+                    .notNull(destination, () -> new ValidateException("Connection destination must not be null"));
+            this.aio = Assert.notNull(aio, () -> new ValidateException("AIO channel must not be null"));
+            this.conduit = new AioConduit(this.aio);
+            this.scope = LifecycleScope.session(
+                    this,
+                    "aio-connection",
+                    listener,
+                    EventObserver.noop(),
+                    ObservationMarker.CONNECT_SUCCESS,
+                    null,
+                    ObservationMarker.CONNECT_FAILED);
+            this.scope.open(this);
         }
 
         /**
@@ -549,29 +541,27 @@ public final class AioNetwork implements AutoCloseable {
          */
         @Override
         public Status state() {
-            return state;
+            return scope.state();
         }
 
         /**
-         * Reads bytes.
+         * Returns the protocol-layer source.
          *
-         * @param buffer target buffer
-         * @return read future
+         * @return source view
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer buffer) {
-            return aio.read(buffer);
+        public Source source() {
+            return conduit.source();
         }
 
         /**
-         * Writes bytes.
+         * Returns the protocol-layer sink.
          *
-         * @param buffer source buffer
-         * @return write future
+         * @return sink view
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer buffer) {
-            return aio.write(buffer);
+        public Sink sink() {
+            return conduit.sink();
         }
 
         /**
@@ -581,7 +571,7 @@ public final class AioNetwork implements AutoCloseable {
          */
         @Override
         public boolean healthy() {
-            return state == Status.OPENED && aio.opened();
+            return scope.state() == Status.OPENED && aio.opened();
         }
 
         /**
@@ -599,10 +589,13 @@ public final class AioNetwork implements AutoCloseable {
          */
         @Override
         public void close() {
-            if (state != Status.CLOSED) {
+            if (scope.state().terminal()) {
+                return;
+            }
+            try {
                 aio.close();
-                state = Status.CLOSED;
-                listener.close(this);
+            } finally {
+                scope.close(this);
             }
         }
 
@@ -619,56 +612,68 @@ public final class AioNetwork implements AutoCloseable {
         private final AioChannel aio;
 
         /**
+         * Source view for protocol readers.
+         */
+        private final Source source;
+
+        /**
+         * Sink view for protocol writers.
+         */
+        private final Sink sink;
+
+        /**
          * Creates an adapter.
          *
          * @param aio channel
          */
         private AioConduit(final AioChannel aio) {
-            this.aio = require(aio, "AIO channel");
+            this.aio = Assert.notNull(aio, () -> new ValidateException("AIO channel must not be null"));
+            this.source = new AioSource();
+            this.sink = new AioSink();
         }
 
         /**
-         * Reads bytes.
+         * Reads bytes into a core.io buffer.
          *
-         * @param target target buffer
+         * @param target    target buffer
+         * @param byteCount maximum byte count
          * @return read future
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer target) {
-            return aio.read(target);
+        public CompletableFuture<Long> read(final Buffer target, final long byteCount) {
+            return aio.read(target, byteCount);
         }
 
         /**
-         * Reads bytes with a handler.
+         * Writes bytes from a core.io buffer.
          *
-         * @param target  target buffer
-         * @param handler completion handler
-         */
-        @Override
-        public void read(final ByteBuffer target, final CompletionHandler<Integer, ByteBuffer> handler) {
-            aio.read(target, handler);
-        }
-
-        /**
-         * Writes bytes.
-         *
-         * @param source source buffer
+         * @param source    source buffer
+         * @param byteCount byte count to write
          * @return write future
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer source) {
-            return aio.write(source);
+        public CompletableFuture<Long> write(final Buffer source, final long byteCount) {
+            return aio.write(source, byteCount);
         }
 
         /**
-         * Writes bytes with a handler.
+         * Returns the core.io source view.
          *
-         * @param source  source buffer
-         * @param handler completion handler
+         * @return source view
          */
         @Override
-        public void write(final ByteBuffer source, final CompletionHandler<Integer, ByteBuffer> handler) {
-            aio.write(source, handler);
+        public Source source() {
+            return source;
+        }
+
+        /**
+         * Returns the core.io sink view.
+         *
+         * @return sink view
+         */
+        @Override
+        public Sink sink() {
+            return sink;
         }
 
         /**
@@ -688,6 +693,262 @@ public final class AioNetwork implements AutoCloseable {
         public void close() {
             aio.close();
         }
+
+        /**
+         * Awaits an asynchronous byte-count operation.
+         *
+         * @param future  operation future
+         * @param message failure message
+         * @return byte count
+         * @throws IOException when the operation fails
+         */
+        private static long await(final CompletableFuture<Long> future, final String message) throws IOException {
+            try {
+                return Assert.notNull(future, () -> new ValidateException("IO future must not be null")).get();
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException(message, e);
+            } catch (final ExecutionException e) {
+                final Throwable cause = e.getCause();
+                if (cause instanceof IOException io) {
+                    throw io;
+                }
+                if (cause instanceof RuntimeException runtime) {
+                    throw runtime;
+                }
+                throw new IOException(message, cause);
+            }
+        }
+
+        /**
+         * Source backed by the AIO conduit.
+         */
+        private final class AioSource implements Source {
+
+            /**
+             * Reads bytes through the enclosing conduit.
+             *
+             * @param sink      target buffer
+             * @param byteCount maximum byte count
+             * @return read byte count
+             * @throws IOException when reading fails
+             */
+            @Override
+            public long read(final Buffer sink, final long byteCount) throws IOException {
+                return await(AioConduit.this.read(sink, byteCount), "Unable to read AIO source");
+            }
+
+            /**
+             * Returns the no-op timeout.
+             *
+             * @return timeout
+             */
+            @Override
+            public org.miaixz.bus.core.io.timout.Timeout timeout() {
+                return org.miaixz.bus.core.io.timout.Timeout.NONE;
+            }
+
+            /**
+             * Closes the enclosing conduit.
+             */
+            @Override
+            public void close() {
+                AioConduit.this.close();
+            }
+
+        }
+
+        /**
+         * Sink backed by the AIO conduit.
+         */
+        private final class AioSink implements Sink {
+
+            /**
+             * Writes bytes through the enclosing conduit.
+             *
+             * @param source    source buffer
+             * @param byteCount byte count
+             * @throws IOException when writing fails
+             */
+            @Override
+            public void write(final Buffer source, final long byteCount) throws IOException {
+                await(AioConduit.this.write(source, byteCount), "Unable to write AIO sink");
+            }
+
+            /**
+             * Flushes the AIO sink.
+             */
+            @Override
+            public void flush() {
+                // AIO socket writes are flushed by the operating system.
+            }
+
+            /**
+             * Returns the no-op timeout.
+             *
+             * @return timeout
+             */
+            @Override
+            public org.miaixz.bus.core.io.timout.Timeout timeout() {
+                return org.miaixz.bus.core.io.timout.Timeout.NONE;
+            }
+
+            /**
+             * Closes the enclosing conduit.
+             */
+            @Override
+            public void close() {
+                AioConduit.this.close();
+            }
+
+        }
+
+    }
+
+    /**
+     * Composed listener.
+     *
+     * @param first  first listener
+     * @param second second listener
+     */
+    private record CompositeListener(Listener<Object> first, Listener<Object> second) implements Listener<Object> {
+
+        /**
+         * Handles open events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void open(final Object source) {
+            RuntimeException failure = null;
+            try {
+                first.open(source);
+            } catch (final RuntimeException e) {
+                failure = e;
+            }
+            try {
+                second.open(source);
+            } catch (final RuntimeException e) {
+                failure = failure == null ? e : failure;
+            }
+            if (failure != null) {
+                throw failure;
+            }
+        }
+
+        /**
+         * Handles close events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void close(final Object source) {
+            RuntimeException failure = null;
+            try {
+                first.close(source);
+            } catch (final RuntimeException e) {
+                failure = e;
+            }
+            try {
+                second.close(source);
+            } catch (final RuntimeException e) {
+                failure = failure == null ? e : failure;
+            }
+            if (failure != null) {
+                throw failure;
+            }
+        }
+
+        /**
+         * Handles failure events.
+         *
+         * @param source lifecycle source
+         * @param cause  failure cause
+         */
+        @Override
+        public void failure(final Object source, final Throwable cause) {
+            RuntimeException failure = null;
+            try {
+                first.failure(source, cause);
+            } catch (final RuntimeException e) {
+                failure = e;
+            }
+            try {
+                second.failure(source, cause);
+            } catch (final RuntimeException e) {
+                failure = failure == null ? e : failure;
+            }
+            if (failure != null) {
+                throw failure;
+            }
+        }
+
+    }
+
+    /**
+     * Safe listener wrapper.
+     *
+     * @param delegate listener delegate
+     */
+    private record SafeListener(Listener<Object> delegate) implements Listener<Object> {
+
+        /**
+         * Handles open events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void open(final Object source) {
+            try {
+                delegate.open(source);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break network lifecycle transitions.
+            }
+        }
+
+        /**
+         * Handles close events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void close(final Object source) {
+            try {
+                delegate.close(source);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break network lifecycle transitions.
+            }
+        }
+
+        /**
+         * Handles failure events.
+         *
+         * @param source lifecycle source
+         * @param cause  failure cause
+         */
+        @Override
+        public void failure(final Object source, final Throwable cause) {
+            try {
+                delegate.failure(source, cause);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break network lifecycle transitions.
+            }
+        }
+
+    }
+
+    /**
+     * Internal no-operation listener.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
+    private enum NoopListener implements Listener<Object> {
+
+        /**
+         * Singleton no-operation listener.
+         */
+        INSTANCE
 
     }
 

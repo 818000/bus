@@ -28,12 +28,16 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
-import org.miaixz.bus.fabric.Options;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Payload;
+import org.miaixz.bus.fabric.network.Transport;
 import org.miaixz.bus.fabric.network.udp.UdpNetwork;
 import org.miaixz.bus.fabric.network.udp.UdpSession;
 
@@ -44,21 +48,6 @@ import org.miaixz.bus.fabric.network.udp.UdpSession;
  * @since Java 21+
  */
 public final class KcpNetwork implements AutoCloseable {
-
-    /**
-     * Default send and receive window.
-     */
-    private static final int DEFAULT_WINDOW = 32;
-
-    /**
-     * Default retransmission delay.
-     */
-    private static final Duration DEFAULT_RETRANSMIT_DELAY = Duration.ofMillis(200);
-
-    /**
-     * Half of the unsigned 32-bit sequence space.
-     */
-    private static final long HALF_SEQUENCE_SPACE = 2_147_483_648L;
 
     /**
      * Wrapped UDP network.
@@ -161,7 +150,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @param udp UDP network
      */
     private KcpNetwork(final UdpNetwork udp) {
-        this(udp, Clock.systemUTC(), DEFAULT_WINDOW, DEFAULT_WINDOW, DEFAULT_RETRANSMIT_DELAY);
+        this(udp, Clock.systemUTC(), Normal._32, Normal._32, Builder.KCP_NETWORK_DEFAULT_RETRANSMIT_DELAY);
     }
 
     /**
@@ -175,33 +164,30 @@ public final class KcpNetwork implements AutoCloseable {
      */
     private KcpNetwork(final UdpNetwork udp, final Clock clock, final int sendWindowSize, final int receiveWindowSize,
             final Duration retransmitDelay) {
-        if (udp == null) {
-            throw new ValidateException("UDP network must not be null");
-        }
-        if (clock == null) {
-            throw new ValidateException("KCP clock must not be null");
-        }
-        if (sendWindowSize <= 0 || sendWindowSize > 65_535) {
-            throw new ValidateException("KCP send window must be between 1 and 65535");
-        }
-        if (receiveWindowSize <= 0 || receiveWindowSize > 65_535) {
-            throw new ValidateException("KCP receive window must be between 1 and 65535");
-        }
-        if (retransmitDelay == null || retransmitDelay.isNegative()) {
-            throw new ValidateException("KCP retransmit delay must be non-null and non-negative");
-        }
-        this.udp = udp;
+        this.udp = Assert.notNull(udp, () -> new ValidateException("UDP network must not be null"));
         this.sequence = new AtomicLong();
-        this.clock = clock;
-        this.sendWindowSize = sendWindowSize;
-        this.receiveWindowSize = receiveWindowSize;
-        this.retransmitDelay = retransmitDelay;
+        this.clock = Assert.notNull(clock, () -> new ValidateException("KCP clock must not be null"));
+        this.sendWindowSize = Assert.checkBetween(
+                sendWindowSize,
+                Normal._1,
+                Normal._65535,
+                () -> new ValidateException("KCP send window must be between 1 and 65535"));
+        this.receiveWindowSize = Assert.checkBetween(
+                receiveWindowSize,
+                Normal._1,
+                Normal._65535,
+                () -> new ValidateException("KCP receive window must be between 1 and 65535"));
+        this.retransmitDelay = Assert
+                .notNull(retransmitDelay, () -> new ValidateException("KCP retransmit delay must not be null"));
+        Assert.isTrue(
+                !this.retransmitDelay.isNegative(),
+                () -> new ValidateException("KCP retransmit delay must be non-negative"));
         this.sendWindow = new LinkedHashMap<>();
         this.receiveWindow = new TreeMap<>();
         this.closed = new AtomicBoolean();
-        this.lastRttMillis = -1L;
-        this.smoothedRttMillis = -1L;
-        this.congestionWindow = sendWindowSize;
+        this.lastRttMillis = Normal.__1;
+        this.smoothedRttMillis = Normal.__1;
+        this.congestionWindow = this.sendWindowSize;
     }
 
     /**
@@ -240,16 +226,14 @@ public final class KcpNetwork implements AutoCloseable {
      * @return packet
      */
     public synchronized KcpPacket encode(final Payload payload) {
-        if (payload == null) {
-            throw new ValidateException("KCP payload must not be null");
-        }
+        Assert.notNull(payload, () -> new ValidateException("KCP payload must not be null"));
         ensureOpen();
         if (sendWindow.size() >= currentSendLimit()) {
             throw new StatefulException("KCP send window is full");
         }
-        final long current = sequence.getAndUpdate(value -> (value + 1L) & 0xffff_ffffL);
-        final KcpPacket packet = KcpPacket
-                .data(current, payload.bytes(KcpPacket.maxPayloadBytes()), remainingReceiveWindow(), now());
+        final long current = sequence.getAndUpdate(value -> (value + Normal._1) & Builder.UNSIGNED_INT_MASK);
+        final ByteString bytes = ByteString.of(payload.bytes(KcpPacket.maxPayloadBytes()));
+        final KcpPacket packet = KcpPacket.data(current, bytes, remainingReceiveWindow(), now());
         sendWindow.put(current, new SentPacket(packet, packet.timestamp()));
         return packet;
     }
@@ -261,16 +245,14 @@ public final class KcpNetwork implements AutoCloseable {
      * @return payload
      */
     public synchronized Payload decode(final KcpPacket packet) {
-        if (packet == null) {
-            throw new ValidateException("KCP packet must not be null");
-        }
+        Assert.notNull(packet, () -> new ValidateException("KCP packet must not be null"));
         ensureOpen();
         if (packet.type() == KcpPacket.Type.ACK) {
             acknowledge(packet);
             return Payload.empty();
         }
-        final byte[] bytes = packet.payload();
-        return bytes.length == 0 ? Payload.empty() : Payload.of(bytes);
+        final ByteString bytes = packet.payloadBytes();
+        return bytes.size() == Normal._0 ? Payload.empty() : Payload.of(bytes);
     }
 
     /**
@@ -280,16 +262,14 @@ public final class KcpNetwork implements AutoCloseable {
      * @return inbound processing result
      */
     public synchronized Inbound receive(final KcpPacket packet) {
-        if (packet == null) {
-            throw new ValidateException("KCP packet must not be null");
-        }
+        Assert.notNull(packet, () -> new ValidateException("KCP packet must not be null"));
         ensureOpen();
         if (packet.type() == KcpPacket.Type.ACK) {
             acknowledge(packet);
             return new Inbound(null, List.of());
         }
         final KcpPacket ack = KcpPacket.ack(packet.sequence(), remainingReceiveWindow(), now());
-        final ArrayList<byte[]> delivered = new ArrayList<>();
+        final ArrayList<ByteString> delivered = new ArrayList<>();
         if (isBeforeExpected(packet.sequence())) {
             duplicatePackets++;
             return new Inbound(ack, delivered);
@@ -308,9 +288,9 @@ public final class KcpNetwork implements AutoCloseable {
             if (ready == null) {
                 break;
             }
-            delivered.add(ready.payload());
+            delivered.add(ready.payloadBytes());
             deliveredPackets++;
-            expectedReceiveSequence = (expectedReceiveSequence + 1L) & 0xffff_ffffL;
+            expectedReceiveSequence = (expectedReceiveSequence + Normal._1) & Builder.UNSIGNED_INT_MASK;
         }
         return new Inbound(ack, delivered);
     }
@@ -321,9 +301,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @param packet ACK packet
      */
     public synchronized void acknowledge(final KcpPacket packet) {
-        if (packet == null) {
-            throw new ValidateException("KCP ACK packet must not be null");
-        }
+        Assert.notNull(packet, () -> new ValidateException("KCP ACK packet must not be null"));
         ensureOpen();
         if (packet.type() != KcpPacket.Type.ACK) {
             throw new ValidateException("KCP acknowledgement requires ACK packet");
@@ -332,7 +310,7 @@ public final class KcpNetwork implements AutoCloseable {
         if (sent != null) {
             acknowledgedPackets++;
             updateRtt(sent.sentAt);
-            congestionWindow = Math.min(sendWindowSize, Math.max(1, congestionWindow + 1));
+            congestionWindow = Math.min(sendWindowSize, Math.max(Normal._1, congestionWindow + Normal._1));
         }
     }
 
@@ -354,7 +332,7 @@ public final class KcpNetwork implements AutoCloseable {
         }
         if (!due.isEmpty()) {
             retransmissions += due.size();
-            congestionWindow = Math.max(1, congestionWindow / 2);
+            congestionWindow = Math.max(Normal._1, congestionWindow / Normal._2);
         }
         return due;
     }
@@ -395,9 +373,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return datagram bytes
      */
     public byte[] pack(final KcpPacket packet) {
-        if (packet == null) {
-            throw new ValidateException("KCP packet must not be null");
-        }
+        Assert.notNull(packet, () -> new ValidateException("KCP packet must not be null"));
         return packet.datagram();
     }
 
@@ -408,7 +384,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return packet
      */
     public KcpPacket unpack(final Payload payload) {
-        return unpack(payload, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+        return unpack(payload, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
     }
 
     /**
@@ -419,10 +395,9 @@ public final class KcpNetwork implements AutoCloseable {
      * @return packet
      */
     public KcpPacket unpack(final Payload payload, final long materializeMaxBytes) {
-        if (payload == null) {
-            throw new ValidateException("KCP payload must not be null");
-        }
-        return KcpPacket.fromDatagram(payload.bytes(materializeMaxBytes));
+        Assert.notNull(payload, () -> new ValidateException("KCP payload must not be null"));
+        final long maxBytes = Math.min(materializeMaxBytes, KcpPacket.maxDatagramBytes() + Normal._1);
+        return KcpPacket.fromDatagram(payload.bytes(maxBytes));
     }
 
     /**
@@ -432,9 +407,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return UDP session
      */
     public UdpSession open(final Address address) {
-        if (address == null) {
-            throw new ValidateException("KCP address must not be null");
-        }
+        Assert.notNull(address, () -> new ValidateException("KCP address must not be null"));
         ensureOpen();
         return udp.connect(toUdp(address));
     }
@@ -467,10 +440,12 @@ public final class KcpNetwork implements AutoCloseable {
      * @return UDP address
      */
     private static Address toUdp(final Address address) {
-        if ("udp".equals(address.scheme())) {
+        if (Transport.UDP.scheme().equals(address.scheme())) {
             return address;
         }
-        return Address.parse("udp://" + address.host() + Symbol.COLON + address.port());
+        return Address.parse(
+                Transport.UDP.scheme() + Symbol.COLON + Symbol.SLASH + Symbol.SLASH + address.host() + Symbol.COLON
+                        + address.port());
     }
 
     /**
@@ -479,7 +454,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return available receive window slots
      */
     private int remainingReceiveWindow() {
-        return Math.max(0, receiveWindowSize - receiveWindow.size());
+        return Math.max(Normal._0, receiveWindowSize - receiveWindow.size());
     }
 
     /**
@@ -488,7 +463,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return maximum unacknowledged packets allowed now
      */
     private int currentSendLimit() {
-        return Math.min(sendWindowSize, Math.max(1, congestionWindow));
+        return Math.min(sendWindowSize, Math.max(Normal._1, congestionWindow));
     }
 
     /**
@@ -507,7 +482,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return {@code true} when the packet is older than the receive window can use
      */
     private boolean isBeforeExpected(final long current) {
-        return sequenceDistance(expectedReceiveSequence, current) >= HALF_SEQUENCE_SPACE;
+        return sequenceDistance(expectedReceiveSequence, current) >= Builder.KCP_NETWORK_HALF_SEQUENCE_SPACE;
     }
 
     /**
@@ -516,9 +491,10 @@ public final class KcpNetwork implements AutoCloseable {
      * @param sentAt original send time in milliseconds
      */
     private void updateRtt(final long sentAt) {
-        final long sample = Math.max(0L, now() - sentAt);
+        final long sample = Math.max(Normal._0, now() - sentAt);
         lastRttMillis = sample;
-        smoothedRttMillis = smoothedRttMillis < 0L ? sample : ((smoothedRttMillis * 7L) + sample) / 8L;
+        smoothedRttMillis = smoothedRttMillis < Normal._0 ? sample
+                : ((smoothedRttMillis * Normal._7) + sample) / Normal._8;
     }
 
     /**
@@ -538,7 +514,7 @@ public final class KcpNetwork implements AutoCloseable {
      * @return distance in the KCP sequence space
      */
     private static long sequenceDistance(final long from, final long to) {
-        return (to - from) & 0xffff_ffffL;
+        return (to - from) & Builder.UNSIGNED_INT_MASK;
     }
 
     /**
@@ -547,13 +523,26 @@ public final class KcpNetwork implements AutoCloseable {
      * @param ack      ACK to send, or null
      * @param payloads ordered payloads ready for application delivery
      */
-    public record Inbound(KcpPacket ack, List<byte[]> payloads) {
+    public record Inbound(KcpPacket ack, List<ByteString> payloads) {
 
         /**
          * Creates an inbound result.
          */
         public Inbound {
             payloads = List.copyOf(payloads);
+        }
+
+        /**
+         * Returns payload snapshots as byte arrays for compatibility callers.
+         *
+         * @return payload snapshots
+         */
+        public List<byte[]> payloadArrays() {
+            final ArrayList<byte[]> values = new ArrayList<>(payloads.size());
+            for (final ByteString payload : payloads) {
+                values.add(payload.toByteArray());
+            }
+            return List.copyOf(values);
         }
 
     }

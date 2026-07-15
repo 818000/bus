@@ -33,8 +33,10 @@ import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.PORT;
+import org.miaixz.bus.core.net.Protocol;
+import org.miaixz.bus.core.net.url.UrlDecoder;
 import org.miaixz.bus.core.net.url.UrlEncoder;
-import org.miaixz.bus.core.xyz.CharKit;
 import org.miaixz.bus.core.xyz.StringKit;
 
 /**
@@ -44,11 +46,6 @@ import org.miaixz.bus.core.xyz.StringKit;
  * @since Java 21+
  */
 public final class UnoUrl {
-
-    /**
-     * Uppercase hexadecimal digits for percent encoding.
-     */
-    private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
     /**
      * Parsed protocol address.
@@ -190,13 +187,16 @@ public final class UnoUrl {
      */
     public static int defaultPort(final String scheme) {
         if (scheme == null) {
-            return -1;
+            return Normal.__1;
         }
-        return switch (scheme.toLowerCase(Locale.ROOT)) {
-            case "http", "ws" -> 80;
-            case "https", "wss" -> 443;
-            default -> -1;
-        };
+        final String normalized = scheme.toLowerCase(Locale.ROOT);
+        if (Protocol.HTTP.name.equals(normalized) || Protocol.WS.name.equals(normalized)) {
+            return PORT._80.getPort();
+        }
+        if (Protocol.HTTPS.name.equals(normalized) || Protocol.WSS.name.equals(normalized)) {
+            return PORT._443.getPort();
+        }
+        return Normal.__1;
     }
 
     /**
@@ -538,6 +538,11 @@ public final class UnoUrl {
         return toUri();
     }
 
+    /**
+     * Returns the canonical encoded URL text.
+     *
+     * @return encoded URL
+     */
     @Override
     public String toString() {
         return encoded();
@@ -546,9 +551,12 @@ public final class UnoUrl {
     /**
      * Builds the encoded URL.
      *
-     * @param address address
-     * @param path    path
-     * @param query   query
+     * @param address  address
+     * @param path     path
+     * @param query    query parameters
+     * @param username decoded username
+     * @param password decoded password
+     * @param fragment decoded fragment
      * @return encoded URL
      */
     private static String buildEncoded(
@@ -656,23 +664,9 @@ public final class UnoUrl {
     }
 
     /**
-     * Creates a mutable query copy.
+     * Encodes query parameters.
      *
-     * @param source source query
-     * @return mutable query
-     */
-    private static LinkedHashMap<String, List<String>> mutableQuery(final Map<String, List<String>> source) {
-        final LinkedHashMap<String, List<String>> copy = new LinkedHashMap<>();
-        for (final Map.Entry<String, List<String>> entry : source.entrySet()) {
-            copy.put(entry.getKey(), new ArrayList<>(entry.getValue()));
-        }
-        return copy;
-    }
-
-    /**
-     * Encodes the query map.
-     *
-     * @param values query values
+     * @param values query parameters
      * @return query string
      */
     private static String encodeQuery(final List<QueryParameter> values) {
@@ -711,24 +705,7 @@ public final class UnoUrl {
      * @return encoded value
      */
     private static String encode(final String value) {
-        StringBuilder builder = null;
-        for (int i = 0; i < value.length(); i++) {
-            final char current = value.charAt(i);
-            if (isUnreserved(current)) {
-                if (builder != null) {
-                    builder.append(current);
-                }
-            } else if (current < 0x80) {
-                if (builder == null) {
-                    builder = new StringBuilder(value.length() + 8);
-                    builder.append(value, 0, i);
-                }
-                appendPercentEncoded(builder, current);
-            } else {
-                return UrlEncoder.encodeAll(value, Charset.UTF_8);
-            }
-        }
-        return builder == null ? value : builder.toString();
+        return UrlEncoder.encodeComponent(value, Charset.UTF_8);
     }
 
     /**
@@ -738,30 +715,7 @@ public final class UnoUrl {
      * @return decoded value
      */
     private static String decode(final String value) {
-        StringBuilder builder = null;
-        for (int i = 0; i < value.length();) {
-            final char current = value.charAt(i);
-            if (current == Symbol.C_PLUS) {
-                if (builder == null) {
-                    builder = new StringBuilder(value.length());
-                    builder.append(value, 0, i);
-                }
-                builder.append(Symbol.C_SPACE);
-                i++;
-            } else if (current == Symbol.C_PERCENT) {
-                if (builder == null) {
-                    builder = new StringBuilder(value.length());
-                    builder.append(value, 0, i);
-                }
-                i = appendPercentDecoded(builder, value, i);
-            } else {
-                if (builder != null) {
-                    builder.append(current);
-                }
-                i++;
-            }
-        }
-        return builder == null ? value : builder.toString();
+        return UrlDecoder.decodeStrict(value, Charset.UTF_8, true);
     }
 
     /**
@@ -793,7 +747,7 @@ public final class UnoUrl {
      * Parses a raw query string.
      *
      * @param rawQuery raw query
-     * @return decoded query map
+     * @return decoded query parameters
      */
     private static List<QueryParameter> parseQueryParameters(final String rawQuery) {
         final ArrayList<QueryParameter> values = new ArrayList<>();
@@ -898,7 +852,8 @@ public final class UnoUrl {
      * @return {@code true} for HTTP, HTTPS, WebSocket, and secure WebSocket schemes
      */
     private static boolean commonScheme(final String scheme) {
-        return "http".equals(scheme) || "https".equals(scheme) || "ws".equals(scheme) || "wss".equals(scheme);
+        return Protocol.HTTP.name.equals(scheme) || Protocol.HTTPS.name.equals(scheme)
+                || Protocol.WS.name.equals(scheme) || Protocol.WSS.name.equals(scheme);
     }
 
     /**
@@ -918,7 +873,7 @@ public final class UnoUrl {
                 return -1;
             }
             port = port * 10 + current - Symbol.C_ZERO;
-            if (port > 65535) {
+            if (port > Normal._65535) {
                 return -1;
             }
         }
@@ -1013,69 +968,6 @@ public final class UnoUrl {
             throw new ValidateException(name + " must be non-null and single-line");
         }
         return value;
-    }
-
-    /**
-     * Returns whether a character may appear in a URL component without percent encoding.
-     *
-     * @param value character
-     * @return {@code true} for RFC 3986 unreserved characters
-     */
-    private static boolean isUnreserved(final char value) {
-        return value >= Symbol.C_ZERO && value <= Symbol.C_NINE || value >= 'A' && value <= 'Z'
-                || value >= 'a' && value <= 'z' || value == Symbol.C_MINUS || value == Symbol.C_DOT
-                || value == Symbol.C_UNDERLINE || value == Symbol.C_TILDE;
-    }
-
-    /**
-     * Appends one already-normalized byte as a two-digit uppercase percent escape.
-     *
-     * @param builder target builder
-     * @param value   byte value in the low eight bits
-     */
-    private static void appendPercentEncoded(final StringBuilder builder, final int value) {
-        builder.append(Symbol.C_PERCENT).append(HEX_DIGITS[value >> 4]).append(HEX_DIGITS[value & 0xf]);
-    }
-
-    /**
-     * Decodes a contiguous percent-escaped UTF-8 byte run into the target builder.
-     *
-     * @param builder decoded component target
-     * @param value   encoded component
-     * @param offset  index of the first percent sign
-     * @return index immediately after the decoded run
-     */
-    private static int appendPercentDecoded(final StringBuilder builder, final String value, final int offset) {
-        if (offset + 2 >= value.length() || !CharKit.isHexChar(value.charAt(offset + 1))
-                || !CharKit.isHexChar(value.charAt(offset + 2))) {
-            throw new IllegalArgumentException("Invalid URL percent encoding");
-        }
-        final byte[] bytes = new byte[(value.length() - offset) / 3 + 1];
-        int count = 0;
-        int index = offset;
-        while (index + 2 < value.length() && value.charAt(index) == Symbol.C_PERCENT
-                && CharKit.isHexChar(value.charAt(index + 1)) && CharKit.isHexChar(value.charAt(index + 2))) {
-            bytes[count++] = (byte) ((hexDigit(value.charAt(index + 1)) << 4) + hexDigit(value.charAt(index + 2)));
-            index += 3;
-        }
-        builder.append(new String(bytes, 0, count, Charset.UTF_8));
-        return index;
-    }
-
-    /**
-     * Converts a validated hexadecimal character to its numeric value.
-     *
-     * @param value hexadecimal character
-     * @return value between {@code 0} and {@code 15}
-     */
-    private static int hexDigit(final char value) {
-        if (value >= Symbol.C_ZERO && value <= Symbol.C_NINE) {
-            return value - Symbol.C_ZERO;
-        }
-        if (value >= 'A' && value <= 'F') {
-            return value - 'A' + 10;
-        }
-        return value - 'a' + 10;
     }
 
     /**
@@ -1220,7 +1112,7 @@ public final class UnoUrl {
          * @return this builder
          */
         public Builder port(final int port) {
-            if (port != -1 && (port < 1 || port > 65535)) {
+            if (port != Normal.__1 && (port < Normal._1 || port > Normal._65535)) {
                 throw new ValidateException("Port must be -1 or between 1 and 65535");
             }
             this.port = port;

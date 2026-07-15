@@ -19,6 +19,7 @@
 */
 package org.miaixz.bus.fabric.codec;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.MediaType;
 import org.miaixz.bus.fabric.Payload;
@@ -45,27 +46,38 @@ public interface DataCodec<T> {
             final DataEncoder<? super T> encoder,
             final DataDecoder<? extends T> decoder,
             final MediaType media) {
-        if (encoder == null) {
-            throw new ValidateException("Data encoder must not be null");
-        }
-        if (decoder == null) {
-            throw new ValidateException("Data decoder must not be null");
-        }
-        if (media == null) {
-            throw new ValidateException("Data codec media type must not be null");
-        }
+        Assert.notNull(encoder, () -> new ValidateException("Data encoder must not be null"));
+        Assert.notNull(decoder, () -> new ValidateException("Data decoder must not be null"));
+        Assert.notNull(media, () -> new ValidateException("Data codec media type must not be null"));
         return new DataCodec<>() {
 
+            /**
+             * Encodes a value with the supplied encoder.
+             *
+             * @param value value
+             * @return payload
+             */
             @Override
             public Payload encode(final T value) {
                 return encoder.encode(value);
             }
 
+            /**
+             * Decodes a payload with the supplied decoder.
+             *
+             * @param payload payload
+             * @return decoded value
+             */
             @Override
             public T decode(final Payload payload) {
                 return decoder.decode(payload);
             }
 
+            /**
+             * Returns the codec media type.
+             *
+             * @return media type
+             */
             @Override
             public MediaType media() {
                 return media;

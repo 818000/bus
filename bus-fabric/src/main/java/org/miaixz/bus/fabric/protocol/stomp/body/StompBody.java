@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.BiConsumer;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.MediaType;
 import org.miaixz.bus.fabric.Payload;
@@ -37,11 +39,6 @@ import org.miaixz.bus.fabric.codec.body.ProgressBody;
  * @since Java 21+
  */
 public final class StompBody implements MessageBody, ProgressBody {
-
-    /**
-     * Default binary media.
-     */
-    private static final MediaType BINARY = MediaType.APPLICATION_OCTET_STREAM_TYPE;
 
     /**
      * Payload.
@@ -87,7 +84,9 @@ public final class StompBody implements MessageBody, ProgressBody {
      * @return empty body
      */
     public static StompBody empty() {
-        return Instances.get(StompBody.class.getName() + ".empty", () -> new StompBody(Payload.empty(), BINARY));
+        return Instances.get(
+                StompBody.class.getName() + ".empty",
+                () -> new StompBody(Payload.empty(), MediaType.APPLICATION_OCTET_STREAM_TYPE));
     }
 
     /**
@@ -97,7 +96,7 @@ public final class StompBody implements MessageBody, ProgressBody {
      * @return STOMP body
      */
     public static StompBody of(final Payload payload) {
-        return of(payload, BINARY);
+        return of(payload, MediaType.APPLICATION_OCTET_STREAM_TYPE);
     }
 
     /**
@@ -118,7 +117,7 @@ public final class StompBody implements MessageBody, ProgressBody {
      * @return STOMP body
      */
     public static StompBody bytes(final byte[] bytes) {
-        return of(Payload.of(bytes), BINARY);
+        return of(Payload.of(bytes), MediaType.APPLICATION_OCTET_STREAM_TYPE);
     }
 
     /**
@@ -153,26 +152,52 @@ public final class StompBody implements MessageBody, ProgressBody {
         return new StompBody(payload, media, ProgressBody.Tracker.of(payload, listener));
     }
 
+    /**
+     * Returns the current payload, wrapped with progress tracking when enabled.
+     *
+     * @return current payload
+     */
     @Override
     public Payload payload() {
         return progress == null ? payload : progress.payload();
     }
 
+    /**
+     * Returns the STOMP body media type.
+     *
+     * @return media type
+     */
     @Override
     public MediaType media() {
         return media;
     }
 
+    /**
+     * Returns transferred byte count reported by the progress tracker.
+     *
+     * @return transferred bytes
+     */
     @Override
     public long transferred() {
-        return progress == null ? 0L : progress.transferred();
+        return progress == null ? Normal.LONG_ZERO : progress.transferred();
     }
 
+    /**
+     * Returns the declared payload length.
+     *
+     * @return total bytes, or -1 when unknown
+     */
     @Override
     public long total() {
         return payload.length();
     }
 
+    /**
+     * Advances progress notification by a byte step.
+     *
+     * @param bytes step bytes
+     * @return this body
+     */
     @Override
     public StompBody stepBytes(final long bytes) {
         if (progress == null) {
@@ -183,6 +208,12 @@ public final class StompBody implements MessageBody, ProgressBody {
         return this;
     }
 
+    /**
+     * Advances progress notification by a total-size rate.
+     *
+     * @param rate progress rate
+     * @return this body
+     */
     @Override
     public StompBody stepRate(final double rate) {
         if (progress == null) {
@@ -202,10 +233,7 @@ public final class StompBody implements MessageBody, ProgressBody {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -215,7 +243,7 @@ public final class StompBody implements MessageBody, ProgressBody {
      * @return media type
      */
     private static MediaType textMedia(final Charset charset) {
-        return MediaType.parse("text/plain; charset=" + charset.name());
+        return MediaType.TEXT_PLAIN_TYPE.withCharset(charset);
     }
 
 }

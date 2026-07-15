@@ -24,10 +24,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Headers;
-import org.miaixz.bus.fabric.observe.tag.Tags;
+import org.miaixz.bus.fabric.observe.tags.Tags;
 
 /**
  * Immutable proxy plan used before opening a network route.
@@ -36,11 +40,6 @@ import org.miaixz.bus.fabric.observe.tag.Tags;
  * @since Java 21+
  */
 public final class ProxyPlan {
-
-    /**
-     * Shared empty proxy authorization headers.
-     */
-    private static final Headers EMPTY_AUTHORIZATION = Headers.empty();
 
     /**
      * Proxy type.
@@ -65,9 +64,10 @@ public final class ProxyPlan {
      * @param authorization proxy authorization headers
      */
     private ProxyPlan(final Type type, final Address proxy, final Headers authorization) {
-        this.type = type;
+        this.type = Assert.notNull(type, () -> new ValidateException("Proxy type must not be null"));
         this.proxy = proxy;
-        this.authorization = require(authorization, "Proxy authorization headers");
+        this.authorization = Assert
+                .notNull(authorization, () -> new ValidateException("Proxy authorization headers must not be null"));
     }
 
     /**
@@ -77,8 +77,8 @@ public final class ProxyPlan {
      */
     public static ProxyPlan direct() {
         return Instances.get(
-                ProxyPlan.class.getName() + ".direct",
-                () -> new ProxyPlan(Type.DIRECT, null, EMPTY_AUTHORIZATION));
+                ProxyPlan.class.getName() + Symbol.DOT + Builder.PROXY_PLAN_DIRECT_ID,
+                () -> new ProxyPlan(Type.DIRECT, null, Headers.empty()));
     }
 
     /**
@@ -99,10 +99,13 @@ public final class ProxyPlan {
      * @return proxy plan
      */
     public static ProxyPlan http(final Address proxy, final Headers authorization) {
-        if (proxy == null || proxy.secure()) {
-            throw new ValidateException("HTTP proxy address must be non-null and plain");
-        }
-        return new ProxyPlan(Type.HTTP, proxy, require(authorization, "Proxy authorization headers"));
+        final Address checkedProxy = Assert
+                .notNull(proxy, () -> new ValidateException("HTTP proxy address must be non-null and plain"));
+        Assert.isFalse(
+                checkedProxy.secure(),
+                () -> new ValidateException("HTTP proxy address must be non-null and plain"));
+        return new ProxyPlan(Type.HTTP, checkedProxy, Assert
+                .notNull(authorization, () -> new ValidateException("Proxy authorization headers must not be null")));
     }
 
     /**
@@ -112,10 +115,9 @@ public final class ProxyPlan {
      * @return proxy plan
      */
     public static ProxyPlan socks(final Address proxy) {
-        if (proxy == null) {
-            throw new ValidateException("SOCKS proxy address must not be null");
-        }
-        return new ProxyPlan(Type.SOCKS, proxy, Headers.empty());
+        return new ProxyPlan(Type.SOCKS,
+                Assert.notNull(proxy, () -> new ValidateException("SOCKS proxy address must not be null")),
+                Headers.empty());
     }
 
     /**
@@ -161,9 +163,7 @@ public final class ProxyPlan {
      * @return true when CONNECT tunnel is needed
      */
     public boolean requiresTunnel(final Address target) {
-        if (target == null) {
-            throw new ValidateException("Target address must not be null");
-        }
+        Assert.notNull(target, () -> new ValidateException("Target address must not be null"));
         return type == Type.HTTP && target.secure();
     }
 
@@ -174,10 +174,9 @@ public final class ProxyPlan {
      * @return proxy plan
      */
     public ProxyPlan withAuthorization(final Headers authorization) {
-        if (type != Type.HTTP) {
-            throw new ValidateException("Proxy authorization requires an HTTP proxy");
-        }
-        return new ProxyPlan(type, proxy, require(authorization, "Proxy authorization headers"));
+        Assert.isTrue(type == Type.HTTP, () -> new ValidateException("Proxy authorization requires an HTTP proxy"));
+        return new ProxyPlan(type, proxy, Assert
+                .notNull(authorization, () -> new ValidateException("Proxy authorization headers must not be null")));
     }
 
     /**
@@ -196,9 +195,10 @@ public final class ProxyPlan {
      */
     public String id() {
         if (type == Type.DIRECT) {
-            return "direct";
+            return Builder.PROXY_PLAN_DIRECT_ID;
         }
-        return type.name().toLowerCase(Locale.ROOT) + "://" + proxy.host() + ":" + proxy.port();
+        return type.name().toLowerCase(Locale.ROOT) + Symbol.COLON + Symbol.FORWARDSLASH + proxy.host() + Symbol.COLON
+                + proxy.port();
     }
 
     /**
@@ -229,6 +229,11 @@ public final class ProxyPlan {
         return Objects.hash(type, proxy, authorization.asMap());
     }
 
+    /**
+     * Returns a diagnostic representation with sanitized credentials.
+     *
+     * @return redacted proxy plan text
+     */
     @Override
     public String toString() {
         return "ProxyPlan[type=" + type + ", id=" + id() + ", authorization=" + redactedAuthorization() + "]";
@@ -240,32 +245,17 @@ public final class ProxyPlan {
      * @return redacted authorization summary
      */
     private String redactedAuthorization() {
-        if (authorization.size() == 0) {
-            return "none";
+        if (authorization.size() == Normal._0) {
+            return Normal.NONE;
         }
         final StringBuilder builder = new StringBuilder();
         authorization.asMap().forEach((name, values) -> values.forEach(value -> {
             if (!builder.isEmpty()) {
-                builder.append(",");
+                builder.append(Symbol.COMMA);
             }
-            builder.append(name).append("=").append(Tags.sanitize(name, value));
+            builder.append(name).append(Symbol.EQUAL).append(Tags.sanitize(name, value));
         }));
         return builder.toString();
-    }
-
-    /**
-     * Validates required references.
-     *
-     * @param value value
-     * @param name  field name
-     * @param <T>   value type
-     * @return value
-     */
-    private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
     }
 
     /**

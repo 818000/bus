@@ -19,14 +19,15 @@
 */
 package org.miaixz.bus.fabric.registry;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.registry.connection.ConnectionPool;
 import org.miaixz.bus.fabric.registry.connection.ConnectionRegistry;
 import org.miaixz.bus.fabric.registry.route.Selector;
@@ -38,31 +39,6 @@ import org.miaixz.bus.fabric.registry.route.Selector;
  * @since Java 21+
  */
 public final class Directory implements AutoCloseable {
-
-    /**
-     * Connection registry key.
-     */
-    private static final String CONNECTION = "connection";
-
-    /**
-     * Route registry key.
-     */
-    private static final String ROUTE = "route";
-
-    /**
-     * Resolver registry key.
-     */
-    private static final String RESOLVER = "resolver";
-
-    /**
-     * Proxy registry key.
-     */
-    private static final String PROXY = "proxy";
-
-    /**
-     * Policy registry key.
-     */
-    private static final String POLICY = "policy";
 
     /**
      * Registered ledgers.
@@ -98,11 +74,11 @@ public final class Directory implements AutoCloseable {
      */
     public static Directory create() {
         final Directory directory = new Directory();
-        directory.register(CONNECTION, Ledger.create());
-        directory.register(ROUTE, Ledger.create());
-        directory.register(RESOLVER, Ledger.create());
-        directory.register(PROXY, Ledger.create());
-        directory.register(POLICY, Ledger.create());
+        directory.register(Builder.DIRECTORY_CONNECTION, Ledger.create());
+        directory.register(Builder.ROUTE, Ledger.create());
+        directory.register(Builder.DIRECTORY_RESOLVER, Ledger.create());
+        directory.register(Builder.DIRECTORY_PROXY, Ledger.create());
+        directory.register(Builder.DIRECTORY_POLICY, Ledger.create());
         return directory;
     }
 
@@ -114,10 +90,7 @@ public final class Directory implements AutoCloseable {
      * @param <T>    value type
      */
     public <T> void register(final String name, final Ledger<T> ledger) {
-        if (ledger == null) {
-            throw new ValidateException("Registry ledger must not be null");
-        }
-        ledgers.put(validateName(name), ledger);
+        ledgers.put(validateName(name), require(ledger, "Registry ledger"));
     }
 
     /**
@@ -137,7 +110,7 @@ public final class Directory implements AutoCloseable {
      * @return directory snapshot
      */
     public Map<String, Ledger<?>> snapshot() {
-        return Collections.unmodifiableMap(Map.copyOf(ledgers));
+        return Map.copyOf(ledgers);
     }
 
     /**
@@ -218,6 +191,18 @@ public final class Directory implements AutoCloseable {
             throw new ValidateException("Registry name must be non-blank and single-line");
         }
         return name.trim();
+    }
+
+    /**
+     * Validates required references.
+     *
+     * @param value value
+     * @param name  name
+     * @param <T>   value type
+     * @return value
+     */
+    private static <T> T require(final T value, final String name) {
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

@@ -19,24 +19,25 @@
 */
 package org.miaixz.bus.fabric.protocol.socket.session;
 
-import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.TimeoutException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Listener;
-import org.miaixz.bus.fabric.Options;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Status;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.codec.frame.FrameCodec;
 import org.miaixz.bus.fabric.network.Conduit;
 import org.miaixz.bus.fabric.network.Connection;
@@ -81,10 +82,7 @@ public final class SocketLease {
      * @param session session
      */
     private SocketLease(final ConnectionLease lease) {
-        if (lease == null) {
-            throw new ValidateException("Connection lease must not be null");
-        }
-        this.lease = lease;
+        this.lease = require(lease, "Connection lease");
         this.released = new AtomicBoolean();
     }
 
@@ -99,13 +97,13 @@ public final class SocketLease {
         return acquire(
                 pool,
                 destination,
-                Timeout.of(Duration.ofSeconds(10)),
-                Wiring.noop(),
+                Timeout.of(Duration.ofSeconds(Normal._10)),
+                null,
                 DnsResolver.system(),
                 FrameCodec.line(),
                 null,
                 Map.of(),
-                Wiring.noop());
+                null);
     }
 
     /**
@@ -142,7 +140,7 @@ public final class SocketLease {
                 handler,
                 attributes,
                 sessionListener,
-                Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
     }
 
     /**
@@ -171,28 +169,23 @@ public final class SocketLease {
             final Map<String, Object> attributes,
             final Listener<? super SocketSession> sessionListener,
             final long materializeMaxBytes) {
-        if (pool == null) {
-            throw new ValidateException("Connection pool must not be null");
-        }
-        if (destination == null) {
-            throw new ValidateException("Connection destination must not be null");
-        }
+        final ConnectionPool currentPool = require(pool, "Connection pool");
+        final Destination currentDestination = require(destination, "Connection destination");
         final Timeout currentTimeout = require(timeout, "Timeout");
-        final Listener<Object> currentListener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+        final Listener<Object> currentListener = listener;
         final DnsResolver currentResolver = require(resolver, "DNS resolver");
         final FrameCodec currentCodec = require(frameCodec, "Frame codec");
-        final SocketOptions socketOptions = SocketOptions.from(destination.options());
+        final SocketOptions socketOptions = SocketOptions.from(currentDestination.options());
         final Map<String, Object> currentAttributes = attributes(socketOptions, attributes);
-        final Listener<? super SocketSession> currentSessionListener = sessionListener == null ? Wiring.noop()
-                : sessionListener;
+        final Listener<? super SocketSession> currentSessionListener = sessionListener;
         Payload.validateMaterializeMaxBytes(materializeMaxBytes);
-        final ConnectionLease lease = pool.acquire(
-                destination,
-                () -> connect(destination, currentTimeout, currentListener, currentResolver, socketOptions));
+        final ConnectionLease lease = currentPool.acquire(
+                currentDestination,
+                () -> connect(currentDestination, currentTimeout, currentListener, currentResolver, socketOptions));
         final SocketLease socketLease = new SocketLease(lease);
         try {
             socketLease.session = session(
-                    destination,
+                    currentDestination,
                     lease.connection(),
                     currentCodec,
                     handler,
@@ -245,7 +238,7 @@ public final class SocketLease {
                 handler,
                 attributes,
                 sessionListener,
-                Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
     }
 
     /**
@@ -276,26 +269,21 @@ public final class SocketLease {
             final Map<String, Object> attributes,
             final Listener<? super SocketSession> sessionListener,
             final long materializeMaxBytes) {
-        if (pool == null) {
-            throw new ValidateException("Connection pool must not be null");
-        }
-        if (destination == null) {
-            throw new ValidateException("Connection destination must not be null");
-        }
+        final ConnectionPool currentPool = require(pool, "Connection pool");
+        final Destination currentDestination = require(destination, "Connection destination");
         final Timeout currentTimeout = require(timeout, "Timeout");
-        final Listener<Object> currentListener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+        final Listener<Object> currentListener = listener;
         final DnsResolver currentResolver = require(resolver, "DNS resolver");
         final Dispatcher currentDispatcher = require(dispatcher, "Dispatcher");
         final FrameCodec currentCodec = require(frameCodec, "Frame codec");
-        final SocketOptions socketOptions = SocketOptions.from(destination.options());
+        final SocketOptions socketOptions = SocketOptions.from(currentDestination.options());
         final Map<String, Object> currentAttributes = attributes(socketOptions, attributes);
-        final Listener<? super SocketSession> currentSessionListener = sessionListener == null ? Wiring.noop()
-                : sessionListener;
+        final Listener<? super SocketSession> currentSessionListener = sessionListener;
         Payload.validateMaterializeMaxBytes(materializeMaxBytes);
-        final ConnectionLease lease = pool.acquire(
-                destination,
+        final ConnectionLease lease = currentPool.acquire(
+                currentDestination,
                 () -> connect(
-                        destination,
+                        currentDestination,
                         currentTimeout,
                         currentListener,
                         currentResolver,
@@ -304,7 +292,7 @@ public final class SocketLease {
         final SocketLease socketLease = new SocketLease(lease);
         try {
             socketLease.session = session(
-                    destination,
+                    currentDestination,
                     lease.connection(),
                     currentCodec,
                     handler,
@@ -326,10 +314,7 @@ public final class SocketLease {
      * @return session
      */
     public SocketSession session() {
-        if (session == null) {
-            throw new ValidateException("Socket session has not been initialized");
-        }
-        return session;
+        return Assert.notNull(session, () -> new ValidateException("Socket session has not been initialized"));
     }
 
     /**
@@ -563,7 +548,7 @@ public final class SocketLease {
     private static Map<String, Object> attributes(final SocketOptions socketOptions, final Map<String, Object> source) {
         final java.util.LinkedHashMap<String, Object> values = new java.util.LinkedHashMap<>(
                 source == null ? Map.of() : source);
-        values.putIfAbsent(SocketSession.ATTRIBUTE_SOCKET_OPTIONS, socketOptions);
+        values.putIfAbsent(Builder.ATTRIBUTE_SOCKET_OPTIONS, socketOptions);
         return Map.copyOf(values);
     }
 
@@ -576,10 +561,7 @@ public final class SocketLease {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -645,52 +627,86 @@ public final class SocketLease {
          * @param owner    owning AIO network
          */
         private OwnedConnection(final Connection delegate, final AioNetwork owner) {
-            if (delegate == null) {
-                throw new ValidateException("Owned connection delegate must not be null");
-            }
-            if (owner == null) {
-                throw new ValidateException("Owned connection network must not be null");
-            }
-            this.delegate = delegate;
-            this.owner = owner;
+            this.delegate = Assert
+                    .notNull(delegate, () -> new ValidateException("Owned connection delegate must not be null"));
+            this.owner = Assert
+                    .notNull(owner, () -> new ValidateException("Owned connection network must not be null"));
             this.closed = new AtomicBoolean();
         }
 
+        /**
+         * Returns the delegated connection destination.
+         *
+         * @return destination
+         */
         @Override
         public Destination destination() {
             return delegate.destination();
         }
 
+        /**
+         * Returns the delegated connection conduit.
+         *
+         * @return conduit
+         */
         @Override
         public Conduit conduit() {
             return delegate.conduit();
         }
 
+        /**
+         * Returns the delegated connection state.
+         *
+         * @return state
+         */
         @Override
         public Status state() {
             return delegate.state();
         }
 
+        /**
+         * Returns the delegated source view.
+         *
+         * @return source view
+         */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer buffer) {
-            return delegate.read(buffer);
+        public Source source() {
+            return delegate.source();
         }
 
+        /**
+         * Returns the delegated sink view.
+         *
+         * @return sink view
+         */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer buffer) {
-            return delegate.write(buffer);
+        public Sink sink() {
+            return delegate.sink();
         }
 
+        /**
+         * Returns whether this owned connection remains healthy.
+         *
+         * @return true when healthy
+         */
         @Override
         public boolean healthy() {
             return !closed.get() && delegate.healthy();
         }
 
+        /**
+         * Returns whether the delegated connection is idle.
+         *
+         * @return true when idle
+         */
         @Override
         public boolean idle() {
             return delegate.idle();
         }
 
+        /**
+         * Closes the delegated connection and its owning AIO network once.
+         */
         @Override
         public void close() {
             if (closed.compareAndSet(false, true)) {

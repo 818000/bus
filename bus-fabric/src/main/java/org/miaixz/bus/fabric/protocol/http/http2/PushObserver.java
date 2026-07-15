@@ -19,10 +19,10 @@
 */
 package org.miaixz.bus.fabric.protocol.http.http2;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.io.ByteString;
 
 /**
  * Observer for HTTP/2 server push events.
@@ -40,21 +40,50 @@ public interface PushObserver {
     static PushObserver canceling() {
         return Instances.get(PushObserver.class.getName() + ".canceling", () -> new PushObserver() {
 
+            /**
+             * Cancels a pushed request.
+             *
+             * @param streamId pushed stream id
+             * @param headers  request headers
+             * @return true to cancel the stream
+             */
             @Override
             public boolean onRequest(final int streamId, final List<Http2Header> headers) {
                 return true;
             }
 
+            /**
+             * Cancels pushed response headers.
+             *
+             * @param streamId  pushed stream id
+             * @param headers   response headers
+             * @param endStream true when the stream ends with this event
+             * @return true to cancel the stream
+             */
             @Override
             public boolean onHeaders(final int streamId, final List<Http2Header> headers, final boolean endStream) {
                 return true;
             }
 
+            /**
+             * Cancels pushed data.
+             *
+             * @param streamId  pushed stream id
+             * @param data      data snapshot
+             * @param endStream true when the stream ends with this event
+             * @return true to cancel the stream
+             */
             @Override
-            public boolean onData(final int streamId, final ByteBuffer data, final boolean endStream) {
+            public boolean onData(final int streamId, final ByteString data, final boolean endStream) {
                 return true;
             }
 
+            /**
+             * Ignores reset events because this observer cancels every pushed stream.
+             *
+             * @param streamId  pushed stream id
+             * @param errorCode HTTP/2 error code
+             */
             @Override
             public void onReset(final int streamId, final int errorCode) {
                 // Reset is already terminal for a canceled observer.
@@ -89,7 +118,9 @@ public interface PushObserver {
      * @param endStream true when the stream ends with this event
      * @return true to cancel the pushed stream
      */
-    boolean onData(int streamId, ByteBuffer data, boolean endStream);
+    default boolean onData(final int streamId, final ByteString data, final boolean endStream) {
+        return true;
+    }
 
     /**
      * Handles a pushed stream reset.

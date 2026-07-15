@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
@@ -108,36 +109,67 @@ final class DefaultLedger<T> implements Ledger<T> {
      */
     private final ConcurrentHashMap<String, Binding<T>> bindings = new ConcurrentHashMap<>();
 
+    /**
+     * Stores or replaces a binding by key.
+     *
+     * @param binding binding
+     */
     @Override
     public void put(final Binding<T> binding) {
-        if (binding == null) {
-            throw new ValidateException("Binding must not be null");
-        }
-        bindings.put(binding.key(), binding);
+        final Binding<T> checked = require(binding, "Binding");
+        bindings.put(checked.key(), checked);
     }
 
+    /**
+     * Returns the bound value for a key.
+     *
+     * @param key binding key
+     * @return value, or null when absent
+     */
     @Override
     public T get(final String key) {
         final Binding<T> binding = binding(key);
         return binding == null ? null : binding.value();
     }
 
+    /**
+     * Returns the full binding for a key.
+     *
+     * @param key binding key
+     * @return binding, or null when absent
+     */
     @Override
     public Binding<T> binding(final String key) {
         return bindings.get(validateKey(key));
     }
 
+    /**
+     * Removes a binding by key and returns its value.
+     *
+     * @param key binding key
+     * @return removed value, or null when absent
+     */
     @Override
     public T remove(final String key) {
         final Binding<T> removed = bindings.remove(validateKey(key));
         return removed == null ? null : removed.value();
     }
 
+    /**
+     * Returns an immutable snapshot of all bindings.
+     *
+     * @return binding snapshot
+     */
     @Override
     public Map<String, Binding<T>> snapshot() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(bindings));
     }
 
+    /**
+     * Returns the number of stored bindings.
+     *
+     * @return binding count
+     */
     @Override
     public int size() {
         return bindings.size();
@@ -154,6 +186,18 @@ final class DefaultLedger<T> implements Ledger<T> {
             throw new ValidateException("Registry key must be non-blank and single-line");
         }
         return key.trim();
+    }
+
+    /**
+     * Validates required references.
+     *
+     * @param value value
+     * @param name  name
+     * @param <T>   value type
+     * @return value
+     */
+    private static <T> T require(final T value, final String name) {
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

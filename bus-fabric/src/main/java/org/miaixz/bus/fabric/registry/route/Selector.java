@@ -27,12 +27,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Clock;
 import org.miaixz.bus.fabric.observe.EventObserver;
 import org.miaixz.bus.fabric.observe.ObservationMarker;
 import org.miaixz.bus.fabric.observe.event.FabricEvent;
-import org.miaixz.bus.fabric.observe.tag.Tags;
 
 /**
  * Route candidate selector that defers failed routes behind fresh candidates.
@@ -41,16 +43,6 @@ import org.miaixz.bus.fabric.observe.tag.Tags;
  * @since Java 21+
  */
 public final class Selector {
-
-    /**
-     * Base route backoff.
-     */
-    private static final Duration BASE_BACKOFF = Duration.ofSeconds(1);
-
-    /**
-     * Maximum route backoff.
-     */
-    private static final Duration MAX_BACKOFF = Duration.ofMinutes(5);
 
     /**
      * Ready route candidates.
@@ -162,7 +154,7 @@ public final class Selector {
         require(clock);
         final Instant now = clock.now();
         final Backoff previous = failures.get(route);
-        final int failures = previous == null ? 1 : previous.failures() + 1;
+        final int failures = previous == null ? Normal._1 : previous.failures() + Normal._1;
         final Duration delay = backoff(failures);
         this.failures.put(route, new Backoff(route, now, failures, now.plus(delay)));
         ready.remove(route);
@@ -184,7 +176,7 @@ public final class Selector {
         if (!ready.contains(route)) {
             ready.addLast(route);
         }
-        emit(ObservationMarker.ROUTE_READY, route, 0, Duration.ZERO);
+        emit(ObservationMarker.ROUTE_READY, route, Normal._0, Duration.ZERO);
     }
 
     /**
@@ -236,9 +228,7 @@ public final class Selector {
      * @param route route
      */
     private static void require(final Route route) {
-        if (route == null) {
-            throw new ValidateException("Route must not be null");
-        }
+        Assert.notNull(route, () -> new ValidateException("Route must not be null"));
     }
 
     /**
@@ -247,9 +237,7 @@ public final class Selector {
      * @param clock clock
      */
     private static void require(final Clock clock) {
-        if (clock == null) {
-            throw new ValidateException("Clock must not be null");
-        }
+        Assert.notNull(clock, () -> new ValidateException("Clock must not be null"));
     }
 
     /**
@@ -262,8 +250,9 @@ public final class Selector {
      */
     private void emit(final ObservationMarker marker, final Route route, final int attempts, final Duration delay) {
         observer.emit(
-                FabricEvent.builder(marker).tag(Tags.KEY, route.id()).tag(Tags.ATTEMPT, Integer.toString(attempts))
-                        .tag(Tags.DELAY, delay.toString()).build());
+                FabricEvent.builder(marker).tag(Builder.TAG_KEY, route.id())
+                        .tag(Builder.TAG_ATTEMPT, Integer.toString(attempts)).tag(Builder.TAG_DELAY, delay.toString())
+                        .build());
     }
 
     /**
@@ -275,10 +264,7 @@ public final class Selector {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -288,9 +274,9 @@ public final class Selector {
      * @return backoff
      */
     private static Duration backoff(final int failures) {
-        final int shift = Math.min(8, Math.max(0, failures - 1));
-        final Duration backoff = BASE_BACKOFF.multipliedBy(1L << shift);
-        return backoff.compareTo(MAX_BACKOFF) > 0 ? MAX_BACKOFF : backoff;
+        final int shift = Math.min(Normal._8, Math.max(Normal._0, failures - Normal._1));
+        final Duration backoff = Builder.DURATION_1_SECOND.multipliedBy(1L << shift);
+        return backoff.compareTo(Builder.SELECTOR_MAX_BACKOFF) > 0 ? Builder.SELECTOR_MAX_BACKOFF : backoff;
     }
 
 }

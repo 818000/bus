@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.logger.Logger;
 
@@ -34,11 +35,6 @@ import org.miaixz.bus.logger.Logger;
  * @since Java 21+
  */
 public final class Cancellation {
-
-    /**
-     * Logger tag used by the fabric runtime.
-     */
-    private static final String LOG_TAG = "Fabric";
 
     /**
      * Registered cleanup callbacks.
@@ -183,7 +179,7 @@ public final class Cancellation {
         try {
             callback.run();
         } catch (final RuntimeException e) {
-            Logger.warn(false, LOG_TAG, e, "Cancellation cleanup failed: exception={}", e.getClass().getSimpleName());
+            Logger.warn(false, "Fabric", e, "Cancellation cleanup failed: exception={}", e.getClass().getSimpleName());
         }
     }
 
@@ -198,7 +194,7 @@ public final class Cancellation {
         } catch (final Exception e) {
             Logger.warn(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     e,
                     "Cancellation resource cleanup failed: resource={}, exception={}",
                     resource.getClass().getName(),
@@ -222,10 +218,7 @@ public final class Cancellation {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

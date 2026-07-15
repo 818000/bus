@@ -22,7 +22,10 @@ package org.miaixz.bus.fabric.protocol.sse.event;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * Mutable SSE retry delay policy updated by server retry directives.
@@ -31,16 +34,6 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
  * @since Java 21+
  */
 public final class SseRetry {
-
-    /**
-     * Default base delay.
-     */
-    private static final Duration DEFAULT_CURRENT = Duration.ofSeconds(3);
-
-    /**
-     * Default maximum delay.
-     */
-    private static final Duration DEFAULT_MAX_DELAY = Duration.ofSeconds(30);
 
     /**
      * Current base retry delay.
@@ -61,7 +54,7 @@ public final class SseRetry {
     private SseRetry(final Duration current, final Duration maxDelay) {
         this.current = new AtomicReference<>(validate(current, "SSE retry"));
         this.maxDelay = validate(maxDelay, "SSE maximum retry");
-        if (this.maxDelay.compareTo(this.current.get()) < 0) {
+        if (this.maxDelay.compareTo(this.current.get()) < Normal._0) {
             throw new ValidateException("SSE maximum retry must not be less than current retry");
         }
     }
@@ -72,7 +65,7 @@ public final class SseRetry {
      * @return default retry policy
      */
     public static SseRetry defaults() {
-        return new SseRetry(DEFAULT_CURRENT, DEFAULT_MAX_DELAY);
+        return new SseRetry(Builder.SSE_RETRY_DEFAULT_CURRENT, Builder.SSE_RETRY_DEFAULT_MAX_DELAY);
     }
 
     /**
@@ -100,13 +93,11 @@ public final class SseRetry {
      * @return next delay
      */
     public Duration nextDelay(final int attempt) {
-        if (attempt < 0) {
-            throw new ValidateException("SSE retry attempt must be non-negative");
-        }
+        Assert.isTrue(attempt >= Normal._0, () -> new ValidateException("SSE retry attempt must be non-negative"));
         Duration delay = current();
-        for (int i = 0; i < attempt && delay.compareTo(maxDelay) < 0; i++) {
+        for (int i = Normal._0; i < attempt && delay.compareTo(maxDelay) < Normal._0; i++) {
             try {
-                delay = delay.multipliedBy(2L);
+                delay = delay.multipliedBy(Normal._2);
             } catch (final ArithmeticException e) {
                 return maxDelay;
             }
@@ -122,10 +113,10 @@ public final class SseRetry {
      * @return delay
      */
     private static Duration validate(final Duration value, final String name) {
-        if (value == null || value.isNegative()) {
-            throw new ValidateException(name + " must be non-null and non-negative");
-        }
-        return value;
+        final Duration checked = Assert
+                .notNull(value, () -> new ValidateException(name + " must be non-null and non-negative"));
+        Assert.isTrue(!checked.isNegative(), () -> new ValidateException(name + " must be non-null and non-negative"));
+        return checked;
     }
 
 }

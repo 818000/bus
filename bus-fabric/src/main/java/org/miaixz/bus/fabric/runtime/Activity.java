@@ -22,12 +22,16 @@ package org.miaixz.bus.fabric.runtime;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.fabric.Lifecycle;
 import org.miaixz.bus.fabric.Status;
+import org.miaixz.bus.fabric.observe.EventObserver;
+import org.miaixz.bus.fabric.runtime.lifecycle.LifecycleScope;
 import org.miaixz.bus.fabric.runtime.resource.Cancellation;
 
 /**
@@ -36,7 +40,7 @@ import org.miaixz.bus.fabric.runtime.resource.Cancellation;
  * @author Kimi Liu
  * @since Java 21+
  */
-public final class Activity implements Runnable {
+public final class Activity implements Runnable, Lifecycle {
 
     /**
      * Activity name.
@@ -49,14 +53,9 @@ public final class Activity implements Runnable {
     private final Runnable runnable;
 
     /**
-     * Shared cancellation scope.
-     */
-    private final Cancellation cancellation;
-
-    /**
      * Lifecycle state.
      */
-    private final AtomicReference<Status> state;
+    private final LifecycleScope scope;
 
     /**
      * Failure cause.
@@ -83,8 +82,8 @@ public final class Activity implements Runnable {
     private Activity(final String name, final Runnable runnable, final Cancellation cancellation) {
         this.name = validateName(name);
         this.runnable = require(runnable, "Runnable");
-        this.cancellation = require(cancellation, "Cancellation");
-        this.state = new AtomicReference<>(Status.QUEUED);
+        this.scope = LifecycleScope.resource(this, this.name, null, EventObserver.noop());
+        this.scope.own(require(cancellation, "Cancellation")::cancel);
         this.failure = new AtomicReference<>();
     }
 
@@ -126,7 +125,7 @@ public final class Activity implements Runnable {
      * @return lifecycle state
      */
     public Status state() {
-        return state.get();
+        return scope.state();
     }
 
     /**
@@ -135,7 +134,7 @@ public final class Activity implements Runnable {
      * @return cancellation scope
      */
     public Cancellation cancellation() {
-        return cancellation;
+        return scope.cancellation();
     }
 
     /**
@@ -144,13 +143,7 @@ public final class Activity implements Runnable {
      * @return true when this invocation changed the state
      */
     public boolean cancel() {
-        final boolean changed = state.compareAndSet(Status.QUEUED, Status.CANCELLED)
-                || state.compareAndSet(Status.RUNNING, Status.CANCELLED)
-                || state.compareAndSet(Status.OPENED, Status.CANCELLED);
-        if (changed || !cancellation.cancelled()) {
-            cancellation.cancel(new CancellationException("Activity cancelled: " + name));
-        }
-        return changed;
+        return scope.cancel(new CancellationException("Activity cancelled: " + name));
     }
 
     /**
@@ -159,7 +152,7 @@ public final class Activity implements Runnable {
      * @return true when cancelled
      */
     public boolean cancelled() {
-        return state.get() == Status.CANCELLED || cancellation.cancelled();
+        return scope.state() == Status.CANCELLED || scope.cancellation().cancelled();
     }
 
     /**
@@ -167,20 +160,24 @@ public final class Activity implements Runnable {
      */
     @Override
     public void run() {
-        if (!state.compareAndSet(Status.QUEUED, Status.RUNNING)) {
-            throw new StatefulException("Activity cannot be run from state " + state.get());
+        if (!scope.start()) {
+            throw new StatefulException("Activity cannot be run from state " + scope.state());
         }
         try {
-            cancellation.throwIfCancelled();
+            scope.cancellation().throwIfCancelled();
             runnable.run();
-            state.set(cancellation.cancelled() ? Status.CANCELLED : Status.DONE);
+            if (scope.cancellation().cancelled()) {
+                scope.cancel(new CancellationException("Activity cancelled: " + name));
+            } else {
+                scope.complete();
+            }
         } catch (final RuntimeException e) {
             failure.set(e);
-            if (e instanceof CancellationException || cancellation.cancelled()) {
-                state.set(Status.CANCELLED);
+            if (e instanceof CancellationException || scope.cancellation().cancelled()) {
+                scope.cancel(e);
                 throw e;
             }
-            state.set(Status.FAILED);
+            scope.fail(e);
             throw new InternalException("Activity failed", e);
         }
     }
@@ -201,10 +198,12 @@ public final class Activity implements Runnable {
      * @return normalized name
      */
     private static String validateName(final String value) {
-        if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException("Activity name must be non-blank and single-line");
-        }
-        return value.trim();
+        final String current = Assert
+                .notBlank(value, () -> new ValidateException("Activity name must be non-blank and single-line"));
+        Assert.isFalse(
+                StringKit.containsAny(current, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException("Activity name must be non-blank and single-line"));
+        return current.trim();
     }
 
     /**
@@ -216,10 +215,7 @@ public final class Activity implements Runnable {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

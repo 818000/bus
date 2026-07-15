@@ -20,7 +20,6 @@
 package org.miaixz.bus.fabric.protocol.http;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -32,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -51,7 +53,6 @@ import org.miaixz.bus.fabric.Message;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Timeout;
 import org.miaixz.bus.fabric.UnoUrl;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.codec.DataCodec;
 import org.miaixz.bus.fabric.codec.body.RequestBody;
 import org.miaixz.bus.fabric.guard.GuardRule;
@@ -61,9 +62,10 @@ import org.miaixz.bus.fabric.protocol.Itinerary;
 import org.miaixz.bus.fabric.protocol.http.auth.HttpAuth;
 import org.miaixz.bus.fabric.protocol.http.body.FileBody;
 import org.miaixz.bus.fabric.protocol.http.body.FormBody;
-import org.miaixz.bus.fabric.protocol.http.body.HttpBody;
 import org.miaixz.bus.fabric.protocol.http.body.MultipartBody;
+import org.miaixz.bus.fabric.protocol.http.body.PayloadBody;
 import org.miaixz.bus.fabric.protocol.http.body.SoapBody;
+import org.miaixz.bus.fabric.protocol.http.body.TextBody;
 import org.miaixz.bus.fabric.protocol.http.calls.HttpCall;
 import org.miaixz.bus.fabric.runtime.resource.Cancellation;
 
@@ -230,10 +232,7 @@ public final class HttpX {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -379,7 +378,7 @@ public final class HttpX {
         /**
          * Callback.
          */
-        private Callback<HttpResponse> callback = Wiring.callback();
+        private Callback<HttpResponse> callback;
 
         /**
          * Creates a builder.
@@ -626,7 +625,7 @@ public final class HttpX {
          * @return this builder
          */
         public Builder userAgent(final String value) {
-            return replaceHeader("User-Agent", value);
+            return replaceHeader(HTTP.USER_AGENT, value);
         }
 
         /**
@@ -858,7 +857,7 @@ public final class HttpX {
             ensureBodyMode(BodyMode.MULTIPART);
             parts.add(
                     MultipartBody.Part.file(
-                            name == null || name.isBlank() ? "file" : name,
+                            StringKit.isBlank(name) ? "file" : name,
                             path,
                             MediaType.APPLICATION_OCTET_STREAM_TYPE));
             return this;
@@ -898,12 +897,11 @@ public final class HttpX {
             final File current = require(file, "File");
             final Path path = current.toPath();
             final Path fileName = path.getFileName();
-            final String selected = filename == null || filename.isBlank()
-                    ? fileName == null ? "file" : fileName.toString()
+            final String selected = StringKit.isBlank(filename) ? fileName == null ? "file" : fileName.toString()
                     : stringValue(filename, "File name");
             parts.add(
                     MultipartBody.Part.file(
-                            name == null || name.isBlank() ? "file" : name,
+                            StringKit.isBlank(name) ? "file" : name,
                             selected,
                             path,
                             MediaType.APPLICATION_OCTET_STREAM_TYPE));
@@ -922,7 +920,7 @@ public final class HttpX {
             ensureBodyMode(BodyMode.MULTIPART);
             parts.add(
                     MultipartBody.Part.file(
-                            name == null || name.isBlank() ? "file" : name,
+                            StringKit.isBlank(name) ? "file" : name,
                             stringValue(filename, "File name"),
                             Payload.of(require(content, "File content")),
                             MediaType.APPLICATION_OCTET_STREAM_TYPE));
@@ -943,20 +941,21 @@ public final class HttpX {
         }
 
         /**
-         * Appends a file part from a stream.
+         * Appends a file part from a source.
          *
          * @param name     file part name
          * @param filename filename
-         * @param input    file input
+         * @param input    file source
+         * @param length   declared length, or -1 when unknown
          * @return this builder
          */
-        public Builder file(final String name, final String filename, final InputStream input) {
+        public Builder file(final String name, final String filename, final Source input, final long length) {
             ensureBodyMode(BodyMode.MULTIPART);
             parts.add(
                     MultipartBody.Part.file(
-                            name == null || name.isBlank() ? "file" : name,
+                            StringKit.isBlank(name) ? "file" : name,
                             stringValue(filename, "File name"),
-                            Payload.stream(require(input, "File input"), -1),
+                            Payload.source(require(input, "File source"), length),
                             MediaType.APPLICATION_OCTET_STREAM_TYPE));
             return this;
         }
@@ -984,10 +983,10 @@ public final class HttpX {
          */
         public Builder file(final String name, final String filename, final String content, final String charsetName) {
             final Charset charset = Charset.forName(validateText(charsetName, "Charset name"));
-            if (content == null) {
-                throw new ValidateException("File content must not be null");
-            }
-            return file(name, filename, content.getBytes(charset));
+            return file(
+                    name,
+                    filename,
+                    ByteString.encodeString(require(content, "File content"), charset).toByteArray());
         }
 
         /**
@@ -1019,10 +1018,7 @@ public final class HttpX {
          * @return this builder
          */
         public Builder body(final String value) {
-            ensureBodyMode(BodyMode.BODY);
-            this.body = Payload.of(value == null ? "" : value, org.miaixz.bus.core.lang.Charset.UTF_8);
-            this.media = MediaType.TEXT_PLAIN_TYPE.withCharset(org.miaixz.bus.core.lang.Charset.UTF_8);
-            return this;
+            return body(TextBody.of(value));
         }
 
         /**
@@ -1033,7 +1029,7 @@ public final class HttpX {
          * @return this builder
          */
         public Builder body(final String value, final MediaType media) {
-            return body(value).media(media);
+            return body(TextBody.of(value, media));
         }
 
         /**
@@ -1063,13 +1059,13 @@ public final class HttpX {
         /**
          * Sets a streaming body.
          *
-         * @param input  body stream
+         * @param input  body source
          * @param length declared length, or -1 when unknown
          * @return this builder
          */
-        public Builder body(final InputStream input, final long length) {
+        public Builder body(final Source input, final long length) {
             ensureBodyMode(BodyMode.BODY);
-            this.body = Payload.stream(require(input, "Body stream"), length);
+            this.body = Payload.source(require(input, "Body source"), length);
             this.media = MediaType.APPLICATION_OCTET_STREAM_TYPE;
             return this;
         }
@@ -1077,12 +1073,12 @@ public final class HttpX {
         /**
          * Sets a streaming body with explicit media.
          *
-         * @param input  body stream
+         * @param input  body source
          * @param length declared length, or -1 when unknown
          * @param media  media
          * @return this builder
          */
-        public Builder body(final InputStream input, final long length, final MediaType media) {
+        public Builder body(final Source input, final long length, final MediaType media) {
             return body(input, length).media(media);
         }
 
@@ -1135,7 +1131,7 @@ public final class HttpX {
          * @return this builder
          */
         public Builder text(final String value) {
-            return body(value);
+            return body(TextBody.of(value));
         }
 
         /**
@@ -1145,8 +1141,10 @@ public final class HttpX {
          * @return this builder
          */
         public Builder json(final String value) {
-            return body(value)
-                    .media(MediaType.APPLICATION_JSON_TYPE.withCharset(org.miaixz.bus.core.lang.Charset.UTF_8));
+            return body(
+                    TextBody.of(
+                            value,
+                            MediaType.APPLICATION_JSON_TYPE.withCharset(org.miaixz.bus.core.lang.Charset.UTF_8)));
         }
 
         /**
@@ -1189,13 +1187,13 @@ public final class HttpX {
         }
 
         /**
-         * Sets a prepared HTTP body.
+         * Sets a prepared payload body.
          *
-         * @param body HTTP body
+         * @param body payload body
          * @return this builder
          */
-        public Builder body(final HttpBody body) {
-            final HttpBody current = require(body, "HTTP body");
+        public Builder body(final PayloadBody body) {
+            final PayloadBody current = require(body, "Payload body");
             ensureBodyMode(BodyMode.BODY);
             this.body = current.payload();
             this.media = current.media();
@@ -1210,7 +1208,7 @@ public final class HttpX {
          */
         public Builder body(final RequestBody body) {
             final RequestBody current = require(body, "Request body");
-            return body(HttpBody.of(current.payload(), current.media()));
+            return body(PayloadBody.of(current.payload(), current.media()));
         }
 
         /**
@@ -1223,8 +1221,8 @@ public final class HttpX {
             if (value instanceof RequestBody requestBody) {
                 return body(requestBody);
             }
-            if (value instanceof HttpBody httpBody) {
-                return body(httpBody);
+            if (value instanceof PayloadBody payloadBody) {
+                return body(payloadBody);
             }
             if (value instanceof Payload payload) {
                 return body(payload);
@@ -1257,7 +1255,7 @@ public final class HttpX {
          */
         public Builder soap(final String namespace, final String method, final Map<String, ?> params) {
             final SoapBody soap = SoapBody.envelope().namespace(namespace).method(method).params(params).build();
-            headers.set("SOAPAction", soap.action());
+            headers.set(HTTP.SOAPACTION, soap.action());
             return body(soap.body());
         }
 
@@ -1291,10 +1289,10 @@ public final class HttpX {
          * @return this builder
          */
         public Builder range(final long start, final long end) {
-            if (start < 0 || end < 0 || end < start) {
-                throw new ValidateException("Range bounds must be non-negative and ordered");
-            }
-            headers.set("Range", "bytes=" + start + Symbol.C_MINUS + end);
+            Assert.isTrue(
+                    start >= 0 && end >= 0 && end >= start,
+                    () -> new ValidateException("Range bounds must be non-negative and ordered"));
+            headers.set(HTTP.RANGE, "bytes=" + start + Symbol.C_MINUS + end);
             return this;
         }
 
@@ -1433,7 +1431,7 @@ public final class HttpX {
          * @return this builder
          */
         public Builder callback(final Callback<HttpResponse> callback) {
-            this.callback = callback == null ? Wiring.callback() : callback;
+            this.callback = callback;
             return this;
         }
 
@@ -1444,9 +1442,9 @@ public final class HttpX {
          * @return this builder
          */
         public Builder timeout(final Duration timeout) {
-            if (timeout == null || timeout.isNegative()) {
-                throw new ValidateException("Timeout must be non-null and non-negative");
-            }
+            Assert.isTrue(
+                    timeout != null && !timeout.isNegative(),
+                    () -> new ValidateException("Timeout must be non-null and non-negative"));
             this.timeout = Timeout.of(timeout);
             return this;
         }
@@ -1469,10 +1467,10 @@ public final class HttpX {
          */
         public HttpX build() {
             final UnoUrl target = buildUrl();
-            final HttpBody httpBody = buildBody();
-            final Headers requestHeaders = buildHeaders(httpBody);
+            final PayloadBody payloadBody = buildBody();
+            final Headers requestHeaders = buildHeaders(payloadBody);
             final HttpRequest request = HttpRequest.builder().method(method).url(target).headers(requestHeaders)
-                    .body(httpBody).tag(tag).proxy(proxy).timeout(timeout).build();
+                    .body(payloadBody).tag(tag).proxy(proxy).timeout(timeout).build();
             final Protocol protocol = request.url().address().protocol();
             if (protocol != Protocol.HTTP && protocol != Protocol.HTTPS) {
                 throw new ProtocolException("HTTP exchange requires http or https URL");
@@ -1540,15 +1538,15 @@ public final class HttpX {
          * @param body body
          * @return headers
          */
-        private Headers buildHeaders(final HttpBody body) {
+        private Headers buildHeaders(final PayloadBody body) {
             final Headers current = headers.build();
             final Headers.Builder builder = Headers.builder();
             current.asMap().forEach((name, values) -> values.forEach(value -> builder.add(name, value)));
-            if (body.length() > 0 && !current.contains("Content-Length")) {
-                builder.set("Content-Length", Long.toString(body.length()));
+            if (body.length() > 0 && !current.contains(HTTP.CONTENT_LENGTH)) {
+                builder.set(HTTP.CONTENT_LENGTH, Long.toString(body.length()));
             }
-            if (!current.contains("Content-Type") && body.length() != 0) {
-                builder.set("Content-Type", body.media().value());
+            if (!current.contains(HTTP.CONTENT_TYPE) && body.length() != 0) {
+                builder.set(HTTP.CONTENT_TYPE, body.media().value());
             }
             return builder.build();
         }
@@ -1556,9 +1554,9 @@ public final class HttpX {
         /**
          * Builds request body.
          *
-         * @return HTTP body
+         * @return payload body
          */
-        private HttpBody buildBody() {
+        private PayloadBody buildBody() {
             Payload payload = body;
             MediaType selectedMedia = media;
             if (bodyMode == BodyMode.FORM && form != null) {
@@ -1577,8 +1575,9 @@ public final class HttpX {
             if (codec != null && bodyMode == BodyMode.NONE) {
                 selectedMedia = codec.media();
             }
-            final HttpBody httpBody = HttpBody.of(payload, selectedMedia, context.options().materializeMaxBytes());
-            return progress == null ? httpBody : httpBody.progress(progress);
+            final PayloadBody payloadBody = PayloadBody
+                    .of(payload, selectedMedia, context.options().materializeMaxBytes());
+            return progress == null ? payloadBody : payloadBody.progress(progress);
         }
 
         /**
@@ -1774,9 +1773,9 @@ public final class HttpX {
          * @return value
          */
         private static String validateText(final String value, final String name) {
-            if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-                throw new ValidateException(name + " must be non-blank and single-line");
-            }
+            Assert.isFalse(
+                    StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF),
+                    () -> new ValidateException(name + " must be non-blank and single-line"));
             return value;
         }
 

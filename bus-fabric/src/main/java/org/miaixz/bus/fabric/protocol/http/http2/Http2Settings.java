@@ -19,7 +19,11 @@
 */
 package org.miaixz.bus.fabric.protocol.http.http2;
 
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * Compact HTTP/2 settings storage.
@@ -28,66 +32,6 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
  * @since Java 21+
  */
 public final class Http2Settings {
-
-    /**
-     * Header table size id.
-     */
-    public static final int HEADER_TABLE_SIZE = 1;
-
-    /**
-     * Enable push id.
-     */
-    public static final int ENABLE_PUSH = 2;
-
-    /**
-     * Max concurrent streams id.
-     */
-    public static final int MAX_CONCURRENT_STREAMS = 3;
-
-    /**
-     * Initial window size id.
-     */
-    public static final int INITIAL_WINDOW_SIZE = 4;
-
-    /**
-     * Max frame size id.
-     */
-    public static final int MAX_FRAME_SIZE = 5;
-
-    /**
-     * Max header list size id.
-     */
-    public static final int MAX_HEADER_LIST_SIZE = 6;
-
-    /**
-     * Setting slot count.
-     */
-    private static final int COUNT = 7;
-
-    /**
-     * Default header table size.
-     */
-    private static final int DEFAULT_HEADER_TABLE_SIZE = 4_096;
-
-    /**
-     * Default initial stream window.
-     */
-    private static final int DEFAULT_INITIAL_WINDOW = 65_535;
-
-    /**
-     * Default maximum frame size.
-     */
-    private static final int DEFAULT_MAX_FRAME_SIZE = 16_384;
-
-    /**
-     * Maximum unsigned 31-bit value.
-     */
-    private static final int MAX_UNSIGNED_31 = 0x7fffffff;
-
-    /**
-     * Largest legal frame size.
-     */
-    private static final int MAX_FRAME_SIZE_LIMIT = 16_777_215;
 
     /**
      * Setting values.
@@ -103,7 +47,7 @@ public final class Http2Settings {
      * Creates default settings.
      */
     private Http2Settings() {
-        this.values = new int[COUNT];
+        this.values = new int[Normal._7];
     }
 
     /**
@@ -125,7 +69,7 @@ public final class Http2Settings {
         validateId(id);
         validateValue(id, value);
         values[id] = value;
-        set |= 1 << id;
+        set |= Normal._1 << id;
     }
 
     /**
@@ -147,7 +91,7 @@ public final class Http2Settings {
      */
     public boolean isSet(final int id) {
         validateId(id);
-        return (set & (1 << id)) != 0;
+        return (set & (Normal._1 << id)) != Normal._0;
     }
 
     /**
@@ -156,12 +100,11 @@ public final class Http2Settings {
      * @param other other settings
      */
     public void merge(final Http2Settings other) {
-        if (other == null) {
-            throw new ValidateException("HTTP/2 settings must not be null");
-        }
-        for (int id = 1; id < COUNT; id++) {
-            if (other.isSet(id)) {
-                set(id, other.get(id));
+        final Http2Settings checkedOther = Assert
+                .notNull(other, () -> new ValidateException("HTTP/2 settings must not be null"));
+        for (int id = Normal._1; id < Normal._7; id++) {
+            if (checkedOther.isSet(id)) {
+                set(id, checkedOther.get(id));
             }
         }
     }
@@ -172,7 +115,7 @@ public final class Http2Settings {
      * @return initial window size
      */
     public int initialWindowSize() {
-        return get(INITIAL_WINDOW_SIZE);
+        return get(HTTP.INITIAL_WINDOW_SIZE);
     }
 
     /**
@@ -181,7 +124,7 @@ public final class Http2Settings {
      * @return header table size
      */
     public int headerTableSize() {
-        return get(HEADER_TABLE_SIZE);
+        return get(HTTP.HEADER_TABLE_SIZE);
     }
 
     /**
@@ -190,7 +133,7 @@ public final class Http2Settings {
      * @return max concurrent streams
      */
     public int maxConcurrentStreams() {
-        return get(MAX_CONCURRENT_STREAMS);
+        return get(HTTP.MAX_CONCURRENT_STREAMS);
     }
 
     /**
@@ -199,7 +142,7 @@ public final class Http2Settings {
      * @return max frame size
      */
     public int maxFrameSize() {
-        return get(MAX_FRAME_SIZE);
+        return get(HTTP.MAX_FRAME_SIZE);
     }
 
     /**
@@ -208,7 +151,7 @@ public final class Http2Settings {
      * @return max header list size
      */
     public int maxHeaderListSize() {
-        return get(MAX_HEADER_LIST_SIZE);
+        return get(HTTP.MAX_HEADER_LIST_SIZE);
     }
 
     /**
@@ -218,7 +161,7 @@ public final class Http2Settings {
      */
     Http2Settings copy() {
         final Http2Settings copy = new Http2Settings();
-        System.arraycopy(values, 0, copy.values, 0, values.length);
+        System.arraycopy(values, Normal._0, copy.values, Normal._0, values.length);
         copy.set = set;
         return copy;
     }
@@ -230,8 +173,8 @@ public final class Http2Settings {
      */
     int[] ids() {
         final int[] ids = new int[Integer.bitCount(set)];
-        int index = 0;
-        for (int id = 1; id < COUNT; id++) {
+        int index = Normal._0;
+        for (int id = Normal._1; id < Normal._7; id++) {
             if (isSet(id)) {
                 ids[index++] = id;
             }
@@ -245,7 +188,7 @@ public final class Http2Settings {
      * @param id id
      */
     private static void validateId(final int id) {
-        if (id < HEADER_TABLE_SIZE || id > MAX_HEADER_LIST_SIZE) {
+        if (id < HTTP.HEADER_TABLE_SIZE || id > HTTP.MAX_HEADER_LIST_SIZE) {
             throw new ValidateException("HTTP/2 setting id must be between 1 and 6");
         }
     }
@@ -257,19 +200,20 @@ public final class Http2Settings {
      * @param value value
      */
     private static void validateValue(final int id, final int value) {
-        if (value < 0) {
+        if (value < Normal._0) {
             throw new ValidateException("HTTP/2 setting value must be non-negative");
         }
-        if (id == ENABLE_PUSH && value != 0 && value != 1) {
+        if (id == HTTP.ENABLE_PUSH && value != Normal._0 && value != Normal._1) {
             throw new ValidateException("HTTP/2 enable push must be 0 or 1");
         }
-        if (id == HEADER_TABLE_SIZE && value > HpackCodec.MAX_DYNAMIC_TABLE_SIZE) {
+        if (id == HTTP.HEADER_TABLE_SIZE && value > Builder.BYTES_64_KIB) {
             throw new ValidateException("HTTP/2 header table size is too large");
         }
-        if (id == INITIAL_WINDOW_SIZE && value > MAX_UNSIGNED_31) {
+        if (id == HTTP.INITIAL_WINDOW_SIZE && value > Integer.MAX_VALUE) {
             throw new ValidateException("HTTP/2 initial window is too large");
         }
-        if (id == MAX_FRAME_SIZE && (value < DEFAULT_MAX_FRAME_SIZE || value > MAX_FRAME_SIZE_LIMIT)) {
+        if (id == HTTP.MAX_FRAME_SIZE
+                && (value < Normal._16384 || value > (int) (Normal._16 * Normal.MEBI - Normal._1))) {
             throw new ValidateException("HTTP/2 max frame size is out of range");
         }
     }
@@ -282,11 +226,11 @@ public final class Http2Settings {
      */
     private static int defaultValue(final int id) {
         return switch (id) {
-            case HEADER_TABLE_SIZE -> DEFAULT_HEADER_TABLE_SIZE;
-            case ENABLE_PUSH -> 1;
-            case MAX_CONCURRENT_STREAMS, MAX_HEADER_LIST_SIZE -> MAX_UNSIGNED_31;
-            case INITIAL_WINDOW_SIZE -> DEFAULT_INITIAL_WINDOW;
-            case MAX_FRAME_SIZE -> DEFAULT_MAX_FRAME_SIZE;
+            case HTTP.HEADER_TABLE_SIZE -> Normal._4096;
+            case HTTP.ENABLE_PUSH -> Normal._1;
+            case HTTP.MAX_CONCURRENT_STREAMS, HTTP.MAX_HEADER_LIST_SIZE -> Integer.MAX_VALUE;
+            case HTTP.INITIAL_WINDOW_SIZE -> (int) HTTP.DEFAULT_INITIAL_WINDOW_SIZE;
+            case HTTP.MAX_FRAME_SIZE -> Normal._16384;
             default -> throw new ValidateException("HTTP/2 setting id must be between 1 and 6");
         };
     }

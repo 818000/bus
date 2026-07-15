@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.fabric.protocol.stomp;
 
+import static org.miaixz.bus.fabric.Builder.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -36,12 +39,12 @@ import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Call;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Message;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
 import org.miaixz.bus.fabric.protocol.Itinerary;
@@ -73,12 +76,10 @@ public final class StompX {
     private StompX(final Builder builder) {
         final Context current = require(builder.context, "Context");
         final EventObserver currentObserver = builder.observer == null ? EventObserver.noop() : builder.observer;
-        final Listener<? super StompSession> currentListener = Wiring
-                .safe(Wiring.compose(current.listener(), builder.listener), currentObserver);
         this.snapshot = new StompSnapshot(current, builder.uri, Address.from(builder.uri), builder.headers.build(),
-                builder.timeout, builder.destination, builder.login, builder.passcode, builder.guard, currentObserver,
-                builder.callback == null ? Wiring.callback() : builder.callback,
-                builder.handler == null ? noopHandler() : builder.handler, currentListener);
+                builder.timeout, builder.destination, builder.login, builder.passcode, builder.guard, builder.filter,
+                currentObserver, builder.callback, builder.handler == null ? noopHandler() : builder.handler,
+                builder.listener);
         this.runner = new StompRunner(snapshot);
     }
 
@@ -230,10 +231,7 @@ public final class StompX {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -249,7 +247,8 @@ public final class StompX {
         try {
             final URI parsed = new URI(value.trim());
             final String scheme = parsed.getScheme();
-            if (!"ws".equalsIgnoreCase(scheme) && !"wss".equalsIgnoreCase(scheme) && !"tcp".equalsIgnoreCase(scheme)) {
+            if (!Protocol.WS.name.equalsIgnoreCase(scheme) && !Protocol.WSS.name.equalsIgnoreCase(scheme)
+                    && !Protocol.TCP.name.equalsIgnoreCase(scheme)) {
                 throw new ProtocolException("STOMP URL must use ws, wss, or tcp");
             }
             Address.from(parsed);
@@ -266,10 +265,21 @@ public final class StompX {
      * @return duration
      */
     private static Duration validateDuration(final Duration duration) {
-        if (duration == null || duration.isNegative()) {
-            throw new ValidateException("Timeout must be non-null and non-negative");
-        }
-        return duration;
+        return validateDuration(duration, "Timeout");
+    }
+
+    /**
+     * Validates a duration.
+     *
+     * @param duration duration
+     * @param name     field name
+     * @return duration
+     */
+    private static Duration validateDuration(final Duration duration, final String name) {
+        final Duration checked = Assert
+                .notNull(duration, () -> new ValidateException(name + " must be non-null and non-negative"));
+        Assert.isFalse(checked.isNegative(), () -> new ValidateException(name + " must be non-null and non-negative"));
+        return checked;
     }
 
     /**
@@ -321,6 +331,11 @@ public final class StompX {
         private GuardRule guard;
 
         /**
+         * Message filter.
+         */
+        private Filter filter;
+
+        /**
          * Observer.
          */
         private EventObserver observer;
@@ -358,12 +373,12 @@ public final class StompX {
         private Builder(final Context context) {
             this.context = context;
             this.headers = Headers.builder();
-            final Timeout configured = context.options().get("timeout", Timeout.class);
+            final Timeout configured = context.options().get(OPTION_TIMEOUT, Timeout.class);
             this.timeout = configured == null ? Timeout.defaults() : configured;
             this.observer = EventObserver.noop();
-            this.callback = Wiring.callback();
+            this.callback = null;
             this.handler = noopHandler();
-            this.listener = Wiring.noop();
+            this.listener = null;
             this.openHandler = session -> {
             };
             this.errorHandler = cause -> {
@@ -432,7 +447,7 @@ public final class StompX {
          * @return this builder
          */
         public Builder heartBeat(final Duration outgoing, final Duration incoming) {
-            headers.set("heart-beat", heartbeat(outgoing) + "," + heartbeat(incoming));
+            headers.set(STOMP_HEADER_HEART_BEAT, heartbeat(outgoing) + "," + heartbeat(incoming));
             return this;
         }
 
@@ -544,6 +559,17 @@ public final class StompX {
         }
 
         /**
+         * Sets message filter.
+         *
+         * @param filter filter
+         * @return this builder
+         */
+        public Builder filter(final Filter filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        /**
          * Sets observer.
          *
          * @param observer observer
@@ -561,7 +587,7 @@ public final class StompX {
          * @return this builder
          */
         public Builder callback(final Callback<StompSession> callback) {
-            this.callback = callback == null ? Wiring.callback() : callback;
+            this.callback = callback;
             return this;
         }
 
@@ -572,7 +598,7 @@ public final class StompX {
          * @return this builder
          */
         public Builder listener(final Listener<? super StompSession> listener) {
-            this.listener = listener == null ? Wiring.noop() : listener;
+            this.listener = listener;
             return this;
         }
 
@@ -582,9 +608,7 @@ public final class StompX {
          * @return exchange
          */
         public StompX build() {
-            if (uri == null) {
-                throw new ValidateException("STOMP target must be set");
-            }
+            Assert.notNull(uri, () -> new ValidateException("STOMP target must be set"));
             return new StompX(this);
         }
 
@@ -641,11 +665,21 @@ public final class StompX {
         private Builder composeCallback() {
             this.callback = new Callback<>() {
 
+                /**
+                 * Forwards a successful open session to the configured open handler.
+                 *
+                 * @param value opened STOMP session
+                 */
                 @Override
                 public void success(final StompSession value) {
                     openHandler.accept(value);
                 }
 
+                /**
+                 * Forwards an open failure to the configured error handler.
+                 *
+                 * @param cause failure cause
+                 */
                 @Override
                 public void failure(final Throwable cause) {
                     errorHandler.accept(cause);
@@ -661,11 +695,9 @@ public final class StompX {
          * @return milliseconds
          */
         private static long heartbeat(final Duration duration) {
-            if (duration == null || duration.isNegative()) {
-                throw new ValidateException("STOMP heart-beat must be non-null and non-negative");
-            }
+            final Duration checked = validateDuration(duration, "STOMP heart-beat");
             try {
-                return duration.toMillis();
+                return checked.toMillis();
             } catch (final ArithmeticException e) {
                 throw new ValidateException("STOMP heart-beat is too large", e);
             }

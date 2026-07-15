@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.fabric.protocol.socket;
 
+import static org.miaixz.bus.fabric.Builder.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +28,10 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -37,18 +41,18 @@ import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Call;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Message;
 import org.miaixz.bus.fabric.Payload;
-import org.miaixz.bus.fabric.Session;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.codec.frame.FrameCodec;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.network.proxy.ProxyHeader;
 import org.miaixz.bus.fabric.observe.EventObserver;
+import org.miaixz.bus.fabric.protocol.Demuxer;
 import org.miaixz.bus.fabric.protocol.Itinerary;
 import org.miaixz.bus.fabric.protocol.socket.calls.SocketCall;
 
@@ -59,6 +63,10 @@ import org.miaixz.bus.fabric.protocol.socket.calls.SocketCall;
  * @since Java 21+
  */
 public final class SocketX {
+
+    /**
+     * Context option key for the default timeout policy.
+     */
 
     /**
      * Immutable execution snapshot.
@@ -78,12 +86,9 @@ public final class SocketX {
     private SocketX(final Builder builder) {
         final Context current = require(builder.context, "Context");
         final EventObserver currentObserver = builder.observer == null ? EventObserver.noop() : builder.observer;
-        final Listener<? super SocketSession> currentListener = Wiring
-                .safe(Wiring.compose(current.listener(), builder.listener), currentObserver);
         this.snapshot = new SocketSnapshot(current, builder.uri, Address.from(builder.uri), builder.headers.build(),
-                builder.timeout, builder.frameCodec, builder.handler(), builder.guard, currentObserver,
-                builder.proxyHeader, builder.socketOptions,
-                builder.callback == null ? Wiring.callback() : builder.callback, currentListener, builder.pooled);
+                builder.timeout, builder.frameCodec, builder.handler(), builder.guard, builder.filter, currentObserver,
+                builder.proxyHeader, builder.socketOptions, builder.callback, builder.listener, builder.pooled);
         this.runner = new SocketRunner(snapshot);
     }
 
@@ -217,21 +222,6 @@ public final class SocketX {
     }
 
     /**
-     * Returns the shared no-op socket handler.
-     *
-     * @return no-op handler
-     */
-    private static Handler noopHandler() {
-        return Instances.get(SocketX.class.getName() + ".noopHandler", () -> new Handler() {
-
-            @Override
-            public void message(final Session session, final Message message) {
-                // No-op handler intentionally ignores socket messages.
-            }
-        });
-    }
-
-    /**
      * Validates required references.
      *
      * @param value value
@@ -240,10 +230,7 @@ public final class SocketX {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -259,9 +246,9 @@ public final class SocketX {
         try {
             final URI parsed = new URI(value.trim());
             final String scheme = parsed.getScheme();
-            if (!"tcp".equalsIgnoreCase(scheme) && !"udp".equalsIgnoreCase(scheme) && !"tls".equalsIgnoreCase(scheme)
-                    && !"kcp".equalsIgnoreCase(scheme) && !"socket".equalsIgnoreCase(scheme)
-                    && !"aio".equalsIgnoreCase(scheme)) {
+            if (!Protocol.TCP.name.equalsIgnoreCase(scheme) && !Protocol.UDP.name.equalsIgnoreCase(scheme)
+                    && !Protocol.TLS.name.equalsIgnoreCase(scheme) && !SOCKET_X_KCP_SCHEME.equalsIgnoreCase(scheme)
+                    && !Protocol.SOCKET.name.equalsIgnoreCase(scheme) && !AIO_SCHEME.equalsIgnoreCase(scheme)) {
                 throw new ProtocolException("Socket URL must use tcp, tls, udp, kcp, socket, or aio");
             }
             Address.from(parsed);
@@ -283,14 +270,14 @@ public final class SocketX {
         if (StringKit.isBlank(host) || StringKit.containsAny(host, Symbol.C_CR, Symbol.C_LF)) {
             throw new ValidateException("Socket host must be non-blank and single-line");
         }
-        if (port < 1 || port > 65535) {
+        if (port < Normal._1 || port > Normal._65535) {
             throw new ValidateException("Socket port must be between 1 and 65535");
         }
         final String current = host.trim();
         final String authority = current.indexOf(Symbol.C_COLON) >= 0 && !current.startsWith(Symbol.BRACKET_LEFT)
                 ? Symbol.BRACKET_LEFT + current + Symbol.BRACKET_RIGHT
                 : current;
-        return scheme + "://" + authority + Symbol.C_COLON + port;
+        return scheme + Symbol.COLON + Symbol.SLASH + Symbol.SLASH + authority + Symbol.C_COLON + port;
     }
 
     /**
@@ -300,10 +287,10 @@ public final class SocketX {
      * @return duration
      */
     private static Duration validateDuration(final Duration value) {
-        if (value == null || value.isNegative()) {
-            throw new ValidateException("Timeout must be non-null and non-negative");
-        }
-        return value;
+        final Duration checked = Assert
+                .notNull(value, () -> new ValidateException("Timeout must be non-null and non-negative"));
+        Assert.isTrue(!checked.isNegative(), () -> new ValidateException("Timeout must be non-null and non-negative"));
+        return checked;
     }
 
     /**
@@ -350,9 +337,19 @@ public final class SocketX {
         private Handler handler;
 
         /**
+         * Optional demuxer builder.
+         */
+        private Demuxer.Builder demuxer;
+
+        /**
          * Guard.
          */
         private GuardRule guard;
+
+        /**
+         * Message filter.
+         */
+        private Filter filter;
 
         /**
          * Observer.
@@ -397,16 +394,16 @@ public final class SocketX {
         private Builder(final Context context) {
             this.context = context;
             this.headers = Headers.builder();
-            final Timeout configured = context.options().get("timeout", Timeout.class);
+            final Timeout configured = context.options().get(OPTION_TIMEOUT, Timeout.class);
             this.timeout = configured == null ? Timeout.defaults() : configured;
             this.socketOptions = hasSocketOptions(context.options()) ? SocketOptions.from(context.options())
                     : SocketOptions.defaults();
             this.timeout = timeoutWithConnect(this.timeout, this.socketOptions.connectTimeout());
             this.frameCodec = FrameCodec.line();
-            this.handler = noopHandler();
+            this.handler = Demuxer.noop();
             this.observer = EventObserver.noop();
-            this.callback = Wiring.callback();
-            this.listener = Wiring.noop();
+            this.callback = null;
+            this.listener = null;
             this.openHandler = session -> {
             };
             this.errorHandler = cause -> {
@@ -442,7 +439,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder tcp(final String host, final int port) {
-            return to(target("tcp", host, port));
+            return to(target(Protocol.TCP.name, host, port));
         }
 
         /**
@@ -453,7 +450,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder tls(final String host, final int port) {
-            return to(target("tls", host, port));
+            return to(target(Protocol.TLS.name, host, port));
         }
 
         /**
@@ -464,7 +461,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder udp(final String host, final int port) {
-            return to(target("udp", host, port));
+            return to(target(Protocol.UDP.name, host, port));
         }
 
         /**
@@ -475,7 +472,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder kcp(final String host, final int port) {
-            return to(target("kcp", host, port));
+            return to(target(SOCKET_X_KCP_SCHEME, host, port));
         }
 
         /**
@@ -571,23 +568,13 @@ public final class SocketX {
         }
 
         /**
-         * Sets TCP server backlog.
+         * Sets AIO read I/O thread count.
          *
-         * @param backlog backlog
+         * @param ioThreads I/O thread count
          * @return this builder
          */
-        public Builder backlog(final int backlog) {
-            return socketOptions(copySocketOptions().backlog(backlog).build());
-        }
-
-        /**
-         * Sets AIO read worker count.
-         *
-         * @param threadNum worker count
-         * @return this builder
-         */
-        public Builder threadNum(final int threadNum) {
-            return socketOptions(copySocketOptions().threadNum(threadNum).build());
+        public Builder ioThreads(final int ioThreads) {
+            return socketOptions(copySocketOptions().ioThreads(ioThreads).build());
         }
 
         /**
@@ -644,13 +631,106 @@ public final class SocketX {
         }
 
         /**
+         * Uses the default LF-delimited frame codec.
+         *
+         * @return this builder
+         */
+        public Builder lineFrame() {
+            return frame(FrameCodec.line());
+        }
+
+        /**
+         * Uses a delimiter-based frame codec.
+         *
+         * @param delimiter frame delimiter
+         * @return this builder
+         */
+        public Builder delimiterFrame(final byte[] delimiter) {
+            return frame(org.miaixz.bus.fabric.codec.frame.LineCodec.of(delimiter));
+        }
+
+        /**
+         * Uses a fixed-length frame codec.
+         *
+         * @param length frame length
+         * @return this builder
+         */
+        public Builder fixedFrame(final int length) {
+            return frame(FrameCodec.length(length));
+        }
+
+        /**
+         * Uses the default length-field frame codec.
+         *
+         * @return this builder
+         */
+        public Builder lengthFieldFrame() {
+            return frame(FrameCodec.lengthField());
+        }
+
+        /**
+         * Uses an unframed raw byte codec.
+         *
+         * @return this builder
+         */
+        public Builder rawFrame() {
+            return frame(FrameCodec.raw());
+        }
+
+        /**
          * Sets message handler.
          *
          * @param handler handler
          * @return this builder
          */
         public Builder onMessage(final Handler handler) {
-            this.handler = handler == null ? noopHandler() : handler;
+            this.handler = handler == null ? Demuxer.noop() : handler;
+            this.demuxer = null;
+            return this;
+        }
+
+        /**
+         * Registers a channel message handler.
+         *
+         * @param channel channel id
+         * @param handler handler
+         * @return this builder
+         */
+        public Builder channel(final String channel, final Handler handler) {
+            demuxer().channel(channel, handler);
+            return this;
+        }
+
+        /**
+         * Sets fallback message handler for unmatched channels.
+         *
+         * @param handler fallback handler
+         * @return this builder
+         */
+        public Builder fallback(final Handler handler) {
+            demuxer().fallback(handler);
+            return this;
+        }
+
+        /**
+         * Sets the header used for channel lookup.
+         *
+         * @param name header name
+         * @return this builder
+         */
+        public Builder channelHeader(final String name) {
+            demuxer().header(name);
+            return this;
+        }
+
+        /**
+         * Sets a custom message channel resolver.
+         *
+         * @param resolver resolver
+         * @return this builder
+         */
+        public Builder resolver(final Function<Message, String> resolver) {
+            demuxer().resolver(resolver);
             return this;
         }
 
@@ -661,8 +741,9 @@ public final class SocketX {
          * @return this builder
          */
         public Builder onText(final Consumer<String> handler) {
+            this.demuxer = null;
             if (handler == null) {
-                this.handler = noopHandler();
+                this.handler = Demuxer.noop();
             } else {
                 this.handler = (session, message) -> handler.accept(message.payload().text(StandardCharsets.UTF_8));
             }
@@ -705,6 +786,17 @@ public final class SocketX {
         }
 
         /**
+         * Sets message filter.
+         *
+         * @param filter filter
+         * @return this builder
+         */
+        public Builder filter(final Filter filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        /**
          * Sets observer.
          *
          * @param observer observer
@@ -743,7 +835,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder callback(final Callback<SocketSession> callback) {
-            this.callback = callback == null ? Wiring.callback() : callback;
+            this.callback = callback;
             return this;
         }
 
@@ -754,7 +846,7 @@ public final class SocketX {
          * @return this builder
          */
         public Builder listener(final Listener<? super SocketSession> listener) {
-            this.listener = listener == null ? Wiring.noop() : listener;
+            this.listener = listener;
             return this;
         }
 
@@ -833,11 +925,21 @@ public final class SocketX {
         private Builder composeCallback() {
             this.callback = new Callback<>() {
 
+                /**
+                 * Forwards a successful open session to the configured open handler.
+                 *
+                 * @param value opened socket session
+                 */
                 @Override
                 public void success(final SocketSession value) {
                     openHandler.accept(value);
                 }
 
+                /**
+                 * Forwards an open failure to the configured error handler.
+                 *
+                 * @param cause failure cause
+                 */
                 @Override
                 public void failure(final Throwable cause) {
                     errorHandler.accept(cause);
@@ -852,7 +954,22 @@ public final class SocketX {
          * @return handler
          */
         private Handler handler() {
-            return handler == null ? noopHandler() : handler;
+            if (demuxer != null) {
+                return demuxer.build();
+            }
+            return handler == null ? Demuxer.noop() : handler;
+        }
+
+        /**
+         * Returns the demuxer builder.
+         *
+         * @return demuxer builder
+         */
+        private Demuxer.Builder demuxer() {
+            if (demuxer == null) {
+                demuxer = Demuxer.builder();
+            }
+            return demuxer;
         }
 
         /**
@@ -863,7 +980,7 @@ public final class SocketX {
         private SocketOptions.Builder copySocketOptions() {
             return SocketOptions.builder().readBufferSize(socketOptions.readBufferSize())
                     .writeChunkSize(socketOptions.writeChunkSize()).writeChunkCount(socketOptions.writeChunkCount())
-                    .backlog(socketOptions.backlog()).threadNum(socketOptions.threadNum())
+                    .backlog(socketOptions.backlog()).ioThreads(socketOptions.ioThreads())
                     .socketOptions(socketOptions.socketOptions()).retainReadBuffer(socketOptions.retainReadBuffer())
                     .connectTimeout(socketOptions.connectTimeout()).idleTimeout(socketOptions.idleTimeout());
         }
@@ -889,11 +1006,10 @@ public final class SocketX {
      * @return true when socket-specific keys exist
      */
     private static boolean hasSocketOptions(final org.miaixz.bus.fabric.Options options) {
-        return options.contains(SocketOptions.READ_BUFFER_SIZE) || options.contains(SocketOptions.WRITE_CHUNK_SIZE)
-                || options.contains(SocketOptions.WRITE_CHUNK_COUNT) || options.contains(SocketOptions.BACKLOG)
-                || options.contains(SocketOptions.THREAD_NUM) || options.contains(SocketOptions.SOCKET_OPTIONS)
-                || options.contains(SocketOptions.RETAIN_READ_BUFFER) || options.contains(SocketOptions.CONNECT_TIMEOUT)
-                || options.contains(SocketOptions.IDLE_TIMEOUT);
+        return options.contains(OPTION_SOCKET_READ_BUFFER_SIZE) || options.contains(OPTION_SOCKET_WRITE_CHUNK_SIZE)
+                || options.contains(OPTION_SOCKET_WRITE_CHUNK_COUNT) || options.contains(OPTION_SOCKET_IO_THREADS)
+                || options.contains(OPTION_SOCKET_OPTIONS) || options.contains(OPTION_SOCKET_RETAIN_READ_BUFFER)
+                || options.contains(OPTION_SOCKET_CONNECT_TIMEOUT) || options.contains(OPTION_SOCKET_IDLE_TIMEOUT);
     }
 
 }

@@ -20,6 +20,7 @@
 package org.miaixz.bus.fabric.observe;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.observe.event.FabricEvent;
 
@@ -47,11 +48,14 @@ final class NoopEventObserver implements EventObserver {
         return Instances.get(NoopEventObserver.class.getName(), NoopEventObserver::new);
     }
 
+    /**
+     * Validates and ignores the event.
+     *
+     * @param event fabric event
+     */
     @Override
     public void emit(final FabricEvent event) {
-        if (event == null) {
-            throw new ValidateException("Fabric event must not be null");
-        }
+        Assert.notNull(event, () -> new ValidateException("Fabric event must not be null"));
     }
 
 }

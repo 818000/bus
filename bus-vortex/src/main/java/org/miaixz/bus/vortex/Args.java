@@ -40,12 +40,12 @@ import org.miaixz.bus.vortex.strategy.vetting.RestVettingStrategy;
  * "language" of the gateway. It also contains nested static classes that serve as models for type-safe configuration
  * binding from application properties (e.g., YAML or .properties files) using {@code @ConfigurationProperties}.
  *
+ * @author Kimi Liu
  * @see RestQualifierStrategy
  * @see McpQualifierStrategy
  * @see RestVettingStrategy
  * @see McpVettingStrategy
  * @see RequestStrategy
- * @author Kimi Liu
  * @since Java 21+
  */
 public class Args extends Specifics {
@@ -143,6 +143,11 @@ public class Args extends Specifics {
     public static final String CST_PATH_PREFIX = Symbol.SLASH + "router" + Symbol.SLASH + "cst";
 
     /**
+     * Default registry method used to resolve public slug forwarding assets.
+     */
+    public static final String VORTEX_SLUG_GET = "vortex.slug.get";
+
+    /**
      * A constant for a default API version, e.g., "1.0".
      */
     public static final String DEFAULT_VERSION = "1.0";
@@ -176,6 +181,11 @@ public class Args extends Specifics {
      * Route protocol for LLM assets.
      */
     public static final int PROTOCOL_LLM = 6;
+
+    /**
+     * Route protocol for public slug forwarding assets.
+     */
+    public static final int PROTOCOL_SLUG = 7;
 
     /**
      * Checks if the given path is a RESTful API proxy request path.

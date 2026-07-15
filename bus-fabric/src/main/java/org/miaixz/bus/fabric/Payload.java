@@ -19,19 +19,19 @@
 */
 package org.miaixz.bus.fabric;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
-import org.miaixz.bus.core.xyz.ArrayKit;
 
 /**
  * Payload abstraction that keeps byte-array payloads repeatable and stream payloads one-shot.
@@ -47,7 +47,7 @@ public interface Payload {
      * @return empty payload
      */
     static Payload empty() {
-        return Instances.get(Payload.class.getName() + ".empty", () -> Payload.of(new byte[0]));
+        return Instances.get(Payload.class.getName() + ".empty", () -> Payload.of(Normal.EMPTY_BYTE_ARRAY));
     }
 
     /**
@@ -60,44 +60,105 @@ public interface Payload {
         if (bytes == null) {
             throw new ValidateException("Payload bytes must not be null");
         }
-        final byte[] snapshot = ArrayKit.clone(bytes);
+        return repeatable(ByteString.of(bytes));
+    }
+
+    /**
+     * Creates a repeatable payload from immutable bytes.
+     *
+     * @param bytes bytes
+     * @return byte-string payload
+     */
+    static Payload of(final ByteString bytes) {
+        if (bytes == null) {
+            throw new ValidateException("Payload bytes must not be null");
+        }
+        return repeatable(ByteString.of(bytes.toByteArray()));
+    }
+
+    /**
+     * Creates a repeatable payload from a trusted byte snapshot.
+     *
+     * @param snapshot byte snapshot
+     * @return repeatable payload
+     */
+    private static Payload repeatable(final ByteString snapshot) {
         return new Payload() {
 
+            /**
+             * Returns the repeatable snapshot length.
+             *
+             * @return snapshot length
+             */
             @Override
             public long length() {
-                return snapshot.length;
+                return snapshot.size();
             }
 
+            /**
+             * Opens a new source over the repeatable snapshot.
+             *
+             * @return repeatable snapshot source
+             */
             @Override
-            public InputStream stream() {
-                return new ByteArrayInputStream(snapshot);
+            public Source source() {
+                return new Buffer().write(snapshot);
             }
 
+            /**
+             * Returns the repeatable snapshot bytes using the default threshold.
+             *
+             * @return snapshot bytes
+             */
             @Override
             public byte[] bytes() {
-                return bytes(Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return bytes(Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Returns the repeatable snapshot bytes using an explicit threshold.
+             *
+             * @param maxBytes maximum bytes to materialize
+             * @return snapshot bytes
+             */
             @Override
             public byte[] bytes(final long maxBytes) {
                 validateMaterializeMaxBytes(maxBytes);
-                if (snapshot.length > maxBytes) {
-                    throw materializeExceeded(snapshot.length, maxBytes, "Payload.bytes(long)");
+                if (snapshot.size() > maxBytes) {
+                    throw materializeExceeded(snapshot.size(), maxBytes, "Payload.bytes(long)");
                 }
-                return ArrayKit.clone(snapshot);
+                return snapshot.toByteArray();
             }
 
+            /**
+             * Decodes the repeatable snapshot using the default threshold.
+             *
+             * @param charset charset
+             * @return decoded text
+             */
             @Override
             public String text(final Charset charset) {
-                return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Decodes the repeatable snapshot using an explicit threshold.
+             *
+             * @param charset  charset
+             * @param maxBytes maximum bytes to materialize
+             * @return decoded text
+             */
             @Override
             public String text(final Charset charset, final long maxBytes) {
                 validateCharset(charset);
                 return new String(bytes(maxBytes), charset);
             }
 
+            /**
+             * Returns true because byte snapshots can be read repeatedly.
+             *
+             * @return true
+             */
             @Override
             public boolean repeatable() {
                 return true;
@@ -117,19 +178,19 @@ public interface Payload {
             throw new ValidateException("Payload text must not be null");
         }
         validateCharset(charset);
-        return of(text.getBytes(charset));
+        return of(ByteString.encodeString(text, charset));
     }
 
     /**
-     * Creates a one-shot streaming payload.
+     * Creates a one-shot source payload.
      *
-     * @param input  input stream
+     * @param input  source
      * @param length declared length, or -1 when unknown
-     * @return stream payload
+     * @return source payload
      */
-    static Payload stream(final InputStream input, final long length) {
+    static Payload source(final Source input, final long length) {
         if (input == null) {
-            throw new ValidateException("Payload stream must not be null");
+            throw new ValidateException("Payload source must not be null");
         }
         if (length < -1) {
             throw new ValidateException("Payload length must be -1 or greater");
@@ -137,40 +198,79 @@ public interface Payload {
         final AtomicBoolean opened = new AtomicBoolean();
         return new Payload() {
 
+            /**
+             * Returns the declared one-shot stream length.
+             *
+             * @return declared length, or -1 when unknown
+             */
             @Override
             public long length() {
                 return length;
             }
 
+            /**
+             * Opens the one-shot source exactly once.
+             *
+             * @return one-shot source
+             */
             @Override
-            public InputStream stream() {
+            public Source source() {
                 if (!opened.compareAndSet(false, true)) {
                     throw new StatefulException("Streaming payload can only be opened once");
                 }
                 return input;
             }
 
+            /**
+             * Materializes this one-shot stream using the default threshold.
+             *
+             * @return materialized bytes
+             */
             @Override
             public byte[] bytes() {
-                return bytes(Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return bytes(Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Materializes this one-shot stream using an explicit threshold.
+             *
+             * @param maxBytes maximum bytes to materialize
+             * @return materialized bytes
+             */
             @Override
             public byte[] bytes(final long maxBytes) {
                 return materialize(this, maxBytes, "Payload.bytes(long)");
             }
 
+            /**
+             * Decodes this one-shot stream using the default threshold.
+             *
+             * @param charset charset
+             * @return decoded text
+             */
             @Override
             public String text(final Charset charset) {
-                return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Decodes this one-shot stream using an explicit threshold.
+             *
+             * @param charset  charset
+             * @param maxBytes maximum bytes to materialize
+             * @return decoded text
+             */
             @Override
             public String text(final Charset charset, final long maxBytes) {
                 validateCharset(charset);
                 return new String(bytes(maxBytes), charset);
             }
 
+            /**
+             * Returns false because the source can be opened only once.
+             *
+             * @return false
+             */
             @Override
             public boolean repeatable() {
                 return false;
@@ -186,11 +286,11 @@ public interface Payload {
     long length();
 
     /**
-     * Opens the payload stream.
+     * Opens the payload source.
      *
-     * @return payload stream
+     * @return payload source
      */
-    InputStream stream();
+    Source source();
 
     /**
      * Reads all payload bytes.
@@ -198,7 +298,7 @@ public interface Payload {
      * @return payload bytes
      */
     default byte[] bytes() {
-        return materialize(this, Options.DEFAULT_MATERIALIZE_MAX_BYTES, "Payload.bytes()");
+        return materialize(this, Builder.DEFAULT_MATERIALIZE_MAX_BYTES, "Payload.bytes()");
     }
 
     /**
@@ -218,7 +318,7 @@ public interface Payload {
      * @return payload text
      */
     default String text(final Charset charset) {
-        return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+        return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
     }
 
     /**
@@ -262,13 +362,12 @@ public interface Payload {
             throw new InternalException(
                     "Materialize size " + length + " bytes exceeds JVM byte array limit at " + source);
         }
-        final int initial = length >= 0 ? (int) length : 8192;
-        try (InputStream input = payload.stream(); ByteArrayOutputStream output = new ByteArrayOutputStream(initial)) {
-            final byte[] buffer = new byte[8192];
+        try (Source input = payload.source()) {
+            final Buffer buffer = new Buffer();
             long total = 0;
             while (true) {
-                final int read = input.read(buffer);
-                if (read < 0) {
+                final long read = input.read(buffer, Normal._8192);
+                if (read == -1) {
                     break;
                 }
                 total += read;
@@ -279,43 +378,43 @@ public interface Payload {
                     throw new InternalException(
                             "Materialize size " + total + " bytes exceeds JVM byte array limit at " + source);
                 }
-                output.write(buffer, 0, read);
             }
             if (length >= 0 && total > length) {
                 throw new InternalException("Streaming payload exceeded declared length at " + source);
             }
-            return output.toByteArray();
+            return buffer.readByteArray();
         } catch (final IOException e) {
             throw new InternalException("Unable to read payload at " + source, e);
         }
     }
 
     /**
-     * Copies a payload stream to an output stream without materializing it.
+     * Copies a payload stream to a sink without materializing it.
      *
      * @param payload payload
-     * @param output  output stream
+     * @param sink    sink
      * @return copied byte count
      */
-    static long copyTo(final Payload payload, final OutputStream output) {
+    static long copyTo(final Payload payload, final Sink sink) {
         if (payload == null) {
             throw new ValidateException("Payload must not be null");
         }
-        if (output == null) {
-            throw new ValidateException("Output stream must not be null");
+        if (sink == null) {
+            throw new ValidateException("Sink must not be null");
         }
         final long length = payload.length();
-        final byte[] buffer = new byte[8192];
         long total = 0L;
-        try (InputStream input = payload.stream()) {
-            int read;
-            while ((read = input.read(buffer)) != -1) {
+        try (Source input = payload.source()) {
+            final Buffer buffer = new Buffer();
+            long read;
+            while ((read = input.read(buffer, Normal._8192)) != -1) {
                 total += read;
                 if (length >= 0 && total > length) {
                     throw new InternalException("Streaming payload exceeded declared length at Payload.copyTo");
                 }
-                output.write(buffer, 0, read);
+                sink.write(buffer, read);
             }
+            sink.flush();
             return total;
         } catch (final IOException e) {
             throw new InternalException("Unable to copy payload stream", e);

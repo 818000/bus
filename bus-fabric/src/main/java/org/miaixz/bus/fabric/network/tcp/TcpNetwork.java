@@ -23,13 +23,13 @@ import java.util.EnumSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.network.Connection;
 import org.miaixz.bus.fabric.network.Connector;
 import org.miaixz.bus.fabric.network.Transport;
@@ -70,12 +70,9 @@ public final class TcpNetwork implements Connector {
      * @param listener lifecycle listener
      */
     private TcpNetwork(final AioNetwork aio, final Listener<Object> listener) {
-        if (aio == null) {
-            throw new ValidateException("AIO network must not be null");
-        }
-        this.aio = aio;
+        this.aio = Assert.notNull(aio, () -> new ValidateException("AIO network must not be null"));
         this.closed = new AtomicBoolean();
-        this.listener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+        this.listener = listener;
     }
 
     /**
@@ -85,7 +82,7 @@ public final class TcpNetwork implements Connector {
      * @return TCP network
      */
     public static TcpNetwork create(final AioNetwork aio) {
-        return new TcpNetwork(aio, Wiring.noop());
+        return new TcpNetwork(aio, null);
     }
 
     /**
@@ -96,7 +93,7 @@ public final class TcpNetwork implements Connector {
      * @return TCP network
      */
     public static TcpNetwork create(final AioNetwork aio, final Listener<Object> listener) {
-        return new TcpNetwork(aio, listener == null ? Wiring.noop() : listener);
+        return new TcpNetwork(aio, listener);
     }
 
     /**
@@ -108,17 +105,13 @@ public final class TcpNetwork implements Connector {
      */
     @Override
     public CompletableFuture<Connection> connect(final Address address, final Timeout timeout) {
-        if (address == null) {
-            throw new ValidateException("Address must not be null");
-        }
-        if (timeout == null) {
-            throw new ValidateException("Timeout must not be null");
-        }
-        final Transport transport = Transport.fromScheme(address.scheme());
+        final Address checkedAddress = Assert.notNull(address, () -> new ValidateException("Address must not be null"));
+        final Timeout checkedTimeout = Assert.notNull(timeout, () -> new ValidateException("Timeout must not be null"));
+        final Transport transport = Transport.fromScheme(checkedAddress.scheme());
         if (!supports(transport)) {
             throw new ProtocolException("TCP network does not support transport: " + transport);
         }
-        return aio.connect(address, timeout, listener);
+        return aio.connect(checkedAddress, checkedTimeout, listener);
     }
 
     /**
@@ -129,17 +122,15 @@ public final class TcpNetwork implements Connector {
      * @return TCP server
      */
     public TcpServer listen(final Address address, final Handler handler) {
-        if (address == null) {
-            throw new ValidateException("Listen address must not be null");
-        }
-        if (handler == null) {
-            throw new ValidateException("Listen handler must not be null");
-        }
-        final Transport transport = Transport.fromScheme(address.scheme());
+        final Address checkedAddress = Assert
+                .notNull(address, () -> new ValidateException("Listen address must not be null"));
+        final Handler checkedHandler = Assert
+                .notNull(handler, () -> new ValidateException("Listen handler must not be null"));
+        final Transport transport = Transport.fromScheme(checkedAddress.scheme());
         if (!supports(transport)) {
             throw new ProtocolException("TCP listener does not support transport: " + transport);
         }
-        return aio.server(address, handler, listener);
+        return aio.server(checkedAddress, checkedHandler, listener);
     }
 
     /**
@@ -150,10 +141,7 @@ public final class TcpNetwork implements Connector {
      */
     @Override
     public boolean supports(final Transport transport) {
-        if (transport == null) {
-            throw new ValidateException("Transport must not be null");
-        }
-        return SUPPORTED.contains(transport);
+        return SUPPORTED.contains(Assert.notNull(transport, () -> new ValidateException("Transport must not be null")));
     }
 
     /**

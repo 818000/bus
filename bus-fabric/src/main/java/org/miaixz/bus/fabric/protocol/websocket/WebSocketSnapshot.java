@@ -21,15 +21,16 @@ package org.miaixz.bus.fabric.protocol.websocket;
 
 import java.net.URI;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
 
@@ -42,6 +43,7 @@ import org.miaixz.bus.fabric.observe.EventObserver;
  * @param headers  upgrade request headers
  * @param timeout  connect and session timeout policy
  * @param guard    optional policy guard for WebSocket messages
+ * @param filter   optional message filter for WebSocket open, inbound, and outbound messages
  * @param observer observer receiving WebSocket lifecycle events
  * @param callback callback receiving the opened WebSocket session or failure
  * @param handler  inbound message handler
@@ -50,7 +52,7 @@ import org.miaixz.bus.fabric.observe.EventObserver;
  * @since Java 21+
  */
 record WebSocketSnapshot(Context context, URI uri, Address address, Headers headers, Timeout timeout, GuardRule guard,
-        EventObserver observer, Callback<WebSocketSession> callback, Handler handler,
+        Filter filter, EventObserver observer, Callback<WebSocketSession> callback, Handler handler,
         Listener<? super WebSocketSession> listener) {
 
     /**
@@ -63,9 +65,7 @@ record WebSocketSnapshot(Context context, URI uri, Address address, Headers head
         headers = require(headers, "Headers");
         timeout = require(timeout, "Timeout");
         observer = EventObserver.safe(require(observer, "Observer"));
-        callback = Wiring.safeCallback(require(callback, "Callback"), observer);
         handler = require(handler, "Handler");
-        listener = Wiring.safe(require(listener, "Listener"), observer);
     }
 
     /**
@@ -77,10 +77,7 @@ record WebSocketSnapshot(Context context, URI uri, Address address, Headers head
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

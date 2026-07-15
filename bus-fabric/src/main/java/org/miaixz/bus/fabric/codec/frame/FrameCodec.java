@@ -19,9 +19,10 @@
 */
 package org.miaixz.bus.fabric.codec.frame;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
+import org.miaixz.bus.core.codec.Decoder;
+import org.miaixz.bus.core.io.buffer.Buffer;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 
@@ -31,7 +32,7 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
  * @author Kimi Liu
  * @since Java 21+
  */
-public interface FrameCodec {
+public interface FrameCodec extends Decoder<Buffer, List<Frame>> {
 
     /**
      * Creates the default line codec.
@@ -56,7 +57,25 @@ public interface FrameCodec {
      * @return fixed-length codec
      */
     static FrameCodec length(final int length) {
-        return LengthCodec.of(length);
+        return FixedCodec.of(length);
+    }
+
+    /**
+     * Creates the default length-field codec.
+     *
+     * @return length-field codec
+     */
+    static FrameCodec lengthField() {
+        return LengthCodec.create();
+    }
+
+    /**
+     * Creates a raw byte codec.
+     *
+     * @return raw codec
+     */
+    static FrameCodec raw() {
+        return RawCodec.create();
     }
 
     /**
@@ -65,15 +84,15 @@ public interface FrameCodec {
      * @param input input bytes
      * @return decoded frames
      */
-    List<Frame> decode(ByteBuffer input);
+    List<Frame> decode(Buffer input);
 
     /**
      * Encodes a frame.
      *
-     * @param frame frame
-     * @return encoded bytes
+     * @param frame  frame
+     * @param output output buffer
      */
-    ByteBuffer encode(Frame frame);
+    void encode(Frame frame, Buffer output);
 
     /**
      * Resets codec state.

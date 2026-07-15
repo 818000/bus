@@ -19,25 +19,26 @@
 */
 package org.miaixz.bus.fabric.protocol.http.http2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.LongConsumer;
 
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.io.timout.Timeout;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Headers;
-import org.miaixz.bus.fabric.Options;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Status;
-import org.miaixz.bus.fabric.codec.stream.SegmentedBuffer;
-import org.miaixz.bus.fabric.codec.stream.StreamSink;
-import org.miaixz.bus.fabric.codec.stream.StreamSource;
 
 /**
  * HTTP/2 stream state with buffered body source and sink.
@@ -46,11 +47,6 @@ import org.miaixz.bus.fabric.codec.stream.StreamSource;
  * @since Java 21+
  */
 public final class Http2Stream implements AutoCloseable {
-
-    /**
-     * Default stream flow-control window.
-     */
-    private static final long DEFAULT_WINDOW = 65_535L;
 
     /**
      * Stream id.
@@ -106,7 +102,7 @@ public final class Http2Stream implements AutoCloseable {
      * @param inboundConsumed inbound body bytes consumed by the application
      */
     Http2Stream(final int id, final Headers headers, final LongConsumer inboundConsumed) {
-        if (id <= 0) {
+        if (id <= Normal._0) {
             throw new ValidateException("HTTP/2 stream id must be positive");
         }
         this.id = id;
@@ -115,7 +111,7 @@ public final class Http2Stream implements AutoCloseable {
         this.sink = new StreamBody(ignored -> {
         });
         this.state = new AtomicReference<>(Status.OPENED);
-        this.receiveWindow = new AtomicLong(DEFAULT_WINDOW);
+        this.receiveWindow = new AtomicLong(Builder.HTTP2_STREAM_DEFAULT_WINDOW);
     }
 
     /**
@@ -170,16 +166,14 @@ public final class Http2Stream implements AutoCloseable {
      *
      * @param data data
      */
-    public void receiveData(final ByteBuffer data) {
-        if (data == null) {
-            throw new ValidateException("HTTP/2 data must not be null");
-        }
+    public void receiveData(final ByteString data) {
+        final ByteString payload = require(data, "HTTP/2 data");
         if (!opened()) {
             throw new ProtocolException("HTTP/2 closed stream received data");
         }
-        final ByteBuffer view = data.asReadOnlyBuffer();
-        consumeReceiveWindow(view.remaining());
-        source.write(view);
+        consumeReceiveWindow(payload.size());
+        final Buffer buffer = new Buffer().write(payload);
+        source.write(buffer, buffer.size());
     }
 
     /**
@@ -188,7 +182,7 @@ public final class Http2Stream implements AutoCloseable {
      * @param delta restored byte count
      */
     void updateReceiveWindow(final long delta) {
-        if (delta <= 0 || delta > Integer.MAX_VALUE) {
+        if (delta <= Normal._0 || delta > Integer.MAX_VALUE) {
             throw new ProtocolException("Invalid HTTP/2 stream window update");
         }
         long current;
@@ -207,7 +201,7 @@ public final class Http2Stream implements AutoCloseable {
      *
      * @return source
      */
-    public StreamSource source() {
+    public Source source() {
         return source;
     }
 
@@ -216,7 +210,7 @@ public final class Http2Stream implements AutoCloseable {
      *
      * @return sink
      */
-    public StreamSink sink() {
+    public Sink sink() {
         return sink;
     }
 
@@ -307,21 +301,18 @@ public final class Http2Stream implements AutoCloseable {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
      * Buffered stream body.
      */
-    private static final class StreamBody implements StreamSource, StreamSink {
+    private static final class StreamBody implements Source, Sink, Payload {
 
         /**
          * Buffer.
          */
-        private final SegmentedBuffer buffer = SegmentedBuffer.create();
+        private final Buffer buffer = new Buffer();
 
         /**
          * Callback for newly consumed bytes.
@@ -349,7 +340,7 @@ public final class Http2Stream implements AutoCloseable {
          * @param consumed consumed byte callback
          */
         private StreamBody(final LongConsumer consumed) {
-            this.consumed = consumed;
+            this.consumed = require(consumed, "HTTP/2 consumed callback");
         }
 
         /**
@@ -363,40 +354,52 @@ public final class Http2Stream implements AutoCloseable {
         }
 
         /**
-         * Opens a stream snapshot.
+         * Opens a bounded source view over the buffered HTTP/2 body.
          *
-         * @return stream
+         * @return body source view
          */
         @Override
-        public synchronized InputStream stream() {
+        public synchronized Source source() {
             ensureOpen();
-            return new SegmentedInputStream(buffer.size());
+            return new BufferSourceView(bufferSize());
         }
 
         /**
-         * Reads bytes.
+         * Reads from the buffered body and reports consumed flow-control bytes.
          *
-         * @param target target buffer
-         * @return read count
+         * @param target    destination buffer
+         * @param byteCount maximum bytes to read
+         * @return bytes read, or -1 at end of buffer
          */
         @Override
-        public synchronized int read(final ByteBuffer target) {
-            if (target == null) {
-                throw new ValidateException("HTTP/2 body target must not be null");
+        public synchronized long read(final Buffer target, final long byteCount) {
+            final Buffer checkedTarget = require(target, "HTTP/2 body target");
+            if (byteCount < Normal._0) {
+                throw new IllegalArgumentException("byteCount < 0: " + byteCount);
             }
             ensureOpen();
-            if (!target.hasRemaining()) {
-                return 0;
+            if (byteCount == Normal._0) {
+                return Normal._0;
             }
             final long size = buffer.size();
             if (readIndex >= size) {
-                return -1;
+                return Normal.__1;
             }
-            final int count = (int) Math.min(target.remaining(), size - readIndex);
-            buffer.copyTo(readIndex, target, count);
+            final int count = (int) Math.min(Math.min(byteCount, size - readIndex), Integer.MAX_VALUE);
+            buffer.copyTo(checkedTarget, readIndex, count);
             readIndex += count;
             creditConsumed(readIndex);
             return count;
+        }
+
+        /**
+         * Returns source and sink timeout.
+         *
+         * @return timeout
+         */
+        @Override
+        public Timeout timeout() {
+            return Timeout.NONE;
         }
 
         /**
@@ -406,9 +409,15 @@ public final class Http2Stream implements AutoCloseable {
          */
         @Override
         public synchronized byte[] bytes() {
-            return bytes(Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+            return bytes(Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
         }
 
+        /**
+         * Materializes buffered bytes and marks the buffer as consumed.
+         *
+         * @param maxBytes maximum bytes to materialize
+         * @return materialized bytes
+         */
         @Override
         public synchronized byte[] bytes(final long maxBytes) {
             ensureOpen();
@@ -428,54 +437,45 @@ public final class Http2Stream implements AutoCloseable {
          */
         @Override
         public String text(final Charset charset) {
-            return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+            return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
         }
 
+        /**
+         * Materializes and decodes the buffered body with an explicit threshold.
+         *
+         * @param charset  charset
+         * @param maxBytes maximum bytes to materialize
+         * @return decoded text
+         */
         @Override
         public String text(final Charset charset, final long maxBytes) {
-            if (charset == null) {
-                throw new ValidateException("Charset must not be null");
-            }
-            return new String(bytes(maxBytes), charset);
+            return new String(bytes(maxBytes), require(charset, "Charset"));
         }
 
         /**
-         * Writes bytes.
+         * Returns whether this buffered body is repeatable.
          *
-         * @param source source buffer
+         * @return true
          */
         @Override
-        public synchronized void write(final ByteBuffer source) {
-            if (source == null) {
-                throw new ValidateException("HTTP/2 body source must not be null");
+        public boolean repeatable() {
+            return true;
+        }
+
+        /**
+         * Writes buffered bytes.
+         *
+         * @param source    source buffer
+         * @param byteCount byte count
+         */
+        @Override
+        public synchronized void write(final Buffer source, final long byteCount) {
+            final Buffer checkedSource = require(source, "HTTP/2 body source");
+            if (byteCount < Normal._0) {
+                throw new IllegalArgumentException("byteCount < 0: " + byteCount);
             }
             ensureOpen();
-            buffer.append(source);
-            source.position(source.limit());
-        }
-
-        /**
-         * Writes a payload.
-         *
-         * @param payload payload
-         */
-        @Override
-        public void write(final Payload payload) {
-            if (payload == null) {
-                throw new ValidateException("Payload must not be null");
-            }
-            final byte[] bytes = new byte[8192];
-            try (InputStream input = payload.stream()) {
-                int read = input.read(bytes);
-                while (read >= 0) {
-                    if (read > 0) {
-                        write(ByteBuffer.wrap(bytes, 0, read));
-                    }
-                    read = input.read(bytes);
-                }
-            } catch (final IOException e) {
-                throw new InternalException("Unable to stream HTTP/2 payload", e);
-            }
+            buffer.write(checkedSource, byteCount);
         }
 
         /**
@@ -483,7 +483,6 @@ public final class Http2Stream implements AutoCloseable {
          *
          * @return written
          */
-        @Override
         public synchronized long written() {
             return buffer.size();
         }
@@ -519,7 +518,9 @@ public final class Http2Stream implements AutoCloseable {
          * @return snapshot bytes
          */
         private byte[] snapshot() {
-            return buffer.copy(0, buffer.size());
+            final Buffer copy = new Buffer();
+            buffer.copyTo(copy, Normal._0, buffer.size());
+            return copy.readByteArray();
         }
 
         /**
@@ -550,12 +551,12 @@ public final class Http2Stream implements AutoCloseable {
         }
 
         /**
-         * Input stream view over the buffered segments.
+         * Source view over the buffered segments.
          */
-        private final class SegmentedInputStream extends InputStream {
+        private final class BufferSourceView implements Source {
 
             /**
-             * Read limit captured when the stream is opened.
+             * Read limit captured when the source is opened.
              */
             private final int limit;
 
@@ -565,60 +566,58 @@ public final class Http2Stream implements AutoCloseable {
             private int cursor;
 
             /**
-             * Creates a stream view.
+             * Creates a source view.
              *
              * @param limit readable limit
              */
-            private SegmentedInputStream(final int limit) {
+            private BufferSourceView(final int limit) {
                 this.limit = limit;
             }
 
             /**
-             * Reads one byte.
+             * Reads from this bounded buffer view and reports consumed bytes.
              *
-             * @return byte or -1
+             * @param target    destination buffer
+             * @param byteCount maximum bytes to read
+             * @return bytes read, or -1 at end of view
              */
             @Override
-            public int read() {
-                synchronized (StreamBody.this) {
-                    if (cursor >= limit) {
-                        return -1;
-                    }
-                    final int value = buffer.get(cursor++) & 0xff;
-                    creditConsumed(cursor);
-                    return value;
+            public long read(final Buffer target, final long byteCount) {
+                final Buffer checkedTarget = require(target, "HTTP/2 body target");
+                if (byteCount < Normal._0) {
+                    throw new IllegalArgumentException("byteCount < 0: " + byteCount);
                 }
-            }
-
-            /**
-             * Reads bytes into a target array.
-             *
-             * @param target target
-             * @param offset offset
-             * @param length length
-             * @return read count or -1
-             */
-            @Override
-            public int read(final byte[] target, final int offset, final int length) {
-                if (target == null) {
-                    throw new ValidateException("HTTP/2 body target must not be null");
-                }
-                if (offset < 0 || length < 0 || length > target.length - offset) {
-                    throw new IndexOutOfBoundsException("HTTP/2 body read range is outside target");
-                }
-                if (length == 0) {
-                    return 0;
+                if (byteCount == Normal._0) {
+                    return Normal._0;
                 }
                 synchronized (StreamBody.this) {
                     if (cursor >= limit) {
-                        return -1;
+                        return Normal.__1;
                     }
-                    final int count = Math.min(length, limit - cursor);
-                    buffer.copyTo(cursor, ByteBuffer.wrap(target, offset, count), count);
+                    final int count = (int) Math.min(Math.min(byteCount, limit - cursor), Integer.MAX_VALUE);
+                    buffer.copyTo(checkedTarget, cursor, count);
                     cursor += count;
                     creditConsumed(cursor);
                     return count;
                 }
+            }
+
+            /**
+             * Returns the source view timeout policy.
+             *
+             * @return timeout
+             */
+            @Override
+            public Timeout timeout() {
+                return Timeout.NONE;
+            }
+
+            /**
+             * Leaves buffer lifecycle to the owning stream body.
+             */
+            @Override
+            public void close() {
+                // The backing stream body owns the buffer lifecycle.
             }
 
         }

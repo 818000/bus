@@ -19,13 +19,17 @@
 */
 package org.miaixz.bus.fabric.protocol.http.chain;
 
-import java.io.IOException;
 import java.util.Locale;
-import java.util.zip.GZIPInputStream;
 
-import org.miaixz.bus.core.lang.exception.InternalException;
+import org.miaixz.bus.core.io.source.GzipSource;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Keys;
+import org.miaixz.bus.core.lang.Normal;
+import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
+import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.protocol.CookieJar;
@@ -33,7 +37,7 @@ import org.miaixz.bus.fabric.protocol.http.HttpCookie;
 import org.miaixz.bus.fabric.protocol.http.HttpHeaders;
 import org.miaixz.bus.fabric.protocol.http.HttpRequest;
 import org.miaixz.bus.fabric.protocol.http.HttpResponse;
-import org.miaixz.bus.fabric.protocol.http.body.HttpBody;
+import org.miaixz.bus.fabric.protocol.http.body.PayloadBody;
 import org.miaixz.bus.logger.Logger;
 
 /**
@@ -43,16 +47,6 @@ import org.miaixz.bus.logger.Logger;
  * @since Java 21+
  */
 public final class HttpBridge implements HttpStage {
-
-    /**
-     * Logger tag used by the fabric runtime.
-     */
-    private static final String LOG_TAG = "Fabric";
-
-    /**
-     * Product token used in the default User-Agent.
-     */
-    private static final String PRODUCT = "bus-fabric";
 
     /**
      * Stage name.
@@ -105,7 +99,7 @@ public final class HttpBridge implements HttpStage {
     public static String defaultUserAgent() {
         final Package source = HttpBridge.class.getPackage();
         final String version = source == null ? null : source.getImplementationVersion();
-        return version == null || version.isBlank() ? PRODUCT : PRODUCT + "/" + version;
+        return version == null || version.isBlank() ? Keys.BUS : Keys.BUS + "/" + version;
     }
 
     /**
@@ -119,7 +113,7 @@ public final class HttpBridge implements HttpStage {
     public HttpResponse execute(final HttpRequest request, final HttpChain chain) {
         Logger.debug(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "HTTP bridge stage started: method={}, host={}, port={}, path={}",
                 request.method().value(),
                 request.url().host(),
@@ -130,7 +124,7 @@ public final class HttpBridge implements HttpStage {
         save(response);
         Logger.debug(
                 false,
-                LOG_TAG,
+                "Fabric",
                 "HTTP bridge stage completed: method={}, host={}, port={}, path={}, code={}",
                 prepared.method().value(),
                 prepared.url().host(),
@@ -149,17 +143,18 @@ public final class HttpBridge implements HttpStage {
     public HttpRequest prepare(final HttpRequest request) {
         final HttpRequest source = require(request, "HTTP request");
         Headers headers = HttpHeaders.host(source.url(), source.headers());
-        headers = setIfMissing(headers, "Connection", "keep-alive");
-        headers = setIfMissing(headers, "Accept-Encoding", "gzip");
-        headers = setIfMissing(headers, "User-Agent", userAgent);
+        headers = setIfMissing(headers, HTTP.CONNECTION, HTTP.CONNECTION_KEEP_ALIVE);
+        headers = setIfMissing(headers, HTTP.ACCEPT_ENCODING, HTTP.CONTENT_CODING_GZIP);
+        headers = setIfMissing(headers, HTTP.USER_AGENT, userAgent);
         headers = bodyHeaders(headers, source.body());
-        if (cookies != null && !headers.contains("Cookie")) {
+        if (cookies != null && !headers.contains(HTTP.COOKIE)) {
             headers = HttpCookie.attach(source.url(), headers, cookies.load(source.url()));
         }
         Logger.debug(
                 false,
-                LOG_TAG,
-                "HTTP bridge headers prepared: host={}, port={}, bodyLength={}, repeatable={}, cookiesEnabled={}, headerNames={}",
+                "Fabric",
+                "HTTP bridge headers prepared: host={}, port={}, bodyLength={}, repeatable={}, "
+                        + "cookiesEnabled={}, headerNames={}",
                 source.url().host(),
                 source.url().port(),
                 source.body().length(),
@@ -179,21 +174,22 @@ public final class HttpBridge implements HttpStage {
     public HttpResponse receive(final HttpResponse response) {
         final HttpResponse source = require(response, "HTTP response");
         if (!gzip(source.headers())) {
-            Logger.debug(false, LOG_TAG, "HTTP bridge response decode skipped: code={}, gzip={}", source.code(), false);
+            Logger.debug(
+                    false,
+                    "Fabric",
+                    "HTTP bridge response decode skipped: code={}, gzip={}",
+                    source.code(),
+                    false);
             return source;
         }
-        try {
-            Logger.debug(true, LOG_TAG, "HTTP bridge gzip decode started: code={}", source.code());
-            final GZIPInputStream input = new GZIPInputStream(source.body().stream());
-            final Headers headers = source.headers().without("Content-Encoding").without("Content-Length");
-            final HttpBody body = HttpBody.of(Payload.stream(input, -1), source.body().media());
-            final HttpResponse decoded = HttpResponse.builder().request(source.request()).code(source.code())
-                    .message(source.message()).headers(headers).body(body).build();
-            Logger.debug(false, LOG_TAG, "HTTP bridge gzip decode completed: code={}", source.code());
-            return decoded;
-        } catch (final IOException e) {
-            throw new InternalException("Unable to decode gzip HTTP response", e);
-        }
+        Logger.debug(true, "Fabric", "HTTP bridge gzip decode started: code={}", source.code());
+        final Headers headers = source.headers().without(HTTP.CONTENT_ENCODING).without(HTTP.CONTENT_LENGTH);
+        final PayloadBody body = PayloadBody
+                .of(Payload.source(new GzipSource(source.body().source()), Normal.__1), source.body().media());
+        final HttpResponse decoded = HttpResponse.builder().request(source.request()).code(source.code())
+                .message(source.message()).headers(headers).body(body).build();
+        Logger.debug(false, "Fabric", "HTTP bridge gzip decode completed: code={}", source.code());
+        return decoded;
     }
 
     /**
@@ -213,20 +209,20 @@ public final class HttpBridge implements HttpStage {
      * @param body    body
      * @return headers
      */
-    private static Headers bodyHeaders(final Headers headers, final HttpBody body) {
+    private static Headers bodyHeaders(final Headers headers, final PayloadBody body) {
         final long length = body.length();
-        if (length == 0) {
+        if (length == Normal._0) {
             return headers;
         }
-        if (length >= 0) {
+        if (length >= Normal._0) {
             final long declared = declaredLength(headers);
-            if (declared >= 0 && declared != length) {
+            if (declared >= Normal._0 && declared != length) {
                 throw new ProtocolException("Content-Length does not match body length");
             }
-            return declared >= 0 ? headers : HttpHeaders.contentLength(headers, length);
+            return declared >= Normal._0 ? headers : HttpHeaders.contentLength(headers, length);
         }
-        return headers.contains("Transfer-Encoding") ? headers
-                : headers.with("Transfer-Encoding", "chunked").without("Content-Length");
+        return headers.contains(HTTP.TRANSFER_ENCODING) ? headers
+                : headers.with(HTTP.TRANSFER_ENCODING, HTTP.TRANSFER_CODING_CHUNKED).without(HTTP.CONTENT_LENGTH);
     }
 
     /**
@@ -248,13 +244,13 @@ public final class HttpBridge implements HttpStage {
      * @return declared length or -1
      */
     private static long declaredLength(final Headers headers) {
-        final String value = headers.get("Content-Length");
+        final String value = headers.get(HTTP.CONTENT_LENGTH);
         if (value == null) {
-            return -1;
+            return Normal.__1;
         }
         try {
             final long length = Long.parseLong(value);
-            if (length < 0) {
+            if (length < Normal._0) {
                 throw new ProtocolException("Content-Length must be non-negative");
             }
             return length;
@@ -270,8 +266,8 @@ public final class HttpBridge implements HttpStage {
      * @return true when gzip
      */
     private static boolean gzip(final Headers headers) {
-        for (final String value : HttpHeaders.values(headers, "Content-Encoding")) {
-            if ("gzip".equals(value.toLowerCase(Locale.ROOT))) {
+        for (final String value : HttpHeaders.values(headers, HTTP.CONTENT_ENCODING)) {
+            if (HTTP.CONTENT_CODING_GZIP.equals(value.toLowerCase(Locale.ROOT))) {
                 return true;
             }
         }
@@ -288,7 +284,7 @@ public final class HttpBridge implements HttpStage {
             cookies.save(response.request().url(), response.headers());
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP bridge cookies saved: host={}, port={}, code={}",
                     response.request().url().host(),
                     response.request().url().port(),
@@ -303,9 +299,9 @@ public final class HttpBridge implements HttpStage {
      * @return validated value
      */
     private static String validateUserAgent(final String value) {
-        if (value == null || value.isBlank() || value.indexOf('\r') >= 0 || value.indexOf('\n') >= 0) {
-            throw new ValidateException("User-Agent must be non-blank and single-line");
-        }
+        Assert.isFalse(
+                StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException("User-Agent must be non-blank and single-line"));
         return value.trim();
     }
 
@@ -318,10 +314,7 @@ public final class HttpBridge implements HttpStage {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

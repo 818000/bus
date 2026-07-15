@@ -24,9 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.protocol.http.HttpHeaders;
@@ -45,17 +48,6 @@ public final class HttpCacheControl {
     private static final HttpCacheControl EMPTY = new HttpCacheControl(Map.of());
 
     /**
-     * Forces a network validation.
-     */
-    public static final HttpCacheControl FORCE_NETWORK = new HttpCacheControl(Map.of("no-cache", ""));
-
-    /**
-     * Forces cache usage and accepts stale entries.
-     */
-    public static final HttpCacheControl FORCE_CACHE = new HttpCacheControl(
-            Map.of("only-if-cached", "", "max-stale", Integer.toString(Integer.MAX_VALUE)));
-
-    /**
      * Parsed directive values keyed by lower-case directive name.
      */
     private final Map<String, String> directives;
@@ -71,6 +63,17 @@ public final class HttpCacheControl {
     }
 
     /**
+     * Creates a cache control snapshot from directive values.
+     *
+     * @param directives directive values
+     * @return cache control
+     */
+    public static HttpCacheControl of(final Map<String, String> directives) {
+        return new HttpCacheControl(Assert
+                .notNull(directives, () -> new ValidateException("HTTP cache control directives must not be null")));
+    }
+
+    /**
      * Parses Cache-Control and Pragma headers.
      *
      * @param headers headers
@@ -79,12 +82,12 @@ public final class HttpCacheControl {
     public static HttpCacheControl parse(final Headers headers) {
         final Headers source = require(headers, "Headers");
         final LinkedHashMap<String, String> parsed = new LinkedHashMap<>();
-        for (final String token : HttpHeaders.values(source, "Cache-Control")) {
+        for (final String token : HttpHeaders.values(source, HTTP.CACHE_CONTROL)) {
             parseDirective(token, parsed);
         }
-        for (final String token : HttpHeaders.values(source, "Pragma")) {
-            if ("no-cache".equalsIgnoreCase(token.trim())) {
-                parsed.putIfAbsent("no-cache", "");
+        for (final String token : HttpHeaders.values(source, HTTP.PRAGMA)) {
+            if (HTTP.CACHE_DIRECTIVE_NO_CACHE.equalsIgnoreCase(token.trim())) {
+                parsed.putIfAbsent(HTTP.CACHE_DIRECTIVE_NO_CACHE, Normal.EMPTY);
             }
         }
         return parsed.isEmpty() ? EMPTY : new HttpCacheControl(parsed);
@@ -96,7 +99,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean noCache() {
-        return contains("no-cache");
+        return contains(HTTP.CACHE_DIRECTIVE_NO_CACHE);
     }
 
     /**
@@ -105,7 +108,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean noStore() {
-        return contains("no-store");
+        return contains(HTTP.CACHE_DIRECTIVE_NO_STORE);
     }
 
     /**
@@ -114,7 +117,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean onlyIfCached() {
-        return contains("only-if-cached");
+        return contains(HTTP.CACHE_DIRECTIVE_ONLY_IF_CACHED);
     }
 
     /**
@@ -123,7 +126,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean noTransform() {
-        return contains("no-transform");
+        return contains(HTTP.CACHE_DIRECTIVE_NO_TRANSFORM);
     }
 
     /**
@@ -132,7 +135,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean immutable() {
-        return contains("immutable");
+        return contains(HTTP.CACHE_DIRECTIVE_IMMUTABLE);
     }
 
     /**
@@ -141,7 +144,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean isPublic() {
-        return contains("public");
+        return contains(HTTP.CACHE_DIRECTIVE_PUBLIC);
     }
 
     /**
@@ -150,7 +153,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean isPrivate() {
-        return contains("private");
+        return contains(HTTP.CACHE_DIRECTIVE_PRIVATE);
     }
 
     /**
@@ -159,7 +162,7 @@ public final class HttpCacheControl {
      * @return true when present
      */
     public boolean mustRevalidate() {
-        return contains("must-revalidate");
+        return contains(HTTP.CACHE_DIRECTIVE_MUST_REVALIDATE);
     }
 
     /**
@@ -168,7 +171,7 @@ public final class HttpCacheControl {
      * @return seconds, or -1 when absent
      */
     public int maxAgeSeconds() {
-        return seconds("max-age", -1);
+        return seconds(HTTP.CACHE_DIRECTIVE_MAX_AGE, -1);
     }
 
     /**
@@ -177,7 +180,7 @@ public final class HttpCacheControl {
      * @return seconds, or -1 when absent
      */
     public int sMaxAgeSeconds() {
-        return seconds("s-maxage", -1);
+        return seconds(HTTP.CACHE_DIRECTIVE_S_MAXAGE, -1);
     }
 
     /**
@@ -186,7 +189,7 @@ public final class HttpCacheControl {
      * @return seconds, Integer.MAX_VALUE when valueless, or -1 when absent
      */
     public int maxStaleSeconds() {
-        return seconds("max-stale", Integer.MAX_VALUE);
+        return seconds(HTTP.CACHE_DIRECTIVE_MAX_STALE, Integer.MAX_VALUE);
     }
 
     /**
@@ -195,7 +198,7 @@ public final class HttpCacheControl {
      * @return seconds, or -1 when absent
      */
     public int minFreshSeconds() {
-        return seconds("min-fresh", -1);
+        return seconds(HTTP.CACHE_DIRECTIVE_MIN_FRESH, -1);
     }
 
     /**
@@ -235,13 +238,13 @@ public final class HttpCacheControl {
      * @param directives target directives
      */
     private static void parseDirective(final String token, final Map<String, String> directives) {
-        final String trimmed = token == null ? "" : token.trim();
+        final String trimmed = token == null ? Normal.EMPTY : token.trim();
         if (trimmed.isEmpty()) {
             return;
         }
         final int equals = trimmed.indexOf(Symbol.C_EQUAL);
         final String name = equals < 0 ? trimmed : trimmed.substring(0, equals).trim();
-        final String value = equals < 0 ? "" : unquote(trimmed.substring(equals + 1).trim());
+        final String value = equals < 0 ? Normal.EMPTY : unquote(trimmed.substring(equals + 1).trim());
         directives.putIfAbsent(normalizeName(name), value);
     }
 
@@ -262,9 +265,7 @@ public final class HttpCacheControl {
         }
         try {
             final long seconds = Long.parseLong(value);
-            if (seconds < 0) {
-                throw new ProtocolException("Cache-Control seconds must be non-negative");
-            }
+            Assert.isFalse(seconds < 0, () -> new ProtocolException("Cache-Control seconds must be non-negative"));
             return seconds > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) seconds;
         } catch (final NumberFormatException e) {
             throw new ProtocolException("Invalid Cache-Control seconds", e);
@@ -278,7 +279,8 @@ public final class HttpCacheControl {
      * @return unquoted value
      */
     private static String unquote(final String value) {
-        if (value.length() >= 2 && value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"') {
+        if (value.length() >= 2 && value.charAt(0) == Symbol.C_DOUBLE_QUOTES
+                && value.charAt(value.length() - 1) == Symbol.C_DOUBLE_QUOTES) {
             return value.substring(1, value.length() - 1);
         }
         return value;
@@ -306,10 +308,7 @@ public final class HttpCacheControl {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

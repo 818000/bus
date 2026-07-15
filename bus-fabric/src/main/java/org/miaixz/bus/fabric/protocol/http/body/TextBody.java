@@ -21,16 +21,14 @@ package org.miaixz.bus.fabric.protocol.http.body;
 
 import java.nio.charset.Charset;
 
-import org.miaixz.bus.core.lang.Symbol;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.MediaType;
-import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.fabric.Payload;
-import org.miaixz.bus.fabric.codec.body.BodyCodec;
 import org.miaixz.bus.fabric.codec.body.RequestBody;
 
 /**
- * HTTP text body with an explicit encoding snapshot.
+ * HTTP text request body with an explicit media type and charset snapshot.
  *
  * @author Kimi Liu
  * @since Java 21+
@@ -66,19 +64,41 @@ public final class TextBody implements RequestBody {
     }
 
     /**
-     * Creates a text body.
+     * Creates a UTF-8 {@code text/plain} body.
+     *
+     * @param text text
+     * @return text body
+     */
+    public static TextBody of(final String text) {
+        return of(text, org.miaixz.bus.core.lang.Charset.UTF_8);
+    }
+
+    /**
+     * Creates a {@code text/plain} body with an explicit charset.
+     *
+     * @param text    text
+     * @param charset charset
+     * @return text body
+     */
+    public static TextBody of(final String text, final Charset charset) {
+        final Charset checkedCharset = Assert
+                .notNull(charset, () -> new ValidateException("Text charset must not be null"));
+        return of(text, MediaType.TEXT_PLAIN_TYPE.withCharset(checkedCharset));
+    }
+
+    /**
+     * Creates a text body with an explicit media type.
      *
      * @param text  text
      * @param media media type
      * @return text body
      */
     public static TextBody of(final String text, final MediaType media) {
-        final String validText = validateText(text);
-        if (media == null) {
-            throw new ValidateException("Text media must not be null");
-        }
-        final Charset charset = media.charset(org.miaixz.bus.core.lang.Charset.UTF_8);
-        return new TextBody(validText, media, BodyCodec.create().text(validText, charset));
+        final String value = text == null ? "" : text;
+        final MediaType checkedMedia = Assert
+                .notNull(media, () -> new ValidateException("Text media must not be null"));
+        final Charset charset = checkedMedia.charset(org.miaixz.bus.core.lang.Charset.UTF_8);
+        return new TextBody(value, checkedMedia, Payload.of(value, charset));
     }
 
     /**
@@ -95,6 +115,7 @@ public final class TextBody implements RequestBody {
      *
      * @return media type
      */
+    @Override
     public MediaType media() {
         return media;
     }
@@ -104,21 +125,9 @@ public final class TextBody implements RequestBody {
      *
      * @return payload
      */
+    @Override
     public Payload payload() {
         return payload;
-    }
-
-    /**
-     * Validates text.
-     *
-     * @param text text
-     * @return validated text
-     */
-    private static String validateText(final String text) {
-        if (StringKit.isBlank(text) || StringKit.containsAny(text, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException("Text must be non-blank and single-line");
-        }
-        return text;
     }
 
 }

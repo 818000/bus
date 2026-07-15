@@ -19,6 +19,8 @@
 */
 package org.miaixz.bus.fabric.protocol.websocket;
 
+import static org.miaixz.bus.fabric.Builder.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -26,27 +28,29 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import org.miaixz.bus.core.instance.Instances;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.fabric.Address;
 import org.miaixz.bus.fabric.Call;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
+import org.miaixz.bus.fabric.Filter;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Message;
 import org.miaixz.bus.fabric.Payload;
-import org.miaixz.bus.fabric.Session;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
+import org.miaixz.bus.fabric.protocol.Demuxer;
 import org.miaixz.bus.fabric.protocol.Itinerary;
 import org.miaixz.bus.fabric.protocol.websocket.calls.WebSocketCall;
 
@@ -76,12 +80,9 @@ public final class WebSocketX {
     private WebSocketX(final Builder builder) {
         final Context current = require(builder.context, "Context");
         final EventObserver currentObserver = builder.observer == null ? EventObserver.noop() : builder.observer;
-        final Listener<? super WebSocketSession> currentListener = Wiring
-                .safe(Wiring.compose(current.listener(), builder.listener), currentObserver);
         this.snapshot = new WebSocketSnapshot(current, builder.uri, Address.from(builder.uri), builder.headers.build(),
-                builder.timeout, builder.guard, currentObserver,
-                builder.callback == null ? Wiring.callback() : builder.callback,
-                builder.handler == null ? noopHandler() : builder.handler, currentListener);
+                builder.timeout, builder.guard, builder.filter, currentObserver, builder.callback, builder.handler(),
+                builder.listener);
         this.runner = new WebSocketRunner(snapshot);
     }
 
@@ -205,21 +206,6 @@ public final class WebSocketX {
     }
 
     /**
-     * Returns the shared no-op WebSocket handler.
-     *
-     * @return no-op handler
-     */
-    private static Handler noopHandler() {
-        return Instances.get(WebSocketX.class.getName() + ".noopHandler", () -> new Handler() {
-
-            @Override
-            public void message(final Session session, final Message message) {
-                // No-op handler intentionally ignores incoming messages.
-            }
-        });
-    }
-
-    /**
      * Validates a required value.
      *
      * @param value value
@@ -228,10 +214,7 @@ public final class WebSocketX {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -247,7 +230,7 @@ public final class WebSocketX {
         try {
             final URI uri = new URI(value.trim());
             final String scheme = uri.getScheme();
-            if (!"ws".equalsIgnoreCase(scheme) && !"wss".equalsIgnoreCase(scheme)) {
+            if (!Protocol.WS.name.equalsIgnoreCase(scheme) && !Protocol.WSS.name.equalsIgnoreCase(scheme)) {
                 throw new ProtocolException("WebSocket URL must use ws or wss");
             }
             Address.from(uri);
@@ -265,10 +248,10 @@ public final class WebSocketX {
      * @return duration
      */
     private static Duration validateDuration(final Duration duration, final String name) {
-        if (duration == null || duration.isNegative()) {
-            throw new ValidateException(name + " must be non-null and non-negative");
-        }
-        return duration;
+        final Duration checked = Assert
+                .notNull(duration, () -> new ValidateException(name + " must be non-null and non-negative"));
+        Assert.isFalse(checked.isNegative(), () -> new ValidateException(name + " must be non-null and non-negative"));
+        return checked;
     }
 
     /**
@@ -305,6 +288,11 @@ public final class WebSocketX {
         private GuardRule guard;
 
         /**
+         * Message filter.
+         */
+        private Filter filter;
+
+        /**
          * Observer.
          */
         private EventObserver observer;
@@ -318,6 +306,11 @@ public final class WebSocketX {
          * Handler.
          */
         private Handler handler;
+
+        /**
+         * Optional demuxer builder.
+         */
+        private Demuxer.Builder demuxer;
 
         /**
          * Session lifecycle listener.
@@ -342,12 +335,12 @@ public final class WebSocketX {
         private Builder(final Context context) {
             this.context = context;
             this.headers = Headers.builder();
-            final Timeout configured = context.options().get("timeout", Timeout.class);
+            final Timeout configured = context.options().get(OPTION_TIMEOUT, Timeout.class);
             this.timeout = configured == null ? Timeout.defaults() : configured;
             this.observer = EventObserver.noop();
-            this.callback = Wiring.callback();
-            this.handler = noopHandler();
-            this.listener = Wiring.noop();
+            this.callback = null;
+            this.handler = Demuxer.noop();
+            this.listener = null;
             this.openHandler = session -> {
             };
             this.errorHandler = cause -> {
@@ -394,7 +387,7 @@ public final class WebSocketX {
          * @return this builder
          */
         public Builder protocol(final String protocol) {
-            headers.set("Sec-WebSocket-Protocol", protocol);
+            headers.set(HTTP.SEC_WEBSOCKET_PROTOCOL, protocol);
             return this;
         }
 
@@ -448,6 +441,17 @@ public final class WebSocketX {
         }
 
         /**
+         * Sets message filter.
+         *
+         * @param filter filter
+         * @return this builder
+         */
+        public Builder filter(final Filter filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        /**
          * Sets observer.
          *
          * @param observer observer
@@ -465,7 +469,7 @@ public final class WebSocketX {
          * @return this builder
          */
         public Builder callback(final Callback<WebSocketSession> callback) {
-            this.callback = callback == null ? Wiring.callback() : callback;
+            this.callback = callback;
             return this;
         }
 
@@ -476,7 +480,53 @@ public final class WebSocketX {
          * @return this builder
          */
         public Builder onMessage(final Handler handler) {
-            this.handler = handler == null ? noopHandler() : handler;
+            this.handler = handler == null ? Demuxer.noop() : handler;
+            this.demuxer = null;
+            return this;
+        }
+
+        /**
+         * Registers a channel message handler.
+         *
+         * @param channel channel id
+         * @param handler handler
+         * @return this builder
+         */
+        public Builder channel(final String channel, final Handler handler) {
+            demuxer().channel(channel, handler);
+            return this;
+        }
+
+        /**
+         * Sets fallback message handler for unmatched channels.
+         *
+         * @param handler fallback handler
+         * @return this builder
+         */
+        public Builder fallback(final Handler handler) {
+            demuxer().fallback(handler);
+            return this;
+        }
+
+        /**
+         * Sets the header used for channel lookup.
+         *
+         * @param name header name
+         * @return this builder
+         */
+        public Builder channelHeader(final String name) {
+            demuxer().header(name);
+            return this;
+        }
+
+        /**
+         * Sets a custom message channel resolver.
+         *
+         * @param resolver resolver
+         * @return this builder
+         */
+        public Builder resolver(final Function<Message, String> resolver) {
+            demuxer().resolver(resolver);
             return this;
         }
 
@@ -487,8 +537,9 @@ public final class WebSocketX {
          * @return this builder
          */
         public Builder onText(final Consumer<String> handler) {
+            this.demuxer = null;
             if (handler == null) {
-                this.handler = noopHandler();
+                this.handler = Demuxer.noop();
             } else {
                 this.handler = (session, message) -> handler.accept(message.payload().text(StandardCharsets.UTF_8));
             }
@@ -526,7 +577,7 @@ public final class WebSocketX {
          * @return this builder
          */
         public Builder listener(final Listener<? super WebSocketSession> listener) {
-            this.listener = listener == null ? Wiring.noop() : listener;
+            this.listener = listener;
             return this;
         }
 
@@ -536,9 +587,7 @@ public final class WebSocketX {
          * @return exchange
          */
         public WebSocketX build() {
-            if (uri == null) {
-                throw new ValidateException("WebSocket target must be set");
-            }
+            Assert.notNull(uri, () -> new ValidateException("WebSocket target must be set"));
             return new WebSocketX(this);
         }
 
@@ -595,17 +644,51 @@ public final class WebSocketX {
         private Builder composeCallback() {
             this.callback = new Callback<>() {
 
+                /**
+                 * Forwards a successful open session to the configured open handler.
+                 *
+                 * @param value opened WebSocket session
+                 */
                 @Override
                 public void success(final WebSocketSession value) {
                     openHandler.accept(value);
                 }
 
+                /**
+                 * Forwards an open failure to the configured error handler.
+                 *
+                 * @param cause failure cause
+                 */
                 @Override
                 public void failure(final Throwable cause) {
                     errorHandler.accept(cause);
                 }
             };
             return this;
+        }
+
+        /**
+         * Returns the configured handler.
+         *
+         * @return handler
+         */
+        private Handler handler() {
+            if (demuxer != null) {
+                return demuxer.build();
+            }
+            return handler == null ? Demuxer.noop() : handler;
+        }
+
+        /**
+         * Returns the demuxer builder.
+         *
+         * @return demuxer builder
+         */
+        private Demuxer.Builder demuxer() {
+            if (demuxer == null) {
+                demuxer = Demuxer.builder();
+            }
+            return demuxer;
         }
 
     }

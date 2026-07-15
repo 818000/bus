@@ -19,15 +19,19 @@
 */
 package org.miaixz.bus.fabric.runtime.dispatch;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.fabric.Lifecycle;
 import org.miaixz.bus.fabric.Status;
+import org.miaixz.bus.fabric.observe.EventObserver;
 import org.miaixz.bus.fabric.runtime.Activity;
+import org.miaixz.bus.fabric.runtime.lifecycle.LifecycleScope;
 
 /**
  * Cancellable handle for a queued or running activity.
@@ -35,7 +39,7 @@ import org.miaixz.bus.fabric.runtime.Activity;
  * @author Kimi Liu
  * @since Java 21+
  */
-public final class DispatchHandle {
+public final class DispatchHandle implements Lifecycle {
 
     /**
      * Dispatch key.
@@ -58,9 +62,9 @@ public final class DispatchHandle {
     private final CompletableFuture<Void> future;
 
     /**
-     * Handle lifecycle state.
+     * Handle lifecycle scope.
      */
-    private final AtomicReference<Status> state;
+    private final LifecycleScope scope;
 
     /**
      * Creates a dispatch handle.
@@ -74,7 +78,7 @@ public final class DispatchHandle {
         this.tag = tag;
         this.activity = require(activity, "Activity");
         this.future = new CompletableFuture<>();
-        this.state = new AtomicReference<>(Status.QUEUED);
+        this.scope = LifecycleScope.resource(this, this.key, null, EventObserver.noop());
     }
 
     /**
@@ -126,14 +130,22 @@ public final class DispatchHandle {
     }
 
     /**
+     * Returns the handle lifecycle state.
+     *
+     * @return lifecycle state
+     */
+    @Override
+    public Status state() {
+        return scope.state();
+    }
+
+    /**
      * Cancels this handle and its activity.
      *
      * @return true when this invocation changed the state
      */
     public boolean cancel() {
-        if (state.compareAndSet(Status.QUEUED, Status.CANCELLED)
-                || state.compareAndSet(Status.RUNNING, Status.CANCELLED)
-                || state.compareAndSet(Status.OPENED, Status.CANCELLED)) {
+        if (scope.cancel(new CancellationException("Dispatch handle cancelled: " + key))) {
             activity.cancel();
             future.cancel(false);
             return true;
@@ -147,25 +159,22 @@ public final class DispatchHandle {
      * @return true when cancelled
      */
     public boolean cancelled() {
-        return state.get() == Status.CANCELLED || future.isCancelled() || activity.cancelled();
+        return scope.state() == Status.CANCELLED || future.isCancelled() || activity.cancelled();
     }
 
     /**
      * Completes this handle successfully.
      */
     public void complete() {
-        while (true) {
-            final Status current = state.get();
-            if (current == Status.DONE) {
-                return;
-            }
-            if (current == Status.CANCELLED || current == Status.FAILED) {
-                throw new StatefulException("Dispatch handle cannot complete from state " + current);
-            }
-            if (state.compareAndSet(current, Status.DONE)) {
-                future.complete(null);
-                return;
-            }
+        final Status current = scope.state();
+        if (current == Status.DONE) {
+            return;
+        }
+        if (current == Status.CANCELLED || current == Status.FAILED) {
+            throw new StatefulException("Dispatch handle cannot complete from state " + current);
+        }
+        if (scope.complete()) {
+            future.complete(null);
         }
     }
 
@@ -176,18 +185,15 @@ public final class DispatchHandle {
      */
     public void fail(final Throwable cause) {
         require(cause, "Failure cause");
-        while (true) {
-            final Status current = state.get();
-            if (current == Status.FAILED) {
-                return;
-            }
-            if (current == Status.DONE || current == Status.CANCELLED) {
-                throw new StatefulException("Dispatch handle cannot fail from state " + current);
-            }
-            if (state.compareAndSet(current, Status.FAILED)) {
-                future.completeExceptionally(cause);
-                return;
-            }
+        final Status current = scope.state();
+        if (current == Status.FAILED) {
+            return;
+        }
+        if (current == Status.DONE || current == Status.CANCELLED) {
+            throw new StatefulException("Dispatch handle cannot fail from state " + current);
+        }
+        if (scope.fail(cause)) {
+            future.completeExceptionally(cause);
         }
     }
 
@@ -198,10 +204,12 @@ public final class DispatchHandle {
      * @return normalized key
      */
     private static String validateKey(final String value) {
-        if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException("Dispatch key must be non-blank and single-line");
-        }
-        return value.trim();
+        final String current = Assert
+                .notBlank(value, () -> new ValidateException("Dispatch key must be non-blank and single-line"));
+        Assert.isFalse(
+                StringKit.containsAny(current, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException("Dispatch key must be non-blank and single-line"));
+        return current.trim();
     }
 
     /**
@@ -213,10 +221,7 @@ public final class DispatchHandle {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

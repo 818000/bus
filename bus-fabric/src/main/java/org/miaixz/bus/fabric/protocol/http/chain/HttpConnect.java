@@ -20,12 +20,10 @@
 package org.miaixz.bus.fabric.protocol.http.chain;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
-import java.nio.channels.CompletionHandler;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -40,6 +38,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
@@ -47,18 +51,20 @@ import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.StatefulException;
 import org.miaixz.bus.core.lang.exception.TimeoutException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.core.xyz.NetKit;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.crypto.builtin.TlsHandshake;
 import org.miaixz.bus.fabric.Address;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Listener;
 import org.miaixz.bus.fabric.Options;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Status;
 import org.miaixz.bus.fabric.Timeout;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.network.Conduit;
 import org.miaixz.bus.fabric.network.Connection;
 import org.miaixz.bus.fabric.network.Connector;
@@ -71,14 +77,16 @@ import org.miaixz.bus.fabric.network.tls.TlsChannel;
 import org.miaixz.bus.fabric.network.tls.TlsEngine;
 import org.miaixz.bus.fabric.network.tls.TlsSettings;
 import org.miaixz.bus.fabric.network.tls.context.TlsContext;
-import org.miaixz.bus.fabric.network.tls.handshake.TlsHandshake;
+import org.miaixz.bus.fabric.observe.EventObserver;
+import org.miaixz.bus.fabric.observe.ObservationMarker;
 import org.miaixz.bus.fabric.protocol.http.HttpRequest;
 import org.miaixz.bus.fabric.protocol.http.HttpResponse;
-import org.miaixz.bus.fabric.protocol.http.body.HttpBody;
+import org.miaixz.bus.fabric.protocol.http.body.PayloadBody;
 import org.miaixz.bus.fabric.registry.connection.ConnectionLease;
 import org.miaixz.bus.fabric.registry.connection.ConnectionPool;
 import org.miaixz.bus.fabric.registry.route.Route;
 import org.miaixz.bus.fabric.runtime.dispatch.Dispatcher;
+import org.miaixz.bus.fabric.runtime.lifecycle.LifecycleScope;
 import org.miaixz.bus.fabric.runtime.resource.Cancellation;
 import org.miaixz.bus.logger.Logger;
 
@@ -89,46 +97,6 @@ import org.miaixz.bus.logger.Logger;
  * @since Java 21+
  */
 public final class HttpConnect implements HttpStage {
-
-    /**
-     * Logger tag used by the fabric runtime.
-     */
-    private static final String LOG_TAG = "Fabric";
-
-    /**
-     * Maximum proxy response header size.
-     */
-    private static final int MAX_PROXY_HEADER = 65536;
-
-    /**
-     * SOCKS protocol version supported by this connector.
-     */
-    private static final byte SOCKS5 = 0x05;
-
-    /**
-     * SOCKS no-authentication method.
-     */
-    private static final byte SOCKS_NO_AUTH = 0x00;
-
-    /**
-     * SOCKS CONNECT command.
-     */
-    private static final byte SOCKS_CONNECT = 0x01;
-
-    /**
-     * SOCKS IPv4 address type.
-     */
-    private static final byte SOCKS_ATYP_IPV4 = 0x01;
-
-    /**
-     * SOCKS domain address type.
-     */
-    private static final byte SOCKS_ATYP_DOMAIN = 0x03;
-
-    /**
-     * SOCKS IPv6 address type.
-     */
-    private static final byte SOCKS_ATYP_IPV6 = 0x04;
 
     /**
      * Response release states keyed by tracked responses.
@@ -180,8 +148,8 @@ public final class HttpConnect implements HttpStage {
      * Creates a connect stage with a default socket connector.
      */
     public HttpConnect() {
-        this(ConnectionPool.create(null), TlsContext.defaults(), TlsSettings.defaults(), Wiring.noop(),
-                DnsResolver.system(), Dispatcher.create());
+        this(ConnectionPool.create(null), TlsContext.defaults(), TlsSettings.defaults(), null, DnsResolver.system(),
+                Dispatcher.create());
     }
 
     /**
@@ -190,8 +158,7 @@ public final class HttpConnect implements HttpStage {
      * @param pool connection pool
      */
     public HttpConnect(final ConnectionPool pool) {
-        this(pool, TlsContext.defaults(), TlsSettings.defaults(), Wiring.noop(), DnsResolver.system(),
-                Dispatcher.create());
+        this(pool, TlsContext.defaults(), TlsSettings.defaults(), null, DnsResolver.system(), Dispatcher.create());
     }
 
     /**
@@ -202,7 +169,7 @@ public final class HttpConnect implements HttpStage {
      * @param tlsSettings TLS settings
      */
     public HttpConnect(final ConnectionPool pool, final TlsContext tlsContext, final TlsSettings tlsSettings) {
-        this(pool, tlsContext, tlsSettings, Wiring.noop(), DnsResolver.system(), Dispatcher.create());
+        this(pool, tlsContext, tlsSettings, null, DnsResolver.system(), Dispatcher.create());
     }
 
     /**
@@ -259,7 +226,7 @@ public final class HttpConnect implements HttpStage {
      */
     HttpConnect(final ConnectionPool pool, final Connector connector, final TlsContext tlsContext,
             final TlsSettings tlsSettings) {
-        this(pool, connector, tlsContext, tlsSettings, Wiring.noop(), DnsResolver.system(), Dispatcher.create());
+        this(pool, connector, tlsContext, tlsSettings, null, DnsResolver.system(), Dispatcher.create());
     }
 
     /**
@@ -310,7 +277,7 @@ public final class HttpConnect implements HttpStage {
         this.connector = require(connector, "Network connector");
         this.tlsContext = tlsContext;
         this.tlsSettings = tlsSettings;
-        this.listener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+        this.listener = safe(listener);
         this.resolver = require(resolver, "DNS resolver");
         this.dispatcher = require(dispatcher, "Dispatcher");
     }
@@ -330,7 +297,7 @@ public final class HttpConnect implements HttpStage {
         cancellation.throwIfCancelled();
         Logger.debug(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "HTTP connect stage started: method={}, host={}, port={}, secure={}",
                 current.method().value(),
                 current.url().host(),
@@ -342,7 +309,7 @@ public final class HttpConnect implements HttpStage {
             final HttpResponse response = next.withConnection(lease, lease.connection()).proceed(current);
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP connect stage response received: host={}, port={}, code={}",
                     current.url().host(),
                     current.url().port(),
@@ -351,7 +318,7 @@ public final class HttpConnect implements HttpStage {
         } catch (final RuntimeException e) {
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP connect stage failed: host={}, port={}, exception={}",
                     current.url().host(),
                     current.url().port(),
@@ -388,7 +355,7 @@ public final class HttpConnect implements HttpStage {
         final Destination destination = destination(target, proxy);
         Logger.debug(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "HTTP connection lease acquisition started: host={}, port={}, secure={}, proxyMode={}, tunnel={}",
                 target.host(),
                 target.port(),
@@ -401,7 +368,7 @@ public final class HttpConnect implements HttpStage {
         scope.throwIfCancelled();
         Logger.debug(
                 false,
-                LOG_TAG,
+                "Fabric",
                 "HTTP connection lease acquired: host={}, port={}, healthy={}, proxyMode={}",
                 target.host(),
                 target.port(),
@@ -471,8 +438,9 @@ public final class HttpConnect implements HttpStage {
         final Address connectAddress = connectAddress(target, proxy, connector.supports(Transport.TLS));
         Logger.debug(
                 true,
-                LOG_TAG,
-                "HTTP route open started: targetHost={}, targetPort={}, connectHost={}, connectPort={}, proxyMode={}, tunnel={}, nativeTls={}",
+                "Fabric",
+                "HTTP route open started: targetHost={}, targetPort={}, connectHost={}, connectPort={}, "
+                        + "proxyMode={}, tunnel={}, nativeTls={}",
                 target.host(),
                 target.port(),
                 connectAddress.host(),
@@ -495,7 +463,7 @@ public final class HttpConnect implements HttpStage {
                 final Connection secured = tlsConnection(destination, raw, target, scope);
                 Logger.debug(
                         false,
-                        LOG_TAG,
+                        "Fabric",
                         "HTTP route open completed with TLS wrapper: host={}, port={}",
                         target.host(),
                         target.port());
@@ -503,7 +471,7 @@ public final class HttpConnect implements HttpStage {
             }
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP route open completed: host={}, port={}, secure={}",
                     target.host(),
                     target.port(),
@@ -512,7 +480,7 @@ public final class HttpConnect implements HttpStage {
         } catch (final RuntimeException e) {
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP route open failed: host={}, port={}, exception={}",
                     target.host(),
                     target.port(),
@@ -545,7 +513,7 @@ public final class HttpConnect implements HttpStage {
         final TlsChannel tlsChannel = TlsChannel.wrap(raw.conduit(), engine, listener, dispatcher);
         final Runnable unregisterTls = scope.onCancel(tlsChannel::close);
         try {
-            Logger.debug(true, LOG_TAG, "HTTP TLS handshake started: host={}, port={}", target.host(), target.port());
+            Logger.debug(true, "Fabric", "HTTP TLS handshake started: host={}, port={}", target.host(), target.port());
             final TlsHandshake handshake = await(
                     tlsChannel.handshake(),
                     Duration.ZERO,
@@ -553,7 +521,7 @@ public final class HttpConnect implements HttpStage {
                     scope);
             Logger.debug(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP TLS handshake completed: host={}, port={}",
                     target.host(),
                     target.port());
@@ -582,31 +550,32 @@ public final class HttpConnect implements HttpStage {
         scope.throwIfCancelled();
         Logger.debug(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "HTTP CONNECT tunnel started: targetHost={}, targetPort={}",
                 target.host(),
                 target.port());
         final String request = connectRequest(target, proxy.authorization());
         writeAll(
-                connection,
-                ByteBuffer.wrap(request.getBytes(org.miaixz.bus.core.lang.Charset.US_ASCII)),
+                connection.sink(),
+                new Buffer().write(
+                        ByteString.encodeString(request, org.miaixz.bus.core.lang.Charset.US_ASCII).toByteArray()),
                 timeout.write(),
                 scope);
-        final String response = readHeader(connection, timeout.read(), scope);
-        if (!response.startsWith("HTTP/1.1 200 ") && !response.startsWith("HTTP/1.0 200 ")
+        final String response = readHeader(connection.source(), timeout.read(), scope);
+        if (!response.startsWith(Protocol.HTTP_1_1 + " 200 ") && !response.startsWith(Protocol.HTTP_1_0 + " 200 ")
                 && !response.startsWith("HTTP/2 200 ")) {
             throw new ProtocolException("HTTP CONNECT tunnel failed");
         }
         Logger.debug(
                 false,
-                LOG_TAG,
+                "Fabric",
                 "HTTP CONNECT tunnel completed: targetHost={}, targetPort={}",
                 target.host(),
                 target.port());
     }
 
     /**
-     * Performs a SOCKS5 CONNECT handshake through a proxy.
+     * Performs a Builder.HTTP_CONNECT_SOCKS5 CONNECT handshake through a proxy.
      *
      * @param connection   proxy connection
      * @param target       target address
@@ -622,42 +591,56 @@ public final class HttpConnect implements HttpStage {
         scope.throwIfCancelled();
         Logger.debug(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "SOCKS handshake started: targetHost={}, targetPort={}",
                 target.host(),
                 target.port());
-        writeAll(connection, ByteBuffer.wrap(new byte[] { SOCKS5, 0x01, SOCKS_NO_AUTH }), timeout.write(), scope);
-        final byte[] selection = readExact(connection, 2, timeout.read(), "SOCKS method selection timed out", scope);
-        if (selection[0] != SOCKS5 || selection[1] != SOCKS_NO_AUTH) {
+        writeAll(
+                connection.sink(),
+                new Buffer().write(new byte[] { Builder.HTTP_CONNECT_SOCKS5, 0x01, Normal._0 }),
+                timeout.write(),
+                scope);
+        final byte[] selection = readExact(
+                connection.source(),
+                2,
+                timeout.read(),
+                "SOCKS method selection timed out",
+                scope);
+        if (selection[0] != Builder.HTTP_CONNECT_SOCKS5 || selection[1] != Normal._0) {
             throw new ProtocolException("SOCKS proxy requires an unsupported authentication method");
         }
-        writeAll(connection, ByteBuffer.wrap(socksConnectRequest(target)), timeout.write(), scope);
-        final byte[] header = readExact(connection, 4, timeout.read(), "SOCKS connect response timed out", scope);
-        if (header[0] != SOCKS5) {
+        writeAll(connection.sink(), new Buffer().write(socksConnectRequest(target)), timeout.write(), scope);
+        final byte[] header = readExact(
+                connection.source(),
+                4,
+                timeout.read(),
+                "SOCKS connect response timed out",
+                scope);
+        if (header[0] != Builder.HTTP_CONNECT_SOCKS5) {
             throw new ProtocolException("Invalid SOCKS response version");
         }
         if (header[1] != 0x00) {
-            throw new ProtocolException("SOCKS CONNECT failed with reply " + (header[1] & 0xff));
+            throw new ProtocolException("SOCKS CONNECT failed with reply " + (header[1] & Builder.UNSIGNED_BYTE_MASK));
         }
         final int addressLength = switch (header[3]) {
-            case SOCKS_ATYP_IPV4 -> 4;
-            case SOCKS_ATYP_DOMAIN -> readExact(
-                    connection,
+            case Normal._1 -> 4;
+            case Normal._3 -> readExact(
+                    connection.source(),
                     1,
                     timeout.read(),
                     "SOCKS domain length timed out",
-                    scope)[0] & 0xff;
-            case SOCKS_ATYP_IPV6 -> 16;
+                    scope)[0] & Builder.UNSIGNED_BYTE_MASK;
+            case Normal._4 -> 16;
             default -> throw new ProtocolException("Unsupported SOCKS address type");
         };
-        readExact(connection, addressLength + 2, timeout.read(), "SOCKS bind address timed out", scope);
+        readExact(connection.source(), addressLength + 2, timeout.read(), "SOCKS bind address timed out", scope);
         Logger.debug(
                 false,
-                LOG_TAG,
+                "Fabric",
                 "SOCKS handshake completed: targetHost={}, targetPort={}, addressType={}",
                 target.host(),
                 target.port(),
-                header[3] & 0xff);
+                header[3] & Builder.UNSIGNED_BYTE_MASK);
     }
 
     /**
@@ -670,7 +653,8 @@ public final class HttpConnect implements HttpStage {
     private HttpResponse track(final ConnectionLease lease, final HttpResponse response) {
         final HttpResponse source = require(response, "HTTP response");
         final ReleaseState state = new ReleaseState(lease);
-        final HttpBody body = HttpBody.of(new LeasePayload(source.body().payload(), state), source.body().media());
+        final PayloadBody body = PayloadBody
+                .of(new LeasePayload(source.body().payload(), state), source.body().media());
         final HttpResponse.Builder builder = source.toBuilder().body(body);
         if (source.handshake() == null && lease.connection() instanceof TlsRoutedConnection tls) {
             builder.handshake(tls.handshake());
@@ -680,7 +664,7 @@ public final class HttpConnect implements HttpStage {
         RELEASES.put(tracked, state);
         Logger.debug(
                 false,
-                LOG_TAG,
+                "Fabric",
                 "HTTP response lease tracking installed: code={}, repeatable={}, healthy={}",
                 source.code(),
                 source.body().payload().repeatable(),
@@ -699,7 +683,7 @@ public final class HttpConnect implements HttpStage {
             if (response.body().payload().repeatable() && lease.connection().healthy()) {
                 Logger.debug(
                         false,
-                        LOG_TAG,
+                        "Fabric",
                         "HTTP untracked lease released: code={}, repeatable={}, healthy={}",
                         response.code(),
                         true,
@@ -708,7 +692,7 @@ public final class HttpConnect implements HttpStage {
             } else {
                 Logger.debug(
                         false,
-                        LOG_TAG,
+                        "Fabric",
                         "HTTP untracked lease closed: code={}, repeatable={}, healthy={}",
                         response.code(),
                         response.body().payload().repeatable(),
@@ -754,7 +738,7 @@ public final class HttpConnect implements HttpStage {
      * @return TCP address
      */
     private static Address tcpAddress(final Address target) {
-        return new Address("tcp", target.host(), target.port(), target.path());
+        return new Address(Protocol.TCP.toString(), target.host(), target.port(), target.path());
     }
 
     /**
@@ -802,7 +786,7 @@ public final class HttpConnect implements HttpStage {
             return "socks";
         }
         if (proxy.isHttp()) {
-            return "http";
+            return Protocol.HTTP.name;
         }
         return "custom";
     }
@@ -814,7 +798,7 @@ public final class HttpConnect implements HttpStage {
      */
     private static void validateProxy(final ProxyPlan proxy) {
         proxy.proxy().ifPresent(address -> {
-            if (proxy.isHttp() && !"http".equals(address.scheme())) {
+            if (proxy.isHttp() && !Protocol.HTTP.name.equals(address.scheme())) {
                 throw new ProtocolException("Unsupported HTTP proxy transport");
             }
             if (proxy.isSocks() && (address.secure() || !Transport.fromScheme(address.scheme()).connectionOriented())) {
@@ -833,12 +817,15 @@ public final class HttpConnect implements HttpStage {
     private static String connectRequest(final Address target, final Headers authorization) {
         final String authority = authority(target);
         final StringBuilder builder = new StringBuilder();
-        builder.append("CONNECT ").append(authority).append(" HTTP/1.1\r\n");
-        builder.append("Host: ").append(authority).append(Symbol.CRLF);
-        builder.append("Proxy-Connection: keep-alive\r\n");
+        builder.append(HTTP.CONNECT).append(Symbol.C_SPACE).append(authority).append(Symbol.C_SPACE)
+                .append(Protocol.HTTP_1_1).append(Symbol.CRLF);
+        builder.append(HTTP.HOST).append(Symbol.COLON).append(Symbol.SPACE).append(authority).append(Symbol.CRLF);
+        builder.append(HTTP.PROXY_CONNECTION).append(Symbol.COLON).append(Symbol.SPACE)
+                .append(HTTP.CONNECTION_KEEP_ALIVE).append(Symbol.CRLF);
         for (final Map.Entry<String, List<String>> entry : authorization.asMap().entrySet()) {
             for (final String value : entry.getValue()) {
-                builder.append(entry.getKey()).append(": ").append(value).append(Symbol.CRLF);
+                builder.append(entry.getKey()).append(Symbol.COLON).append(Symbol.SPACE).append(value)
+                        .append(Symbol.CRLF);
             }
         }
         builder.append(Symbol.CRLF);
@@ -846,24 +833,26 @@ public final class HttpConnect implements HttpStage {
     }
 
     /**
-     * Creates a SOCKS5 CONNECT request.
+     * Creates a Builder.HTTP_CONNECT_SOCKS5 CONNECT request.
      *
      * @param target target address
      * @return request bytes
      */
     private static byte[] socksConnectRequest(final Address target) {
         final byte[] ipv4 = ipv4(target.host());
-        final byte[] host = ipv4 == null ? target.host().getBytes(org.miaixz.bus.core.lang.Charset.UTF_8) : ipv4;
+        final byte[] host = ipv4 == null
+                ? ByteString.encodeString(target.host(), org.miaixz.bus.core.lang.Charset.UTF_8).toByteArray()
+                : ipv4;
         if (host.length > 255) {
             throw new ProtocolException("SOCKS target host is too long");
         }
         final int capacity = ipv4 == null ? 7 + host.length : 6 + host.length;
         final ByteBuffer buffer = ByteBuffer.allocate(capacity);
-        buffer.put(SOCKS5).put(SOCKS_CONNECT).put((byte) 0x00);
+        buffer.put(Builder.HTTP_CONNECT_SOCKS5).put((byte) Normal._1).put((byte) Normal._0);
         if (ipv4 == null) {
-            buffer.put(SOCKS_ATYP_DOMAIN).put((byte) host.length);
+            buffer.put((byte) Normal._3).put((byte) host.length);
         } else {
-            buffer.put(SOCKS_ATYP_IPV4);
+            buffer.put((byte) Normal._1);
         }
         buffer.put(host).putShort((short) target.port());
         return buffer.array();
@@ -899,28 +888,30 @@ public final class HttpConnect implements HttpStage {
     /**
      * Writes a whole buffer.
      *
-     * @param connection   connection
+     * @param sink         sink
      * @param source       source
      * @param timeout      timeout
      * @param cancellation cancellation scope
      */
     private static void writeAll(
-            final Connection connection,
-            final ByteBuffer source,
+            final Sink sink,
+            final Buffer source,
             final Duration timeout,
             final Cancellation cancellation) {
         final Cancellation scope = require(cancellation, "Cancellation");
-        while (source.hasRemaining()) {
+        final Sink current = require(sink, "Sink");
+        final Buffer payload = require(source, "Write buffer");
+        configureTimeout(current.timeout(), timeout);
+        while (payload.size() > Normal._0) {
             scope.throwIfCancelled();
-            final int position = source.position();
-            final int written = await(connection.write(source), timeout, "HTTP CONNECT write timed out", scope);
-            if (written < 0) {
-                throw new SocketException("HTTP CONNECT write reached EOF");
+            final long before = payload.size();
+            try {
+                current.write(payload, payload.size());
+            } catch (final IOException e) {
+                throw new SocketException("HTTP CONNECT write failed", e);
             }
-            if (written == 0) {
+            if (payload.size() == before) {
                 Thread.yield();
-            } else {
-                source.position(position + written);
             }
         }
     }
@@ -928,23 +919,25 @@ public final class HttpConnect implements HttpStage {
     /**
      * Reads a proxy response header.
      *
-     * @param connection   connection
+     * @param source       source
      * @param timeout      timeout
      * @param cancellation cancellation scope
      * @return response header
      */
-    private static String readHeader(
-            final Connection connection,
-            final Duration timeout,
-            final Cancellation cancellation) {
+    private static String readHeader(final Source source, final Duration timeout, final Cancellation cancellation) {
         final Cancellation scope = require(cancellation, "Cancellation");
-        final ByteBuffer buffer = ByteBuffer.allocate(1);
+        final Source current = require(source, "Source");
+        configureTimeout(current.timeout(), timeout);
         final StringBuilder header = new StringBuilder();
-        while (header.length() < MAX_PROXY_HEADER) {
+        while (header.length() < Builder.BYTES_64_KIB) {
             scope.throwIfCancelled();
-            buffer.clear();
-            final int position = buffer.position();
-            final int read = await(connection.read(buffer), timeout, "HTTP CONNECT read timed out", scope);
+            final Buffer buffer = new Buffer();
+            final long read;
+            try {
+                read = current.read(buffer, Normal._1);
+            } catch (final IOException e) {
+                throw new SocketException("HTTP CONNECT read failed", e);
+            }
             if (read < 0) {
                 throw new SocketException("HTTP CONNECT response reached EOF");
             }
@@ -952,12 +945,10 @@ public final class HttpConnect implements HttpStage {
                 Thread.yield();
                 continue;
             }
-            buffer.position(position + read);
-            buffer.flip();
-            while (buffer.hasRemaining()) {
-                header.append((char) (buffer.get() & 0xff));
+            while (buffer.size() > Normal._0) {
+                header.append((char) (buffer.readByte() & Builder.UNSIGNED_BYTE_MASK));
             }
-            if (header.indexOf("\r\n\r\n") >= 0) {
+            if (header.indexOf(Symbol.CRLF + Symbol.CRLF) >= Normal._0) {
                 return header.toString();
             }
         }
@@ -967,7 +958,7 @@ public final class HttpConnect implements HttpStage {
     /**
      * Reads exactly the requested number of bytes.
      *
-     * @param connection   connection
+     * @param source       source
      * @param length       length
      * @param timeout      timeout
      * @param message      timeout message
@@ -975,27 +966,50 @@ public final class HttpConnect implements HttpStage {
      * @return bytes
      */
     private static byte[] readExact(
-            final Connection connection,
+            final Source source,
             final int length,
             final Duration timeout,
             final String message,
             final Cancellation cancellation) {
         final Cancellation scope = require(cancellation, "Cancellation");
-        final ByteBuffer buffer = ByteBuffer.allocate(length);
-        while (buffer.hasRemaining()) {
+        final Source current = require(source, "Source");
+        configureTimeout(current.timeout(), timeout);
+        final Buffer buffer = new Buffer();
+        while (buffer.size() < length) {
             scope.throwIfCancelled();
-            final int position = buffer.position();
-            final int read = await(connection.read(buffer), timeout, message, scope);
+            final long read;
+            try {
+                read = current.read(buffer, length - buffer.size());
+            } catch (final IOException e) {
+                throw new SocketException(message, e);
+            }
             if (read < 0) {
                 throw new SocketException("SOCKS response reached EOF");
             }
             if (read == 0) {
                 Thread.yield();
-            } else {
-                buffer.position(position + read);
             }
         }
-        return buffer.array();
+        try {
+            return buffer.readByteArray(length);
+        } catch (final IOException e) {
+            throw new SocketException("Unable to materialize SOCKS response", e);
+        }
+    }
+
+    /**
+     * Applies a fabric duration to a core.io timeout policy.
+     *
+     * @param ioTimeout core.io timeout
+     * @param timeout   fabric duration
+     */
+    private static void configureTimeout(
+            final org.miaixz.bus.core.io.timout.Timeout ioTimeout,
+            final Duration timeout) {
+        if (ioTimeout == null || timeout == null || timeout.isZero() || timeout.isNegative()) {
+            return;
+        }
+        ioTimeout.timeout(timeout.toNanos(), TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -1134,9 +1148,9 @@ public final class HttpConnect implements HttpStage {
      * @return normalized name
      */
     private static String normalizeName(final String value) {
-        if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException("HTTP connect name must be non-blank and single-line");
-        }
+        Assert.isFalse(
+                StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException("HTTP connect name must be non-blank and single-line"));
         return StringKit.trim(value).toLowerCase(Locale.ROOT);
     }
 
@@ -1152,6 +1166,16 @@ public final class HttpConnect implements HttpStage {
     }
 
     /**
+     * Protects listener callbacks from escaping.
+     *
+     * @param listener listener
+     * @return safe listener
+     */
+    private static Listener<Object> safe(final Listener<Object> listener) {
+        return listener == null ? NoopListener.INSTANCE : new SafeListener(listener);
+    }
+
+    /**
      * Validates required references.
      *
      * @param value value
@@ -1160,10 +1184,7 @@ public final class HttpConnect implements HttpStage {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -1252,7 +1273,7 @@ public final class HttpConnect implements HttpStage {
                 if (complete.get() && !broken.get() && lease.connection().healthy()) {
                     Logger.debug(
                             false,
-                            LOG_TAG,
+                            "Fabric",
                             "HTTP tracked lease released: complete={}, broken={}, healthy={}",
                             complete.get(),
                             broken.get(),
@@ -1261,7 +1282,7 @@ public final class HttpConnect implements HttpStage {
                 } else {
                     Logger.debug(
                             false,
-                            LOG_TAG,
+                            "Fabric",
                             "HTTP tracked lease closed: complete={}, broken={}, healthy={}",
                             complete.get(),
                             broken.get(),
@@ -1317,13 +1338,13 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Opens a release-aware stream.
+         * Opens a lease-aware source for the delegated payload.
          *
-         * @return input stream
+         * @return lease-aware source
          */
         @Override
-        public InputStream stream() {
-            return new LeaseInputStream(delegate.stream(), state);
+        public Source source() {
+            return new LeaseSource(delegate.source(), state);
         }
 
         /**
@@ -1333,7 +1354,7 @@ public final class HttpConnect implements HttpStage {
          */
         @Override
         public byte[] bytes() {
-            return bytes(Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+            return bytes(Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
         }
 
         /**
@@ -1364,15 +1385,20 @@ public final class HttpConnect implements HttpStage {
          */
         @Override
         public String text(final Charset charset) {
-            return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+            return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
         }
 
+        /**
+         * Reads payload text with an explicit materialize threshold and releases the lease.
+         *
+         * @param charset  charset
+         * @param maxBytes maximum bytes to materialize
+         * @return text
+         */
         @Override
         public String text(final Charset charset, final long maxBytes) {
-            if (charset == null) {
-                throw new ValidateException("Charset must not be null");
-            }
-            return new String(bytes(maxBytes), charset);
+            return new String(bytes(maxBytes),
+                    Assert.notNull(charset, () -> new ValidateException("Charset must not be null")));
         }
 
         /**
@@ -1407,14 +1433,14 @@ public final class HttpConnect implements HttpStage {
     }
 
     /**
-     * Input stream that tracks EOF and close semantics.
+     * Source that tracks EOF and close semantics.
      */
-    private static final class LeaseInputStream extends InputStream {
+    private static final class LeaseSource implements Source {
 
         /**
-         * Delegate input stream.
+         * Delegate source.
          */
-        private final InputStream delegate;
+        private final Source delegate;
 
         /**
          * Release state.
@@ -1427,52 +1453,29 @@ public final class HttpConnect implements HttpStage {
         private final AtomicBoolean closed;
 
         /**
-         * Creates a lease input stream.
+         * Creates a lease source.
          *
          * @param delegate delegate
          * @param state    release state
          */
-        private LeaseInputStream(final InputStream delegate, final ReleaseState state) {
-            this.delegate = require(delegate, "Input stream");
+        private LeaseSource(final Source delegate, final ReleaseState state) {
+            this.delegate = require(delegate, "Source");
             this.state = require(state, "Release state");
             this.closed = new AtomicBoolean();
         }
 
         /**
-         * Reads one byte.
+         * Reads from the delegated source and releases the connection at end of stream.
          *
-         * @return byte or EOF
-         * @throws IOException when reading fails
+         * @param sink      destination buffer
+         * @param byteCount maximum bytes to read
+         * @return bytes read, or -1 at end of stream
+         * @throws IOException when the delegate read fails
          */
         @Override
-        public int read() throws IOException {
+        public long read(final Buffer sink, final long byteCount) throws IOException {
             try {
-                final int value = delegate.read();
-                if (value < 0) {
-                    state.complete();
-                    state.release();
-                }
-                return value;
-            } catch (final IOException e) {
-                state.broken();
-                state.release();
-                throw e;
-            }
-        }
-
-        /**
-         * Reads bytes.
-         *
-         * @param bytes  target bytes
-         * @param offset offset
-         * @param length length
-         * @return read count
-         * @throws IOException when reading fails
-         */
-        @Override
-        public int read(final byte[] bytes, final int offset, final int length) throws IOException {
-            try {
-                final int read = delegate.read(bytes, offset, length);
+                final long read = delegate.read(sink, byteCount);
                 if (read < 0) {
                     state.complete();
                     state.release();
@@ -1486,9 +1489,19 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Closes the stream and releases the lease.
+         * Returns the delegate timeout.
          *
-         * @throws IOException when close fails
+         * @return timeout
+         */
+        @Override
+        public org.miaixz.bus.core.io.timout.Timeout timeout() {
+            return delegate.timeout();
+        }
+
+        /**
+         * Closes the delegated source and releases or marks the connection as broken.
+         *
+         * @throws IOException when the delegate close fails
          */
         @Override
         public void close() throws IOException {
@@ -1564,25 +1577,23 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Reads bytes.
+         * Returns the protocol-layer source.
          *
-         * @param buffer target buffer
-         * @return read future
+         * @return source view
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer buffer) {
-            return delegate.read(buffer);
+        public Source source() {
+            return delegate.source();
         }
 
         /**
-         * Writes bytes.
+         * Returns the protocol-layer sink.
          *
-         * @param buffer source buffer
-         * @return write future
+         * @return sink view
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer buffer) {
-            return delegate.write(buffer);
+        public Sink sink() {
+            return delegate.sink();
         }
 
         /**
@@ -1661,25 +1672,23 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Reads plain TLS bytes.
+         * Returns the TLS source view.
          *
-         * @param buffer target buffer
-         * @return read future
+         * @return source view
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer buffer) {
-            return tls.read(buffer);
+        public Source source() {
+            return tls.source();
         }
 
         /**
-         * Writes plain TLS bytes.
+         * Returns the TLS sink view.
          *
-         * @param buffer source buffer
-         * @return write future
+         * @return sink view
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer buffer) {
-            return tls.write(buffer);
+        public Sink sink() {
+            return tls.sink();
         }
 
         /**
@@ -1690,6 +1699,16 @@ public final class HttpConnect implements HttpStage {
         @Override
         public boolean healthy() {
             return tls.opened() && raw.healthy();
+        }
+
+        /**
+         * Returns TLS lifecycle state.
+         *
+         * @return state
+         */
+        @Override
+        public Status state() {
+            return tls.state();
         }
 
         /**
@@ -1756,7 +1775,7 @@ public final class HttpConnect implements HttpStage {
          */
         private SocketConnector(final Listener<Object> listener, final DnsResolver resolver,
                 final Dispatcher dispatcher) {
-            this.listener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+            this.listener = safe(listener);
             this.resolver = require(resolver, "DNS resolver");
             this.dispatcher = require(dispatcher, "Dispatcher");
         }
@@ -1775,8 +1794,10 @@ public final class HttpConnect implements HttpStage {
             if (!supports(Transport.fromScheme(address.scheme()))) {
                 return CompletableFuture.failedFuture(new ProtocolException("Unsupported HTTP connect transport"));
             }
-            return dispatcher
-                    .supply("http:connect:" + address.host() + ":" + address.port(), () -> open(address, timeout));
+            return dispatcher.supply(
+                    Protocol.HTTP.name + Symbol.COLON + "connect" + Symbol.COLON + address.host() + Symbol.COLON
+                            + address.port(),
+                    () -> open(address, timeout));
         }
 
         /**
@@ -1825,7 +1846,6 @@ public final class HttpConnect implements HttpStage {
                             new InetSocketAddress(candidate, address.port()),
                             timeoutMillis(timeout.connect()));
                     final Connection connection = new SocketConnection(address, channel, listener, dispatcher);
-                    listener.open(connection);
                     return connection;
                 } catch (final SocketTimeoutException e) {
                     IoKit.closeQuietly(channel);
@@ -1875,14 +1895,9 @@ public final class HttpConnect implements HttpStage {
         private final Conduit conduit;
 
         /**
-         * State.
+         * Lifecycle scope.
          */
-        private volatile Status state = Status.OPENED;
-
-        /**
-         * Lifecycle listener.
-         */
-        private final Listener<Object> listener;
+        private final LifecycleScope scope;
 
         /**
          * Creates a socket connection.
@@ -1897,7 +1912,15 @@ public final class HttpConnect implements HttpStage {
             this.destination = Destination.of(address.protocol(), address, Options.empty());
             this.socket = require(socket, "Socket channel");
             this.conduit = new SocketConduit(socket, dispatcher);
-            this.listener = Wiring.safe(listener == null ? Wiring.noop() : listener, null);
+            this.scope = LifecycleScope.session(
+                    this,
+                    "http-socket-connection",
+                    listener,
+                    EventObserver.noop(),
+                    ObservationMarker.CONNECT_SUCCESS,
+                    null,
+                    ObservationMarker.CONNECT_FAILED);
+            this.scope.open(this);
         }
 
         /**
@@ -1927,29 +1950,27 @@ public final class HttpConnect implements HttpStage {
          */
         @Override
         public Status state() {
-            return state;
+            return scope.state();
         }
 
         /**
-         * Reads bytes.
+         * Returns the protocol-layer source.
          *
-         * @param buffer target buffer
-         * @return read future
+         * @return source view
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer buffer) {
-            return conduit.read(buffer);
+        public Source source() {
+            return conduit.source();
         }
 
         /**
-         * Writes bytes.
+         * Returns the protocol-layer sink.
          *
-         * @param buffer source buffer
-         * @return write future
+         * @return sink view
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer buffer) {
-            return conduit.write(buffer);
+        public Sink sink() {
+            return conduit.sink();
         }
 
         /**
@@ -1959,7 +1980,7 @@ public final class HttpConnect implements HttpStage {
          */
         @Override
         public boolean healthy() {
-            return state == Status.OPENED && socket.isConnected() && socket.isOpen();
+            return scope.state() == Status.OPENED && socket.isConnected() && socket.isOpen();
         }
 
         /**
@@ -1977,10 +1998,13 @@ public final class HttpConnect implements HttpStage {
          */
         @Override
         public void close() {
-            if (state != Status.CLOSED) {
-                state = Status.CLOSED;
+            if (scope.state().terminal()) {
+                return;
+            }
+            try {
                 conduit.close();
-                listener.close(this);
+            } finally {
+                scope.close(this);
             }
         }
 
@@ -2002,6 +2026,16 @@ public final class HttpConnect implements HttpStage {
         private final Dispatcher dispatcher;
 
         /**
+         * Source view for protocol readers.
+         */
+        private final Source source;
+
+        /**
+         * Sink view for protocol writers.
+         */
+        private final Sink sink;
+
+        /**
          * Creates an adapter.
          *
          * @param socket     socket
@@ -2010,20 +2044,33 @@ public final class HttpConnect implements HttpStage {
         private SocketConduit(final SocketChannel socket, final Dispatcher dispatcher) {
             this.socket = require(socket, "Socket channel");
             this.dispatcher = require(dispatcher, "Dispatcher");
+            this.source = new SocketSource();
+            this.sink = new SocketSink();
         }
 
         /**
-         * Reads bytes.
+         * Reads bytes into a core.io buffer.
          *
-         * @param target target buffer
+         * @param target    target buffer
+         * @param byteCount maximum byte count
          * @return read future
          */
         @Override
-        public CompletableFuture<Integer> read(final ByteBuffer target) {
-            require(target, "Read target");
+        public CompletableFuture<Long> read(final Buffer target, final long byteCount) {
+            final Buffer checkedTarget = require(target, "Read target");
+            Assert.isTrue(byteCount >= Normal._0, () -> new ValidateException("Read byte count must not be negative"));
+            if (byteCount == Normal._0) {
+                return CompletableFuture.completedFuture(0L);
+            }
             return dispatcher.supply("http:socket:read", () -> {
                 try {
-                    return socket.read(target);
+                    final ByteBuffer buffer = ByteBuffer.allocate(readCapacity(byteCount));
+                    final int read = socket.read(buffer);
+                    if (read > Normal._0) {
+                        buffer.flip();
+                        checkedTarget.write(buffer);
+                    }
+                    return (long) read;
                 } catch (final IOException e) {
                     throw new SocketException("Socket read failed", e);
                 }
@@ -2031,28 +2078,37 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Reads bytes with a handler.
+         * Writes bytes from a core.io buffer.
          *
-         * @param target  target buffer
-         * @param handler completion handler
-         */
-        @Override
-        public void read(final ByteBuffer target, final CompletionHandler<Integer, ByteBuffer> handler) {
-            complete(read(target), target, handler);
-        }
-
-        /**
-         * Writes bytes.
-         *
-         * @param source source buffer
+         * @param source    source buffer
+         * @param byteCount byte count to write
          * @return write future
          */
         @Override
-        public CompletableFuture<Integer> write(final ByteBuffer source) {
-            require(source, "Write source");
+        public CompletableFuture<Long> write(final Buffer source, final long byteCount) {
+            final Buffer checkedSource = require(source, "Write source");
+            Assert.isTrue(byteCount >= Normal._0, () -> new ValidateException("Write byte count must not be negative"));
+            Assert.isTrue(
+                    byteCount <= checkedSource.size(),
+                    () -> new ValidateException("Write byte count must not exceed source size"));
+            if (byteCount == Normal._0) {
+                return CompletableFuture.completedFuture(0L);
+            }
             return dispatcher.supply("http:socket:write", () -> {
+                long written = Normal._0;
+                long remaining = byteCount;
                 try {
-                    return socket.write(source);
+                    while (remaining > Normal._0) {
+                        final ByteBuffer view = checkedSource.nioBuffer(toIntSize(remaining));
+                        final int count = socket.write(view);
+                        if (count == Normal._0) {
+                            break;
+                        }
+                        checkedSource.skip(count);
+                        written += count;
+                        remaining -= count;
+                    }
+                    return written;
                 } catch (final IOException e) {
                     throw new SocketException("Socket write failed", e);
                 }
@@ -2060,14 +2116,23 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Writes bytes with a handler.
+         * Returns the core.io source view.
          *
-         * @param source  source buffer
-         * @param handler completion handler
+         * @return source view
          */
         @Override
-        public void write(final ByteBuffer source, final CompletionHandler<Integer, ByteBuffer> handler) {
-            complete(write(source), source, handler);
+        public Source source() {
+            return source;
+        }
+
+        /**
+         * Returns the core.io sink view.
+         *
+         * @return sink view
+         */
+        @Override
+        public Sink sink() {
+            return sink;
         }
 
         /**
@@ -2093,25 +2158,171 @@ public final class HttpConnect implements HttpStage {
         }
 
         /**
-         * Bridges a future to a completion handler.
+         * Returns a bounded channel read capacity.
          *
-         * @param future     future
-         * @param attachment attachment
-         * @param handler    handler
+         * @param byteCount requested byte count
+         * @return read capacity
          */
-        private static void complete(
-                final CompletableFuture<Integer> future,
-                final ByteBuffer attachment,
-                final CompletionHandler<Integer, ByteBuffer> handler) {
-            require(handler, "Completion handler");
-            future.whenComplete((value, failure) -> {
-                if (failure == null) {
-                    handler.completed(value, attachment);
-                } else {
-                    handler.failed(failure, attachment);
-                }
-            });
+        private static int readCapacity(final long byteCount) {
+            return toIntSize(Math.min(byteCount, Normal._8192));
         }
+
+        /**
+         * Converts a long byte count to an int size accepted by JDK buffers.
+         *
+         * @param byteCount byte count
+         * @return int size
+         */
+        private static int toIntSize(final long byteCount) {
+            return (int) Math.min(byteCount, Integer.MAX_VALUE);
+        }
+
+        /**
+         * Source backed by the socket conduit.
+         */
+        private final class SocketSource implements Source {
+
+            /**
+             * Reads bytes through the enclosing conduit.
+             *
+             * @param sink      target buffer
+             * @param byteCount maximum byte count
+             * @return read byte count
+             */
+            @Override
+            public long read(final Buffer sink, final long byteCount) {
+                return await(SocketConduit.this.read(sink, byteCount), Duration.ZERO, "Socket source read failed");
+            }
+
+            /**
+             * Returns the no-op timeout.
+             *
+             * @return timeout
+             */
+            @Override
+            public org.miaixz.bus.core.io.timout.Timeout timeout() {
+                return org.miaixz.bus.core.io.timout.Timeout.NONE;
+            }
+
+            /**
+             * Closes the enclosing conduit.
+             */
+            @Override
+            public void close() {
+                SocketConduit.this.close();
+            }
+
+        }
+
+        /**
+         * Sink backed by the socket conduit.
+         */
+        private final class SocketSink implements Sink {
+
+            /**
+             * Writes bytes through the enclosing conduit.
+             *
+             * @param source    source buffer
+             * @param byteCount byte count
+             */
+            @Override
+            public void write(final Buffer source, final long byteCount) {
+                await(SocketConduit.this.write(source, byteCount), Duration.ZERO, "Socket sink write failed");
+            }
+
+            /**
+             * Flushes this socket sink.
+             */
+            @Override
+            public void flush() {
+                // SocketChannel writes are flushed by the operating system.
+            }
+
+            /**
+             * Returns the no-op timeout.
+             *
+             * @return timeout
+             */
+            @Override
+            public org.miaixz.bus.core.io.timout.Timeout timeout() {
+                return org.miaixz.bus.core.io.timout.Timeout.NONE;
+            }
+
+            /**
+             * Closes the enclosing conduit.
+             */
+            @Override
+            public void close() {
+                SocketConduit.this.close();
+            }
+        }
+
+    }
+
+    /**
+     * Safe listener wrapper.
+     *
+     * @param delegate listener delegate
+     */
+    private record SafeListener(Listener<Object> delegate) implements Listener<Object> {
+
+        /**
+         * Handles open events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void open(final Object source) {
+            try {
+                delegate.open(source);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break HTTP connection lifecycle transitions.
+            }
+        }
+
+        /**
+         * Handles close events.
+         *
+         * @param source lifecycle source
+         */
+        @Override
+        public void close(final Object source) {
+            try {
+                delegate.close(source);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break HTTP connection lifecycle transitions.
+            }
+        }
+
+        /**
+         * Handles failure events.
+         *
+         * @param source lifecycle source
+         * @param cause  failure cause
+         */
+        @Override
+        public void failure(final Object source, final Throwable cause) {
+            try {
+                delegate.failure(source, cause);
+            } catch (final RuntimeException ignored) {
+                // Listener failures must not break HTTP connection lifecycle transitions.
+            }
+        }
+
+    }
+
+    /**
+     * Internal no-operation listener.
+     *
+     * @author Kimi Liu
+     * @since Java 21+
+     */
+    private enum NoopListener implements Listener<Object> {
+
+        /**
+         * Singleton no-operation listener.
+         */
+        INSTANCE
 
     }
 

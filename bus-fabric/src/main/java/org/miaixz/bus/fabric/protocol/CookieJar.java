@@ -21,10 +21,11 @@ package org.miaixz.bus.fabric.protocol;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.UnoUrl;
 import org.miaixz.bus.fabric.protocol.http.HttpCookie;
@@ -36,11 +37,6 @@ import org.miaixz.bus.fabric.protocol.http.HttpCookie;
  * @since Java 21+
  */
 public final class CookieJar {
-
-    /**
-     * Cookie jar that never stores or returns cookies.
-     */
-    public static final CookieJar NO_COOKIES = new CookieJar(false);
 
     /**
      * Stored cookie snapshot.
@@ -79,6 +75,15 @@ public final class CookieJar {
     }
 
     /**
+     * Creates a cookie jar that never stores or returns cookies.
+     *
+     * @return cookie jar
+     */
+    public static CookieJar noCookies() {
+        return new CookieJar(false);
+    }
+
+    /**
      * Saves valid cookies from response headers.
      *
      * @param url     response URL
@@ -90,7 +95,7 @@ public final class CookieJar {
         }
         final UnoUrl source = require(url, "URL");
         final Headers sourceHeaders = require(headers, "Headers");
-        for (final String header : sourceHeaders.values("Set-Cookie")) {
+        for (final String header : sourceHeaders.values(HTTP.SET_COOKIE)) {
             try {
                 save(List.of(Cookie.parse(header, source)));
             } catch (final RuntimeException ignored) {
@@ -205,12 +210,7 @@ public final class CookieJar {
      * Removes expired cookies.
      */
     private void pruneExpired() {
-        final Iterator<Cookie> iterator = cookies.iterator();
-        while (iterator.hasNext()) {
-            if (expired(iterator.next())) {
-                iterator.remove();
-            }
-        }
+        cookies.removeIf(CookieJar::expired);
     }
 
     /**
@@ -261,10 +261,7 @@ public final class CookieJar {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

@@ -19,10 +19,13 @@
 */
 package org.miaixz.bus.fabric.protocol.http.http2;
 
-import java.nio.ByteBuffer;
-
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * HTTP/2 stream priority metadata.
@@ -36,20 +39,11 @@ import org.miaixz.bus.core.lang.exception.ValidateException;
 public record Http2Priority(int dependencyStreamId, int weight, boolean exclusive) {
 
     /**
-     * Encoded priority payload size.
-     */
-    static final int LENGTH = Integer.BYTES + Byte.BYTES;
-
-    /**
-     * Maximum HTTP/2 stream id.
-     */
-    private static final int MAX_STREAM_ID = 0x7fffffff;
-
-    /**
      * Creates priority metadata.
      */
     public Http2Priority {
-        if (dependencyStreamId < 0 || dependencyStreamId > MAX_STREAM_ID || weight < 1 || weight > 256) {
+        if (dependencyStreamId < Normal._0 || dependencyStreamId > Integer.MAX_VALUE || weight < Normal._1
+                || weight > Normal._256) {
             throw new ValidateException("Invalid HTTP/2 priority metadata");
         }
     }
@@ -67,37 +61,68 @@ public record Http2Priority(int dependencyStreamId, int weight, boolean exclusiv
     }
 
     /**
-     * Decodes priority metadata from a frame payload.
+     * Decodes priority metadata from immutable payload bytes.
      *
      * @param payload  priority payload
      * @param streamId owning stream id
      * @return priority
      */
-    static Http2Priority decode(final ByteBuffer payload, final int streamId) {
-        if (payload == null || payload.remaining() < LENGTH) {
+    static Http2Priority decode(final ByteString payload, final int streamId) {
+        final ByteString checkedPayload = Assert
+                .notNull(payload, () -> new ProtocolException("Invalid HTTP/2 PRIORITY payload"));
+        if (checkedPayload.size() < Normal._5) {
             throw new ProtocolException("Invalid HTTP/2 PRIORITY payload");
         }
-        final ByteBuffer view = payload.asReadOnlyBuffer();
-        final int dependency = view.getInt();
-        final boolean exclusive = (dependency & 0x80000000) != 0;
-        final int dependencyStreamId = dependency & MAX_STREAM_ID;
-        if (streamId > 0 && dependencyStreamId == streamId) {
-            throw new ProtocolException("HTTP/2 stream cannot depend on itself");
-        }
-        return new Http2Priority(dependencyStreamId, (view.get() & 0xff) + 1, exclusive);
+        final Buffer view = new Buffer().write(checkedPayload);
+        return decodeView(view, streamId);
     }
 
     /**
-     * Encodes priority metadata.
+     * Decodes priority metadata from a readable view.
+     *
+     * @param view     priority view
+     * @param streamId owning stream id
+     * @return priority
+     */
+    private static Http2Priority decodeView(final Buffer view, final int streamId) {
+        final int dependency = view.readInt();
+        final boolean exclusive = (dependency & Builder.HTTP2_PRIORITY_EXCLUSIVE_MASK) != Normal._0;
+        final int dependencyStreamId = dependency & Integer.MAX_VALUE;
+        if (streamId > Normal._0 && dependencyStreamId == streamId) {
+            throw new ProtocolException("HTTP/2 stream cannot depend on itself");
+        }
+        return new Http2Priority(dependencyStreamId, (view.readByte() & Builder.UNSIGNED_BYTE_MASK) + Normal._1,
+                exclusive);
+    }
+
+    /**
+     * Decodes priority metadata from a core buffer.
+     *
+     * @param payload  priority payload
+     * @param streamId owning stream id
+     * @return priority
+     */
+    static Http2Priority decode(final Buffer payload, final int streamId) {
+        final Buffer checkedPayload = Assert
+                .notNull(payload, () -> new ProtocolException("Invalid HTTP/2 PRIORITY payload"));
+        if (checkedPayload.size() < Normal._5) {
+            throw new ProtocolException("Invalid HTTP/2 PRIORITY payload");
+        }
+        final Buffer view = new Buffer();
+        checkedPayload.copyTo(view, Normal._0, Normal._5);
+        return decodeView(view, streamId);
+    }
+
+    /**
+     * Encodes priority metadata as immutable payload bytes.
      *
      * @return payload
      */
-    public ByteBuffer encode() {
-        final ByteBuffer payload = ByteBuffer.allocate(LENGTH);
-        payload.putInt(exclusive ? dependencyStreamId | 0x80000000 : dependencyStreamId);
-        payload.put((byte) (weight - 1));
-        payload.flip();
-        return payload.asReadOnlyBuffer();
+    public ByteString encodeBytes() {
+        final Buffer payload = new Buffer();
+        payload.writeInt(exclusive ? dependencyStreamId | Builder.HTTP2_PRIORITY_EXCLUSIVE_MASK : dependencyStreamId);
+        payload.writeByte(weight - Normal._1);
+        return payload.readByteString();
     }
 
 }

@@ -37,16 +37,6 @@ import org.miaixz.bus.core.xyz.StringKit;
 public final class Options {
 
     /**
-     * Option key for the maximum bytes allowed when materializing a payload.
-     */
-    public static final String MATERIALIZE_MAX_BYTES = "materialize.maxBytes";
-
-    /**
-     * Default maximum bytes allowed when materializing a payload.
-     */
-    public static final long DEFAULT_MATERIALIZE_MAX_BYTES = 64L * 1024L * 1024L;
-
-    /**
      * Immutable backing values.
      */
     private final Map<String, Object> values;
@@ -192,9 +182,9 @@ public final class Options {
      * @return materialize byte threshold
      */
     public long materializeMaxBytes() {
-        final Object value = get(MATERIALIZE_MAX_BYTES);
+        final Object value = get(Builder.OPTION_MATERIALIZE_MAX_BYTES);
         if (value == null) {
-            return DEFAULT_MATERIALIZE_MAX_BYTES;
+            return Builder.DEFAULT_MATERIALIZE_MAX_BYTES;
         }
         if (!(value instanceof Number number)) {
             throw new ValidateException("Materialize max bytes must be numeric");
@@ -209,7 +199,7 @@ public final class Options {
      * @return updated options
      */
     public Options materializeMaxBytes(final long bytes) {
-        return with(MATERIALIZE_MAX_BYTES, validateMaterializeMaxBytes(bytes));
+        return with(Builder.OPTION_MATERIALIZE_MAX_BYTES, validateMaterializeMaxBytes(bytes));
     }
 
     /**

@@ -19,13 +19,17 @@
 */
 package org.miaixz.bus.fabric.observe.event;
 
+import static org.miaixz.bus.fabric.Builder.*;
+
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.observe.ObservationMarker;
-import org.miaixz.bus.fabric.observe.tag.Tags;
+import org.miaixz.bus.fabric.observe.tags.Tags;
 
 /**
  * Immutable fabric observation event.
@@ -48,15 +52,9 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
      * @param cause  event failure cause
      */
     public FabricEvent {
-        if (marker == null) {
-            throw new ValidateException("Observe marker must not be null");
-        }
-        if (time == null) {
-            throw new ValidateException("Event time must not be null");
-        }
-        if (tags == null) {
-            throw new ValidateException("Event tags must not be null");
-        }
+        marker = Assert.notNull(marker, () -> new ValidateException("Observe marker must not be null"));
+        time = Assert.notNull(time, () -> new ValidateException("Event time must not be null"));
+        tags = Assert.notNull(tags, () -> new ValidateException("Event tags must not be null"));
     }
 
     /**
@@ -66,10 +64,7 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
      * @return event builder
      */
     public static Builder builder(final ObservationMarker marker) {
-        if (marker == null) {
-            throw new ValidateException("Observe marker must not be null");
-        }
-        return new Builder(marker);
+        return new Builder(Assert.notNull(marker, () -> new ValidateException("Observe marker must not be null")));
     }
 
     /**
@@ -103,10 +98,10 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
         private Builder(final ObservationMarker marker) {
             this.marker = marker;
             this.tags = new LinkedHashMap<>();
-            tag(Tags.MODULE, module(marker));
-            tag(Tags.PROTOCOL, module(marker));
-            tag(Tags.PHASE, phase(marker));
-            tag(Tags.RESULT, result(marker));
+            tag(TAG_MODULE, module(marker));
+            tag(TAG_PROTOCOL, module(marker));
+            tag(TAG_PHASE, phase(marker));
+            tag(TAG_RESULT, result(marker));
         }
 
         /**
@@ -140,7 +135,7 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
          */
         public FabricEvent build() {
             if (cause != null) {
-                tags.putIfAbsent(Tags.EXCEPTION, cause.getClass().getName());
+                tags.putIfAbsent(TAG_EXCEPTION, cause.getClass().getName());
             }
             return new FabricEvent(marker, Instant.now(), Tags.of(tags), cause);
         }
@@ -155,7 +150,7 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
      */
     private static String module(final ObservationMarker marker) {
         final String code = marker.code();
-        final int dot = code.indexOf('.');
+        final int dot = code.indexOf(Symbol.C_DOT);
         return dot < 0 ? code : code.substring(0, dot);
     }
 
@@ -167,7 +162,7 @@ public record FabricEvent(ObservationMarker marker, Instant time, Tags tags, Thr
      */
     private static String phase(final ObservationMarker marker) {
         final String code = marker.code();
-        final int dot = code.indexOf('.');
+        final int dot = code.indexOf(Symbol.C_DOT);
         return dot < 0 || dot == code.length() - 1 ? code : code.substring(dot + 1);
     }
 

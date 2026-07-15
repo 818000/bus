@@ -19,12 +19,12 @@
 */
 package org.miaixz.bus.fabric.protocol.websocket;
 
-import java.nio.charset.StandardCharsets;
-
+import org.miaixz.bus.core.io.ByteString;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.xyz.StringKit;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * Immutable WebSocket close description.
@@ -38,6 +38,38 @@ import org.miaixz.bus.core.xyz.StringKit;
 public record WebSocketClose(int code, String reason, boolean normal) {
 
     /**
+     * Normal close status code.
+     */
+
+    /**
+     * First protocol-defined close status code after normal close.
+     */
+
+    /**
+     * Last protocol-defined close status code accepted by this implementation.
+     */
+
+    /**
+     * Reserved no-status close code.
+     */
+
+    /**
+     * Reserved abnormal close code.
+     */
+
+    /**
+     * First application-defined close status code.
+     */
+
+    /**
+     * Last application-defined close status code.
+     */
+
+    /**
+     * Maximum close reason payload bytes after the two-byte close code.
+     */
+
+    /**
      * Creates a close description.
      *
      * @param code   close code
@@ -46,7 +78,7 @@ public record WebSocketClose(int code, String reason, boolean normal) {
      */
     public WebSocketClose {
         reason = validate(code, reason);
-        normal = code == 1000;
+        normal = code == Builder._1000;
     }
 
     /**
@@ -57,7 +89,7 @@ public record WebSocketClose(int code, String reason, boolean normal) {
      * @return close description
      */
     public static WebSocketClose of(final int code, final String reason) {
-        return new WebSocketClose(code, reason, code == 1000);
+        return new WebSocketClose(code, reason, code == Builder._1000);
     }
 
     /**
@@ -75,7 +107,7 @@ public record WebSocketClose(int code, String reason, boolean normal) {
         if (StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
             throw new ValidateException("WebSocket close reason must be single-line");
         }
-        if (value.getBytes(StandardCharsets.UTF_8).length > 123) {
+        if (ByteString.encodeUtf8(value).size() > Builder.WEBSOCKET_MAX_REASON_BYTES) {
             throw new ValidateException("WebSocket close reason is too large");
         }
         return value;
@@ -88,8 +120,10 @@ public record WebSocketClose(int code, String reason, boolean normal) {
      * @return true when valid
      */
     private static boolean validCode(final int code) {
-        return code == 1000 || code >= 1001 && code <= 1014 && code != 1005 && code != 1006
-                || code >= 3000 && code <= 4999;
+        return code == Builder._1000 || code >= Builder._1001 && code <= Builder.WEBSOCKET_MAX_PROTOCOL_CLOSE_CODE
+                && code != Builder.WEBSOCKET_RESERVED_NO_STATUS_CODE && code != Builder.WEBSOCKET_RESERVED_ABNORMAL_CODE
+                || code >= Builder.WEBSOCKET_MIN_APPLICATION_CLOSE_CODE
+                        && code <= Builder.WEBSOCKET_MAX_APPLICATION_CLOSE_CODE;
     }
 
 }

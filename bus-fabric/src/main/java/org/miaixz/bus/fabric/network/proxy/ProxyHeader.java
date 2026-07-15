@@ -22,14 +22,17 @@ package org.miaixz.bus.fabric.network.proxy;
 import java.math.BigInteger;
 import java.util.Locale;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.core.net.ip.IPv4;
 import org.miaixz.bus.core.net.ip.IPv6;
 import org.miaixz.bus.core.xyz.StringKit;
 import org.miaixz.bus.fabric.Address;
+import org.miaixz.bus.fabric.Builder;
 
 /**
  * Parsed PROXY protocol v1 header with cached source address metadata.
@@ -51,17 +54,20 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
         if (unknown(source, target, sourcePort, targetPort)) {
             source = Normal.EMPTY;
             target = Normal.EMPTY;
-            if (sourceAddress != null) {
-                throw new ValidateException("UNKNOWN proxy header must not contain a source address");
-            }
+            Assert.isTrue(
+                    sourceAddress == null,
+                    () -> new ValidateException("UNKNOWN proxy header must not contain a source address"));
         } else {
             source = normalizeAnyIp(source, "Source");
             target = normalizeAnyIp(target, "Target");
             sourcePort = validatePort(sourcePort);
             targetPort = validatePort(targetPort);
-            if (sourceAddress == null || !source.equals(sourceAddress.host()) || sourcePort != sourceAddress.port()) {
-                throw new ValidateException("Source address must match parsed source endpoint");
-            }
+            sourceAddress = Assert.notNull(
+                    sourceAddress,
+                    () -> new ValidateException("Source address must match parsed source endpoint"));
+            Assert.isTrue(
+                    source.equals(sourceAddress.host()) && sourcePort == sourceAddress.port(),
+                    () -> new ValidateException("Source address must match parsed source endpoint"));
         }
     }
 
@@ -73,30 +79,31 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      */
     public static ProxyHeader parse(final String line) {
         final String value = validateLine(line);
-        final String[] tokens = value.split(Symbol.SPACE, -1);
-        if (tokens.length < 2) {
+        final String[] tokens = value.split(Symbol.SPACE, Normal.__1);
+        if (tokens.length < Normal._2) {
             throw new ValidateException("PROXY header must include command and protocol");
         }
-        if (!"PROXY".equals(tokens[0])) {
+        if (!Builder.PROXY_HEADER_COMMAND_PROXY.equals(tokens[Normal._0])) {
             throw new ProtocolException("Invalid PROXY header command");
         }
-        final String protocol = tokens[1].toUpperCase(Locale.ROOT);
-        if ("UNKNOWN".equals(protocol)) {
+        final String protocol = tokens[Normal._1].toUpperCase(Locale.ROOT);
+        if (Builder.PROXY_HEADER_PROTOCOL_UNKNOWN.equals(protocol)) {
             // UNKNOWN intentionally carries no synthesized Address.
-            return new ProxyHeader(Normal.EMPTY, Normal.EMPTY, 0, 0, null);
+            return new ProxyHeader(Normal.EMPTY, Normal.EMPTY, Normal._0, Normal._0, null);
         }
-        if (!"TCP4".equals(protocol) && !"TCP6".equals(protocol)) {
+        if (!Builder.PROXY_HEADER_PROTOCOL_TCP4.equals(protocol)
+                && !Builder.PROXY_HEADER_PROTOCOL_TCP6.equals(protocol)) {
             throw new ProtocolException("Unsupported PROXY header protocol: " + protocol);
         }
-        if (tokens.length != 6) {
+        if (tokens.length != Normal._6) {
             throw new ValidateException("TCP PROXY header must contain six tokens");
         }
-        final String source = normalizeIp(tokens[2], protocol, "Source");
-        final String target = normalizeIp(tokens[3], protocol, "Target");
-        final int sourcePort = parsePort(tokens[4], "Source");
-        final int targetPort = parsePort(tokens[5], "Target");
+        final String source = normalizeIp(tokens[Normal._2], protocol, "Source");
+        final String target = normalizeIp(tokens[Normal._3], protocol, "Target");
+        final int sourcePort = parsePort(tokens[Normal._4], "Source");
+        final int targetPort = parsePort(tokens[Normal._5], "Target");
         return new ProxyHeader(source, target, sourcePort, targetPort,
-                new Address("tcp", source, sourcePort, Symbol.SLASH));
+                new Address(Protocol.TCP.name, source, sourcePort, Symbol.SLASH));
     }
 
     /**
@@ -156,10 +163,12 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      * @return trimmed line
      */
     private static String validateLine(final String line) {
-        if (StringKit.isBlank(line) || StringKit.containsAny(line, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException("PROXY header line must be non-blank and single-line");
-        }
-        return line.trim();
+        final String checked = Assert
+                .notBlank(line, () -> new ValidateException("PROXY header line must be non-blank and single-line"));
+        Assert.isFalse(
+                StringKit.containsAny(checked, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException("PROXY header line must be non-blank and single-line"));
+        return checked.trim();
     }
 
     /**
@@ -176,7 +185,8 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
             final String target,
             final int sourcePort,
             final int targetPort) {
-        return Normal.EMPTY.equals(source) && Normal.EMPTY.equals(target) && sourcePort == 0 && targetPort == 0;
+        return Normal.EMPTY.equals(source) && Normal.EMPTY.equals(target) && sourcePort == Normal._0
+                && targetPort == Normal._0;
     }
 
     /**
@@ -203,7 +213,7 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      * @return normalized IP
      */
     private static String normalizeIp(final String value, final String protocol, final String name) {
-        return "TCP4".equals(protocol) ? normalizeIpv4(value) : normalizeIpv6(value, name);
+        return Builder.PROXY_HEADER_PROTOCOL_TCP4.equals(protocol) ? normalizeIpv4(value) : normalizeIpv6(value, name);
     }
 
     /**
@@ -230,7 +240,7 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      */
     private static String normalizeIpv6(final String value, final String name) {
         final String checked = validateToken(value, name);
-        if (checked.indexOf(Symbol.C_PERCENT) >= 0) {
+        if (checked.indexOf(Symbol.C_PERCENT) >= Normal._0) {
             throw new ProtocolException("IPv6 zone identifiers are not supported");
         }
         final BigInteger number = IPv6.ipv6ToBigInteger(checked);
@@ -267,10 +277,11 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      * @return port
      */
     private static int validatePort(final int port) {
-        if (port < 1 || port > 65535) {
-            throw new ValidateException("PROXY port must be between 1 and 65535");
-        }
-        return port;
+        return Assert.checkBetween(
+                port,
+                Normal._1,
+                Normal._65535,
+                () -> new ValidateException("PROXY port must be between 1 and 65535"));
     }
 
     /**
@@ -281,10 +292,12 @@ public record ProxyHeader(String source, String target, int sourcePort, int targ
      * @return token
      */
     private static String validateToken(final String value, final String name) {
-        if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException(name + " must be non-blank and single-line");
-        }
-        return value;
+        final String checked = Assert
+                .notBlank(value, () -> new ValidateException(name + " must be non-blank and single-line"));
+        Assert.isFalse(
+                StringKit.containsAny(checked, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException(name + " must be non-blank and single-line"));
+        return checked;
     }
 
 }

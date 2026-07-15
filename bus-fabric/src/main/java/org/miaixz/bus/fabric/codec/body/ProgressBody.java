@@ -20,15 +20,20 @@
 package org.miaixz.bus.fabric.codec.body;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
+import org.miaixz.bus.core.io.TransferObserver;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.io.timout.Timeout;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
-import org.miaixz.bus.fabric.Options;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Payload;
 
 /**
@@ -46,7 +51,7 @@ public interface ProgressBody extends Body {
      */
     @Override
     default byte[] bytes() {
-        return Payload.materialize(payload(), Options.DEFAULT_MATERIALIZE_MAX_BYTES, "ProgressBody.bytes()");
+        return Payload.materialize(payload(), Builder.DEFAULT_MATERIALIZE_MAX_BYTES, "ProgressBody.bytes()");
     }
 
     /**
@@ -68,10 +73,7 @@ public interface ProgressBody extends Body {
      */
     @Override
     default String text(final Charset charset) {
-        if (charset == null) {
-            throw new ValidateException("Charset must not be null");
-        }
-        return new String(bytes(), charset);
+        return new String(bytes(), Assert.notNull(charset, () -> new ValidateException("Charset must not be null")));
     }
 
     /**
@@ -83,10 +85,8 @@ public interface ProgressBody extends Body {
      */
     @Override
     default String text(final Charset charset, final long maxBytes) {
-        if (charset == null) {
-            throw new ValidateException("Charset must not be null");
-        }
-        return new String(bytes(maxBytes), charset);
+        return new String(bytes(maxBytes),
+                Assert.notNull(charset, () -> new ValidateException("Charset must not be null")));
     }
 
     /**
@@ -132,12 +132,7 @@ public interface ProgressBody extends Body {
     /**
      * Shared progress tracker used by concrete body implementations.
      */
-    final class Tracker {
-
-        /**
-         * Default progress callback step.
-         */
-        private static final long DEFAULT_STEP_BYTES = 8192L;
+    final class Tracker implements TransferObserver {
 
         /**
          * Original payload.
@@ -162,12 +157,12 @@ public interface ProgressBody extends Body {
         /**
          * Callback step in bytes.
          */
-        private final AtomicLong stepBytes = new AtomicLong(DEFAULT_STEP_BYTES);
+        private final AtomicLong stepBytes = new AtomicLong(Normal._8192);
 
         /**
          * Next byte threshold for callback.
          */
-        private final AtomicLong nextStep = new AtomicLong(DEFAULT_STEP_BYTES);
+        private final AtomicLong nextStep = new AtomicLong(Normal._8192);
 
         /**
          * Whether final callback has been fired.
@@ -255,9 +250,7 @@ public interface ProgressBody extends Body {
          * @param bytes step bytes
          */
         static void validateStepBytes(final long bytes) {
-            if (bytes <= 0) {
-                throw new ValidateException("Progress step bytes must be positive");
-            }
+            Assert.isTrue(bytes > 0, () -> new ValidateException("Progress step bytes must be positive"));
         }
 
         /**
@@ -267,12 +260,42 @@ public interface ProgressBody extends Body {
          * @param total total length
          */
         static void validateStepRate(final double rate, final long total) {
-            if (!Double.isFinite(rate) || rate <= 0 || rate > 1) {
-                throw new ValidateException("Progress step rate must be greater than 0 and at most 1");
+            Assert.isTrue(
+                    Double.isFinite(rate) && rate > 0 && rate <= 1,
+                    () -> new ValidateException("Progress step rate must be greater than 0 and at most 1"));
+            Assert.isTrue(
+                    total >= 0,
+                    () -> new ValidateException("Progress step rate requires a known payload length"));
+        }
+
+        /**
+         * Starts observing a core transfer.
+         */
+        @Override
+        public void start() {
+            // Progress bodies emit callbacks only when byte thresholds are crossed.
+        }
+
+        /**
+         * Observes a cumulative core transfer progress update.
+         *
+         * @param total       total byte count
+         * @param transferred transferred byte count
+         */
+        @Override
+        public void progress(final long total, final long transferred) {
+            final long previous = this.transferred.get();
+            if (transferred > previous) {
+                progress(transferred - previous);
             }
-            if (total < 0) {
-                throw new ValidateException("Progress step rate requires a known payload length");
-            }
+        }
+
+        /**
+         * Finishes observing a core transfer.
+         */
+        @Override
+        public void finish() {
+            // Existing payload progress semantics emit the final callback from progress(long).
         }
 
         /**
@@ -338,10 +361,7 @@ public interface ProgressBody extends Body {
          * @return value
          */
         private static <T> T require(final T value, final String name) {
-            if (value == null) {
-                throw new ValidateException(name + " must not be null");
-            }
-            return value;
+            return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
         }
 
         /**
@@ -349,39 +369,76 @@ public interface ProgressBody extends Body {
          */
         private final class ProgressPayload implements Payload {
 
+            /**
+             * Returns the wrapped payload length.
+             *
+             * @return wrapped payload length
+             */
             @Override
             public long length() {
                 return original.length();
             }
 
+            /**
+             * Opens a progress-reporting source over the wrapped payload.
+             *
+             * @return progress-reporting source
+             */
             @Override
-            public InputStream stream() {
-                return new ProgressInputStream(original.stream());
+            public Source source() {
+                return new ProgressSource(original.source());
             }
 
+            /**
+             * Materializes the payload using the default threshold.
+             *
+             * @return materialized bytes
+             */
             @Override
             public byte[] bytes() {
-                return bytes(Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return bytes(Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Materializes the payload using an explicit threshold.
+             *
+             * @param maxBytes maximum bytes to materialize
+             * @return materialized bytes
+             */
             @Override
             public byte[] bytes(final long maxBytes) {
                 return Payload.materialize(this, maxBytes, "ProgressBody.ProgressPayload.bytes(long)");
             }
 
+            /**
+             * Reads payload text using the default threshold.
+             *
+             * @param charset charset
+             * @return text
+             */
             @Override
             public String text(final Charset charset) {
-                return text(charset, Options.DEFAULT_MATERIALIZE_MAX_BYTES);
+                return text(charset, Builder.DEFAULT_MATERIALIZE_MAX_BYTES);
             }
 
+            /**
+             * Reads payload text using an explicit threshold.
+             *
+             * @param charset  charset
+             * @param maxBytes maximum bytes to materialize
+             * @return text
+             */
             @Override
             public String text(final Charset charset, final long maxBytes) {
-                if (charset == null) {
-                    throw new ValidateException("Charset must not be null");
-                }
-                return new String(bytes(maxBytes), charset);
+                return new String(bytes(maxBytes),
+                        Assert.notNull(charset, () -> new ValidateException("Charset must not be null")));
             }
 
+            /**
+             * Returns whether the wrapped payload is repeatable.
+             *
+             * @return true when repeatable
+             */
             @Override
             public boolean repeatable() {
                 return original.repeatable();
@@ -390,42 +447,56 @@ public interface ProgressBody extends Body {
         }
 
         /**
-         * Progress-aware input stream.
+         * Progress-aware source.
          */
-        private final class ProgressInputStream extends InputStream {
+        private final class ProgressSource implements Source {
 
             /**
-             * Delegate stream.
+             * Delegate source.
              */
-            private final InputStream input;
+            private final Source input;
 
             /**
-             * Creates a progress stream.
+             * Creates a progress source.
              *
-             * @param input delegate stream
+             * @param input delegate source
              */
-            private ProgressInputStream(final InputStream input) {
+            private ProgressSource(final Source input) {
                 this.input = input;
             }
 
+            /**
+             * Reads bytes from the delegate and reports progress for positive byte counts.
+             *
+             * @param sink      destination buffer
+             * @param byteCount maximum bytes to read
+             * @return bytes read, or -1 at end of stream
+             * @throws IOException when the delegate read fails
+             */
             @Override
-            public int read() throws IOException {
-                final int value = input.read();
-                if (value != -1) {
-                    progress(1);
-                }
-                return value;
-            }
-
-            @Override
-            public int read(final byte[] buffer, final int offset, final int length) throws IOException {
-                final int read = input.read(buffer, offset, length);
+            public long read(final Buffer sink, final long byteCount) throws IOException {
+                final long read = input.read(sink, byteCount);
                 if (read > 0) {
                     progress(read);
                 }
                 return read;
             }
 
+            /**
+             * Returns the delegate timeout.
+             *
+             * @return timeout
+             */
+            @Override
+            public Timeout timeout() {
+                return input.timeout();
+            }
+
+            /**
+             * Closes the delegate source.
+             *
+             * @throws IOException when the delegate close fails
+             */
             @Override
             public void close() throws IOException {
                 input.close();

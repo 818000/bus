@@ -19,11 +19,11 @@
 */
 package org.miaixz.bus.fabric.protocol.http;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.fabric.Callback;
 import org.miaixz.bus.fabric.Context;
 import org.miaixz.bus.fabric.Filter;
-import org.miaixz.bus.fabric.Wiring;
 import org.miaixz.bus.fabric.guard.GuardRule;
 import org.miaixz.bus.fabric.observe.EventObserver;
 
@@ -49,7 +49,6 @@ record HttpSnapshot(Context context, HttpRequest request, Callback<HttpResponse>
         context = require(context, "Context");
         request = require(request, "HTTP request");
         observer = EventObserver.safe(require(observer, "Observer"));
-        callback = Wiring.safeCallback(require(callback, "Callback"), observer);
     }
 
     /**
@@ -61,10 +60,7 @@ record HttpSnapshot(Context context, HttpRequest request, Callback<HttpResponse>
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

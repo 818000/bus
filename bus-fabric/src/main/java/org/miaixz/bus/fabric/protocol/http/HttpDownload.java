@@ -19,9 +19,9 @@
 */
 package org.miaixz.bus.fabric.protocol.http;
 
+import static org.miaixz.bus.fabric.Builder.BYTES_64_KIB;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -30,12 +30,17 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.sink.Sink;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.HTTP;
+import org.miaixz.bus.core.xyz.IoKit;
 import org.miaixz.bus.fabric.Context;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.runtime.resource.Cancellation;
@@ -48,16 +53,6 @@ import org.miaixz.bus.logger.Logger;
  * @since Java 21+
  */
 public final class HttpDownload {
-
-    /**
-     * Logger tag used by the fabric runtime.
-     */
-    private static final String LOG_TAG = "Fabric";
-
-    /**
-     * Copy buffer size.
-     */
-    private static final int BUFFER_SIZE = 64 * 1024;
 
     /**
      * HTTP executor.
@@ -119,9 +114,7 @@ public final class HttpDownload {
         this.resume = resume;
         this.paused = new AtomicBoolean();
         this.cancelled = new AtomicBoolean();
-        if (request.method() != HTTP.Method.GET) {
-            throw new ValidateException("HTTP download requires GET");
-        }
+        Assert.isTrue(request.method() == HTTP.Method.GET, () -> new ValidateException("HTTP download requires GET"));
     }
 
     /**
@@ -158,7 +151,7 @@ public final class HttpDownload {
         final Path meta = meta();
         Logger.info(
                 true,
-                LOG_TAG,
+                "Fabric",
                 "HTTP download started: method={}, scheme={}, host={}, port={}, path={}, target={}, resume={}",
                 request.method().value(),
                 request.url().scheme(),
@@ -177,7 +170,7 @@ public final class HttpDownload {
             }
             Logger.info(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     "HTTP download resume state: target={}, part={}, offset={}, resume={}",
                     target,
                     part,
@@ -185,7 +178,7 @@ public final class HttpDownload {
                     resume);
             final HttpRequest current = rangedRequest(offset, readValidator(meta));
             try (HttpResponse response = exchange.execute(current, cancellation)) {
-                final boolean append = offset > 0L && response.code() == 206;
+                final boolean append = offset > 0L && response.code() == HTTP.HTTP_PARTIAL;
                 if (!append) {
                     offset = 0L;
                     deleteQuietly(part);
@@ -195,7 +188,7 @@ public final class HttpDownload {
                 final long total = totalLength(response, offset, append);
                 Logger.info(
                         false,
-                        LOG_TAG,
+                        "Fabric",
                         "HTTP download response accepted: code={}, append={}, offset={}, total={}, target={}",
                         response.code(),
                         append,
@@ -206,7 +199,7 @@ public final class HttpDownload {
             }
             Files.move(part, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             deleteQuietly(meta);
-            Logger.info(false, LOG_TAG, "HTTP download completed: target={}, bytes={}", target, Files.size(target));
+            Logger.info(false, "Fabric", "HTTP download completed: target={}, bytes={}", target, Files.size(target));
             return target;
         } catch (final CancellationException e) {
             if (cancelled.get() && !paused.get()) {
@@ -215,7 +208,7 @@ public final class HttpDownload {
             }
             Logger.warn(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     e,
                     "HTTP download cancelled: target={}, paused={}, cancelled={}",
                     target,
@@ -227,7 +220,7 @@ public final class HttpDownload {
             deleteQuietly(meta);
             Logger.error(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     e,
                     "HTTP download failed: target={}, exception={}",
                     target,
@@ -240,7 +233,7 @@ public final class HttpDownload {
             }
             Logger.error(
                     false,
-                    LOG_TAG,
+                    "Fabric",
                     e,
                     "HTTP download failed: target={}, exception={}",
                     target,
@@ -257,7 +250,7 @@ public final class HttpDownload {
     public boolean pause() {
         paused.set(true);
         final boolean changed = cancellation.cancel(new CancellationException("HTTP download paused"));
-        Logger.info(false, LOG_TAG, "HTTP download pause requested: target={}, changed={}", target, changed);
+        Logger.info(false, "Fabric", "HTTP download pause requested: target={}, changed={}", target, changed);
         return changed;
     }
 
@@ -269,7 +262,7 @@ public final class HttpDownload {
     public boolean cancel() {
         cancelled.set(true);
         final boolean changed = cancellation.cancel(new CancellationException("HTTP download cancelled"));
-        Logger.info(false, LOG_TAG, "HTTP download cancel requested: target={}, changed={}", target, changed);
+        Logger.info(false, "Fabric", "HTTP download cancel requested: target={}, changed={}", target, changed);
         return changed;
     }
 
@@ -311,9 +304,9 @@ public final class HttpDownload {
         if (offset <= 0L) {
             return request;
         }
-        Headers headers = request.headers().with("Range", "bytes=" + offset + "-");
+        Headers headers = request.headers().with(HTTP.RANGE, "bytes=" + offset + "-");
         if (validator != null) {
-            headers = headers.with("If-Range", validator);
+            headers = headers.with(HTTP.IF_RANGE, validator);
         }
         return request.toBuilder().headers(headers).build();
     }
@@ -336,18 +329,18 @@ public final class HttpDownload {
         final StandardOpenOption[] options = append
                 ? new StandardOpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.APPEND }
                 : new StandardOpenOption[] { StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING };
-        try (InputStream input = response.body().stream(); OutputStream output = Files.newOutputStream(part, options)) {
-            final byte[] buffer = new byte[BUFFER_SIZE];
+        try (Source input = response.body().source(); Sink output = IoKit.sink(part, options)) {
+            final Buffer buffer = new Buffer();
             long written = offset;
             progress(written, total);
             while (true) {
                 cancellation.throwIfCancelled();
-                final int read = input.read(buffer);
+                final long read = input.read(buffer, BYTES_64_KIB);
                 cancellation.throwIfCancelled();
                 if (read < 0) {
                     break;
                 }
-                output.write(buffer, 0, read);
+                output.write(buffer, read);
                 written += read;
                 progress(written, total);
             }
@@ -365,10 +358,10 @@ public final class HttpDownload {
      */
     private static void validateResponse(final HttpResponse response, final boolean append) {
         final int code = response.code();
-        if (append && code != 206) {
+        if (append && code != HTTP.HTTP_PARTIAL) {
             throw new ProtocolException("HTTP resume requires 206 Partial Content");
         }
-        if (!append && code != 200 && code != 206) {
+        if (!append && code != HTTP.HTTP_OK && code != HTTP.HTTP_PARTIAL) {
             throw new ProtocolException("HTTP download failed with status " + code);
         }
     }
@@ -382,7 +375,7 @@ public final class HttpDownload {
      * @return total or -1
      */
     private static long totalLength(final HttpResponse response, final long offset, final boolean append) {
-        final long rangeTotal = contentRangeTotal(response.headers().get("Content-Range"));
+        final long rangeTotal = contentRangeTotal(response.headers().get(HTTP.CONTENT_RANGE));
         if (rangeTotal >= 0L) {
             return rangeTotal;
         }
@@ -425,8 +418,8 @@ public final class HttpDownload {
      * @return validator or null
      */
     private static String validator(final HttpResponse response) {
-        final String etag = response.headers().get("ETag");
-        return etag == null ? response.headers().get("Last-Modified") : etag;
+        final String etag = response.headers().get(HTTP.ETAG);
+        return etag == null ? response.headers().get(HTTP.LAST_MODIFIED) : etag;
     }
 
     /**
@@ -505,10 +498,10 @@ public final class HttpDownload {
      * @return validated target
      */
     private static Path validateTarget(final Path target) {
-        if (target == null || target.getFileName() == null) {
-            throw new ValidateException("HTTP download target must not be null");
-        }
-        return target;
+        final Path checked = Assert
+                .notNull(target, () -> new ValidateException("HTTP download target must not be null"));
+        Assert.notNull(checked.getFileName(), () -> new ValidateException("HTTP download target must not be null"));
+        return checked;
     }
 
     /**
@@ -520,10 +513,7 @@ public final class HttpDownload {
      * @return validated value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**

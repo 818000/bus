@@ -19,11 +19,12 @@
 */
 package org.miaixz.bus.fabric.protocol;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
+import org.miaixz.bus.core.io.source.AssignSource;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.HTTP;
@@ -32,7 +33,6 @@ import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Payload;
 import org.miaixz.bus.fabric.Session;
-import org.miaixz.bus.fabric.Timeout;
 import org.miaixz.bus.fabric.UnoUrl;
 import org.miaixz.bus.fabric.network.Connection;
 import org.miaixz.bus.fabric.network.tls.TlsSettings;
@@ -73,7 +73,7 @@ public final class Mediator {
             final Context context,
             final URI uri,
             final Headers headers,
-            final Timeout timeout) {
+            final org.miaixz.bus.fabric.Timeout timeout) {
         final HttpResponse response = org.miaixz.bus.fabric.protocol.http.HttpX.builder(require(context, "Context"))
                 .to(require(uri, "HTTP URI").toString()).get().headers(require(headers, "Headers"))
                 .timeout(require(timeout, "Timeout")).build().execute();
@@ -93,7 +93,7 @@ public final class Mediator {
             final Context context,
             final URI uri,
             final Headers headers,
-            final Timeout timeout) {
+            final org.miaixz.bus.fabric.Timeout timeout) {
         final Context current = require(context, "Context");
         final HttpRequest request = new HttpBridge(cookieJar(current), userAgent(current)).prepare(
                 HttpRequest.builder().method(HTTP.Method.GET)
@@ -132,7 +132,7 @@ public final class Mediator {
             final Context context,
             final URI uri,
             final Headers headers,
-            final Timeout timeout,
+            final org.miaixz.bus.fabric.Timeout timeout,
             final Handler handler) {
         return WebSocketX.builder(require(context, "Context")).to(require(uri, "WebSocket URI").toString())
                 .headers(require(headers, "Headers")).timeout(require(timeout, "Timeout"))
@@ -148,10 +148,7 @@ public final class Mediator {
      * @return value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -251,14 +248,17 @@ public final class Mediator {
         }
 
         /**
-         * Opens the response body stream and closes the owner with the stream.
+         * Opens the response body source and closes the owner with the source.
          *
-         * @return body stream
+         * @return body source
          */
-        public InputStream stream() {
-            return new OwnedInputStream(body.stream(), this);
+        public Source source() {
+            return new OwnedSource(body.source(), this);
         }
 
+        /**
+         * Closes the stream owner.
+         */
         @Override
         public void close() {
             try {
@@ -297,6 +297,9 @@ public final class Mediator {
             lease = require(lease, "Connection lease");
         }
 
+        /**
+         * Releases the upgraded connection lease.
+         */
         @Override
         public void close() {
             lease.close();
@@ -305,9 +308,9 @@ public final class Mediator {
     }
 
     /**
-     * Input stream that closes its protocol owner after the body stream.
+     * Source that closes its protocol owner after the body source.
      */
-    private static final class OwnedInputStream extends FilterInputStream {
+    private static final class OwnedSource extends AssignSource {
 
         /**
          * Close owner.
@@ -315,16 +318,21 @@ public final class Mediator {
         private final AutoCloseable owner;
 
         /**
-         * Creates an owned stream.
+         * Creates an owned source.
          *
-         * @param input body stream
-         * @param owner close owner
+         * @param source body source
+         * @param owner  close owner
          */
-        private OwnedInputStream(final InputStream input, final AutoCloseable owner) {
-            super(require(input, "Input stream"));
+        private OwnedSource(final Source source, final AutoCloseable owner) {
+            super(require(source, "Body source"));
             this.owner = require(owner, "Stream owner");
         }
 
+        /**
+         * Closes the body source and then closes its protocol owner.
+         *
+         * @throws IOException when the source close fails
+         */
         @Override
         public void close() throws IOException {
             IOException failure = null;

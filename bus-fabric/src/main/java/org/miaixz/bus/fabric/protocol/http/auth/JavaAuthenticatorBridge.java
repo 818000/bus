@@ -22,9 +22,12 @@ package org.miaixz.bus.fabric.protocol.http.auth;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
+import java.util.List;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
+import org.miaixz.bus.core.net.HTTP;
 import org.miaixz.bus.fabric.protocol.http.HttpRequest;
 import org.miaixz.bus.fabric.protocol.http.HttpResponse;
 
@@ -60,15 +63,23 @@ public final class JavaAuthenticatorBridge implements HttpAuthenticator {
         return new JavaAuthenticatorBridge(authenticator);
     }
 
+    /**
+     * Uses the wrapped JDK authenticator to answer an HTTP authentication challenge.
+     *
+     * @param request  challenged request
+     * @param response challenged response
+     * @return authenticated request, or null when no credentials are available
+     */
     @Override
     public HttpRequest authenticate(final HttpRequest request, final HttpResponse response) {
         final HttpRequest current = require(request, "HTTP request");
         final HttpResponse challenged = require(response, "HTTP response");
-        if (challenged.challenges().isEmpty()) {
+        final List<Challenge> challenges = challenged.challenges();
+        if (challenges.isEmpty()) {
             return null;
         }
-        final boolean proxy = challenged.code() == 407;
-        final Challenge challenge = challenged.challenges().getFirst();
+        final boolean proxy = challenged.code() == HTTP.HTTP_PROXY_AUTH;
+        final Challenge challenge = challenges.getFirst();
         final PasswordAuthentication authentication = requestPasswordAuthentication(current, challenge, proxy);
         if (authentication == null) {
             return null;
@@ -114,10 +125,7 @@ public final class JavaAuthenticatorBridge implements HttpAuthenticator {
      * @return validated value
      */
     private static <T> T require(final T value, final String name) {
-        if (value == null) {
-            throw new ValidateException(name + " must not be null");
-        }
-        return value;
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
 }

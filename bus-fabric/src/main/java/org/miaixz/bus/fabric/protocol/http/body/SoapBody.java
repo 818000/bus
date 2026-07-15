@@ -19,11 +19,16 @@
 */
 package org.miaixz.bus.fabric.protocol.http.body;
 
+import static org.miaixz.bus.fabric.Builder.SOAP_BODY_SOAP_NAMESPACE;
+import static org.miaixz.bus.fabric.Builder.SOAP_BODY_SOAP_PREFIX;
+import static org.miaixz.bus.fabric.Builder.SOAP_METHOD_PREFIX;
+
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.miaixz.bus.core.lang.Assert;
 import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.Symbol;
 import org.miaixz.bus.core.lang.exception.ValidateException;
@@ -39,21 +44,6 @@ import org.miaixz.bus.fabric.codec.body.RequestBody;
  * @since Java 21+
  */
 public final class SoapBody implements RequestBody {
-
-    /**
-     * SOAP envelope namespace.
-     */
-    private static final String SOAP_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
-
-    /**
-     * SOAP prefix.
-     */
-    private static final String SOAP_PREFIX = "soap";
-
-    /**
-     * Method prefix.
-     */
-    private static final String METHOD_PREFIX = "m";
 
     /**
      * Method namespace.
@@ -99,8 +89,12 @@ public final class SoapBody implements RequestBody {
             final Map<String, Object> params, final Charset charset, final String action) {
         this.namespace = optionalLine(namespace, "SOAP namespace");
         this.method = name(method, "SOAP method");
-        this.headers = Collections.unmodifiableMap(new LinkedHashMap<>(headers));
-        this.params = Collections.unmodifiableMap(new LinkedHashMap<>(params));
+        this.headers = Collections.unmodifiableMap(
+                new LinkedHashMap<>(
+                        Assert.notNull(headers, () -> new ValidateException("SOAP headers must not be null"))));
+        this.params = Collections.unmodifiableMap(
+                new LinkedHashMap<>(
+                        Assert.notNull(params, () -> new ValidateException("SOAP params must not be null"))));
         this.charset = charset == null ? org.miaixz.bus.core.lang.Charset.UTF_8 : charset;
         this.action = optionalLine(action, "SOAPAction");
     }
@@ -131,34 +125,34 @@ public final class SoapBody implements RequestBody {
     public String xml() {
         final StringBuilder builder = new StringBuilder(256);
         builder.append("<?xml version=\"1.0\" encoding=\"").append(charset.name()).append("\"?>");
-        builder.append('<').append(SOAP_PREFIX).append(":Envelope xmlns:").append(SOAP_PREFIX).append("=\"")
-                .append(SOAP_NAMESPACE).append('"');
+        builder.append('<').append(SOAP_BODY_SOAP_PREFIX).append(":Envelope xmlns:").append(SOAP_BODY_SOAP_PREFIX)
+                .append("=\"").append(SOAP_BODY_SOAP_NAMESPACE).append('"');
         if (!namespace.isBlank()) {
-            builder.append(" xmlns:").append(METHOD_PREFIX).append("=\"").append(escapeAttribute(namespace))
+            builder.append(" xmlns:").append(SOAP_METHOD_PREFIX).append("=\"").append(escapeAttribute(namespace))
                     .append('"');
         }
         builder.append('>');
         if (!headers.isEmpty()) {
-            builder.append('<').append(SOAP_PREFIX).append(":Header>");
+            builder.append('<').append(SOAP_BODY_SOAP_PREFIX).append(":Header>");
             appendElements(builder, headers);
-            builder.append("</").append(SOAP_PREFIX).append(":Header>");
+            builder.append("</").append(SOAP_BODY_SOAP_PREFIX).append(":Header>");
         }
-        builder.append('<').append(SOAP_PREFIX).append(":Body>");
+        builder.append('<').append(SOAP_BODY_SOAP_PREFIX).append(":Body>");
         appendOpen(builder, method, !namespace.isBlank());
         appendElements(builder, params);
         appendClose(builder, method, !namespace.isBlank());
-        builder.append("</").append(SOAP_PREFIX).append(":Body>");
-        builder.append("</").append(SOAP_PREFIX).append(":Envelope>");
+        builder.append("</").append(SOAP_BODY_SOAP_PREFIX).append(":Body>");
+        builder.append("</").append(SOAP_BODY_SOAP_PREFIX).append(":Envelope>");
         return builder.toString();
     }
 
     /**
-     * Returns the HTTP body.
+     * Returns the payload body.
      *
-     * @return HTTP body
+     * @return payload body
      */
-    public HttpBody body() {
-        return HttpBody.of(Payload.of(xml(), charset), MediaType.parse("text/xml; charset=" + charset.name()));
+    public PayloadBody body() {
+        return PayloadBody.of(payload(), media());
     }
 
     /**
@@ -168,7 +162,7 @@ public final class SoapBody implements RequestBody {
      */
     @Override
     public MediaType media() {
-        return body().media();
+        return MediaType.TEXT_XML_TYPE.withCharset(charset);
     }
 
     /**
@@ -178,7 +172,7 @@ public final class SoapBody implements RequestBody {
      */
     @Override
     public Payload payload() {
-        return body().payload();
+        return Payload.of(xml(), charset);
     }
 
     /**
@@ -215,7 +209,7 @@ public final class SoapBody implements RequestBody {
     private static void appendOpen(final StringBuilder builder, final String name, final boolean method) {
         builder.append('<');
         if (method) {
-            builder.append(METHOD_PREFIX).append(Symbol.C_COLON);
+            builder.append(SOAP_METHOD_PREFIX).append(Symbol.C_COLON);
         }
         builder.append(name).append('>');
     }
@@ -230,7 +224,7 @@ public final class SoapBody implements RequestBody {
     private static void appendClose(final StringBuilder builder, final String name, final boolean method) {
         builder.append("</");
         if (method) {
-            builder.append(METHOD_PREFIX).append(Symbol.C_COLON);
+            builder.append(SOAP_METHOD_PREFIX).append(Symbol.C_COLON);
         }
         builder.append(name).append('>');
     }
@@ -242,7 +236,7 @@ public final class SoapBody implements RequestBody {
      * @return escaped text
      */
     private static String escapeText(final String value) {
-        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        return value.replace(Symbol.AND, "&amp;").replace(Symbol.LT, "&lt;").replace(Symbol.GT, "&gt;");
     }
 
     /**
@@ -263,10 +257,12 @@ public final class SoapBody implements RequestBody {
      * @return value
      */
     private static String name(final String value, final String field) {
-        if (StringKit.isBlank(value) || StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException(field + " must be non-blank and single-line");
-        }
-        return value;
+        final String checked = Assert
+                .notBlank(value, () -> new ValidateException(field + " must be non-blank and single-line"));
+        Assert.isFalse(
+                StringKit.containsAny(checked, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException(field + " must be non-blank and single-line"));
+        return checked;
     }
 
     /**
@@ -280,9 +276,9 @@ public final class SoapBody implements RequestBody {
         if (value == null) {
             return Normal.EMPTY;
         }
-        if (StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF)) {
-            throw new ValidateException(field + " must be single-line");
-        }
+        Assert.isFalse(
+                StringKit.containsAny(value, Symbol.C_CR, Symbol.C_LF),
+                () -> new ValidateException(field + " must be single-line"));
         return value;
     }
 
@@ -297,10 +293,10 @@ public final class SoapBody implements RequestBody {
         if (namespace == null || namespace.isBlank()) {
             return method;
         }
-        if (namespace.endsWith("#") || namespace.endsWith("/") || namespace.endsWith(":")) {
+        if (namespace.endsWith(Symbol.HASH) || namespace.endsWith(Symbol.SLASH) || namespace.endsWith(Symbol.COLON)) {
             return namespace + method;
         }
-        return namespace + "#" + method;
+        return namespace + Symbol.HASH + method;
     }
 
     /**

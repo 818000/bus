@@ -19,18 +19,21 @@
 */
 package org.miaixz.bus.fabric.protocol.websocket.frame;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+import org.miaixz.bus.core.io.ByteString;
+import org.miaixz.bus.core.io.buffer.Buffer;
+import org.miaixz.bus.core.io.source.Source;
+import org.miaixz.bus.core.lang.Assert;
+import org.miaixz.bus.core.lang.Normal;
 import org.miaixz.bus.core.lang.exception.InternalException;
 import org.miaixz.bus.core.lang.exception.ProtocolException;
 import org.miaixz.bus.core.lang.exception.SocketException;
 import org.miaixz.bus.core.lang.exception.ValidateException;
 import org.miaixz.bus.core.net.Protocol;
 import org.miaixz.bus.fabric.Address;
+import org.miaixz.bus.fabric.Builder;
 import org.miaixz.bus.fabric.Handler;
 import org.miaixz.bus.fabric.Headers;
 import org.miaixz.bus.fabric.Message;
@@ -49,42 +52,88 @@ public final class WebSocketReader implements AutoCloseable {
     /**
      * Continuation opcode.
      */
-    private static final int CONTINUATION = 0x0;
 
     /**
      * Text opcode.
      */
-    private static final int TEXT = 0x1;
 
     /**
      * Binary opcode.
      */
-    private static final int BINARY = 0x2;
 
     /**
      * Close opcode.
      */
-    private static final int CLOSE = 0x8;
 
     /**
      * Ping opcode.
      */
-    private static final int PING = 0x9;
 
     /**
      * Pong opcode.
      */
-    private static final int PONG = 0xA;
 
     /**
-     * Maximum payload length.
+     * RSV bit mask.
      */
-    private static final int MAX_PAYLOAD = 16 * 1024 * 1024;
 
     /**
-     * Source stream.
+     * FIN bit mask.
      */
-    private final InputStream source;
+
+    /**
+     * Opcode bit mask.
+     */
+
+    /**
+     * Payload mask flag.
+     */
+
+    /**
+     * Payload length bit mask.
+     */
+
+    /**
+     * Marker for unsigned 16-bit payload length.
+     */
+
+    /**
+     * Marker for unsigned 64-bit payload length.
+     */
+
+    /**
+     * WebSocket mask key byte length.
+     */
+
+    /**
+     * Last mask key index for modulo arithmetic.
+     */
+
+    /**
+     * Default normal close code used when no close payload is present.
+     */
+
+    /**
+     * Initial fragmented opcode marker.
+     */
+
+    /**
+     * Cursor value returned when no segment is available.
+     */
+
+    /**
+     * Maximum message payload bytes accepted by this implementation.
+     */
+
+    /**
+     * Source bytes.
+     */
+    private final Source source;
+
+    /**
+     * Reusable input buffer.
+     */
+    private final Buffer input;
 
     /**
      * Message address.
@@ -104,30 +153,25 @@ public final class WebSocketReader implements AutoCloseable {
     /**
      * Creates a reader.
      *
-     * @param source       source stream
+     * @param source       source
      * @param expectMasked expected mask flag
      */
-    public WebSocketReader(final InputStream source, final boolean expectMasked) {
-        this(source, expectMasked, Address.parse("ws://localhost"));
+    public WebSocketReader(final Source source, final boolean expectMasked) {
+        this(source, expectMasked, Address.parse(Builder.WEB_SOCKET_READER_DEFAULT_ADDRESS));
     }
 
     /**
      * Creates a reader.
      *
-     * @param source       source stream
+     * @param source       source
      * @param expectMasked expected mask flag
      * @param address      message address
      */
-    public WebSocketReader(final InputStream source, final boolean expectMasked, final Address address) {
-        if (source == null) {
-            throw new ValidateException("WebSocket source must not be null");
-        }
-        if (address == null) {
-            throw new ValidateException("WebSocket address must not be null");
-        }
-        this.source = source;
+    public WebSocketReader(final Source source, final boolean expectMasked, final Address address) {
+        this.source = require(source, "WebSocket source");
+        this.input = new Buffer();
         this.expectMasked = expectMasked;
-        this.address = address;
+        this.address = require(address, "WebSocket address");
     }
 
     /**
@@ -139,35 +183,33 @@ public final class WebSocketReader implements AutoCloseable {
         ensureOpen();
         final int first = readByte();
         final int second = readByte();
-        if ((first & 0x70) != 0) {
+        if ((first & Builder.WEBSOCKET_RSV_MASK) != Normal._0) {
             throw new ProtocolException("WebSocket RSV bits must be zero");
         }
-        final boolean fin = (first & 0x80) != 0;
-        final int opcode = first & 0x0F;
-        final boolean masked = (second & 0x80) != 0;
-        long length = second & 0x7F;
+        final boolean fin = (first & Normal._128) != Normal._0;
+        final int opcode = first & Builder.WEBSOCKET_OPCODE_MASK;
+        final boolean masked = (second & Normal._128) != Normal._0;
+        long length = second & Builder._127;
         if (masked != expectMasked) {
             throw new ProtocolException("Unexpected WebSocket mask flag");
         }
-        if (length == 126) {
+        if (length == Builder.WEBSOCKET_LENGTH_16_MARKER) {
             length = readUnsignedShort();
-        } else if (length == 127) {
+        } else if (length == Builder._127) {
             length = readLong();
-            if (length < 0) {
+            if (length < Normal.LONG_ZERO) {
                 throw new ProtocolException("Invalid WebSocket payload length");
             }
         }
-        if (length > MAX_PAYLOAD) {
+        if (length > Builder.BYTES_16_MIB) {
             throw new ProtocolException("WebSocket payload is too large");
         }
-        final byte[] mask = masked ? readBytes(4) : null;
-        final byte[] payload = readBytes((int) length);
+        final byte[] mask = masked ? readBytes(Normal._4) : null;
+        final Buffer payload = readBuffer((int) length);
         if (mask != null) {
-            for (int i = 0; i < payload.length; i++) {
-                payload[i] = (byte) (payload[i] ^ mask[i % 4]);
-            }
+            unmask(payload, mask, length);
         }
-        final WebSocketFrame frame = new WebSocketFrame(opcode, fin, ByteBuffer.wrap(payload), opcode >= CLOSE);
+        final WebSocketFrame frame = new WebSocketFrame(opcode, fin, payload.readByteString(), opcode >= Normal._8);
         validateClose(frame);
         return frame;
     }
@@ -200,49 +242,47 @@ public final class WebSocketReader implements AutoCloseable {
      * @return peer close description, or null when reader was already closed
      */
     public WebSocketClose readLoop(final Session session, final Handler handler, final Control control) {
-        if (handler == null) {
-            throw new ValidateException("WebSocket handler must not be null");
-        }
+        require(handler, "WebSocket handler");
         final Control events = control == null ? NoopControl.INSTANCE : control;
-        ByteArrayOutputStream fragmented = null;
-        int fragmentedOpcode = -1;
+        Buffer fragmented = null;
+        int fragmentedOpcode = Normal.__1;
         try {
             while (!closed) {
                 final WebSocketFrame frame = next();
                 final int opcode = frame.opcode();
-                if (opcode == CLOSE) {
+                if (opcode == Normal._8) {
                     final WebSocketClose close = close(frame);
                     events.close(session, close);
                     return close;
                 }
-                if (opcode == PING) {
+                if (opcode == Builder.WEBSOCKET_OPCODE_PING) {
                     events.ping(session, frame.payload());
                     continue;
                 }
-                if (opcode == PONG) {
+                if (opcode == Builder.WEBSOCKET_OPCODE_PONG) {
                     events.pong(session, frame.payload());
                     continue;
                 }
-                if (opcode == TEXT || opcode == BINARY) {
+                if (opcode == Normal._1 || opcode == Builder.WEBSOCKET_OPCODE_BINARY) {
                     if (fragmented != null) {
                         throw new ProtocolException("WebSocket fragmented message is already open");
                     }
                     if (frame.fin()) {
-                        deliver(session, handler, opcode, bytes(frame.payload()));
+                        deliver(session, handler, opcode, frame.payload());
                     } else {
-                        fragmented = new ByteArrayOutputStream();
+                        fragmented = new Buffer();
                         fragmentedOpcode = opcode;
-                        fragmented.writeBytes(bytes(frame.payload()));
+                        fragmented.write(frame.payload());
                     }
-                } else if (opcode == CONTINUATION) {
+                } else if (opcode == Normal._0) {
                     if (fragmented == null) {
                         throw new ProtocolException("WebSocket continuation has no initial frame");
                     }
-                    fragmented.writeBytes(bytes(frame.payload()));
+                    fragmented.write(frame.payload());
                     if (frame.fin()) {
-                        deliver(session, handler, fragmentedOpcode, fragmented.toByteArray());
+                        deliver(session, handler, fragmentedOpcode, fragmented.readByteString());
                         fragmented = null;
-                        fragmentedOpcode = -1;
+                        fragmentedOpcode = Normal.__1;
                     }
                 }
             }
@@ -264,11 +304,11 @@ public final class WebSocketReader implements AutoCloseable {
      * @param opcode  initial opcode
      * @param data    message bytes
      */
-    private void deliver(final Session session, final Handler handler, final int opcode, final byte[] data) {
-        if (opcode == TEXT) {
-            final String text = new String(data, StandardCharsets.UTF_8);
+    private void deliver(final Session session, final Handler handler, final int opcode, final ByteString data) {
+        if (opcode == Normal._1) {
+            final String text = data.string(StandardCharsets.UTF_8);
             handler.message(session, message(Payload.of(text, StandardCharsets.UTF_8)));
-        } else if (opcode == BINARY) {
+        } else if (opcode == Builder.WEBSOCKET_OPCODE_BINARY) {
             handler.message(session, message(Payload.of(data)));
         }
     }
@@ -295,15 +335,17 @@ public final class WebSocketReader implements AutoCloseable {
      * @param frame frame
      */
     private static void validateClose(final WebSocketFrame frame) {
-        if (frame.opcode() != CLOSE || frame.payload().remaining() == 0) {
+        if (frame.opcode() != Normal._8 || frame.payload().size() == Normal._0) {
             return;
         }
-        final ByteBuffer payload = frame.payload();
-        if (payload.remaining() == 1) {
+        final ByteString payload = frame.payload();
+        if (payload.size() == Normal._1) {
             throw new ProtocolException("Invalid WebSocket close payload");
         }
-        final int code = Short.toUnsignedInt(payload.getShort());
-        if (!validCloseCode(code)) {
+        final int code = Short.toUnsignedInt(new Buffer().write(payload).readShort());
+        try {
+            WebSocketClose.of(code, Normal.EMPTY);
+        } catch (final ValidateException e) {
             throw new ProtocolException("Invalid WebSocket close code");
         }
     }
@@ -315,25 +357,13 @@ public final class WebSocketReader implements AutoCloseable {
      * @return close description
      */
     private static WebSocketClose close(final WebSocketFrame frame) {
-        final ByteBuffer payload = frame.payload();
-        if (payload.remaining() == 0) {
-            return WebSocketClose.of(1000, null);
+        final ByteString payload = frame.payload();
+        if (payload.size() == Normal._0) {
+            return WebSocketClose.of(Builder._1000, null);
         }
-        final int code = Short.toUnsignedInt(payload.getShort());
-        final byte[] reason = new byte[payload.remaining()];
-        payload.get(reason);
-        return WebSocketClose.of(code, new String(reason, StandardCharsets.UTF_8));
-    }
-
-    /**
-     * Returns whether a close code is valid on the wire.
-     *
-     * @param code code
-     * @return true when valid
-     */
-    private static boolean validCloseCode(final int code) {
-        return code == 1000 || code >= 1001 && code <= 1014 && code != 1005 && code != 1006
-                || code >= 3000 && code <= 4999;
+        final Buffer buffer = new Buffer().write(payload);
+        final int code = Short.toUnsignedInt(buffer.readShort());
+        return WebSocketClose.of(code, buffer.readByteString().string(StandardCharsets.UTF_8));
     }
 
     /**
@@ -353,12 +383,12 @@ public final class WebSocketReader implements AutoCloseable {
      */
     private int readByte() {
         try {
-            final int value = source.read();
-            if (value < 0) {
-                throw new SocketException("Unexpected WebSocket EOF");
+            requireBytes(Byte.BYTES);
+            return input.readByte() & Builder.UNSIGNED_BYTE_MASK;
+        } catch (final RuntimeException e) {
+            if (e instanceof SocketException) {
+                throw e;
             }
-            return value;
-        } catch (final IOException e) {
             throw new SocketException("Unable to read WebSocket frame", e);
         }
     }
@@ -369,7 +399,15 @@ public final class WebSocketReader implements AutoCloseable {
      * @return value
      */
     private int readUnsignedShort() {
-        return (readByte() << 8) | readByte();
+        try {
+            requireBytes(Short.BYTES);
+            return Short.toUnsignedInt(input.readShort());
+        } catch (final RuntimeException e) {
+            if (e instanceof SocketException) {
+                throw e;
+            }
+            throw new SocketException("Unable to read WebSocket frame", e);
+        }
     }
 
     /**
@@ -378,11 +416,15 @@ public final class WebSocketReader implements AutoCloseable {
      * @return value
      */
     private long readLong() {
-        long value = 0;
-        for (int i = 0; i < 8; i++) {
-            value = (value << 8) | readByte();
+        try {
+            requireBytes(Long.BYTES);
+            return input.readLong();
+        } catch (final RuntimeException e) {
+            if (e instanceof SocketException) {
+                throw e;
+            }
+            throw new SocketException("Unable to read WebSocket frame", e);
         }
-        return value;
     }
 
     /**
@@ -392,33 +434,80 @@ public final class WebSocketReader implements AutoCloseable {
      * @return bytes
      */
     private byte[] readBytes(final int length) {
-        final byte[] bytes = new byte[length];
-        int offset = 0;
         try {
-            while (offset < length) {
-                final int read = source.read(bytes, offset, length - offset);
-                if (read < 0) {
-                    throw new SocketException("Unexpected WebSocket EOF");
-                }
-                offset += read;
-            }
-            return bytes;
+            requireBytes(length);
+            return input.readByteArray(length);
         } catch (final IOException e) {
             throw new SocketException("Unable to read WebSocket payload", e);
         }
     }
 
     /**
-     * Copies buffer bytes.
+     * Reads bytes into a core buffer.
      *
-     * @param buffer buffer
-     * @return bytes
+     * @param length byte count
+     * @return buffer
      */
-    private static byte[] bytes(final ByteBuffer buffer) {
-        final ByteBuffer duplicate = buffer.duplicate();
-        final byte[] bytes = new byte[duplicate.remaining()];
-        duplicate.get(bytes);
-        return bytes;
+    private Buffer readBuffer(final int length) {
+        final Buffer buffer = new Buffer();
+        try {
+            requireBytes(length);
+            buffer.write(input, length);
+            return buffer;
+        } catch (final RuntimeException e) {
+            if (e instanceof SocketException) {
+                throw e;
+            }
+            throw new SocketException("Unable to read WebSocket payload", e);
+        }
+    }
+
+    /**
+     * Ensures the reusable input buffer contains the requested byte count.
+     *
+     * @param byteCount required byte count
+     */
+    private void requireBytes(final long byteCount) {
+        try {
+            while (input.size() < byteCount) {
+                final long read = source.read(input, byteCount - input.size());
+                if (read < Normal.LONG_ZERO) {
+                    throw new SocketException("Unexpected WebSocket EOF");
+                }
+            }
+        } catch (final IOException e) {
+            throw new SocketException("Unable to read WebSocket payload", e);
+        }
+    }
+
+    /**
+     * Applies the WebSocket mask to a payload buffer.
+     *
+     * @param payload payload
+     * @param mask    mask key
+     * @param length  payload length
+     */
+    private static void unmask(final Buffer payload, final byte[] mask, final long length) {
+        if (length == Normal.LONG_ZERO) {
+            return;
+        }
+        final Buffer.UnsafeCursor cursor = new Buffer.UnsafeCursor();
+        payload.readAndWriteUnsafe(cursor);
+        try {
+            long processed = Normal.LONG_ZERO;
+            int available = cursor.seek(Normal.LONG_ZERO);
+            while (available != Normal.__1 && processed < length) {
+                for (int i = cursor.start; i < cursor.end && processed < length; i++) {
+                    cursor.data[i] = (byte) (cursor.data[i] ^ mask[(int) (processed & Normal._3)]);
+                    processed++;
+                }
+                if (processed < length) {
+                    available = cursor.next();
+                }
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     /**
@@ -428,6 +517,18 @@ public final class WebSocketReader implements AutoCloseable {
         if (closed) {
             throw new SocketException("WebSocket reader is closed");
         }
+    }
+
+    /**
+     * Validates required references.
+     *
+     * @param value value
+     * @param name  name
+     * @param <T>   value type
+     * @return value
+     */
+    private static <T> T require(final T value, final String name) {
+        return Assert.notNull(value, () -> new ValidateException(name + " must not be null"));
     }
 
     /**
@@ -441,7 +542,7 @@ public final class WebSocketReader implements AutoCloseable {
          * @param session owner session
          * @param payload ping payload
          */
-        default void ping(final Session session, final ByteBuffer payload) {
+        default void ping(final Session session, final ByteString payload) {
             // Default control handler intentionally ignores ping frames.
         }
 
@@ -451,7 +552,7 @@ public final class WebSocketReader implements AutoCloseable {
          * @param session owner session
          * @param payload pong payload
          */
-        default void pong(final Session session, final ByteBuffer payload) {
+        default void pong(final Session session, final ByteString payload) {
             // Default control handler intentionally ignores pong frames.
         }
 
