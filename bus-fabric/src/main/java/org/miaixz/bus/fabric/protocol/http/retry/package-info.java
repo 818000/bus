@@ -17,15 +17,11 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+
 /**
- * Parses server-sent event streams and exposes retry directives to the SSE runner.
- *
- * <p>
- * Event readers consume UTF-8 line streams, assemble event id/type/data fields and surface retry delays to the SSE
- * runner. They do not open HTTP connections, schedule reconnect work or invoke user listeners directly.
- * </p>
+ * HTTP retry and redirect execution.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.protocol.sse.event;
+package org.miaixz.bus.fabric.protocol.http.retry;

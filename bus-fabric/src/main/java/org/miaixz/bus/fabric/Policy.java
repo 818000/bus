@@ -17,15 +17,22 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric;
+
 /**
- * Parses server-sent event streams and exposes retry directives to the SSE runner.
- *
- * <p>
- * Event readers consume UTF-8 line streams, assemble event id/type/data fields and surface retry delays to the SSE
- * runner. They do not open HTTP connections, schedule reconnect work or invoke user listeners directly.
- * </p>
+ * Common contract for immutable Fabric policies.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.protocol.sse.event;
+public interface Policy {
+
+    /**
+     * Adds this policy to an immutable option snapshot.
+     *
+     * @param options source options
+     * @return updated options containing this policy
+     */
+    Options from(Options options);
+
+}
