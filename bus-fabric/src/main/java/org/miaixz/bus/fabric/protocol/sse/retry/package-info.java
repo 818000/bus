@@ -18,14 +18,14 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Parses server-sent event streams and exposes retry directives to the SSE runner.
+ * Configures and tracks server-sent event reconnect behavior.
  *
  * <p>
- * Event readers consume UTF-8 line streams, assemble event id/type/data fields and surface retry delays to the SSE
- * runner. They do not open HTTP connections, schedule reconnect work or invoke user listeners directly.
+ * Retry policies define immutable reconnect bounds, while session-local retry state applies server-provided
+ * {@code retry:} directives and calculates capped reconnect delays.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.protocol.sse.event;
+package org.miaixz.bus.fabric.protocol.sse.retry;
