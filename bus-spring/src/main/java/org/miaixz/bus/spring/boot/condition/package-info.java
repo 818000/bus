@@ -18,16 +18,10 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * The only exported starter package. It provides EnableAuth, EnableCache, EnableCors, EnableCortex, EnableDubbo,
- * EnableElastic, EnableFabric, EnableHealth, EnableI18n, EnableImage, EnableJdbc, EnableJson, EnableLimiter,
- * EnableMapper, EnableMetrics, EnableMongo, EnableNotify, EnableOffice, EnablePay, EnableSensitive, EnableStorage,
- * EnableTempus, EnableTracer, EnableValidate, EnableVortex, EnableWrapper, and EnableZookeeper.
- * <p>
- * Every {@code EnableXxx} annotation has higher activation priority than its corresponding {@code bus.xxx.enabled}
- * property. An explicit annotation therefore enables its feature even when the property is absent or set to
- * {@code false}; the property controls activation only when the annotation is absent.
+ * Provides reusable Spring Boot condition types, including annotation-first type-level and method-level feature
+ * activation with configurable property names and missing-property defaults.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.starter.annotation;
+package org.miaixz.bus.spring.boot.condition;
