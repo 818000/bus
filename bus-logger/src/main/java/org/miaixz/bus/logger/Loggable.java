@@ -17,10 +17,38 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.logger;
+
+import java.util.Objects;
+
 /**
- * Provides data desensitization, encryption/decryption, and structured log sanitization algorithms.
+ * Immutable log event snapshot passed through the executor before provider output.
  *
+ * @param level     logging level
+ * @param throwable associated failure, or {@code null}
+ * @param format    provider-compatible message format
+ * @param arguments message arguments
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.sensitive;
+public record Loggable(Level level, Throwable throwable, String format, Object[] arguments) {
+
+    /**
+     * Validates the logging level and defensively copies the message arguments.
+     */
+    public Loggable {
+        Objects.requireNonNull(level, "level");
+        arguments = arguments == null ? new Object[0] : arguments.clone();
+    }
+
+    /**
+     * Returns a defensive copy of the message arguments.
+     *
+     * @return copied message arguments
+     */
+    @Override
+    public Object[] arguments() {
+        return arguments.clone();
+    }
+
+}
