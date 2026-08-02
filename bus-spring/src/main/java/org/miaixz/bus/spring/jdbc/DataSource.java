@@ -17,57 +17,34 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.spring;
+package org.miaixz.bus.spring.jdbc;
 
-import org.springframework.core.Ordered;
-import org.springframework.core.task.TaskDecorator;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Propagates the generic runtime context across task execution boundaries.
+ * Selects a named JDBC datasource for a Spring-managed service invocation.
+ * <p>
+ * A method declaration overrides a declaration on its containing service type. The routing integration selects the key
+ * before transaction advice acquires a connection and restores the exact parent selection after normal completion or
+ * failure.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public class ContextDecorator implements TaskDecorator, Ordered {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface DataSource {
 
     /**
-     * Context facade used to capture and install state.
-     */
-    private final ContextBuilder contextBuilder;
-
-    /**
-     * Creates a stateless runtime context task decorator.
+     * Returns the configured JDBC datasource routing key.
      *
-     * @param contextBuilder context facade used for propagation
+     * @return nonblank datasource routing key
      */
-    public ContextDecorator(ContextBuilder contextBuilder) {
-        this.contextBuilder = contextBuilder;
-    }
-
-    /**
-     * Captures the submitting thread context and restores the executing thread context after the task finishes.
-     *
-     * @param runnable task to decorate
-     * @return context-aware task
-     */
-    @Override
-    public Runnable decorate(Runnable runnable) {
-        ContextState snapshot = this.contextBuilder.capture();
-        return () -> {
-            try (ContextScope ignored = this.contextBuilder.install(snapshot)) {
-                runnable.run();
-            }
-        };
-    }
-
-    /**
-     * Runs context installation before unordered task decorators.
-     *
-     * @return highest precedence
-     */
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
-    }
+    String value();
 
 }

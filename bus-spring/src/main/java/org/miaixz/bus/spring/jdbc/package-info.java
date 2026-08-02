@@ -17,57 +17,11 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.spring;
-
-import org.springframework.core.Ordered;
-import org.springframework.core.task.TaskDecorator;
-
 /**
- * Propagates the generic runtime context across task execution boundaries.
+ * Provides reusable Spring JDBC datasource resolution, creation, dynamic routing, route scope, and annotation advice.
+ * The package has no dependency on Mapper or Starter assembly and can therefore be reused by any Spring integration.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public class ContextDecorator implements TaskDecorator, Ordered {
-
-    /**
-     * Context facade used to capture and install state.
-     */
-    private final ContextBuilder contextBuilder;
-
-    /**
-     * Creates a stateless runtime context task decorator.
-     *
-     * @param contextBuilder context facade used for propagation
-     */
-    public ContextDecorator(ContextBuilder contextBuilder) {
-        this.contextBuilder = contextBuilder;
-    }
-
-    /**
-     * Captures the submitting thread context and restores the executing thread context after the task finishes.
-     *
-     * @param runnable task to decorate
-     * @return context-aware task
-     */
-    @Override
-    public Runnable decorate(Runnable runnable) {
-        ContextState snapshot = this.contextBuilder.capture();
-        return () -> {
-            try (ContextScope ignored = this.contextBuilder.install(snapshot)) {
-                runnable.run();
-            }
-        };
-    }
-
-    /**
-     * Runs context installation before unordered task decorators.
-     *
-     * @return highest precedence
-     */
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
-    }
-
-}
+package org.miaixz.bus.spring.jdbc;

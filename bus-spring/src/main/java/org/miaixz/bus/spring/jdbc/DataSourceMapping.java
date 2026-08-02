@@ -17,57 +17,31 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.spring;
+package org.miaixz.bus.spring.jdbc;
 
-import org.springframework.core.Ordered;
-import org.springframework.core.task.TaskDecorator;
+import java.util.Map;
+
+import org.miaixz.bus.core.xyz.StringKit;
 
 /**
- * Propagates the generic runtime context across task execution boundaries.
+ * Contains the complete datasource-definition mapping and its primary routing name.
  *
+ * @param primary primary routing name
+ * @param sources immutable definitions keyed by routing name
  * @author Kimi Liu
  * @since Java 21+
  */
-public class ContextDecorator implements TaskDecorator, Ordered {
+public record DataSourceMapping(String primary, Map<String, DataSourceDefinition> sources) {
 
     /**
-     * Context facade used to capture and install state.
+     * Validates the primary route and defensively copies all definitions.
      */
-    private final ContextBuilder contextBuilder;
-
-    /**
-     * Creates a stateless runtime context task decorator.
-     *
-     * @param contextBuilder context facade used for propagation
-     */
-    public ContextDecorator(ContextBuilder contextBuilder) {
-        this.contextBuilder = contextBuilder;
-    }
-
-    /**
-     * Captures the submitting thread context and restores the executing thread context after the task finishes.
-     *
-     * @param runnable task to decorate
-     * @return context-aware task
-     */
-    @Override
-    public Runnable decorate(Runnable runnable) {
-        ContextState snapshot = this.contextBuilder.capture();
-        return () -> {
-            try (ContextScope ignored = this.contextBuilder.install(snapshot)) {
-                runnable.run();
-            }
-        };
-    }
-
-    /**
-     * Runs context installation before unordered task decorators.
-     *
-     * @return highest precedence
-     */
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+    public DataSourceMapping {
+        primary = StringKit.trim(primary);
+        sources = sources == null ? Map.of() : Map.copyOf(sources);
+        if (StringKit.isEmpty(primary) || !sources.containsKey(primary)) {
+            throw new IllegalArgumentException("Primary datasource must identify a configured source");
+        }
     }
 
 }
