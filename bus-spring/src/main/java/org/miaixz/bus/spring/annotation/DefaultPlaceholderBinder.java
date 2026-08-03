@@ -17,12 +17,40 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.spring.annotation;
+
+import org.springframework.core.env.Environment;
+
 /**
- * Provides reusable Spring JDBC datasource resolution, creation, dynamic routing, route scope, route-change
- * observation, and annotation advice. The package has no dependency on Mapper or Starter assembly and can therefore be
- * reused by any Spring integration.
+ * Resolves placeholders from a supplied Spring environment.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.spring.jdbc;
+public class DefaultPlaceholderBinder implements PlaceholderBinder {
+
+    /**
+     * Shared stateless placeholder binder.
+     */
+    public static final DefaultPlaceholderBinder INSTANCE = new DefaultPlaceholderBinder();
+
+    /**
+     * Creates a stateless placeholder binder.
+     */
+    public DefaultPlaceholderBinder() {
+        // No initialization required.
+    }
+
+    /**
+     * Resolves placeholders through the supplied environment.
+     *
+     * @param environment environment used for resolution
+     * @param string      text containing placeholders
+     * @return resolved text
+     */
+    @Override
+    public String bind(Environment environment, String string) {
+        return environment.resolvePlaceholders(string);
+    }
+
+}

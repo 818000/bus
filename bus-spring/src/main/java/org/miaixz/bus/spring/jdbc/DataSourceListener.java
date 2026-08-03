@@ -17,12 +17,48 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.spring.jdbc;
+
+import javax.sql.DataSource;
+
+import org.springframework.core.Ordered;
+
 /**
- * Provides reusable Spring JDBC datasource resolution, creation, dynamic routing, route scope, route-change
- * observation, and annotation advice. The package has no dependency on Mapper or Starter assembly and can therefore be
- * reused by any Spring integration.
+ * Observes successful changes to datasource routes owned by one dynamic datasource.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.spring.jdbc;
+public interface DataSourceListener extends Ordered {
+
+    /**
+     * Handles a datasource route after it has been registered successfully.
+     *
+     * @param key        routing key
+     * @param dataSource registered datasource
+     */
+    default void onAdded(String key, DataSource dataSource) {
+        // No action required.
+    }
+
+    /**
+     * Handles a datasource route after it has been removed successfully.
+     *
+     * @param key        routing key
+     * @param dataSource removed datasource
+     */
+    default void onRemoved(String key, DataSource dataSource) {
+        // No action required.
+    }
+
+    /**
+     * Returns the listener order.
+     *
+     * @return lowest precedence unless an implementation declares otherwise
+     */
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+}
