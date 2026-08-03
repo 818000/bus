@@ -17,17 +17,82 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric.network.dns.message;
+
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
- *
- * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
- * </p>
+ * DNS response codes supported by the server codec.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+public enum DnsResponseCode {
+
+    /**
+     * No error.
+     */
+    NOERROR(0),
+
+    /**
+     * Format error.
+     */
+    FORMERR(1),
+
+    /**
+     * Server failure.
+     */
+    SERVFAIL(2),
+
+    /**
+     * Name error.
+     */
+    NXDOMAIN(3),
+
+    /**
+     * Not implemented.
+     */
+    NOTIMP(4),
+
+    /**
+     * Refused.
+     */
+    REFUSED(5);
+
+    /**
+     * Numeric RCODE value.
+     */
+    private final int code;
+
+    /**
+     * Creates a response code.
+     *
+     * @param code numeric RCODE value
+     */
+    DnsResponseCode(final int code) {
+        this.code = code;
+    }
+
+    /**
+     * Returns the numeric RCODE value.
+     *
+     * @return low four-bit DNS RCODE value
+     */
+    public int code() {
+        return code;
+    }
+
+    /**
+     * Resolves a response code from an RCODE value.
+     *
+     * @param code DNS RCODE
+     * @return matching response code, or {@link #SERVFAIL} for unsupported values
+     */
+    public static DnsResponseCode fromCode(final int code) {
+        for (final DnsResponseCode responseCode : values()) {
+            if (responseCode.code == code) {
+                return responseCode;
+            }
+        }
+        return SERVFAIL;
+    }
+
+}

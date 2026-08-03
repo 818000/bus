@@ -18,16 +18,15 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
+ * Provides DNSSEC signing, validation, chain validation, and negative-proof helpers.
  *
  * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
+ * The package validates DNSKEY, DS, RRSIG, NSEC, and NSEC3 material against immutable runtime data. It does not own
+ * listener sockets or persistent storage; all DNSSEC inputs are supplied by the runtime index, received responses, or
+ * external snapshots.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+package org.miaixz.bus.fabric.network.dns.dnssec;

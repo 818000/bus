@@ -17,17 +17,39 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric.network.dns.zone;
+
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
- *
- * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
- * </p>
+ * DNS zone resolution mode.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+public enum DnsZoneMode {
+
+    /**
+     * Locally authoritative zone.
+     */
+    AUTHORITATIVE,
+
+    /**
+     * Local override zone.
+     */
+    OVERRIDE,
+
+    /**
+     * Forward-only zone retained for snapshot compatibility.
+     */
+    FORWARD,
+
+    /**
+     * Stub zone retained for snapshot compatibility.
+     */
+    STUB,
+
+    /**
+     * Blocking zone retained for policy compatibility.
+     */
+    BLOCK
+
+}

@@ -18,16 +18,15 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
+ * Provides secure DNS listener transports.
  *
  * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
+ * The package contains DNS-over-HTTPS and DNS-over-TLS endpoint implementations. These transports decode secure
+ * protocol framing, pass DNS wire messages into the server handler, and write DNS wire responses without owning zone
+ * data or persistent configuration.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+package org.miaixz.bus.fabric.network.dns.secure;

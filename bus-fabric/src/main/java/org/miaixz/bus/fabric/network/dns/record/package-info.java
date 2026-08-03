@@ -18,16 +18,14 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
+ * Provides immutable DNS resource-record models.
  *
  * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
+ * The package contains record type constants, raw wire RDATA values, RRSet grouping, and builders for common DNS record
+ * data. Runtime query execution uses compiled immutable records rather than mutable persistence entities.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+package org.miaixz.bus.fabric.network.dns.record;

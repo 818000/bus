@@ -17,17 +17,39 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric.network.dns.provider;
+
+import org.miaixz.bus.fabric.network.dns.zone.DnsSnapshot;
+
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
- *
- * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
- * </p>
+ * Listener notified when DNS runtime snapshots are accepted, rejected, or rolled back.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+public interface DnsSnapshotListener {
+
+    /**
+     * Handles a snapshot that was compiled and installed as the active runtime index.
+     *
+     * @param snapshot accepted snapshot
+     */
+    void onAccepted(DnsSnapshot snapshot);
+
+    /**
+     * Handles a snapshot that failed validation or compilation.
+     *
+     * @param snapshot rejected snapshot, or {@code null} when the caller supplied no snapshot
+     * @param cause    rejection cause
+     */
+    void onRejected(DnsSnapshot snapshot, Throwable cause);
+
+    /**
+     * Handles preservation of the previously active snapshot after a replacement failure.
+     *
+     * @param activeSnapshot snapshot that remains active
+     * @param cause          failure that prevented replacement
+     */
+    void onRolledBack(DnsSnapshot activeSnapshot, Throwable cause);
+
+}

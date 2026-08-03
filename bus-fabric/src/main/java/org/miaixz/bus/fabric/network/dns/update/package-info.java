@@ -18,16 +18,14 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
+ * Provides DNS dynamic update request handling.
  *
  * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
+ * The package validates UPDATE queries, checks TSIG and view policy requirements, converts wire requests into update
+ * commands, and delegates mutation to the external update sink supplied by the control layer.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+package org.miaixz.bus.fabric.network.dns.update;

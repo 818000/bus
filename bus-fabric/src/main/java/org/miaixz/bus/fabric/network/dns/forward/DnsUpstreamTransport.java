@@ -17,17 +17,39 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric.network.dns.forward;
+
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
- *
- * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
- * </p>
+ * Transport used when forwarding DNS queries to an upstream server.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+public enum DnsUpstreamTransport {
+
+    /**
+     * DNS over UDP upstream transport.
+     */
+    UDP,
+
+    /**
+     * DNS over TCP upstream transport with a two-byte message length prefix.
+     */
+    TCP,
+
+    /**
+     * DNS-over-TLS upstream transport with a two-byte message length prefix.
+     */
+    DOT,
+
+    /**
+     * DNS-over-HTTPS upstream transport carrying wire messages over HTTP.
+     */
+    DOH,
+
+    /**
+     * DNS-over-QUIC upstream transport carrying one DNS message per QUIC stream.
+     */
+    DOQ
+
+}

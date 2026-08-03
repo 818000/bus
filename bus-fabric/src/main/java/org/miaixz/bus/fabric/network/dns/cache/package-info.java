@@ -18,16 +18,14 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
+ * Provides in-memory DNS response and DNSSEC validation caches.
  *
  * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
+ * The package stores immutable cache keys, raw response entries, validation results, expiry metadata, serve-stale
+ * windows, and prefetch state used by the DNS server hot path. It does not persist data outside process memory.
  * </p>
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+package org.miaixz.bus.fabric.network.dns.cache;

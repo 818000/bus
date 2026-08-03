@@ -17,17 +17,33 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.fabric.network.dns.provider;
+
+import org.miaixz.bus.fabric.network.dns.zone.DnsSnapshot;
+
 /**
- * Defines DNS resolution and DNS server runtime components for fabric networking.
- *
- * <p>
- * The root package keeps the legacy host-resolution entry points used by protocol and network code. DNS server packages
- * underneath it provide wire messages, authoritative runtime indexes, forwarding, recursive lookup, secure transports,
- * cache state, policy evaluation, dynamic update, zone transfer, DNSSEC validation, and externally supplied snapshot
- * models.
- * </p>
+ * External provider that supplies complete DNS runtime snapshots.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.fabric.network.dns;
+public interface DnsSnapshotProvider {
+
+    /**
+     * Loads one complete DNS snapshot outside the query hot path.
+     *
+     * @return complete DNS snapshot
+     */
+    DnsSnapshot load();
+
+    /**
+     * Loads one complete DNS snapshot with request context outside the query hot path.
+     *
+     * @param request snapshot load request
+     * @return complete DNS snapshot
+     */
+    default DnsSnapshot load(final DnsSnapshotRequest request) {
+        return load();
+    }
+
+}
