@@ -18,33 +18,12 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * bus.logger
+ * Provides matching and execution support for public slug-based forwarding routes.
+ * <p>
+ * Slug routes resolve registered assets, extract validated slug values from request paths, render target templates,
+ * and forward requests to the resulting downstream URI.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-module bus.logger {
-
-    requires java.logging;
-
-    requires bus.core;
-
-    requires static ch.qos.logback.classic;
-    requires static org.apache.commons.logging;
-    requires static org.apache.logging.log4j;
-    requires static org.jboss.logging;
-    requires static org.slf4j;
-    requires static org.tinylog.api;
-
-    exports org.miaixz.bus.logger;
-    exports org.miaixz.bus.logger.magic;
-    exports org.miaixz.bus.logger.magic.level;
-    exports org.miaixz.bus.logger.nimble.apache.commons;
-    exports org.miaixz.bus.logger.nimble.apache.log4j;
-    exports org.miaixz.bus.logger.nimble.console;
-    exports org.miaixz.bus.logger.nimble.jboss;
-    exports org.miaixz.bus.logger.nimble.jdk;
-    exports org.miaixz.bus.logger.nimble.slf4j;
-    exports org.miaixz.bus.logger.nimble.tinylog;
-
-}
+package org.miaixz.bus.vortex.routing.slug;
