@@ -17,10 +17,28 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.metrics.builtin;
+
+import java.util.Objects;
+
 /**
- * Built-in instrumentation for JVM, system, HTTP, cache, and framework-neutral application startup metrics.
+ * Framework-neutral duration for one application startup stage.
  *
+ * @param name           stable stage name used as the metrics tag
+ * @param durationMillis stage duration in milliseconds
  * @author Kimi Liu
  * @since Java 21+
  */
-package org.miaixz.bus.metrics.builtin;
+public record StartupStage(String name, long durationMillis) {
+
+    /**
+     * Validates one startup stage.
+     */
+    public StartupStage {
+        Objects.requireNonNull(name, "name");
+        if (durationMillis < 0) {
+            throw new IllegalArgumentException("durationMillis must not be negative");
+        }
+    }
+
+}
