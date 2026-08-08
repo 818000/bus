@@ -17,64 +17,68 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.health.unix.openbsd.software;
-
-import com.sun.jna.Native;
-import com.sun.jna.platform.unix.LibCAPI;
+package org.miaixz.bus.health.mac;
 
 import org.miaixz.bus.core.lang.annotation.ThreadSafe;
-import org.miaixz.bus.health.Executor;
-import org.miaixz.bus.health.builtin.software.common.AbstractNetworkParams;
-import org.miaixz.bus.health.unix.shared.jna.OpenBsdLibc;
 
 /**
- * OpenBsdNetworkParams class.
+ * Interprets values reported by macOS SMC sensor keys.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
 @ThreadSafe
-public class OpenBsdNetworkParams extends AbstractNetworkParams {
+public final class SmcSensorValues {
 
     /**
-     * Creates a new OpenBsdNetworkParams instance.
+     * SMC data type reporting a fixed-point value with two fractional bits.
      */
-    public OpenBsdNetworkParams() {
+    private static final String DATATYPE_FPE2 = "fpe2";
+
+    /**
+     * Lowest reading accepted as a plausible CPU voltage, in volts.
+     */
+    public static final double MIN_PLAUSIBLE_VOLTAGE = 0.2;
+
+    /**
+     * Creates a new SmcSensorValues instance.
+     */
+    private SmcSensorValues() {
         // No initialization required.
     }
 
     /**
-     * Returns the host name.
+     * Converts a fan speed reading to RPM.
      *
-     * @return the native host name, or the fallback host name
+     * @param reading The raw reading.
+     * @return The speed in RPM, never negative.
      */
-    @Override
-    public String getHostName() {
-        byte[] hostnameBuffer = new byte[LibCAPI.HOST_NAME_MAX + 1];
-        if (0 != OpenBsdLibc.INSTANCE.gethostname(hostnameBuffer, hostnameBuffer.length)) {
-            return super.getHostName();
+    public static int toRpm(double reading) {
+        if (Double.isNaN(reading) || reading <= 0d) {
+            return 0;
         }
-        return Native.toString(hostnameBuffer);
+        return (int) Math.min(Integer.MAX_VALUE, Math.round(reading));
     }
 
     /**
-     * Returns the ipv4 default gateway.
+     * Tests whether a reading is plausible as a CPU voltage.
      *
-     * @return the get ipv4 default gateway result
+     * @param volts The reading to test, in volts.
+     * @return {@code true} if the reading is plausible.
      */
-    @Override
-    public String getIpv4DefaultGateway() {
-        return searchGateway(Executor.runNative("route -n get default"));
+    public static boolean isPlausibleVoltage(double volts) {
+        return volts >= MIN_PLAUSIBLE_VOLTAGE;
     }
 
     /**
-     * Returns the ipv6 default gateway.
+     * Converts a voltage reading to volts according to the SMC data type.
      *
-     * @return the get ipv6 default gateway result
+     * @param raw      The decoded reading.
+     * @param dataType The key data type.
+     * @return The reading in volts.
      */
-    @Override
-    public String getIpv6DefaultGateway() {
-        return searchGateway(Executor.runNative("route -n get default"));
+    public static double scaleVoltage(double raw, String dataType) {
+        return DATATYPE_FPE2.equals(dataType) ? raw / 1000d : raw;
     }
 
 }
