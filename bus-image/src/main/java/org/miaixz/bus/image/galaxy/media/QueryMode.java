@@ -17,43 +17,51 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.image.nimble.opencv;
-
-import java.nio.ByteBuffer;
-
-import org.miaixz.bus.image.nimble.codec.ImageDescriptor;
+package org.miaixz.bus.image.galaxy.media;
 
 /**
- * Represents the MemoryStreamSegment type.
+ * Manifest completion mode used by a remote query connector.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public class MemoryStreamSegment extends StreamSegment {
+public enum QueryMode {
 
     /**
-     * The cache value.
+     * Database query mode.
      */
-    private final ByteBuffer cache;
+    DB,
 
     /**
-     * Creates a new instance.
+     * DICOM query mode.
+     */
+    DICOM,
+
+    /**
+     * DICOMweb query mode.
+     */
+    DICOM_WEB;
+
+    /**
+     * The default query mode.
+     */
+    public static final QueryMode DEFAULT = DICOM;
+
+    /**
+     * Resolves a query mode from text.
      *
-     * @param b               the b.
-     * @param imageDescriptor the image descriptor.
+     * @param value the text value.
+     * @return the query mode.
      */
-    MemoryStreamSegment(ByteBuffer b, ImageDescriptor imageDescriptor) {
-        super(new long[] { 0 }, new long[] { b.limit() }, imageDescriptor);
-        this.cache = b;
-    }
-
-    /**
-     * Gets the cache.
-     *
-     * @return the cache.
-     */
-    public ByteBuffer getCache() {
-        return cache;
+    public static QueryMode fromValue(String value) {
+        if (value != null) {
+            for (QueryMode mode : values()) {
+                if (mode.name().equalsIgnoreCase(value.trim())) {
+                    return mode;
+                }
+            }
+        }
+        return DEFAULT;
     }
 
 }

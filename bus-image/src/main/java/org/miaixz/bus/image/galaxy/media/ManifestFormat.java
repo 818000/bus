@@ -17,43 +17,24 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.image.nimble.opencv;
-
-import java.nio.ByteBuffer;
-
-import org.miaixz.bus.image.nimble.codec.ImageDescriptor;
+package org.miaixz.bus.image.galaxy.media;
 
 /**
- * Represents the MemoryStreamSegment type.
+ * Manifest output format.
  *
  * @author Kimi Liu
  * @since Java 21+
  */
-public class MemoryStreamSegment extends StreamSegment {
+public enum ManifestFormat {
 
     /**
-     * The cache value.
+     * XML output.
      */
-    private final ByteBuffer cache;
+    XML,
 
     /**
-     * Creates a new instance.
-     *
-     * @param b               the b.
-     * @param imageDescriptor the image descriptor.
+     * JSON output.
      */
-    MemoryStreamSegment(ByteBuffer b, ImageDescriptor imageDescriptor) {
-        super(new long[] { 0 }, new long[] { b.limit() }, imageDescriptor);
-        this.cache = b;
-    }
-
-    /**
-     * Gets the cache.
-     *
-     * @return the cache.
-     */
-    public ByteBuffer getCache() {
-        return cache;
-    }
+    JSON
 
 }
