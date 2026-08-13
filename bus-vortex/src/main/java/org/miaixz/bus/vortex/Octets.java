@@ -71,13 +71,14 @@ public final class Octets {
     /**
      * Reads a bounded response into exact-sized heap segments for later atomic relay.
      * <p>
-     * A non-negative Content-Length is mandatory. Its exact logical size is acquired before source subscription and
-     * remains owned by the returned body until that body is closed.
+     * A known Content-Length reserves its exact logical size. When the length is unknown, the configured per-body
+     * limit is reserved before source subscription and reduced to the materialized size after completion. The retained
+     * logical size remains owned by the returned body until that body is closed.
      *
      * @param body           source response buffers
      * @param maxBytes       per-body materialization limit
      * @param budget         process-wide response-byte budget
-     * @param expectedLength declared Content-Length
+     * @param expectedLength declared Content-Length, or {@code -1} when the transfer length is unknown
      * @return buffered response with an attached logical-byte lease
      */
     public static Mono<BufferedBody> readForRelay(
@@ -85,17 +86,44 @@ public final class Octets {
             int maxBytes,
             AsyncByteBudget budget,
             long expectedLength) {
-        Mono<Void> validation = validateKnownLength(body, maxBytes, budget, expectedLength);
+        Mono<Void> validation = validateRelayLength(body, maxBytes, budget, expectedLength);
         if (validation != null) {
             return validation.then(Mono.empty());
         }
-        return awaitBufferingCapacity().then(budget.acquire(expectedLength))
+        long reservedLength = expectedLength >= 0 ? expectedLength : maxBytes;
+        return awaitBufferingCapacity().then(budget.acquire(reservedLength))
                 .timeout(Duration.ofSeconds(Holder.get().getBufferAcquireTimeoutSeconds()))
                 .onErrorMap(
                         java.util.concurrent.TimeoutException.class,
                         error -> new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                                 "Buffered-byte capacity wait timed out", error))
                 .flatMap(lease -> readReservedSegmented(body, maxBytes, expectedLength, lease));
+    }
+
+    /**
+     * Validates relay prerequisites before a budget is acquired or the source is subscribed.
+     *
+     * @param body           source body
+     * @param maxBytes       positive per-body limit
+     * @param budget         process-wide response-byte budget
+     * @param expectedLength declared Content-Length, or {@code -1} when unknown
+     * @return an error publisher when validation fails, or {@code null} when validation succeeds
+     */
+    private static Mono<Void> validateRelayLength(
+            Flux<? extends DataBuffer> body,
+            int maxBytes,
+            AsyncByteBudget budget,
+            long expectedLength) {
+        if (body == null || budget == null || maxBytes <= 0) {
+            return Mono.error(new IllegalArgumentException("body, positive maxBytes and budget are required"));
+        }
+        if (expectedLength < -1) {
+            return Mono.error(new IllegalArgumentException("expectedLength must be -1 or greater"));
+        }
+        if (expectedLength > maxBytes) {
+            return Mono.error(new DataBufferLimitException("Exceeded buffered body limit of " + maxBytes + " bytes"));
+        }
+        return null;
     }
 
     /**
@@ -195,12 +223,12 @@ public final class Octets {
     }
 
     /**
-     * Consumes a response into segments after its exact capacity has already been acquired.
+     * Consumes a response into segments after bounded capacity has already been acquired.
      *
      * @param body           source response buffers
      * @param maxBytes       per-body materialization limit
-     * @param expectedLength declared and reserved Content-Length
-     * @param lease          exact response-byte lease
+     * @param expectedLength declared Content-Length, or {@code -1} when unknown
+     * @param lease          bounded response-byte lease
      * @return segmented buffered body that assumes ownership of the lease
      */
     private static Mono<BufferedBody> readReservedSegmented(
@@ -208,13 +236,15 @@ public final class Octets {
             int maxBytes,
             long expectedLength,
             AsyncByteBudget.Lease lease) {
-        SegmentAccumulator accumulator = new SegmentAccumulator(expectedLength);
+        long bodyLimit = expectedLength >= 0 ? expectedLength : maxBytes;
+        SegmentAccumulator accumulator = new SegmentAccumulator(bodyLimit);
         return body.<Integer>handle((buffer, sink) -> {
             try {
                 int bytes = buffer.readableByteCount();
-                if ((long) accumulator.length() + bytes > expectedLength
-                        || (long) accumulator.length() + bytes > maxBytes) {
-                    sink.error(new DataBufferLimitException("Body exceeds declared Content-Length"));
+                if ((long) accumulator.length() + bytes > bodyLimit) {
+                    String message = expectedLength >= 0 ? "Body exceeds declared Content-Length"
+                            : "Exceeded buffered body limit of " + maxBytes + " bytes";
+                    sink.error(new DataBufferLimitException(message));
                     return;
                 }
                 accumulator.append(buffer);
@@ -223,8 +253,11 @@ public final class Octets {
                 release(buffer);
             }
         }).then(Mono.defer(() -> {
-            if (accumulator.length() != expectedLength) {
+            if (expectedLength >= 0 && accumulator.length() != expectedLength) {
                 return Mono.error(new DataBufferLimitException("Body length does not match Content-Length"));
+            }
+            if (expectedLength < 0) {
+                lease.shrinkTo(accumulator.length());
             }
             return Mono.just(accumulator.body(lease));
         })).doOnError(error -> lease.close()).doOnCancel(lease::close)
@@ -243,7 +276,7 @@ public final class Octets {
         private final List<byte[]> segments;
 
         /**
-         * Declared body length used to size the final segment without over-allocation.
+         * Maximum body length used to size the final segment without over-allocation.
          */
         private final int expectedLength;
 
@@ -253,9 +286,9 @@ public final class Octets {
         private int length;
 
         /**
-         * Creates an empty accumulator sized from a previously validated Content-Length.
+         * Creates an empty accumulator sized from a previously validated body limit.
          *
-         * @param expectedLength exact number of bytes expected from the source
+         * @param expectedLength maximum number of bytes accepted from the source
          */
         private SegmentAccumulator(long expectedLength) {
             this.expectedLength = Math.toIntExact(expectedLength);

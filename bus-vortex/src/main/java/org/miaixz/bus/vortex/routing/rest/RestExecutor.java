@@ -69,8 +69,9 @@ import reactor.core.publisher.Mono;
  * downstream response back into a {@link ServerResponse} for the original client.
  * <p>
  * The route asset explicitly selects bounded atomic relay, realtime streaming or protected file download. Atomic
- * responses require Content-Length and retain an exact logical-byte lease through the network write; streaming modes
- * preserve downstream backpressure and never aggregate the body.
+ * responses enforce a bounded materialization limit and retain an exact logical-byte lease through the network write;
+ * both fixed-length and chunked downstream responses are supported. Streaming modes preserve downstream backpressure
+ * and never aggregate the body.
  * <p>
  * Generic type parameters: {@code Executor<ServerRequest, ServerResponse>}
  *
@@ -578,9 +579,10 @@ public class RestExecutor extends Coordinator<ServerRequest, ServerResponse> {
     /**
      * Handles the execution for an ATOMIC request using buffered downstream response passthrough.
      * <p>
-     * The downstream response requires Content-Length, acquires that exact logical capacity, and is materialized into
-     * bounded segments before the {@link ServerResponse} is returned. Ownership remains active through the gateway
-     * network write, including cancellation.
+     * The downstream response is materialized into bounded segments before the {@link ServerResponse} is returned.
+     * Fixed-length responses acquire their declared capacity; chunked responses acquire the configured upper bound and
+     * reduce it to the actual size after completion. Ownership remains active through the gateway network write,
+     * including cancellation.
      * </p>
      *
      * @param bodySpec  the downstream request specification
@@ -691,10 +693,10 @@ public class RestExecutor extends Coordinator<ServerRequest, ServerResponse> {
         }
 
         long declaredLength = responseEntity.getHeaders().getContentLength();
-        if (declaredLength < 0 || declaredLength > Math.toIntExact(Holder.get().getMaxBufferedResponseSize())) {
+        if (declaredLength > Math.toIntExact(Holder.get().getMaxBufferedResponseSize())) {
             return discardResponseBody(bodyFlux).then(
                     Mono.error(
-                            new DataBufferLimitException("Atomic response requires Content-Length in range 0.."
+                            new DataBufferLimitException("Atomic response exceeds the buffered body limit of "
                                     + Math.toIntExact(Holder.get().getMaxBufferedResponseSize()))));
         }
 
@@ -705,7 +707,7 @@ public class RestExecutor extends Coordinator<ServerRequest, ServerResponse> {
                 return Mono.error(new IllegalStateException("Vortex request context is missing"));
             }
             int bodyLength = body.length();
-            if (bodyLength != declaredLength) {
+            if (declaredLength >= 0 && bodyLength != declaredLength) {
                 return Mono.error(
                         new DataBufferLimitException("Atomic response length mismatch: declared=" + declaredLength
                                 + ", actual=" + bodyLength));
@@ -731,7 +733,7 @@ public class RestExecutor extends Coordinator<ServerRequest, ServerResponse> {
      * Collects a downstream response body while enforcing the buffered-response size limit.
      *
      * @param bodyFlux       downstream response buffers
-     * @param declaredLength validated downstream Content-Length
+     * @param declaredLength validated downstream Content-Length, or {@code -1} when unknown
      * @return buffered body with an attached response-byte lease
      */
     private Mono<Octets.BufferedBody> collectBufferedBody(Flux<DataBuffer> bodyFlux, long declaredLength) {
