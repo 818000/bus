@@ -23,6 +23,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 import reactor.core.publisher.Mono;
@@ -281,7 +282,7 @@ public final class AsyncByteBudget implements AutoCloseable {
     }
 
     /**
-     * Idempotent ownership token for an exact number of logical bytes.
+     * Idempotent ownership token for a bounded number of logical bytes.
      */
     public static final class Lease implements AutoCloseable {
 
@@ -291,14 +292,9 @@ public final class AsyncByteBudget implements AutoCloseable {
         private final AsyncByteBudget budget;
 
         /**
-         * Exact logical bytes charged to the budget.
+         * Logical bytes currently charged to the budget.
          */
-        private final long bytes;
-
-        /**
-         * Ensures capacity is returned only once.
-         */
-        private final AtomicBoolean closed = new AtomicBoolean();
+        private final AtomicLong bytes;
 
         /**
          * Creates an ownership token for capacity already charged to the budget.
@@ -308,16 +304,38 @@ public final class AsyncByteBudget implements AutoCloseable {
          */
         private Lease(AsyncByteBudget budget, long bytes) {
             this.budget = budget;
-            this.bytes = bytes;
+            this.bytes = new AtomicLong(bytes);
         }
 
         /**
-         * Returns the capacity owned by this lease.
+         * Returns the capacity currently owned by this lease.
          *
-         * @return exact logical bytes owned by this lease
+         * @return logical bytes currently owned by this lease
          */
         public long bytes() {
-            return this.bytes;
+            return this.bytes.get();
+        }
+
+        /**
+         * Reduces this lease to the supplied number of logical bytes and immediately returns the unused capacity.
+         * <p>
+         * This operation is intended for bounded bodies whose exact size becomes known only after materialization.
+         * It is safe to race with {@link #close()}; capacity is returned exactly once.
+         *
+         * @param retainedBytes logical bytes that must remain owned by this lease
+         */
+        public void shrinkTo(long retainedBytes) {
+            long current;
+            do {
+                current = this.bytes.get();
+                if (retainedBytes < 0 || retainedBytes > current) {
+                    throw new IllegalArgumentException("retainedBytes must be in range 0.." + current);
+                }
+                if (retainedBytes == current) {
+                    return;
+                }
+            } while (!this.bytes.compareAndSet(current, retainedBytes));
+            this.budget.release(current - retainedBytes);
         }
 
         /**
@@ -325,8 +343,9 @@ public final class AsyncByteBudget implements AutoCloseable {
          */
         @Override
         public void close() {
-            if (this.closed.compareAndSet(false, true) && this.bytes > 0) {
-                this.budget.release(this.bytes);
+            long ownedBytes = this.bytes.getAndSet(0);
+            if (ownedBytes > 0) {
+                this.budget.release(ownedBytes);
             }
         }
     }
