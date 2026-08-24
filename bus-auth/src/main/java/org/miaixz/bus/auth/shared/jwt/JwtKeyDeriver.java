@@ -17,12 +17,38 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.auth.shared.jwt;
+
+import javax.crypto.SecretKey;
+
+import org.miaixz.bus.auth.shared.jose.JwaAlgorithm;
+
 /**
- * Activates authentication services, resolves protected controller methods, and binds authentication properties.
- * Configuring {@code bus.auth.jwt.secret} additionally exposes one reusable, deterministically keyed
- * {@link org.miaixz.bus.auth.shared.jwt.JwtService}. This non-exported package contains Starter assembly rather than
- * public business APIs.
+ * Derives one deterministic JWT operation key from caller-owned String key material.
+ * <p>
+ * Implementations own their exact versioned encoding and derivation contract. The same algorithm and String must always
+ * produce the same key on every runtime and cluster node. A derivation version must never change its output after
+ * publication.
+ * </p>
  *
  * @author Kimi Liu
  */
-package org.miaixz.bus.starter.auth;
+public interface JwtKeyDeriver {
+
+    /**
+     * Derives a key for one explicitly selected JWT algorithm.
+     *
+     * @param algorithm exact trusted JWT algorithm
+     * @param secret    non-empty caller-owned String key material
+     * @return deterministic secret key suitable for the selected algorithm
+     */
+    SecretKey derive(JwaAlgorithm algorithm, String secret);
+
+    /**
+     * Returns the immutable derivation profile identifier.
+     *
+     * @return stable derivation version
+     */
+    String version();
+
+}
