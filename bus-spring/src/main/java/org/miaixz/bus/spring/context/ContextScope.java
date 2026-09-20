@@ -17,11 +17,47 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.spring.context;
+
 /**
- * Shared Spring integration facades and root contracts. Runtime context APIs live in the dedicated
- * {@code org.miaixz.bus.spring.context} package. This package must not depend on bus-starter or Starter feature
- * activation.
+ * Lexical lifetime of one installed context snapshot.
+ * <p>
+ * Scopes are thread-confined, nestable, idempotently closeable, and must be closed in reverse installation order.
  *
  * @author Kimi Liu
  */
-package org.miaixz.bus.spring;
+public final class ContextScope implements AutoCloseable {
+
+    /**
+     * Context frame restored when this scope closes.
+     */
+    private final ContextCarrier.Frame frame;
+
+    /**
+     * Whether this scope has already restored its previous context.
+     */
+    private boolean closed;
+
+    /**
+     * Creates a scope for an installed carrier frame.
+     *
+     * @param frame installed frame owned by the current thread
+     */
+    ContextScope(ContextCarrier.Frame frame) {
+        this.frame = frame;
+    }
+
+    /**
+     * Restores the previous context exactly once.
+     *
+     * @throws IllegalStateException when called by a non-owning thread or out of installation order
+     */
+    @Override
+    public void close() {
+        if (!closed) {
+            ContextCarrier.close(frame);
+            closed = true;
+        }
+    }
+
+}

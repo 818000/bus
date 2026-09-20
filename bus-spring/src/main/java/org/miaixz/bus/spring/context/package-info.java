@@ -18,10 +18,8 @@
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
 /**
- * Shared Spring integration facades and root contracts. Runtime context APIs live in the dedicated
- * {@code org.miaixz.bus.spring.context} package. This package must not depend on bus-starter or Starter feature
- * activation.
+ * Static read-only context access, immutable snapshots, lexical scopes, and explicit context transfer modes.
  *
  * @author Kimi Liu
  */
-package org.miaixz.bus.spring;
+package org.miaixz.bus.spring.context;

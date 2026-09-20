@@ -17,11 +17,43 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
+package org.miaixz.bus.spring.context.spi;
+
+import org.springframework.core.Ordered;
+
+import org.miaixz.bus.core.basic.entity.Authorize;
+import org.miaixz.bus.core.lang.annotation.Nullable;
+import org.miaixz.bus.spring.context.ContextState;
+
 /**
- * Shared Spring integration facades and root contracts. Runtime context APIs live in the dedicated
- * {@code org.miaixz.bus.spring.context} package. This package must not depend on bus-starter or Starter feature
- * activation.
+ * Resolves an authenticated subject from an already normalized initial context.
+ * <p>
+ * Implementations must not mutate the supplied state or read Servlet transport objects. Returning {@code null} means
+ * that the provider does not recognize the current credentials.
  *
  * @author Kimi Liu
  */
-package org.miaixz.bus.spring;
+public interface ContextProvider extends Ordered {
+
+    /**
+     * Resolves an authenticated subject from normalized correlation and credential values.
+     *
+     * @param context immutable initial context without an authenticated subject
+     * @return authenticated subject, or {@code null} when this provider does not recognize the credentials
+     */
+    @Nullable
+    default Authorize getAuthorize(ContextState context) {
+        return null;
+    }
+
+    /**
+     * Returns the provider precedence used when multiple authentication providers are registered.
+     *
+     * @return provider order; lower values execute first
+     */
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+}
