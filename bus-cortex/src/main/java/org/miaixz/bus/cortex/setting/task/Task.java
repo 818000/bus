@@ -17,7 +17,9 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.cortex.setting.app;
+package org.miaixz.bus.cortex.setting.task;
+
+import jakarta.persistence.Lob;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,40 +28,94 @@ import lombok.experimental.SuperBuilder;
 import org.miaixz.bus.core.basic.entity.Tenant;
 
 /**
- * Application directory entry.
+ * Durable asynchronous service-center task.
  *
  * @author Kimi Liu
  */
 @Getter
 @Setter
 @SuperBuilder
-public class App extends Tenant {
+public class Task extends Tenant {
 
     /**
-     * User responsible for the application.
+     * Parent task identifier.
      */
-    private String owner_id;
+    private String parent_id;
     /**
-     * Stable application code.
+     * Related rollout identifier.
      */
-    private String code;
+    private String rollout_id;
     /**
-     * Display name.
+     * Related revision identifier.
      */
-    private String name;
+    private String revision_id;
     /**
-     * Icon resource address or key.
+     * Related watch identifier.
      */
-    private String icon;
+    private String watch_id;
     /**
-     * Optional application description.
+     * Actor that initiated the task.
      */
-    private String description;
+    private String actor_id;
+    /**
+     * Task kind.
+     */
+    private String kind;
+    /**
+     * Runtime session identifier.
+     */
+    private String session;
+    /**
+     * Runtime generation.
+     */
+    private Long generation;
+    /**
+     * Task state.
+     */
+    private String state;
+    /**
+     * Idempotency request identifier.
+     */
+    private String request;
+    /**
+     * Semantic request digest.
+     */
+    private String digest;
+    /**
+     * Task input stored as text.
+     */
+    @Lob
+    private String payload;
+    /**
+     * Task result stored as text.
+     */
+    @Lob
+    private String result;
+    /**
+     * Number of execution attempts.
+     */
+    private Integer attempts;
+    /**
+     * Earliest execution time.
+     */
+    private Long scheduled;
+    /**
+     * Current worker claim token.
+     */
+    private String claim;
+    /**
+     * Claim deadline.
+     */
+    private Long deadline;
+    /**
+     * Task expiration time.
+     */
+    private Long expires;
 
     /**
-     * Creates an empty application entry.
+     * Creates an empty asynchronous task.
      */
-    public App() {
+    public Task() {
         // No initialization required.
     }
 

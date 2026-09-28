@@ -17,88 +17,121 @@
  ~                                                                           ~
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 */
-package org.miaixz.bus.cortex.setting.rollout;
+package org.miaixz.bus.cortex.setting.event;
+
+import jakarta.persistence.Lob;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import org.miaixz.bus.core.basic.entity.Tenant;
+import org.miaixz.bus.logger.Level;
 
 /**
- * Persistent rollout attributes shared by configuration-center implementations.
+ * Immutable service-center event record.
  *
  * @author Kimi Liu
  */
 @Getter
 @Setter
 @SuperBuilder
-public class Rollout extends Tenant {
+public class Event extends Tenant {
 
     /**
-     * Environment fixed for the rollout.
+     * Actor that produced the event.
      */
-    private String profile_id;
-
+    private String actor_id;
     /**
-     * Persisted rollout mode.
+     * Notification target identifier.
      */
-    private String mode;
-
+    private String target_id;
     /**
-     * Persisted rollout state.
+     * Related runtime instance.
      */
-    private String state;
-
+    private String instance_id;
     /**
-     * Human-readable rollout title.
+     * Related watch.
      */
-    private String title;
-
+    private String watch_id;
     /**
-     * Human-readable rollout description.
+     * Related rollout.
      */
-    private String description;
-
+    private String rollout_id;
     /**
-     * Frozen approval policy JSON.
+     * Related asynchronous task.
      */
-    private String policy;
-
+    private String task_id;
     /**
-     * Digest of the normalized rollout plan and policy.
+     * Related setting item.
      */
-    private String checksum;
-
+    private String item_id;
     /**
-     * Creator-scoped idempotency key.
+     * Related immutable revision.
+     */
+    private String revision_id;
+    /**
+     * Primary affected resource.
+     */
+    private String resource_id;
+    /**
+     * Event category.
+     */
+    private String category;
+    /**
+     * Event action.
+     */
+    private String action;
+    /**
+     * Runtime session.
+     */
+    private String session;
+    /**
+     * Runtime generation.
+     */
+    private Long generation;
+    /**
+     * Idempotency request identifier.
      */
     private String request;
+    /**
+     * Stable event fingerprint.
+     */
+    private String fingerprint;
+    /**
+     * Affected resource type.
+     */
+    private String resource;
+    /**
+     * Event severity level.
+     */
+    private Level level;
+    /**
+     * Source occurrence time.
+     */
+    private Long occurred;
+    /**
+     * Server receipt time.
+     */
+    private Long received;
+    /**
+     * Event result.
+     */
+    private String result;
+    /**
+     * Human-readable message.
+     */
+    private String message;
+    /**
+     * Structured event detail stored as text.
+     */
+    @Lob
+    private String detail;
 
     /**
-     * Digest of the original semantic command.
+     * Creates an empty event record.
      */
-    private String digest;
-
-    /**
-     * Active gray selector JSON when present.
-     */
-    private String rule;
-
-    /**
-     * Gray-rule business edition.
-     */
-    private Long edition;
-
-    /**
-     * Terminal completion timestamp when present.
-     */
-    private Long finished;
-
-    /**
-     * Creates an empty rollout entity.
-     */
-    public Rollout() {
+    public Event() {
         // No initialization required.
     }
 
