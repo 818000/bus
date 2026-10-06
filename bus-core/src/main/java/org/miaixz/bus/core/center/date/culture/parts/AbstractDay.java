@@ -19,59 +19,31 @@
 */
 package org.miaixz.bus.core.center.date.culture.parts;
 
+import org.miaixz.bus.core.center.date.culture.Week;
+
 /**
- * Abstract base class for date components containing day information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds the day field, representing a specific day within a month. It serves
- * as a base class for calendar implementations that require day-level precision.
- * </p>
+ * Abstract base class for days.
  *
  * @author Kimi Liu
  */
-public abstract class DayParts extends MonthParts {
+public abstract class AbstractDay extends DayParts {
 
     /**
-     * The day of the month (1-based index).
-     */
-    protected int day;
-
-    /**
-     * Constructs day-based date parts.
-     */
-    public DayParts() {
-        // No initialization required.
-    }
-
-    /**
-     * Constructs day-based date parts.
+     * Constructs a day.
      *
      * @param year  the year value
      * @param month the month value
      * @param day   the day value
      */
-    public DayParts(final int year, final int month, final int day) {
-        super(year, month);
-        this.day = day;
+    public AbstractDay(final int year, final int month, final int day) {
+        super(year, month, day);
     }
 
     /**
-     * Gets the day of the month.
+     * Gets the week.
      *
-     * @return the day of the month (1-31, depending on the month)
+     * @return the week
      */
-    public int getDay() {
-        return day;
-    }
-
-    /**
-     * Gets the index used for chronological comparisons.
-     *
-     * @return comparison index
-     */
-    @Override
-    protected long getCompareIndex() {
-        return super.getCompareIndex() + day;
-    }
+    public abstract Week getWeek();
 
 }

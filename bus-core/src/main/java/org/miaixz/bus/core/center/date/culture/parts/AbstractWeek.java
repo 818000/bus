@@ -20,58 +20,68 @@
 package org.miaixz.bus.core.center.date.culture.parts;
 
 /**
- * Abstract base class for date components containing day information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds the day field, representing a specific day within a month. It serves
- * as a base class for calendar implementations that require day-level precision.
- * </p>
+ * Abstract base class for weeks.
  *
  * @author Kimi Liu
  */
-public abstract class DayParts extends MonthParts {
+public abstract class AbstractWeek extends WeekParts {
 
     /**
-     * The day of the month (1-based index).
-     */
-    protected int day;
-
-    /**
-     * Constructs day-based date parts.
-     */
-    public DayParts() {
-        // No initialization required.
-    }
-
-    /**
-     * Constructs day-based date parts.
+     * Constructs a week.
      *
      * @param year  the year value
      * @param month the month value
-     * @param day   the day value
+     * @param index the week index
+     * @param start the starting weekday
      */
-    public DayParts(final int year, final int month, final int day) {
-        super(year, month);
-        this.day = day;
+    public AbstractWeek(final int year, final int month, final int index, final int start) {
+        super(year, month, index, start);
     }
 
     /**
-     * Gets the day of the month.
+     * Gets the abstract month.
      *
-     * @return the day of the month (1-31, depending on the month)
+     * @return the abstract month
      */
-    public int getDay() {
-        return day;
-    }
+    public abstract AbstractMonth getAbstractMonth();
 
-    /**
-     * Gets the index used for chronological comparisons.
-     *
-     * @return comparison index
-     */
     @Override
-    protected long getCompareIndex() {
-        return super.getCompareIndex() + day;
+    public AbstractWeek next(final int n) {
+        int d = index + n;
+        AbstractMonth m = getAbstractMonth();
+        if (n > 0) {
+            int weekCount = m.getWeekCount(start);
+            while (d >= weekCount) {
+                d -= weekCount;
+                m = m.next(1);
+                if (m.getFirstDay().getWeek().getIndex() != start) {
+                    d += 1;
+                }
+                weekCount = m.getWeekCount(start);
+            }
+        } else if (n < 0) {
+            while (d < 0) {
+                if (m.getFirstDay().getWeek().getIndex() != start) {
+                    d -= 1;
+                }
+                m = m.next(-1);
+                d += m.getWeekCount(start);
+            }
+        }
+        final AbstractMonth month = m;
+        final int index = d;
+        return new AbstractWeek(month.getYear(), month.getMonthValue(), index, start) {
+
+            @Override
+            public AbstractMonth getAbstractMonth() {
+                return null;
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+        return getAbstractMonth() + getName();
     }
 
 }

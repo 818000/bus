@@ -20,58 +20,45 @@
 package org.miaixz.bus.core.center.date.culture.parts;
 
 /**
- * Abstract base class for date components containing day information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds the day field, representing a specific day within a month. It serves
- * as a base class for calendar implementations that require day-level precision.
- * </p>
+ * Abstract base class for years.
  *
  * @author Kimi Liu
  */
-public abstract class DayParts extends MonthParts {
+public abstract class AbstractYear extends YearParts {
 
     /**
-     * The day of the month (1-based index).
+     * Constructs a year.
+     *
+     * @param year the year value
      */
-    protected int day;
-
-    /**
-     * Constructs day-based date parts.
-     */
-    public DayParts() {
-        // No initialization required.
+    public AbstractYear(final int year) {
+        super(year);
     }
 
     /**
-     * Constructs day-based date parts.
+     * Gets the number of months in the year.
      *
-     * @param year  the year value
-     * @param month the month value
-     * @param day   the day value
+     * @return the month count
      */
-    public DayParts(final int year, final int month, final int day) {
-        super(year, month);
-        this.day = day;
+    public int getMonthCount() {
+        return getLeapMonth() < 1 ? 12 : 13;
     }
 
     /**
-     * Gets the day of the month.
+     * Gets the leap month.
      *
-     * @return the day of the month (1-31, depending on the month)
+     * @return leap month number, or 0 when there is no leap month
      */
-    public int getDay() {
-        return day;
+    public int getLeapMonth() {
+        return 0;
     }
 
-    /**
-     * Gets the index used for chronological comparisons.
-     *
-     * @return comparison index
-     */
     @Override
-    protected long getCompareIndex() {
-        return super.getCompareIndex() + day;
+    public String getName() {
+        return year + "年";
     }
+
+    @Override
+    public abstract AbstractYear next(int n);
 
 }

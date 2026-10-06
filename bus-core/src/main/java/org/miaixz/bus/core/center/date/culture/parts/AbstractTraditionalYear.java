@@ -19,59 +19,62 @@
 */
 package org.miaixz.bus.core.center.date.culture.parts;
 
+import org.miaixz.bus.core.center.date.culture.Direction;
+import org.miaixz.bus.core.center.date.culture.Twenty;
+import org.miaixz.bus.core.center.date.culture.sixty.SixtyCycle;
+import org.miaixz.bus.core.center.date.culture.star.nine.NineStar;
+
 /**
- * Abstract base class for date components containing day information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds the day field, representing a specific day within a month. It serves
- * as a base class for calendar implementations that require day-level precision.
- * </p>
+ * Abstract base class for traditional years.
  *
  * @author Kimi Liu
  */
-public abstract class DayParts extends MonthParts {
+public abstract class AbstractTraditionalYear extends AbstractYear {
 
     /**
-     * The day of the month (1-based index).
+     * Constructs a traditional year.
+     *
+     * @param year the year value
      */
-    protected int day;
-
-    /**
-     * Constructs day-based date parts.
-     */
-    public DayParts() {
-        // No initialization required.
+    public AbstractTraditionalYear(final int year) {
+        super(year);
     }
 
     /**
-     * Constructs day-based date parts.
+     * Gets the sixty-cycle year.
      *
-     * @param year  the year value
-     * @param month the month value
-     * @param day   the day value
+     * @return the sixty-cycle year
      */
-    public DayParts(final int year, final int month, final int day) {
-        super(year, month);
-        this.day = day;
+    public SixtyCycle getSixtyCycle() {
+        return SixtyCycle.fromIndex(year - 4);
     }
 
     /**
-     * Gets the day of the month.
+     * Gets the twenty-year fortune cycle.
      *
-     * @return the day of the month (1-31, depending on the month)
+     * @return the twenty-year cycle
      */
-    public int getDay() {
-        return day;
+    public Twenty getTwenty() {
+        return Twenty.fromIndex((int) Math.floor((year - 1864) / 20D));
     }
 
     /**
-     * Gets the index used for chronological comparisons.
+     * Gets the nine star.
      *
-     * @return comparison index
+     * @return the nine star
      */
-    @Override
-    protected long getCompareIndex() {
-        return super.getCompareIndex() + day;
+    public NineStar getNineStar() {
+        return NineStar.fromIndex(63 + getTwenty().getSixty().getIndex() * 3 - getSixtyCycle().getIndex());
+    }
+
+    /**
+     * Gets the Jupiter direction.
+     *
+     * @return the direction
+     */
+    public Direction getJupiterDirection() {
+        return Direction.fromIndex(
+                new int[] { 0, 7, 7, 2, 3, 3, 8, 1, 1, 6, 0, 0 }[getSixtyCycle().getEarthBranch().getIndex()]);
     }
 
 }

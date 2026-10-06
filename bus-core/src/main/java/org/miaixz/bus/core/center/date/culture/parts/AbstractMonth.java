@@ -20,58 +20,68 @@
 package org.miaixz.bus.core.center.date.culture.parts;
 
 /**
- * Abstract base class for date components containing day information.
- *
- * <p>
- * This class extends {@link MonthParts} and adds the day field, representing a specific day within a month. It serves
- * as a base class for calendar implementations that require day-level precision.
- * </p>
+ * Abstract base class for months.
  *
  * @author Kimi Liu
  */
-public abstract class DayParts extends MonthParts {
+public abstract class AbstractMonth extends MonthParts {
 
     /**
-     * The day of the month (1-based index).
-     */
-    protected int day;
-
-    /**
-     * Constructs day-based date parts.
-     */
-    public DayParts() {
-        // No initialization required.
-    }
-
-    /**
-     * Constructs day-based date parts.
+     * Constructs a month.
      *
      * @param year  the year value
      * @param month the month value
-     * @param day   the day value
      */
-    public DayParts(final int year, final int month, final int day) {
+    public AbstractMonth(final int year, final int month) {
         super(year, month);
-        this.day = day;
     }
 
     /**
-     * Gets the day of the month.
+     * Gets the week count in this month.
      *
-     * @return the day of the month (1-31, depending on the month)
+     * @param start the starting weekday, 1-6 for Monday-Saturday and 0 for Sunday
+     * @return the week count
      */
-    public int getDay() {
-        return day;
+    public int getWeekCount(final int start) {
+        return (int) Math.ceil((indexOf(getFirstDay().getWeek().getIndex() - start, 7) + getDayCount()) / 7D);
     }
 
-    /**
-     * Gets the index used for chronological comparisons.
-     *
-     * @return comparison index
-     */
     @Override
-    protected long getCompareIndex() {
-        return super.getCompareIndex() + day;
+    public abstract AbstractMonth next(int n);
+
+    /**
+     * Gets the day count.
+     *
+     * @return the day count
+     */
+    public abstract int getDayCount();
+
+    /**
+     * Gets the first day in the month.
+     *
+     * @return the first day
+     */
+    public abstract AbstractDay getFirstDay();
+
+    /**
+     * Gets the month value.
+     *
+     * @return the month, negative when this is a leap month
+     */
+    public int getMonthValue() {
+        return month;
+    }
+
+    /**
+     * Gets the abstract year.
+     *
+     * @return the abstract year
+     */
+    public abstract AbstractYear getAbstractYear();
+
+    @Override
+    public String toString() {
+        return getAbstractYear() + getName();
     }
 
 }
